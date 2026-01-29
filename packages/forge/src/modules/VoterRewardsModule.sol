@@ -49,7 +49,7 @@ contract VoterRewardsModule {
     string public constant MODULE_TYPE = "VOTER_REWARDS";
     address public constant JK_LABS_ADDRESS = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738; // Our hot wallet that we collect revenue to.
     uint256 public constant JK_LABS_CANCEL_DELAY = 604800; // One week
-    string private constant VERSION = "6.12"; // Private as to not clutter the ABI
+    string private constant VERSION = "6.13"; // Private as to not clutter the ABI
 
     GovernorCountingSimple public underlyingContest;
     address public creator;
@@ -59,7 +59,6 @@ contract VoterRewardsModule {
     error PayeesSharesLengthMismatch();
     error MustHaveAtLeastOnePayee();
     error TotalSharesCannotBeZero();
-    error MustHaveSortingEnabled();
     error ContestMustBeCompleted();
     error PayoutRankCannotBeZero();
     error RankingHasNoShares();
@@ -172,7 +171,6 @@ contract VoterRewardsModule {
      * @dev Run release checks.
      */
     function runReleaseChecks(uint256 ranking) public view {
-        if (underlyingContest.sortingEnabled() != 1) revert MustHaveSortingEnabled();
         if (underlyingContest.state() != Governor.ContestState.Completed) revert ContestMustBeCompleted();
         if (ranking == 0) revert PayoutRankCannotBeZero();
         if (shares[ranking] == 0) revert RankingHasNoShares();

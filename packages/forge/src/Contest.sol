@@ -13,7 +13,7 @@ contract Contest is GovernorCountingSimple, GovernorModuleRegistry, GovernorEnga
 
     constructor(ConstructorArgs memory _constructorArgs)
         Governor(_constructorArgs)
-        GovernorSorting(_constructorArgs.intConstructorArgs.sortingEnabled, _constructorArgs.intConstructorArgs.rankLimit)
+        GovernorSorting(_constructorArgs.intConstructorArgs.rankLimit)
     {
         if (
             (_constructorArgs.intConstructorArgs.votingDelay > (30 * SECONDS_IN_DAY))
