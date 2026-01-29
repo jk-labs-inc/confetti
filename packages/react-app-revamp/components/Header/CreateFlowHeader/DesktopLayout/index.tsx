@@ -1,5 +1,6 @@
 import { ConnectButtonCustom } from "@components/Connect";
 import CustomLink from "@components/UI/Link";
+import Logo from "@components/UI/Logo";
 import { ROUTE_CREATE_CONTEST, ROUTE_VIEW_LIVE_CONTESTS } from "@config/routes";
 import { PageAction } from "@hooks/useCreateFlowAction/store";
 import { useRouter } from "next/navigation";
@@ -36,9 +37,7 @@ const CreateFlowHeaderDesktopLayout: FC<CreateFlowHeaderDesktopLayoutProps> = ({
   return (
     <header className="flex flex-row items-center justify-between pl-[120px] pr-[60px] mt-8">
       <CustomLink href="/">
-        <h1 className="font-sabo-filled text-neutral-11 normal-case text-[40px]">
-          J<span className="text-[30px]">oke</span>R<span className="text-[30px]">ace</span>
-        </h1>
+        <Logo />
       </CustomLink>
 
       {!isLoading && !isSuccess && (

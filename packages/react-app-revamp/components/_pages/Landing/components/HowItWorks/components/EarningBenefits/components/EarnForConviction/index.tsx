@@ -11,7 +11,7 @@ const EarnForConviction = () => {
         <div className="flex flex-col flex-1 gap-8 lg:gap-8 2xl:gap-12">
           <div className="flex flex-col gap-4 text-base lg:text-lg 2xl:text-xl text-neutral-11 max-w-[400px]">
             <p className="normal-case">
-              JokeRace's innovation is a <span className="font-bold text-true-white">price curve.</span>
+              confetti's innovation is a <span className="font-bold text-true-white">price curve.</span>
             </p>
             <p>the earlier you vote, the cheaper the votes, and the more you can earn.</p>
             <p>

@@ -1,7 +1,7 @@
 import NewContest from "./new";
 
 export const metadata = {
-  title: "Create a new contest - jokerace",
+  title: "Create a new contest - Confetti",
 };
 
 const Page = () => {

@@ -1,7 +1,7 @@
 import UpcomingContests from "./upcoming";
 
 export const metadata = {
-  title: "Upcoming contests - jokerace",
+  title: "Upcoming contests - Confetti",
 };
 
 const Page = () => {

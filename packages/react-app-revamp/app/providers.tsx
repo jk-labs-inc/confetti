@@ -36,7 +36,7 @@ const Providers: FC<ProvidersProps> = ({ children }) => {
       <ParaProvider
         paraClientConfig={para}
         config={{
-          appName: "JokeRace",
+          appName: "Confetti",
         }}
         paraModalConfig={{
           theme: {
@@ -46,7 +46,7 @@ const Providers: FC<ProvidersProps> = ({ children }) => {
             borderRadius: "lg",
             font: "Lato",
           },
-          logo: "/wordmark.svg",
+          logo: "/confetti/loader/frame-1.svg",
           oAuthMethods: ["GOOGLE", "TWITTER", "DISCORD", "TELEGRAM"],
         }}
         externalWalletConfig={{

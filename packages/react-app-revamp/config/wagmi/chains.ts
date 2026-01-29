@@ -65,7 +65,7 @@ export const chains: readonly [ChainWithIcon, ...ChainWithIcon[]] = [
 
 // Transport creation
 const isProduction = process.env.NEXT_PUBLIC_APP_ENVIRONMENT === "production";
-const getHeaders = () => (isProduction ? { Referer: "https://jokerace.io/" } : { Referer: "" });
+const getHeaders = () => (isProduction ? { Referer: "https://confetti.win" } : { Referer: "" });
 
 export const createTransport = (chain: Chain): Transport => {
   const headers = getHeaders();
