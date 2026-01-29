@@ -23,7 +23,7 @@ const MainHeader: FC<MainHeaderProps> = ({ showProfile }) => {
         />
       </MediaQuery>
       <MediaQuery minWidth={1025}>
-        <MainHeaderDesktopLayout isConnected={isConnected} address={userAddress ?? ""} />
+        <MainHeaderDesktopLayout />
       </MediaQuery>
     </div>
   );

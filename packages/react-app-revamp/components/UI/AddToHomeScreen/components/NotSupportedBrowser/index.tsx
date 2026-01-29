@@ -13,7 +13,7 @@ const AddToHomeScreenNotSupportedBrowser: FC<AddToHomeScreenNotSupportedBrowserP
         <div className="flex flex-col gap-6">
           <p className="text-[24px] font-bold">please change browser</p>
           <div className="flex flex-col gap-2">
-            <p className="text-[16px]">to install JokeRace as an app, you’ll need to add it to your home screen.</p>
+            <p className="text-[16px]">to install Confetti as an app, you’ll need to add it to your home screen.</p>
             <p className="text-[16px]">please open it in a supported browser like safari or chrome to install.</p>
           </div>
           <div className="flex flex-col gap-4">
@@ -33,7 +33,7 @@ const AddToHomeScreenNotSupportedBrowser: FC<AddToHomeScreenNotSupportedBrowserP
           <div className="markdown pl-1">
             <ol className="flex flex-col gap-3">
               <li className="text-[16px]">
-                open jokerace.io in safari <i>or</i> chrome
+                open confetti.win in safari <i>or</i> chrome
               </li>
               <li className="text-[16px]">
                 tap the <b>share icon</b>

@@ -61,9 +61,7 @@ async function fetchTokenListOrMetadata({
       symbol: token.symbol,
       decimals: token.decimals,
       logoURI:
-        token.logoURI === "" || token.logoURI === "missing_thumb.png"
-          ? "/contest/mona-lisa-moustache.png"
-          : token.logoURI,
+        token.logoURI === "" || token.logoURI === "missing_thumb.png" ? "/confetti/loader/frame-1.svg" : token.logoURI,
     }));
 
     if (userAddress) {
@@ -129,7 +127,7 @@ async function fetchTokenByAddress({
       address: tokenIdentifier,
       name: token.name ?? "",
       symbol: token.symbol ?? "",
-      logoURI: "/contest/mona-lisa-moustache.png",
+      logoURI: "/confetti/loader/frame-1.svg",
       decimals: token.decimals ?? 18,
     };
 

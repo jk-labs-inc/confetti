@@ -45,7 +45,7 @@ const LayoutViewContestError: FC<LayoutViewContestErrorProps> = ({ error, bugRep
       <div className="flex flex-col gap-6 m-auto animate-appear">
         <h1 className="text-[40px] lg:text-[40px] font-sabo-filled text-negative-10 text-center">ruh-roh!</h1>
         <p className="text-[16px] font-bold text-neutral-11 text-center">
-          looks like this contract wasn’t deployed through Jokerace. Please check the contract address and try again.
+          looks like this contract wasn’t deployed through Confetti. Please check the contract address and try again.
         </p>
       </div>
     );

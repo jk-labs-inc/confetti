@@ -9,7 +9,7 @@ export const generateNativeToken = (nativeCurrency?: ChainNativeCurrency, chainN
     address: "native",
     name: nativeCurrency?.name ?? "",
     symbol: chainNativeCurrencySymbol ?? "",
-    logoURI: chainNativeCurrencySymbol === "ETH" ? "/tokens/ether.svg" : "/contest/mona-lisa-moustache.png",
+    logoURI: chainNativeCurrencySymbol === "ETH" ? "/tokens/ether.svg" : "/confetti/loader/frame-1.svg",
     decimals: nativeCurrency?.decimals ?? 18,
   };
 };

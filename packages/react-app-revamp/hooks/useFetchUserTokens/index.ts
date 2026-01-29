@@ -105,7 +105,7 @@ export const useFetchUserTokens = (userAddress: string, chainName: string) => {
           name: metadata.result.name,
           decimals: metadata.result.decimals,
           symbol: metadata.result.symbol,
-          logoURI: metadata.result.logo ? metadata.result.logo : "/contest/mona-lisa-moustache.png",
+          logoURI: metadata.result.logo ? metadata.result.logo : "/confetti/loader/frame-1.svg",
           balance: formattedTokenBalance,
         };
       });
@@ -128,7 +128,7 @@ export const useFetchUserTokens = (userAddress: string, chainName: string) => {
         name: chain.nativeCurrency.symbol,
         symbol: chain.nativeCurrency.symbol,
         decimals: chain.nativeCurrency.decimals,
-        logoURI: isEth ? "/mainnet.svg" : chainsImages[normalizedChainName] || "/contest/mona-lisa-moustache.png",
+        logoURI: isEth ? "/mainnet.svg" : chainsImages[normalizedChainName] || "/confetti/loader/frame-1.svg",
         balance: parseFloat(formatUnits(nativeBalance.value, nativeBalance.decimals)),
       };
 

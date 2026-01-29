@@ -2,12 +2,14 @@ interface UrlParams {
   [key: string]: string;
 }
 
+//TODO: update all of these to the actual links
 const BASE_LENSTER_URL = "https://hey.xyz/?";
-const BASE_JOKERACE_URL = "https://jokerace.io/contest/";
+const BASE_JOKERACE_URL = "https://confetti.win/contest/";
 const BASE_TWITTER_URL = "https://twitter.com/intent/tweet?";
 const BASE_LINKEDIN_URL = "https://www.linkedin.com/sharing/share-offsite/?";
 const BASE_FACEBOOK_URL = "https://www.facebook.com/sharer/sharer.php?";
 const BASE_FARCASTER_URL = "https://warpcast.com/~/compose?";
+//TODO: update this to the actual channel name if we use farcaster
 const FARCASTER_CHANNEL_NAME = "jokerace";
 const FARCASTER_CHANNEL_KEY = "jokerace";
 

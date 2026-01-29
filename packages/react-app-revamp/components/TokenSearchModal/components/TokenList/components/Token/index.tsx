@@ -41,7 +41,7 @@ const TokenSearchListToken: FC<TokenSearchListTokenProps> = ({ token, isChainDro
   };
 
   const handleImageError = () => {
-    setImgSrc("/contest/mona-lisa-moustache.png");
+    setImgSrc("/confetti/loader/frame-1.svg");
   };
 
   return (

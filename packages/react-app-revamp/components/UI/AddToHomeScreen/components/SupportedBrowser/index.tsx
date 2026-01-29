@@ -14,7 +14,7 @@ const AddToHomeScreenSupportedBrowser: FC<AddToHomeScreenSupportedBrowserProps> 
         <div className="flex flex-col gap-6">
           <p className="text-[24px] font-bold">add to home screen</p>
           <p className="text-[16px]">
-            <span className="normal-case">JokeRace</span> is meant to be used as an app. <br />
+            <span className="normal-case">Confetti</span> is meant to be used as an app. <br />
             just tap share and “add to home screen.”
           </p>
           <div className="flex flex-col gap-4 mt-14">
@@ -30,7 +30,7 @@ const AddToHomeScreenSupportedBrowser: FC<AddToHomeScreenSupportedBrowserProps> 
         <div className="flex flex-col gap-6">
           <p className="text-[24px] font-bold">add to home screen</p>
           <p className="text-[16px]">
-            <span className="normal-case">JokeRace</span> is meant to be used as an app. <br />
+            <span className="normal-case">Confetti</span> is meant to be used as an app. <br />
             to install, just follow the steps below:
           </p>
           <div className="markdown pl-1">
@@ -42,7 +42,7 @@ const AddToHomeScreenSupportedBrowser: FC<AddToHomeScreenSupportedBrowserProps> 
                 tap <b>add to home screen</b>
               </li>
               <li className="text-[16px]">
-                open <span className="normal-case">JokeRace</span> from homescreen
+                open <span className="normal-case">Confetti</span> from homescreen
               </li>
             </ol>
           </div>

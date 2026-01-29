@@ -1,5 +1,6 @@
 import LandingPageTicker from "@components/_pages/Landing/components/Ticker";
 import CustomLink from "@components/UI/Link";
+import Logo from "@components/UI/Logo";
 import { ROUTE_CREATE_CONTEST } from "@config/routes";
 
 const LandingHeaderDesktop = () => {
@@ -9,14 +10,7 @@ const LandingHeaderDesktop = () => {
       <header className="pl-8 3xl:pl-20 mt-6">
         <div className="grid grid-cols-[auto_1fr] items-center gap-x-6 max-w-(--landing-content-max-width)">
           <CustomLink href="/">
-            <h1 className="font-sabo-filled text-neutral-11 normal-case text-[60px]">
-              <span className="joke-3d" data-text="J">
-                J
-              </span>
-              <span className="text-[45px] joke-3d">oke</span>
-              <span className="joke-3d">R</span>
-              <span className="text-[45px] joke-3d">ace</span>
-            </h1>
+            <Logo />
           </CustomLink>
 
           <div className="flex items-center mt-4 ml-auto">
@@ -29,7 +23,7 @@ const LandingHeaderDesktop = () => {
             </CustomLink>
           </div>
 
-          <p className="text-neutral-11 text-2xl font-sabo-filled">vote. rally. earn.</p>
+          <p className="text-secondary-11 text-[18.8px] font-sabo-filled">vote. rally. earn.</p>
         </div>
       </header>
     </>

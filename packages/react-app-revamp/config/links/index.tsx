@@ -1,3 +1,4 @@
+//TODO: update all of these to the actual links
 const LINK_GITHUB = "https://github.com/jk-labs-inc/confetti";
 const LINK_V1 = "https://jokedao.jokedao.io/";
 const LINK_BUG_REPORT =
@@ -9,11 +10,11 @@ const LINK_MEDIA_KIT = "https://drive.google.com/drive/folders/10BVM0YtoyCuCG8y7
 const LINK_PRIVACY_POLICY = "https://github.com/jk-labs-inc/confetti/blob/staging/PrivacyPolicy.md";
 const LINK_HOW_IT_WORKS = "/#how-it-works";
 
-export const LINK_FAQ = "https://docs.jokerace.io/faq";
-export const LINK_BRIDGE_DOCS = "https://docs.jokerace.io/user-how-tos/bridging";
-export const LINK_DOCS = "https://docs.jokerace.io/";
+export const LINK_FAQ = "https://docs.confetti.win/faq";
+export const LINK_BRIDGE_DOCS = "https://docs.confetti.win/user-how-tos/bridging";
+export const LINK_DOCS = "https://docs.confetti.win/";
 export const LINK_LINKTREE = "https://linktr.ee/jokerace_io";
-export const LINK_ROI_CALCULATOR = "https://docs.jokerace.io/calculating-roi";
+export const LINK_ROI_CALCULATOR = "https://docs.confetti.win/calculating-roi";
 
 export const FOOTER_LINKS = [
   {

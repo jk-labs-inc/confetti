@@ -14,7 +14,7 @@ const AddFundsJumperWidget: FC<AddFundsJumperWidgetProps> = ({ chainId, asset })
 
   return (
     <div className="w-full max-w-full overflow-hidden">
-      <LiFiWidget integrator="JokeRace" config={widgetConfig} />
+      <LiFiWidget integrator="Confetti" config={widgetConfig} />
     </div>
   );
 };

@@ -13,7 +13,7 @@ const CreatorSplitToggleInfo = () => {
       />
       <Tooltip id={TOOLTIP_ID}>
         <p className="text-xs text-true-black normal-case">
-          JokeRace takes a 10% cut that <br /> helps prevent whale <br /> manipulation. toggle this, and <br /> we’ll
+          Confetti takes a 10% cut that <br /> helps prevent whale <br /> manipulation. toggle this, and <br /> we’ll
           split it with you.
         </p>
       </Tooltip>

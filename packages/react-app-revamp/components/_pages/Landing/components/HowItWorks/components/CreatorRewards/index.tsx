@@ -35,11 +35,7 @@ const LandingPageHowItWorksCreatorRewards = () => {
       <motion.div variants={itemVariants} className="w-full lg:w-1/2" style={{ willChange: "transform" }}>
         <CreateContests />
       </motion.div>
-      <motion.div
-        variants={itemVariants}
-        className="hidden 2xl:block 2xl:w-1/2"  
-        style={{ willChange: "transform" }}
-      >
+      <motion.div variants={itemVariants} className="hidden 2xl:block 2xl:w-1/2" style={{ willChange: "transform" }}>
         <FundsDistribution />
       </motion.div>
     </motion.div>

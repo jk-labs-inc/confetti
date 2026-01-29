@@ -30,7 +30,7 @@ const BELLO_SUPPORTED_CHAINS = [
   "taikotestnet",
 ];
 
-const JOKERACE_MIN_VERSION = "3.16";
+const CONFETTI_MIN_VERSION = "3.16";
 
 const BelloExtension = () => {
   const contestConfig = useContestConfigStore(useShallow(state => state.contestConfig));
@@ -39,7 +39,7 @@ const BelloExtension = () => {
     contestConfig.chainName.toLowerCase(),
   );
   const isSupportedChain = BELLO_SUPPORTED_CHAINS.includes(contestConfig.chainName.toLowerCase());
-  const isSupportedVersion = compareVersions(contestConfig.version, JOKERACE_MIN_VERSION) >= 0;
+  const isSupportedVersion = compareVersions(contestConfig.version, CONFETTI_MIN_VERSION) >= 0;
 
   if (!isSupportedChain || !isSupportedVersion) return null;
 
