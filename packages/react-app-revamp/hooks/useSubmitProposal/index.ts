@@ -17,6 +17,7 @@ import { useWallet } from "@hooks/useWallet";
 import { simulateContract, waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { addUserActionForAnalytics } from "lib/analytics/participants";
 import { updateRewardAnalytics } from "lib/analytics/rewards";
+import { useRouter } from "next/navigation";
 import { useMediaQuery } from "react-responsive";
 import { useShallow } from "zustand/shallow";
 import { useSubmitProposalStore } from "./store";
@@ -51,6 +52,7 @@ interface RewardsAnalyticsParams {
 interface CombinedAnalyticsParams extends UserAnalyticsParams, RewardsAnalyticsParams {}
 
 export function useSubmitProposal() {
+  const router = useRouter();
   const { userAddress, chain } = useWallet();
   const { contestConfig } = useContestConfigStore(state => state);
   const isMobile = useMediaQuery({ maxWidth: "768px" });
@@ -166,6 +168,9 @@ export function useSubmitProposal() {
           }));
           setMetadataFields(clearedFields);
         }
+
+        const submissionPath = `/contest/${contestConfig.chainName.toLowerCase()}/${contestConfig.address}/submission/${proposalId}`;
+        router.push(submissionPath);
 
         resolve({ tx: txSendProposal, proposalId });
       } catch (e) {

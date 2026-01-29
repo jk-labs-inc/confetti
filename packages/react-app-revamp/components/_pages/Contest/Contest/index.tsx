@@ -5,7 +5,7 @@ import { useContestStore } from "@hooks/useContest/store";
 import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import { useProposalStore } from "@hooks/useProposal/store";
-import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
+import { useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import ContestPrompt from "../components/Prompt";
 import ProposalStatistics from "../components/ProposalStatistics";
@@ -15,6 +15,7 @@ import { useContestSubmitButton } from "./useContestSubmitButton";
 import { useShallow } from "zustand/shallow";
 
 const ContestTab = () => {
+  const [isSubmitProposalModalOpen, setIsSubmitProposalModalOpen] = useState(false);
   const contestPrompt = useContestStore(useShallow(state => state.contestPrompt));
   const contestStatus = useContestStatusStore(useShallow(state => state.contestStatus));
   const { isListProposalsLoading, isListProposalsSuccess } = useProposalStore(
@@ -24,18 +25,13 @@ const ContestTab = () => {
     })),
   );
   const { isLoading: isContestLoading, isSuccess: isContestSuccess } = useContest();
-  const { isModalOpen: isSubmitProposalModalOpen, setIsModalOpen: setIsSubmitProposalModalOpen } =
-    useSubmitProposalStore(
-      useShallow(state => ({
-        isModalOpen: state.isModalOpen,
-        setIsModalOpen: state.setIsModalOpen,
-      })),
-    );
   const contestState = useContestStateStore(useShallow(state => state.contestState));
   const isMobile = useMediaQuery({ maxWidth: 768 });
   const isInPwaMode = window.matchMedia("(display-mode: standalone)").matches;
   const isContestCanceled = contestState === ContestStateEnum.Canceled;
-  const { renderSubmitButton } = useContestSubmitButton();
+  const { renderSubmitButton } = useContestSubmitButton({
+    onOpenModal: () => setIsSubmitProposalModalOpen(true),
+  });
 
   return (
     <div className="animate-fade-in">

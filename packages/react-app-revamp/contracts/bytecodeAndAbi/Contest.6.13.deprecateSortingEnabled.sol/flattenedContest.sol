@@ -939,6 +939,7 @@ abstract contract GovernorSorting {
     // TTs that may occur in your contest. The thing to consider with regard to making it too high is just
     // that it is more gas for users on average the higher that RANK_LIMIT is set.
 
+    uint256 public sortingEnabled; // Either 0 for false or 1 for true
     uint256 public rankLimit; // RULE: Cannot be 0
 
     // RULE: array length can never end lower than it started a transaction, otherwise erroneous ranking can happen
@@ -4829,7 +4830,7 @@ using {
 /// @dev The result is rounded toward zero.
 /// @param x The UD60x18 number to convert.
 /// @return result The same number in basic integer form.
-function convert_1(UD60x18 x) pure returns (uint256 result) {
+function convert_0(UD60x18 x) pure returns (uint256 result) {
     result = UD60x18.unwrap(x) / uUNIT_3;
 }
 
@@ -4840,7 +4841,7 @@ function convert_1(UD60x18 x) pure returns (uint256 result) {
 ///
 /// @param x The basic integer to convert.
 /// @param result The same number converted to UD60x18.
-function convert_0(uint256 x) pure returns (UD60x18 result) {
+function convert_1(uint256 x) pure returns (UD60x18 result) {
     if (x > uMAX_UD60x18 / uUNIT_3) {
         revert PRBMath_UD60x18_Convert_Overflow(x);
     }

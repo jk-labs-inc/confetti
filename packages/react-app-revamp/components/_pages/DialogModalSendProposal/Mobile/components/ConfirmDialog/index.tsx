@@ -1,4 +1,3 @@
-import DialogModalSendProposalSuccessLayout from "@components/_pages/DialogModalSendProposal/components/SuccessLayout";
 import { Charge } from "@hooks/useDeployContest/types";
 import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
 import { type GetBalanceReturnType } from "@wagmi/core";
@@ -8,7 +7,6 @@ import SendProposalMobileLayoutConfirmLoadingContent from "./components/LoadingC
 
 interface DialogModalSendProposalMobileLayoutConfirmProps {
   chainName: string;
-  contestId: string;
   isOpen?: boolean;
   charge: Charge;
   accountData: GetBalanceReturnType | undefined;
@@ -18,30 +16,21 @@ interface DialogModalSendProposalMobileLayoutConfirmProps {
 
 const DialogModalSendProposalMobileLayoutConfirm: FC<DialogModalSendProposalMobileLayoutConfirmProps> = ({
   chainName,
-  contestId,
   isOpen,
   charge,
   accountData,
   onConfirm,
   onClose,
 }) => {
-  const { isLoading, isSuccess, proposalId } = useSubmitProposalStore(state => state);
+  const { isLoading } = useSubmitProposalStore(state => state);
   const [showAddFunds, setShowAddFunds] = useState(false);
 
-  const title = isLoading
-    ? "approving transaction..."
-    : isSuccess && proposalId
-    ? "your entry is live!"
-    : "submit entry";
+  const title = isLoading ? "approving transaction..." : "submit entry";
 
   if (!isOpen) return null;
 
   const renderContent = () => {
     if (isLoading) return <SendProposalMobileLayoutConfirmLoadingContent />;
-    if (isSuccess && proposalId)
-      return (
-        <DialogModalSendProposalSuccessLayout proposalId={proposalId} chainName={chainName} contestId={contestId} />
-      );
     return (
       <SendProposalMobileLayoutConfirmInitialContent
         onConfirm={onConfirm}
@@ -55,7 +44,7 @@ const DialogModalSendProposalMobileLayoutConfirm: FC<DialogModalSendProposalMobi
 
   return (
     <div className="fixed z-50 left-0 right-0 bottom-0 bg-true-black w-full border-t border-neutral-9 rounded-t-[40px] animate-appear pl-10 pr-8 pt-8 pb-4">
-      <div className={`flex flex-col ${isSuccess ? "gap-8" : "gap-5"} transition-all`}>
+      <div className="flex flex-col gap-5 transition-all">
         <div className="flex justify-between items-center">
           {!showAddFunds ? <p className="text-[24px] font-bold">{title}</p> : null}
           {!showAddFunds ? (

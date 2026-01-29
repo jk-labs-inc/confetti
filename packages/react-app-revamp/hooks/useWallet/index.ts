@@ -1,12 +1,13 @@
 import { chains, ChainWithIcon } from "@config/wagmi/chains";
 import { useAccount, useLogout, useModal, useWallet as useParaWallet } from "@getpara/react-sdk-lite";
 import { useMemo } from "react";
-import { useChainId, useSwitchChain } from "wagmi";
+import { Connector, useChainId, useSwitchChain } from "wagmi";
 
 interface WalletHookReturn {
   userAddress: `0x${string}` | undefined;
   isConnected: boolean;
   chain: ChainWithIcon;
+  connector: Connector | undefined;
   connect: () => Promise<void>;
   disconnect: () => void;
   changeNetworks: (chainId: number) => void;
@@ -68,6 +69,7 @@ export function useWallet(): WalletHookReturn {
     isConnected,
     //TODO: test if we need an undefined here?
     chain: chain as ChainWithIcon,
+    connector: external?.evm?.connector,
     connect,
     disconnect,
     changeNetworks,

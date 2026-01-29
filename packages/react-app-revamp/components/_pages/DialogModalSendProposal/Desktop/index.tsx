@@ -22,7 +22,6 @@ import { useShallow } from "zustand/shallow";
 import DialogModalSendProposalEditor from "../components/Editor";
 import DialogModalSendProposalEntryPreviewLayout from "../components/EntryPreviewLayout";
 import DialogModalSendProposalMetadataFields from "../components/MetadataFields";
-import DialogModalSendProposalSuccessLayout from "../components/SuccessLayout";
 import { isEntryPreviewPrompt } from "../utils";
 
 interface DialogModalSendProposalDesktopLayoutProps {
@@ -76,8 +75,7 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
     emailAlreadyExists,
     setEmailAlreadyExists,
   } = useSubmitProposalStore(state => state);
-  const { isLoading, isSuccess } = useSubmitProposal();
-  const { proposalId } = useSubmitProposalStore(state => state);
+  const { isLoading } = useSubmitProposal();
   const [emailError, setEmailError] = useState<string | null>(null);
   const tosHref = FOOTER_LINKS.find(link => link.label === "Terms")?.href;
   const { isLoading: isMetadataFieldsLoading, isError: isMetadataFieldsError } = useMetadataFields({
@@ -145,13 +143,7 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
   };
 
   return (
-    <DialogModalV3
-      title="submission"
-      isOpen={isOpen}
-      setIsOpen={onCloseModal}
-      className="w-full xl:w-[1100px]"
-      disableClose={!!(isSuccess && proposalId)}
-    >
+    <DialogModalV3 title="submission" isOpen={isOpen} setIsOpen={onCloseModal} className="w-full xl:w-[1100px]">
       <div className="flex flex-col gap-4 md:pl-[50px] lg:pl-[100px] mt-[60px] mb-[60px]">
         {showAddFundsModal ? (
           <AddFunds
@@ -160,11 +152,6 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
             asset={chainCurrencySymbol ?? ""}
             onGoBack={() => setShowAddFundsModal(false)}
           />
-        ) : isSuccess && proposalId ? (
-          <div className="flex flex-col gap-8">
-            <p className="text-[24px] font-bold text-neutral-11">your entry is live!</p>
-            <DialogModalSendProposalSuccessLayout proposalId={proposalId} chainName={chainName} contestId={contestId} />
-          </div>
         ) : (
           <div className="flex flex-col gap-8">
             <div className="flex flex-col gap-4">

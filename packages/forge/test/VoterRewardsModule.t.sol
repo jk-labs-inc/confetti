@@ -31,7 +31,6 @@ contract VoterRewardsModuleTest is Test {
     address public constant JK_LABS_SPLIT_DESTINATION = JK_LABS_ADDRESS;
 
     // SORTING INT PARAMS
-    uint256 public constant SORTING_ENABLED = 1;
     uint256 public constant RANK_LIMIT_1 = 1;
     uint256 public constant RANK_LIMIT_250 = 250;
 
@@ -46,7 +45,6 @@ contract VoterRewardsModuleTest is Test {
         VOTING_PERIOD,
         NUM_ALLOWED_PROPOSAL_SUBMISSIONS,
         MAX_PROPOSAL_COUNT,
-        SORTING_ENABLED,
         RANK_LIMIT_250,
         NINETY_PERCENT_TO_REWARDS,
         STANDARD_COST_TO_VOTE,
@@ -70,7 +68,6 @@ contract VoterRewardsModuleTest is Test {
         VOTING_PERIOD,
         NUM_ALLOWED_PROPOSAL_SUBMISSIONS,
         MAX_PROPOSAL_COUNT,
-        SORTING_ENABLED,
         RANK_LIMIT_1,
         NINETY_PERCENT_TO_REWARDS,
         STANDARD_COST_TO_VOTE,
@@ -184,9 +181,7 @@ contract VoterRewardsModuleTest is Test {
 
         payPerVoteExpCurveContest.setOfficialRewardsModule(address(voterRewardsModule));
         payPerVoteExpCurveAltContest.setOfficialRewardsModule(address(voterRewardsModuleAlt));
-        payPerVoteExpCurveRankLimitOneContest.setOfficialRewardsModule(
-            address(voterRewardsModuleToRankLimitOneContest)
-        );
+        payPerVoteExpCurveRankLimitOneContest.setOfficialRewardsModule(address(voterRewardsModuleToRankLimitOneContest));
 
         testERC20 = new ERC20PresetFixedSupply("test", "TEST", INITIAL_TEST_ERC20_SUPPLY, CREATOR_ADDRESS);
 

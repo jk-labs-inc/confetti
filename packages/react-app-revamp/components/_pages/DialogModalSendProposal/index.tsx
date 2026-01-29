@@ -47,8 +47,6 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
   const { chainName, address: contestId } = extractPathSegments(asPath ?? "");
   const { sendProposal } = useSubmitProposal();
   const {
-    setProposalId,
-    setIsMobileConfirmModalOpen,
     wantsSubscription,
     emailForSubscription,
     setWantsSubscription,
@@ -149,16 +147,8 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
       const [proposalResult] = await Promise.all(promises);
 
       if (proposalResult) {
-        setProposalId(proposalResult.proposalId);
-        setProposal("");
-        editorProposal?.commands.clearContent();
+        // Clean up local storage before navigation (which happens in sendProposal)
         removeSubmissionFromLocalStorage("submissions", contestId);
-        if (isMobile) {
-          setIsOpen(true);
-          setIsMobileConfirmModalOpen(true);
-        } else {
-          setIsOpen(true);
-        }
       }
     } catch (error) {
       console.error("Error:", error);

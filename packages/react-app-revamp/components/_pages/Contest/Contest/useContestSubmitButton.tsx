@@ -1,5 +1,4 @@
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
-import { useContestStore } from "@hooks/useContest/store";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
 import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
@@ -9,7 +8,11 @@ import { useModal } from "@getpara/react-sdk-lite";
 import { useMediaQuery } from "react-responsive";
 import { useShallow } from "zustand/shallow";
 
-export const useContestSubmitButton = () => {
+interface UseContestSubmitButtonProps {
+  onOpenModal: () => void;
+}
+
+export const useContestSubmitButton = ({ onOpenModal }: UseContestSubmitButtonProps) => {
   const { isConnected, userAddress } = useWallet();
   const { openModal } = useModal();
   const { contestConfig } = useContestConfigStore(state => state);
@@ -21,14 +24,8 @@ export const useContestSubmitButton = () => {
     enabled: isConnected,
   });
 
-  const {
-    isModalOpen: isSubmitProposalModalOpen,
-    setIsModalOpen: setIsSubmitProposalModalOpen,
-    setIsSuccess: setIsSubmitProposalSuccess,
-  } = useSubmitProposalStore(
+  const { setIsSuccess: setIsSubmitProposalSuccess } = useSubmitProposalStore(
     useShallow(state => ({
-      isModalOpen: state.isModalOpen,
-      setIsModalOpen: state.setIsModalOpen,
       setIsSuccess: state.setIsSuccess,
     })),
   );
@@ -39,7 +36,7 @@ export const useContestSubmitButton = () => {
 
   const handleEnterContest = () => {
     setIsSubmitProposalSuccess(false);
-    setIsSubmitProposalModalOpen(!isSubmitProposalModalOpen);
+    onOpenModal();
   };
 
   const renderSubmitButton = () => {

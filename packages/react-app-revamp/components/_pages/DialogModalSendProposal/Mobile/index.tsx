@@ -8,10 +8,9 @@ import { Charge } from "@hooks/useDeployContest/types";
 import useMetadataFields from "@hooks/useMetadataFields";
 import { useMetadataStore } from "@hooks/useMetadataFields/store";
 import useSubmitProposal from "@hooks/useSubmitProposal";
-import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
 import { Editor } from "@tiptap/react";
 import { type GetBalanceReturnType } from "@wagmi/core";
-import { FC, useEffect } from "react";
+import { FC, useEffect, useState } from "react";
 import { useShallow } from "zustand/shallow";
 import DialogModalSendProposalEditor from "../components/Editor";
 import DialogModalSendProposalEntryPreviewLayout from "../components/EntryPreviewLayout";
@@ -48,9 +47,8 @@ const DialogModalSendProposalMobileLayout: FC<DialogModalSendProposalMobileLayou
   onSwitchNetwork,
   onSubmitProposal,
 }) => {
-  const { isLoading, error } = useSubmitProposal();
-  const { isMobileConfirmModalOpen, setIsMobileConfirmModalOpen, setIsLoading, setIsSuccess, setProposalId } =
-    useSubmitProposalStore(state => state);
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const { isLoading, isSuccess, error } = useSubmitProposal();
   const { contestConfig } = useContestConfigStore(useShallow(state => state));
   const { contestPrompt } = useContestStore(state => state);
   const isInPwaMode = window.matchMedia("(display-mode: standalone)").matches;
@@ -64,16 +62,13 @@ const DialogModalSendProposalMobileLayout: FC<DialogModalSendProposalMobileLayou
   const hasEntryPreview = metadataFields.length > 0 && isEntryPreviewPrompt(metadataFields[0].prompt);
 
   useEffect(() => {
-    if (error) {
-      setIsMobileConfirmModalOpen(false);
+    if (error || isSuccess) {
+      setIsConfirmModalOpen(false);
     }
-  }, [error, setIsMobileConfirmModalOpen]);
+  }, [error, isSuccess]);
 
-  const resetStatesAndProceed = () => {
-    setIsLoading(false);
-    setIsSuccess(false);
-    setProposalId("");
-    setIsMobileConfirmModalOpen(true);
+  const handleOpenConfirmModal = () => {
+    setIsConfirmModalOpen(true);
   };
 
   const isAnyMetadataFieldEmpty = () => {
@@ -93,13 +88,13 @@ const DialogModalSendProposalMobileLayout: FC<DialogModalSendProposalMobileLayou
     <DialogModalV3 isOpen={isOpen} title="sendProposalMobile" isMobile>
       <div
         className={`${
-          isMobileConfirmModalOpen ? "fixed" : "hidden"
+          isConfirmModalOpen ? "fixed" : "hidden"
         } inset-0 z-50 pointer-events-none bg-neutral-8 bg-neutral-8/60`}
         aria-hidden="true"
       />
       <div
         className={`flex flex-col gap-8 ${isInPwaMode ? "mt-0" : "mt-12"} ${
-          isMobileConfirmModalOpen ? "pointer-events-none" : ""
+          isConfirmModalOpen ? "pointer-events-none" : ""
         }`}
       >
         <div className="flex justify-between items-center">
@@ -110,7 +105,7 @@ const DialogModalSendProposalMobileLayout: FC<DialogModalSendProposalMobileLayou
             <ButtonV3
               colorClass="bg-gradient-purple rounded-[40px]"
               size={ButtonSize.DEFAULT_LONG}
-              onClick={resetStatesAndProceed}
+              onClick={handleOpenConfirmModal}
               isDisabled={isLoading || isSubmitButtonDisabled()}
             >
               submit
@@ -157,12 +152,11 @@ const DialogModalSendProposalMobileLayout: FC<DialogModalSendProposalMobileLayou
       <div>
         <DialogModalSendProposalMobileLayoutConfirm
           chainName={chainName}
-          contestId={contestId}
-          isOpen={isMobileConfirmModalOpen}
+          isOpen={isConfirmModalOpen}
           charge={charge}
           accountData={accountData}
           onConfirm={() => onSubmitProposal?.()}
-          onClose={() => setIsMobileConfirmModalOpen(false)}
+          onClose={() => setIsConfirmModalOpen(false)}
         />
       </div>
     </DialogModalV3>

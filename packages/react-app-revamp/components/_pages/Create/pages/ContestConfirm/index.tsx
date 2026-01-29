@@ -20,11 +20,12 @@ import CreateContestConfirmPreview from "./components/Preview";
 import CreateContestConfirmRewards from "./components/Rewards";
 import CreateContestConfirmTiming from "./components/Timing";
 import CreateContestConfirmTitle from "./components/Title";
-import { isEthereumMainnet } from "./utils";
+import { displayWalletWarning, isEthereumMainnet, isWalletForbidden } from "./utils";
 
 const CreateContestConfirm = () => {
   const {
     chain: { id: chainId, testnet },
+    connector,
   } = useWallet();
   const { steps, stepReferences } = useContestSteps();
   const state = useDeployContestStore(state => state);
@@ -50,9 +51,11 @@ const CreateContestConfirm = () => {
       return;
     }
 
-    //TODO: we need connector here, see how we can get it from para
-    // if (connector && isWalletForbidden(connector?.id)) {
-    //   displayWalletWarning(connector?.id);
+    if (connector && isWalletForbidden(connector.id)) {
+      displayWalletWarning(connector.id);
+      return;
+    }
+
     if (isEthereumMainnet(chainId)) {
       setIsEthereumDeploymentModalOpen(true);
     } else if (testnet) {
@@ -60,7 +63,7 @@ const CreateContestConfirm = () => {
     } else {
       deployContest();
     }
-  }, [chainId, deployContest]);
+  }, [chainId, connector, deployContest, testnet]);
 
   const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;

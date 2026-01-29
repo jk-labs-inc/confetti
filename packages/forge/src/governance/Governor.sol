@@ -43,7 +43,6 @@ abstract contract Governor is GovernorSorting {
         uint256 votingPeriod;
         uint256 numAllowedProposalSubmissions;
         uint256 maxProposalCount;
-        uint256 sortingEnabled;
         uint256 rankLimit;
         uint256 percentageToRewards;
         uint256 costToVote;
@@ -108,7 +107,7 @@ abstract contract Governor is GovernorSorting {
     address public constant JK_LABS_ADDRESS = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738; // Our hot wallet that we collect revenue to.
     uint256 public constant PRICE_CURVE_UPDATE_INTERVAL = 60; // How often the price curve updates if applicable.
     uint256 public constant COST_ROUNDING_VALUE = 1e12; // Used for rounding costs, means cost to propose or vote can't be less than 1e18/this.
-    string private constant VERSION = "6.12"; // Private as to not clutter the ABI.
+    string private constant VERSION = "6.13"; // Private as to not clutter the ABI.
 
     string public name; // The title of the contest
     string public prompt;
