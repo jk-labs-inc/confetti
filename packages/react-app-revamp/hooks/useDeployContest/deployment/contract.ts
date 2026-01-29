@@ -1,7 +1,6 @@
 import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import DeployedContestContract from "@contracts/bytecodeAndAbi//Contest.sol/Contest.json";
 import { deployContract, waitForTransactionReceipt } from "@wagmi/core";
-import { isSortingEnabled } from "../contracts";
 import { prepareConstructorArgs } from "../helpers/constructorArgs";
 
 export const deployContractToChain = async (
@@ -26,9 +25,4 @@ export const deployContractToChain = async (
   }
 
   return { contractDeploymentHash, contractAddress: contractAddress.toLowerCase() };
-};
-
-export const finalizeContractDeployment = async (contractAddress: string, chainId: number) => {
-  const sortingEnabled = await isSortingEnabled(contractAddress, chainId);
-  return { sortingEnabled };
 };
