@@ -6,7 +6,7 @@ const LandingHeaderMobileExplainerCreatorSection = () => {
     <div className="flex flex-col gap-6">
       <img src="/landing/path.svg" alt="creator" />
       <div className="flex items-center gap-4 px-4">
-        <img src="/landing/bubbles-money.png" alt="creator" />
+        <img src="/landing/bubbles-money.png" alt="creator" width={114} height={114} />
         <div className="flex flex-col gap-4">
           <p className="text-neutral-11 font-sabo-filled text-xs">or create a contest...</p>
           <CustomLink
