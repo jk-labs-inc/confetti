@@ -46,7 +46,7 @@ const LandingPageHowItWorksProcessFlow = () => {
       <div className="flex items-center gap-4">
         <motion.div variants={itemVariants} style={{ willChange: "transform" }}>
           <LandingPageHowItWorksProcessStepContainer>
-            <img src="/landing/bubbles-ballot.png" alt="step 1" />
+            <img src="/landing/bubbles-ballot.png" alt="step 1" width={120} height={120} />
             <p className="text-neutral-11 font-sabo-filled text-xl 2xl:text-2xl">
               buy votes early <br /> for cheap
             </p>
@@ -60,7 +60,7 @@ const LandingPageHowItWorksProcessFlow = () => {
         />
         <motion.div variants={itemVariants} style={{ willChange: "transform" }}>
           <LandingPageHowItWorksProcessStepContainer>
-            <img src="/landing/money.png" alt="step 2" />
+            <img src="/landing/money.png" alt="step 2" width={114} height={113} />
             <p className="text-neutral-11 font-sabo-filled text-xl 2xl:text-2xl">
               this funds the <br />
               rewards
@@ -75,7 +75,7 @@ const LandingPageHowItWorksProcessFlow = () => {
         />
         <motion.div variants={itemVariants} style={{ willChange: "transform" }}>
           <LandingPageHowItWorksProcessStepContainer>
-            <img src="/landing/bubbles-money.png" alt="step 3" />
+            <img src="/landing/bubbles-money.png" alt="step 3" width={114} height={114} />
             <p className="text-neutral-11 font-sabo-filled text-xl 2xl:text-2xl">
               earn by voting <br />
               up winners
