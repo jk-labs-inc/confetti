@@ -1,10 +1,11 @@
 import AddFundsModal from "@components/AddFunds/components/Modal";
 import ButtonV3, { ButtonSize, ButtonType } from "@components/UI/ButtonV3";
 import { usePreviousStep } from "@components/_pages/Create/hooks/usePreviousStep";
+import { isWalletForbidden } from "@components/_pages/Create/pages/ContestConfirm/utils";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
+import { useWallet } from "@hooks/useWallet";
 import { FC, MouseEventHandler, useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
-import { useWallet } from "@hooks/useWallet";
 import { useBalance } from "wagmi";
 import MobileBottomButton from "../Mobile";
 
@@ -22,7 +23,7 @@ enum CreateButtonText {
 
 const CreateContestButton: FC<CreateContestButtonProps> = ({ step, onClick, isDisabled }) => {
   const { errors } = useDeployContestStore(state => state);
-  const { isConnected, userAddress, chain } = useWallet();
+  const { isConnected, userAddress, chain, connector } = useWallet();
   const [shake, setShake] = useState(false);
   const onPreviousStep = usePreviousStep();
   const isMobileOrTablet = useMediaQuery({ maxWidth: 1024 });
@@ -36,16 +37,17 @@ const CreateContestButton: FC<CreateContestButtonProps> = ({ step, onClick, isDi
   const insufficientBalance = balance && (balance.value === BigInt(0) || balance.value < DUST_THRESHOLD);
   const [createButtonText, setCreateButtonText] = useState(CreateButtonText.CREATE);
   const chainNativeCurrency = chain?.nativeCurrency.symbol;
+  const isUnsupportedWallet = connector && isWalletForbidden(connector.id);
 
   useEffect(() => {
-    if (insufficientBalance && isConnected) {
-      setCreateButtonText(CreateButtonText.ADD_FUNDS);
-    } else if (isConnected) {
-      setCreateButtonText(CreateButtonText.CREATE);
-    } else {
+    if (!isConnected) {
       setCreateButtonText(CreateButtonText.CONNECT_WALLET);
+    } else if (insufficientBalance && !isUnsupportedWallet) {
+      setCreateButtonText(CreateButtonText.ADD_FUNDS);
+    } else {
+      setCreateButtonText(CreateButtonText.CREATE);
     }
-  }, [insufficientBalance, isConnected]);
+  }, [insufficientBalance, isConnected, isUnsupportedWallet]);
 
   useEffect(() => {
     // If there's an error for the current step, shake the button
@@ -80,7 +82,7 @@ const CreateContestButton: FC<CreateContestButtonProps> = ({ step, onClick, isDi
             onClick={handleClick}
             colorClass="text-[20px] bg-gradient-create rounded-[15px] font-bold text-true-black hover:scale-105 transition-transform duration-200 ease-in-out"
           >
-            {isConnected ? (insufficientBalance ? "add funds" : "create") : "connect wallet"}
+            {!isConnected ? "connect wallet" : insufficientBalance && !isUnsupportedWallet ? "add funds" : "create"}
           </ButtonV3>
         </div>
       </MobileBottomButton>
