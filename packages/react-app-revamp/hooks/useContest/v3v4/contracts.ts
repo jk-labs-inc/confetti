@@ -28,15 +28,10 @@ export function getContracts(contractConfig: any, version: string) {
   const hasCreatorSplit = compareVersions(version, CREATOR_SPLIT_VERSION) >= 0;
   const v4FunctionNames = hasCreatorSplit ? ["percentageToRewards"] : ["percentageToCreator"];
 
-  const v4_2FunctionNames = ["sortingEnabled"];
-
   let contractFunctionNames = [...commonFunctionNames];
 
   if (compareVersions(version, VERSIONS.V4_0) >= 0) {
     contractFunctionNames = [...contractFunctionNames, ...v4FunctionNames];
-  }
-  if (compareVersions(version, VERSIONS.V4_2) >= 0) {
-    contractFunctionNames = [...contractFunctionNames, ...v4_2FunctionNames];
   }
 
   if (compareVersions(version, VERSIONS.V4_23) >= 0) {
