@@ -945,8 +945,7 @@ abstract contract GovernorSorting {
     // RULE: array length can never end lower than it started a transaction, otherwise erroneous ranking can happen
     uint256[] public sortedRanks; // value is votes counts, has the constraint of no duplicate values.
 
-    constructor(uint256 sortingEnabled_, uint256 rankLimit_) {
-        sortingEnabled = sortingEnabled_;
+    constructor(uint256 rankLimit_) {
         rankLimit = rankLimit_;
     }
 
@@ -4831,7 +4830,7 @@ using {
 /// @dev The result is rounded toward zero.
 /// @param x The UD60x18 number to convert.
 /// @return result The same number in basic integer form.
-function convert_1(UD60x18 x) pure returns (uint256 result) {
+function convert_0(UD60x18 x) pure returns (uint256 result) {
     result = UD60x18.unwrap(x) / uUNIT_3;
 }
 
@@ -4842,7 +4841,7 @@ function convert_1(UD60x18 x) pure returns (uint256 result) {
 ///
 /// @param x The basic integer to convert.
 /// @param result The same number converted to UD60x18.
-function convert_0(uint256 x) pure returns (UD60x18 result) {
+function convert_1(uint256 x) pure returns (UD60x18 result) {
     if (x > uMAX_UD60x18 / uUNIT_3) {
         revert PRBMath_UD60x18_Convert_Overflow(x);
     }
@@ -4911,7 +4910,6 @@ abstract contract Governor is GovernorSorting {
         uint256 votingPeriod;
         uint256 numAllowedProposalSubmissions;
         uint256 maxProposalCount;
-        uint256 sortingEnabled;
         uint256 rankLimit;
         uint256 percentageToRewards;
         uint256 costToVote;
@@ -5602,23 +5600,22 @@ abstract contract GovernorCountingSimple is Governor {
         if (firstTimeVoting) {
             proposalVote.addressesVoted.push(account);
         }
+
         addressTotalCastVoteCount[account] += numVotes;
         totalVotesCast += numVotes;
 
-        // sorting and consequently rewards module compatibility is only available if sorting enabled
-        if (sortingEnabled == 1) {
-            uint256 newVotes = proposalVote.proposalVoteCount; // only check state var once to save on gas
-            uint256 oldVotes = newVotes - numVotes;
+        // this point down is maintaining sorting
+        uint256 newVotes = proposalVote.proposalVoteCount; // only check state var once to save on gas
+        uint256 oldVotes = newVotes - numVotes;
 
-            // update map of forVotes => proposalId[] to be able to go from rank => proposalId.
-            // if oldVotes is 0, then this proposal will not already be in this map, so we don't need to rm it
-            if (oldVotes > 0) {
-                _rmProposalIdFromVotesMap(proposalId, oldVotes);
-            }
-            votesToProposalIds[newVotes].push(proposalId);
-
-            _updateRanks(oldVotes, newVotes);
+        // update map of forVotes => proposalId[] to be able to go from rank => proposalId.
+        // if oldVotes is 0, then this proposal will not already be in this map, so we don't need to rm it
+        if (oldVotes > 0) {
+            _rmProposalIdFromVotesMap(proposalId, oldVotes);
         }
+        votesToProposalIds[newVotes].push(proposalId);
+
+        _updateRanks(oldVotes, newVotes);
     }
 }
 
@@ -5796,7 +5793,6 @@ contract VoterRewardsModule {
     error PayeesSharesLengthMismatch();
     error MustHaveAtLeastOnePayee();
     error TotalSharesCannotBeZero();
-    error MustHaveSortingEnabled();
     error ContestMustBeCompleted();
     error PayoutRankCannotBeZero();
     error RankingHasNoShares();
@@ -5909,7 +5905,6 @@ contract VoterRewardsModule {
      * @dev Run release checks.
      */
     function runReleaseChecks(uint256 ranking) public view {
-        if (underlyingContest.sortingEnabled() != 1) revert MustHaveSortingEnabled();
         if (underlyingContest.state() != Governor.ContestState.Completed) revert ContestMustBeCompleted();
         if (ranking == 0) revert PayoutRankCannotBeZero();
         if (shares[ranking] == 0) revert RankingHasNoShares();
@@ -6137,7 +6132,7 @@ contract Contest is GovernorCountingSimple, GovernorModuleRegistry, GovernorEnga
 
     constructor(ConstructorArgs memory _constructorArgs)
         Governor(_constructorArgs)
-        GovernorSorting(_constructorArgs.intConstructorArgs.sortingEnabled, _constructorArgs.intConstructorArgs.rankLimit)
+        GovernorSorting(_constructorArgs.intConstructorArgs.rankLimit)
     {
         if (
             (_constructorArgs.intConstructorArgs.votingDelay > (30 * SECONDS_IN_DAY))
