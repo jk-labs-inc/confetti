@@ -84,9 +84,7 @@ contract VoterRewardsModule {
      * All rankings in `payees` must be non-zero. Both arrays must have the same non-zero length, and there must be no
      * duplicates in `payees`.
      */
-    constructor(uint256[] memory payees_, uint256[] memory shares_, GovernorCountingSimple underlyingContest_)
-        payable
-    {
+    constructor(uint256[] memory payees_, uint256[] memory shares_, GovernorCountingSimple underlyingContest_) payable {
         if (payees_.length != shares_.length) revert PayeesSharesLengthMismatch();
         if (payees_.length == 0) revert MustHaveAtLeastOnePayee();
 

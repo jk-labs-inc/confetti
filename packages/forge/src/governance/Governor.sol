@@ -370,9 +370,9 @@ abstract contract Governor is GovernorSorting {
 
         if (PriceCurveTypes(priceCurveType) == PriceCurveTypes.Exponential) {
             uint256 currentInterval = (block.timestamp - (voteStart() + 1)) / PRICE_CURVE_UPDATE_INTERVAL; // voteStart is the last block that one can enter, so voting period is exclusive of it, hence the plus 1
-            UD60x18 percentThroughVotingPeriod = (
-                ud(currentInterval * 1e18) / (ud(votingPeriod * 1e18) / ud(PRICE_CURVE_UPDATE_INTERVAL * 1e18))
-            ) * ud(100 * 1e18); // percentage as whole number so curve is 0 to 100
+            UD60x18 percentThroughVotingPeriod =
+                (ud(currentInterval * 1e18) / (ud(votingPeriod * 1e18) / ud(PRICE_CURVE_UPDATE_INTERVAL * 1e18)))
+                    * ud(100 * 1e18); // percentage as whole number so curve is 0 to 100
             UD60x18 exponent = percentThroughVotingPeriod * (ud(multiple) / ud(1e18));
             UD60x18 curveMultiple = exponent.exp2();
             uint256 result = ((ud(costToVote) / ud(1e18)) * curveMultiple).intoUint256(); // costToVote is the minimum cost per vote for exponential curves
