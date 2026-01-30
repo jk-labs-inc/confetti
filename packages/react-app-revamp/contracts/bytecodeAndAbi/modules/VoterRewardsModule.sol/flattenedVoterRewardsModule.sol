@@ -939,12 +939,14 @@ abstract contract GovernorSorting {
     // TTs that may occur in your contest. The thing to consider with regard to making it too high is just
     // that it is more gas for users on average the higher that RANK_LIMIT is set.
 
+    uint256 public sortingEnabled; // Either 0 for false or 1 for true
     uint256 public rankLimit; // RULE: Cannot be 0
 
     // RULE: array length can never end lower than it started a transaction, otherwise erroneous ranking can happen
     uint256[] public sortedRanks; // value is votes counts, has the constraint of no duplicate values.
 
-    constructor(uint256 rankLimit_) {
+    constructor(uint256 sortingEnabled_, uint256 rankLimit_) {
+        sortingEnabled = sortingEnabled_;
         rankLimit = rankLimit_;
     }
 
@@ -4909,6 +4911,7 @@ abstract contract Governor is GovernorSorting {
         uint256 votingPeriod;
         uint256 numAllowedProposalSubmissions;
         uint256 maxProposalCount;
+        uint256 sortingEnabled;
         uint256 rankLimit;
         uint256 percentageToRewards;
         uint256 costToVote;
@@ -4973,7 +4976,7 @@ abstract contract Governor is GovernorSorting {
     address public constant JK_LABS_ADDRESS = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738; // Our hot wallet that we collect revenue to.
     uint256 public constant PRICE_CURVE_UPDATE_INTERVAL = 60; // How often the price curve updates if applicable.
     uint256 public constant COST_ROUNDING_VALUE = 1e12; // Used for rounding costs, means cost to propose or vote can't be less than 1e18/this.
-    string private constant VERSION = "6.13"; // Private as to not clutter the ABI.
+    string private constant VERSION = "6.12"; // Private as to not clutter the ABI.
 
     string public name; // The title of the contest
     string public prompt;
@@ -5599,22 +5602,23 @@ abstract contract GovernorCountingSimple is Governor {
         if (firstTimeVoting) {
             proposalVote.addressesVoted.push(account);
         }
-
         addressTotalCastVoteCount[account] += numVotes;
         totalVotesCast += numVotes;
 
-        // this point down is maintaining sorting
-        uint256 newVotes = proposalVote.proposalVoteCount; // only check state var once to save on gas
-        uint256 oldVotes = newVotes - numVotes;
+        // sorting and consequently rewards module compatibility is only available if sorting enabled
+        if (sortingEnabled == 1) {
+            uint256 newVotes = proposalVote.proposalVoteCount; // only check state var once to save on gas
+            uint256 oldVotes = newVotes - numVotes;
 
-        // update map of forVotes => proposalId[] to be able to go from rank => proposalId.
-        // if oldVotes is 0, then this proposal will not already be in this map, so we don't need to rm it
-        if (oldVotes > 0) {
-            _rmProposalIdFromVotesMap(proposalId, oldVotes);
+            // update map of forVotes => proposalId[] to be able to go from rank => proposalId.
+            // if oldVotes is 0, then this proposal will not already be in this map, so we don't need to rm it
+            if (oldVotes > 0) {
+                _rmProposalIdFromVotesMap(proposalId, oldVotes);
+            }
+            votesToProposalIds[newVotes].push(proposalId);
+
+            _updateRanks(oldVotes, newVotes);
         }
-        votesToProposalIds[newVotes].push(proposalId);
-
-        _updateRanks(oldVotes, newVotes);
     }
 }
 
@@ -5665,7 +5669,7 @@ contract VoterRewardsModule {
     string public constant MODULE_TYPE = "VOTER_REWARDS";
     address public constant JK_LABS_ADDRESS = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738; // Our hot wallet that we collect revenue to.
     uint256 public constant JK_LABS_CANCEL_DELAY = 604800; // One week
-    string private constant VERSION = "6.13"; // Private as to not clutter the ABI
+    string private constant VERSION = "6.12"; // Private as to not clutter the ABI
 
     GovernorCountingSimple public underlyingContest;
     address public creator;
@@ -5675,6 +5679,7 @@ contract VoterRewardsModule {
     error PayeesSharesLengthMismatch();
     error MustHaveAtLeastOnePayee();
     error TotalSharesCannotBeZero();
+    error MustHaveSortingEnabled();
     error ContestMustBeCompleted();
     error PayoutRankCannotBeZero();
     error RankingHasNoShares();
@@ -5787,6 +5792,7 @@ contract VoterRewardsModule {
      * @dev Run release checks.
      */
     function runReleaseChecks(uint256 ranking) public view {
+        if (underlyingContest.sortingEnabled() != 1) revert MustHaveSortingEnabled();
         if (underlyingContest.state() != Governor.ContestState.Completed) revert ContestMustBeCompleted();
         if (ranking == 0) revert PayoutRankCannotBeZero();
         if (shares[ranking] == 0) revert RankingHasNoShares();

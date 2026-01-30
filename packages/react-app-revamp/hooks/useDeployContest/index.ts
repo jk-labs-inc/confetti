@@ -7,6 +7,7 @@ import { useWallet } from "@hooks/useWallet";
 import { useShallow } from "zustand/shallow";
 import {
   deployContractToChain,
+  finalizeContractDeployment,
   handleDeploymentError,
   indexContestInDatabase,
   prepareContestDataForIndexing,
@@ -119,10 +120,13 @@ export function useDeployContest() {
 
       setTransactionState("deployContest", { status: "success", hash: contractDeploymentHash });
 
+      const { sortingEnabled } = await finalizeContractDeployment(contractAddress, validatedChain.id);
+
       updateDeploymentStore(
         setDeployContestData,
         contractDeploymentHash,
         contractAddress,
+        sortingEnabled,
         validatedChain.name ?? "",
         validatedChain.id,
       );

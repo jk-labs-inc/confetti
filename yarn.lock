@@ -2466,10 +2466,10 @@
     bluebird "^3.5.0"
     rewire "^7.0.0"
 
-"@getpara/core-components@2.7.0":
-  version "2.7.0"
-  resolved "https://registry.yarnpkg.com/@getpara/core-components/-/core-components-2.7.0.tgz#51c6d11cab7c7b909e621366ed2fc5cd7901950b"
-  integrity sha512-WjklkBV09FJiHOL1VOLBenjMDMdhWAFHVO5JXaMPOwuq9MMT5FO0Ix04IT69jb3fILVVjFL7ymI85WZXHP9iEg==
+"@getpara/core-components@2.8.0":
+  version "2.8.0"
+  resolved "https://registry.yarnpkg.com/@getpara/core-components/-/core-components-2.8.0.tgz#2176c13fb02ca53073091d4031627fa6faef9d3f"
+  integrity sha512-ec3BM4xfahgu4/gAep4sitJZYEkne8vxW1TMVhvcZYimp7g52Xw18tLuF3v45aKPD/JDZgD8Z+3cqvwmyluMxA==
   dependencies:
     "@stencil/core" "^4.7.0"
     color-blend "^4.0.0"
@@ -2478,61 +2478,61 @@
     inputmask "5.0.9"
     qrcode-with-logos "1.1.1"
 
-"@getpara/core-sdk@2.7.0":
-  version "2.7.0"
-  resolved "https://registry.yarnpkg.com/@getpara/core-sdk/-/core-sdk-2.7.0.tgz#75abc7ec651cf23995793ab769a825fc1be09f17"
-  integrity sha512-GRQxgcWUrZPzQhIcJMZRX/r2JcnO7VGPJXfCXHXA/YE+6nC9it1/KSgrXEj//Q+1jDfEmqWsDs01eXfk0T7O8A==
+"@getpara/core-sdk@2.8.0":
+  version "2.8.0"
+  resolved "https://registry.yarnpkg.com/@getpara/core-sdk/-/core-sdk-2.8.0.tgz#49b3010e6d89cf476eae1c2e3eda7d7aa4ff234f"
+  integrity sha512-zJKl3feRVvZyTMyPDIyxrIAK0kWKFTlQMqLMabTi/gqHWEteXLzJU2WVdeOwIyjxsH5CT5XL4ivuUSL7HAmmcw==
   dependencies:
     "@celo/utils" "^8.0.2"
     "@cosmjs/encoding" "^0.32.4"
     "@ethereumjs/util" "^9.1.0"
-    "@getpara/user-management-client" "2.7.0"
+    "@getpara/user-management-client" "2.8.0"
     "@noble/hashes" "^1.5.0"
     base64url "^3.0.1"
     libphonenumber-js "^1.11.7"
     node-forge "^1.3.1"
     uuid "^11.1.0"
 
-"@getpara/evm-wallet-connectors@2.7.0":
-  version "2.7.0"
-  resolved "https://registry.yarnpkg.com/@getpara/evm-wallet-connectors/-/evm-wallet-connectors-2.7.0.tgz#d5745752b4fbef4c3ffb0be865c775cc1995952d"
-  integrity sha512-cvssBqVcnLR/rBGCD9/l3Hcyjh7srYOwuV2NV9mSAvwqqavubijD//898Z+4sRbK+cKsIJ0bx7AUYLOKvLQwlQ==
+"@getpara/evm-wallet-connectors@2.8.0":
+  version "2.8.0"
+  resolved "https://registry.yarnpkg.com/@getpara/evm-wallet-connectors/-/evm-wallet-connectors-2.8.0.tgz#9eff4d4aaee442a0f8d7cc31dc4ceffde51d4ac3"
+  integrity sha512-/CcyFTcS4NHU3xkgT9pYQ3kFmQMEFhVksopDPVwBxU5nMJCQTn0qtQMAAGyIsDXcdrgfleVPYUP75ezdKdwbkw==
   dependencies:
     "@coinbase/wallet-sdk" "4.3.0"
-    "@getpara/wagmi-v2-connector" "2.7.0"
-    "@getpara/web-sdk" "2.7.0"
+    "@getpara/wagmi-v2-connector" "2.8.0"
+    "@getpara/web-sdk" "2.8.0"
     "@walletconnect/ethereum-provider" "2.23.0"
     zustand "^4.5.2"
     zustand-sync-tabs "^0.2.2"
 
-"@getpara/react-common@2.7.0":
-  version "2.7.0"
-  resolved "https://registry.yarnpkg.com/@getpara/react-common/-/react-common-2.7.0.tgz#211ce32f2c1035d3298a3a3f8dbc0796511d2f5c"
-  integrity sha512-/LB/r/ZIgXvQ4X+l4Zgqk7pX5anqfFoEkTMPOdJ4X2wwfSOAgmRi90kTXyoZ4vtYj/oiBKaMWtpLoflVBqF1ZQ==
+"@getpara/react-common@2.8.0":
+  version "2.8.0"
+  resolved "https://registry.yarnpkg.com/@getpara/react-common/-/react-common-2.8.0.tgz#6e75200d9044cf7b6c6c5ed17427d014d8bf2666"
+  integrity sha512-qBAc2P4ChLZOlvx4YlAkwyQaOche6hMMFlyW+kFQslWPDoH6b+BzFBwuX1/V+xVuB68mgO3tAFmeZQ8KRs9SLQ==
   dependencies:
-    "@getpara/react-components" "2.7.0"
-    "@getpara/web-sdk" "2.7.0"
+    "@getpara/react-components" "2.8.0"
+    "@getpara/web-sdk" "2.8.0"
     "@moonpay/moonpay-react" "^1.10.6"
     "@ramp-network/ramp-instant-sdk" "^4.0.5"
     libphonenumber-js "^1.11.7"
     styled-components "^6.1.8"
     ua-parser-js "^2.0.2"
 
-"@getpara/react-components@2.7.0":
-  version "2.7.0"
-  resolved "https://registry.yarnpkg.com/@getpara/react-components/-/react-components-2.7.0.tgz#0097db6be06513bf82603bebbfcce175a38b619b"
-  integrity sha512-2+/j5TROWmeBXsPMn/WKBjgZS/Pn7Rr972tD4w+J/SEf5axZVy5zdnvUaqFDGsqBu63fT15M2Sx94h/cSRomUA==
+"@getpara/react-components@2.8.0":
+  version "2.8.0"
+  resolved "https://registry.yarnpkg.com/@getpara/react-components/-/react-components-2.8.0.tgz#747187de19dac054189265e1fa411da9f052db55"
+  integrity sha512-xjFquu/mmNszeRqoINm7KEh8nIl91BUsAcM8NfHUjfct+FjgGJCOd2TY3ADZj2CwCUZ9z9kM3Zpdx1HEGPZzkg==
   dependencies:
-    "@getpara/core-components" "2.7.0"
+    "@getpara/core-components" "2.8.0"
 
-"@getpara/react-sdk-lite@2.7.0":
-  version "2.7.0"
-  resolved "https://registry.yarnpkg.com/@getpara/react-sdk-lite/-/react-sdk-lite-2.7.0.tgz#b2f58f0e01898375f8f22c99bd6752e667d9b267"
-  integrity sha512-VmLFTBQqLqgwkxK1NRfcXpaA8ypZu7ES3dgpNNhpn3Az0+pfwa2DMR3+ra3s0TA/ozgkKpVLpAlCELlYF+DtOA==
+"@getpara/react-sdk-lite@2.8.0":
+  version "2.8.0"
+  resolved "https://registry.yarnpkg.com/@getpara/react-sdk-lite/-/react-sdk-lite-2.8.0.tgz#848a738d0b15cb57b3422f2fb17019bf9017b885"
+  integrity sha512-OG8oT3D4hpaSLMrjk0uRkt7EQ9Xfl5teG8TsTxS9F3ASG8Nc4MWHw7qSinK5JY+FQ8FrGlsKvpyzp6HjvdcOfw==
   dependencies:
-    "@getpara/react-common" "2.7.0"
-    "@getpara/react-components" "2.7.0"
-    "@getpara/web-sdk" "2.7.0"
+    "@getpara/react-common" "2.8.0"
+    "@getpara/react-components" "2.8.0"
+    "@getpara/web-sdk" "2.8.0"
     date-fns "^3.6.0"
     framer-motion "^11.3.31"
     libphonenumber-js "^1.11.7"
@@ -2545,37 +2545,37 @@
   resolved "https://registry.yarnpkg.com/@getpara/shared/-/shared-1.9.0.tgz#a3e8bb65b682013e154b933b1ed1207396934e8a"
   integrity sha512-HiW+4tpACqhZeg2VjR428uGm9YMV1/CBh+NFemabKj+3B+fdOcI3y+7/MAhZMT7sa/7PemBdUNOJnc+Tbcxifg==
 
-"@getpara/user-management-client@2.7.0":
-  version "2.7.0"
-  resolved "https://registry.yarnpkg.com/@getpara/user-management-client/-/user-management-client-2.7.0.tgz#13d620e49c6d3e204f450f91f5c5debbbff754e2"
-  integrity sha512-IqbohDLwd6z357lx4of7UOvVGM1waoEMUO0AhoPsxddBETPH0Y5SPxlbmNBgBkd19pxtp2I+XxY4ENzjs3I5Cg==
+"@getpara/user-management-client@2.8.0":
+  version "2.8.0"
+  resolved "https://registry.yarnpkg.com/@getpara/user-management-client/-/user-management-client-2.8.0.tgz#270fa0ce697af8d5395a75470cb13b3b753029fb"
+  integrity sha512-b86cDR9PiwEyBGLLUrZnb98M1QKI5Qc35dJfubEYjhuUzhYYgV3qCYkkNPu+9SFxbCE1Jvu65v8M6dPD9E+LyQ==
   dependencies:
     "@getpara/shared" "1.9.0"
     axios "^1.8.4"
     libphonenumber-js "^1.11.7"
 
-"@getpara/viem-v2-integration@2.7.0":
-  version "2.7.0"
-  resolved "https://registry.yarnpkg.com/@getpara/viem-v2-integration/-/viem-v2-integration-2.7.0.tgz#5c133ec9dac607a78db92431c9e90c94d5cf65b9"
-  integrity sha512-QYleR8gIgJvbEnxdEUZRj3R5kZYshT29Hg0UvJPz1Hi+ffgqAQTzUHIDFGr75AJ8ZLVXlmnxSWLSkauQz+zTyA==
+"@getpara/viem-v2-integration@2.8.0":
+  version "2.8.0"
+  resolved "https://registry.yarnpkg.com/@getpara/viem-v2-integration/-/viem-v2-integration-2.8.0.tgz#bc6af3308310ec5a8edc7e252c1f21ee388443e3"
+  integrity sha512-bevpy5rFU/cU8Bm+ocM7FCI+ap7XXJvIMKVJCegfxw8ibekbOwHlxyhg8vy5iN0VAjEHloY+T+WLEGHocNpMCQ==
   dependencies:
-    "@getpara/core-sdk" "2.7.0"
+    "@getpara/core-sdk" "2.8.0"
 
-"@getpara/wagmi-v2-connector@2.7.0":
-  version "2.7.0"
-  resolved "https://registry.yarnpkg.com/@getpara/wagmi-v2-connector/-/wagmi-v2-connector-2.7.0.tgz#24ec90061337fd56ade8526ee2f3df1942ab7863"
-  integrity sha512-GJEylybTTwUsO7wcMGySpmw+/uRJlRTFXTxUfFBovMmFD1NPriQcRGm4ymQ0i/v6vU4E3/PYcYGZuNcJfd9zyA==
+"@getpara/wagmi-v2-connector@2.8.0":
+  version "2.8.0"
+  resolved "https://registry.yarnpkg.com/@getpara/wagmi-v2-connector/-/wagmi-v2-connector-2.8.0.tgz#aa45da28c8afe624b637a00363364589a6ce8e32"
+  integrity sha512-45qpL2gGC+mnw3aXSd+223oOIbUvD+QDt+9/mxj3gxikBWprsBoJrPj5gapunlpcQlXKmr/ZKpWfrnaDsyz9ww==
   dependencies:
-    "@getpara/viem-v2-integration" "2.7.0"
-    "@getpara/web-sdk" "2.7.0"
+    "@getpara/viem-v2-integration" "2.8.0"
+    "@getpara/web-sdk" "2.8.0"
 
-"@getpara/web-sdk@2.7.0":
-  version "2.7.0"
-  resolved "https://registry.yarnpkg.com/@getpara/web-sdk/-/web-sdk-2.7.0.tgz#6887a25ae84c58fa11dbbf9df862f798b12df6d0"
-  integrity sha512-fqjWjKOqIT6PMJJuk6duQRwYLYTFaqOo/WWenr2EhBhia5WzlOtpz68Tqq4GFOwMgXuNtZowPeOheY/QLnCIXQ==
+"@getpara/web-sdk@2.8.0":
+  version "2.8.0"
+  resolved "https://registry.yarnpkg.com/@getpara/web-sdk/-/web-sdk-2.8.0.tgz#ad03496fc6ef72096f7182d77759932d4f00afcd"
+  integrity sha512-8czkLtT+yn7nDALDt4lCt43NbC7wHK5lEYf0GHcOWpf+sa45R7o9ObCrsA0O70Gj42a3atvzf2b4GFkRDfJ09w==
   dependencies:
-    "@getpara/core-sdk" "2.7.0"
-    "@getpara/user-management-client" "2.7.0"
+    "@getpara/core-sdk" "2.8.0"
+    "@getpara/user-management-client" "2.8.0"
     base64url "^3.0.1"
     buffer "6.0.3"
     cbor-web "^9.0.2"
@@ -6016,55 +6016,55 @@
     "@rollup/rollup-win32-arm64-msvc" "4.34.9"
     "@rollup/rollup-win32-x64-msvc" "4.34.9"
 
-"@supabase/auth-js@2.93.2":
-  version "2.93.2"
-  resolved "https://registry.yarnpkg.com/@supabase/auth-js/-/auth-js-2.93.2.tgz#8396a9b07dfcffc18567036f827c035c32e7c9ce"
-  integrity sha512-uifI5vkhvHCQjn+LUPL5QlsuDMP4oVBD5SiliREgYuTJvCkbPLOcAPGrw88q7VUX9S0J0QuJn+37hrcTITisuw==
+"@supabase/auth-js@2.93.3":
+  version "2.93.3"
+  resolved "https://registry.yarnpkg.com/@supabase/auth-js/-/auth-js-2.93.3.tgz#1e289b91fa7ea5b9fd4e78ec1680d1fa49c4b22a"
+  integrity sha512-JdnkHZPKexVGSNONtu89RHU4bxz3X9kxx+f5ZnR5osoCIX+vs/MckwWRPZEybAEvlJXt5xjomDb3IB876QCxWQ==
   dependencies:
     tslib "2.8.1"
 
-"@supabase/functions-js@2.93.2":
-  version "2.93.2"
-  resolved "https://registry.yarnpkg.com/@supabase/functions-js/-/functions-js-2.93.2.tgz#426a37d7d18d34f97d00a13df9da85a12d20b433"
-  integrity sha512-reSp7yj4KmvAFfmN+N7vYsHXOIZQh9cmRBh+VrZlm7qgIIUdYmzKuD85TvFnWApqcdI2pPnuZGKWE/2B4GXT1A==
+"@supabase/functions-js@2.93.3":
+  version "2.93.3"
+  resolved "https://registry.yarnpkg.com/@supabase/functions-js/-/functions-js-2.93.3.tgz#d5a738ec1703ad356c7138f81796b42189eb2e90"
+  integrity sha512-qWO0gHNDm/5jRjROv/nv9L6sYabCWS1kzorOLUv3kqCwRvEJLYZga93ppJPrZwOgoZfXmJzvpjY8fODA4HQfBw==
   dependencies:
     tslib "2.8.1"
 
-"@supabase/postgrest-js@2.93.2":
-  version "2.93.2"
-  resolved "https://registry.yarnpkg.com/@supabase/postgrest-js/-/postgrest-js-2.93.2.tgz#44f446a0bdc2a02ce2cd9d1f09e05e7740e25847"
-  integrity sha512-W2AWDsYwRT217II5yD3jWaX3fJjB7DwyNi2KNi4sphdUI3DKY4fP2XYVDGfeb1clEFL18gw+GBhyQb3BcpNWkw==
+"@supabase/postgrest-js@2.93.3":
+  version "2.93.3"
+  resolved "https://registry.yarnpkg.com/@supabase/postgrest-js/-/postgrest-js-2.93.3.tgz#2b45d1c49896998c1fced008519d729e8fc9e0a1"
+  integrity sha512-+iJ96g94skO2e4clsRSmEXg22NUOjh9BziapsJSAvnB1grOBf/BA8vGtCHjNOA+Z6lvKXL1jwBqcL9+fS1W/Lg==
   dependencies:
     tslib "2.8.1"
 
-"@supabase/realtime-js@2.93.2":
-  version "2.93.2"
-  resolved "https://registry.yarnpkg.com/@supabase/realtime-js/-/realtime-js-2.93.2.tgz#515add6c18aab598f9748c817919e839071337f7"
-  integrity sha512-YpAmJn7DLbMeYfQilcf3f0DKoY8O8TRbTF2oRpWFzHXTlEA+YWms8fBqM13Mf7RE72ouSNKDYyf5K2pWRSHvFw==
+"@supabase/realtime-js@2.93.3":
+  version "2.93.3"
+  resolved "https://registry.yarnpkg.com/@supabase/realtime-js/-/realtime-js-2.93.3.tgz#71bb4c57b1fcd7a2d8dfbe60c009d9d403a545ce"
+  integrity sha512-gnYpcFzwy8IkezRP4CDbT5I8jOsiOjrWrqTY1B+7jIriXsnpifmlM6RRjLBm9oD7OwPG0/WksniGPdKW67sXOA==
   dependencies:
     "@types/phoenix" "^1.6.6"
     "@types/ws" "^8.18.1"
     tslib "2.8.1"
     ws "^8.18.2"
 
-"@supabase/storage-js@2.93.2":
-  version "2.93.2"
-  resolved "https://registry.yarnpkg.com/@supabase/storage-js/-/storage-js-2.93.2.tgz#e45193ba53cecd082457e5e9a41d7ac7f0270875"
-  integrity sha512-abRSVClfIQn+SqpdqL7S7b3VeyS8270/o0gqmGFtiidb7Lu0COsIV6Mor/mK9xE99KYWzyd37vwYYwv/jaANhw==
+"@supabase/storage-js@2.93.3":
+  version "2.93.3"
+  resolved "https://registry.yarnpkg.com/@supabase/storage-js/-/storage-js-2.93.3.tgz#31a4811a366b3ce1d3df30439d53c19fc53ad0b6"
+  integrity sha512-cw4qXiLrx3apglDM02Tx/w/stvFlrkKocC6vCvuFAz3JtVEl1zH8MUfDQDTH59kJAQVaVdbewrMWSoBob7REnA==
   dependencies:
     iceberg-js "^0.8.1"
     tslib "2.8.1"
 
-"@supabase/supabase-js@2.93.2":
-  version "2.93.2"
-  resolved "https://registry.yarnpkg.com/@supabase/supabase-js/-/supabase-js-2.93.2.tgz#c8e4e1d76a18bd59e47cc973f41e7a0ff35aa691"
-  integrity sha512-G3bZZi6rPwXcPtyHLXQTeHKa5ADZ2UW/+hv8YhwZFwngz4TlPnR4+TeO37EwU5+d/reD02qXozOZgz+QHv1Jtg==
+"@supabase/supabase-js@2.93.3":
+  version "2.93.3"
+  resolved "https://registry.yarnpkg.com/@supabase/supabase-js/-/supabase-js-2.93.3.tgz#c66d07914f6a6490668d42ee64f3c2fe97a104fb"
+  integrity sha512-paUqEqdBI9ztr/4bbMoCgeJ6M8ZTm2fpfjSOlzarPuzYveKFM20ZfDZqUpi9CFfYagYj5Iv3m3ztUjaI9/tM1w==
   dependencies:
-    "@supabase/auth-js" "2.93.2"
-    "@supabase/functions-js" "2.93.2"
-    "@supabase/postgrest-js" "2.93.2"
-    "@supabase/realtime-js" "2.93.2"
-    "@supabase/storage-js" "2.93.2"
+    "@supabase/auth-js" "2.93.3"
+    "@supabase/functions-js" "2.93.3"
+    "@supabase/postgrest-js" "2.93.3"
+    "@supabase/realtime-js" "2.93.3"
+    "@supabase/storage-js" "2.93.3"
 
 "@surma/rollup-plugin-off-main-thread@^2.2.3":
   version "2.2.3"
