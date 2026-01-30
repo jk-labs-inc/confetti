@@ -103,8 +103,6 @@ contract VoterRewardsModuleTest is Test {
         author: TEST_ADDRESS_1,
         description: "testAddress1AuthorProposal1",
         exists: true,
-        targetMetadata: Governor.TargetMetadata({targetAddress: TEST_ADDRESS_1}),
-        safeMetadata: Governor.SafeMetadata({signers: safeSigners, threshold: SAFE_THRESHOLD}),
         fieldsMetadata: Governor.FieldsMetadata({
             addressArray: METADATA_FIELDS_ADDRESS_ARRAY,
             stringArray: METADATA_FIELDS_STRING_ARRAY,
@@ -116,8 +114,6 @@ contract VoterRewardsModuleTest is Test {
         author: TEST_ADDRESS_1,
         description: "testAddress1AuthorProposal2",
         exists: true,
-        targetMetadata: Governor.TargetMetadata({targetAddress: TEST_ADDRESS_1}),
-        safeMetadata: Governor.SafeMetadata({signers: safeSigners, threshold: SAFE_THRESHOLD}),
         fieldsMetadata: Governor.FieldsMetadata({
             addressArray: METADATA_FIELDS_ADDRESS_ARRAY,
             stringArray: METADATA_FIELDS_STRING_ARRAY,
@@ -129,8 +125,6 @@ contract VoterRewardsModuleTest is Test {
         author: TEST_ADDRESS_1,
         description: "testAddress1AuthorProposal3",
         exists: true,
-        targetMetadata: Governor.TargetMetadata({targetAddress: TEST_ADDRESS_1}),
-        safeMetadata: Governor.SafeMetadata({signers: safeSigners, threshold: SAFE_THRESHOLD}),
         fieldsMetadata: Governor.FieldsMetadata({
             addressArray: METADATA_FIELDS_ADDRESS_ARRAY,
             stringArray: METADATA_FIELDS_STRING_ARRAY,
@@ -142,8 +136,6 @@ contract VoterRewardsModuleTest is Test {
         author: TEST_ADDRESS_1,
         description: "testAddress1AuthorProposal4",
         exists: true,
-        targetMetadata: Governor.TargetMetadata({targetAddress: TEST_ADDRESS_1}),
-        safeMetadata: Governor.SafeMetadata({signers: safeSigners, threshold: SAFE_THRESHOLD}),
         fieldsMetadata: Governor.FieldsMetadata({
             addressArray: METADATA_FIELDS_ADDRESS_ARRAY,
             stringArray: METADATA_FIELDS_STRING_ARRAY,
