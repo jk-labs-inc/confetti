@@ -282,7 +282,10 @@ export async function checkIfContestExists(address: string, networkName: string)
         .from("contests_v3")
         .select("address")
         .eq("address", address.toLowerCase())
+        .or("disabled.eq.false,disabled.is.null")
         .eq("network_name", networkName);
+
+      console.log("data", data);
 
       if (error) {
         throw new Error(error.message);
@@ -292,10 +295,13 @@ export async function checkIfContestExists(address: string, networkName: string)
         return true;
       }
 
+      console.log("in here");
+
       ({ data, error } = await supabase
         .from("contests_v3")
         .select("address")
         .eq("address", address)
+        .or("disabled.eq.false,disabled.is.null")
         .eq("network_name", networkName));
 
       if (error) {
