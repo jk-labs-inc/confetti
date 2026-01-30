@@ -22,9 +22,11 @@ export interface ContestState {
   isV3: boolean;
   contestMaxProposalCount: number;
   contestMaxNumberSubmissionsPerUser: number;
+  sortingEnabled: boolean;
   charge: Charge;
   isReadOnly: boolean;
   canEditTitleAndDescription: boolean;
+  setSortingEnabled: (isAllowed: boolean) => void;
   setContestPrompt: (prompt: string) => void;
   setContestMaxProposalCount: (amount: number) => void;
   setContestMaxNumberSubmissionsPerUser: (amount: number) => void;
@@ -61,9 +63,11 @@ export const createContestStore = () =>
     isSuccess: false,
     contestMaxProposalCount: 0,
     contestMaxNumberSubmissionsPerUser: 0,
+    sortingEnabled: false,
     isV3: false,
     isReadOnly: false,
     canEditTitleAndDescription: false,
+    setSortingEnabled: isAllowed => set({ sortingEnabled: isAllowed }),
     setContestPrompt: prompt => set({ contestPrompt: prompt }),
     setContestMaxProposalCount: amount => set({ contestMaxProposalCount: amount }),
     setContestMaxNumberSubmissionsPerUser: amount => set({ contestMaxNumberSubmissionsPerUser: amount }),
