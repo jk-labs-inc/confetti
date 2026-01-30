@@ -18,7 +18,7 @@
     "@clustersxyz/sdk": "1.0.2",
     "@coinbase/wallet-sdk": "4.3.7",
     "@getbrevo/brevo": "3.0.1",
-    "@getpara/evm-wallet-connectors": "2.7.0",
+    "@getpara/evm-wallet-connectors": "2.8.0",
     "@getpara/react-sdk-lite": "2.7.0",
     "@headlessui/react": "2.2.9",
     "@heroicons/react": "2.2.0",
