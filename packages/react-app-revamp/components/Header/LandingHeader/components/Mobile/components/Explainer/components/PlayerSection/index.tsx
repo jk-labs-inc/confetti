@@ -13,7 +13,7 @@ const LandingHeaderMobileExplainerPlayerSection = () => {
             <p className="text-neutral-11 font-sabo-filled text-xs">3. VOTE UP WINNERS TO EARN REWARDS</p>
           </div>
         </div>
-        <img src="/landing/bubbles-ballot.png" alt="player" />
+        <img src="/landing/bubbles-ballot.png" alt="player" width={120} height={120} />
       </div>
       <CustomLink
         href={ROUTE_VIEW_LIVE_CONTESTS}

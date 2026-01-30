@@ -1,7 +1,7 @@
 import LiveContests from "./live";
 
 export const metadata = {
-  title: "Live contests - jokerace",
+  title: "Live contests - Confetti",
 };
 
 const Page = () => {

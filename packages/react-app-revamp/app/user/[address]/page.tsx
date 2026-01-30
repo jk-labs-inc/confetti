@@ -15,9 +15,9 @@ export async function generateMetadata(props: Props, parent: ResolvingMetadata):
 
   return {
     title: addressProps.address
-      ? `${addressProps.address}-jokerace`
+      ? `${addressProps.address}-Confetti`
         ? addressProps.ensName
-        : ` ${addressProps.ensName}-jokerace`
+        : ` ${addressProps.ensName}-Confetti`
       : "User not found",
   };
 }

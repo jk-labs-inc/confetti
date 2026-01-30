@@ -20,7 +20,6 @@ import AlwaysSelfFundVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterR
 import DeprecateCostToEnterVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.6.10.deprecateCostToEnter.sol/VoterRewardsModule.json";
 import DeprecateFlatCurvesVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.6.11.deprecateFlatCurves.sol/VoterRewardsModule.json";
 import AddCreatorSplitVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.6.12.addCreatorSplit.sol/VoterRewardsModule.json";
-import DeprecateSortingEnabledVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.6.13.deprecateSortingEnabled.sol/VoterRewardsModule.json";
 import DeployedVoterRewardsContract from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.sol/VoterRewardsModule.json";
 import { createPublicClient, getContract, http } from "viem";
 import { getChainFromId } from "./getChainFromId";
@@ -32,7 +31,6 @@ type ContractData = {
 };
 
 const VERSION_TO_CONTRACT: Record<string, ContractData> = {
-  "6.13": DeprecateSortingEnabledVoterRewards,
   "6.12": AddCreatorSplitVoterRewards,
   "6.11": DeprecateFlatCurvesVoterRewards,
   "6.10": DeprecateCostToEnterVoterRewards,

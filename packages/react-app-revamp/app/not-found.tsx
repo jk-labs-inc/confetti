@@ -1,8 +1,8 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "Page not found - JokeRace",
-  description: "JokeRace - contests for communities to run, grow, and monetize",
+  title: "Page not found - Confetti",
+  description: "Confetti - vote. rally. earn.",
 };
 
 const NotFoundPage = () => {

@@ -11,6 +11,7 @@ export interface DeploymentSliceState {
     chainId: number;
     hash: string;
     address: string;
+    sortingEnabled: boolean;
   };
   isLoading: boolean;
   isSuccess: boolean;
@@ -19,7 +20,13 @@ export interface DeploymentSliceState {
 }
 
 export interface DeploymentSliceActions {
-  setDeployContestData: (chain: string, chainId: number, hash: string, address: string) => void;
+  setDeployContestData: (
+    chain: string,
+    chainId: number,
+    hash: string,
+    address: string,
+    sortingEnabled: boolean,
+  ) => void;
   setIsLoading: (isLoading: boolean) => void;
   setIsSuccess: (isSuccess: boolean) => void;
   setError: (step: StepTitle | number, error: ContestDeployError) => void;
@@ -35,6 +42,7 @@ export const createDeploymentSlice = (set: any, get: any): DeploymentSlice => {
       chainId: 0,
       hash: "",
       address: "",
+      sortingEnabled: false,
     },
     isLoading: false,
     isSuccess: false,
@@ -45,8 +53,8 @@ export const createDeploymentSlice = (set: any, get: any): DeploymentSlice => {
   return {
     ...initialState,
 
-    setDeployContestData: (chain: string, chainId: number, hash: string, address: string) =>
-      set({ deployContestData: { chain, chainId, hash, address } }),
+    setDeployContestData: (chain: string, chainId: number, hash: string, address: string, sortingEnabled: boolean) =>
+      set({ deployContestData: { chain, chainId, hash, address, sortingEnabled } }),
     setIsLoading: (isLoading: boolean) => set({ isLoading }),
     setIsSuccess: (isSuccess: boolean) => set({ isSuccess }),
     setError: (step: StepTitle | number, error: ContestDeployError) => {

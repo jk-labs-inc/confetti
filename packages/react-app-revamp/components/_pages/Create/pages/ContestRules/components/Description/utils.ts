@@ -2,7 +2,7 @@ import { PriceCurveType } from "@hooks/useDeployContest/types";
 import moment from "moment";
 
 const SUMMARY_TEMPLATE =
-  "Vote and earn. Voting runs from [voting open date] to [voting close date]. Buy as many votes as you like on [article] [price curve] price curve, 90% of your funds go into the rewards pool, and you can earn by voting on the winner. You can earn <em>even more</em> by voting early with conviction to get cheaper votes and a bigger share of the rewards pool. But be careful. If you wait too long, you might lose money... even if you vote on a winner. You can always calculate your earnings here: https://docs.jokerace.io/calculating-roi.";
+  "Vote and earn. Voting runs from [voting open date] to [voting close date]. Buy as many votes as you like on [article] [price curve] price curve, 90% of your funds go into the rewards pool, and you can earn by voting on the winner. You can earn <em>even more</em> by voting early with conviction to get cheaper votes and a bigger share of the rewards pool. But be careful. If you wait too long, you might lose money... even if you vote on a winner. You can always calculate your earnings here: https://docs.confetti.win/calculating-roi.";
 
 const formatDate = (date: Date) =>
   date

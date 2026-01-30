@@ -7,19 +7,22 @@ const NATIVE_TOKEN_ADDRESS = "0x0000000000000000000000000000000000000000";
  * Extracts RPC URLs from wagmi chains config and formats them for Jumper widget
  */
 const createRpcUrlsConfig = () => {
-  return chains.reduce((acc, chain) => {
-    const rpcUrls: string[] = [];
+  return chains.reduce(
+    (acc, chain) => {
+      const rpcUrls: string[] = [];
 
-    if (chain.rpcUrls?.default?.http) {
-      rpcUrls.push(...chain.rpcUrls.default.http);
-    }
+      if (chain.rpcUrls?.default?.http) {
+        rpcUrls.push(...chain.rpcUrls.default.http);
+      }
 
-    if (rpcUrls.length > 0) {
-      acc[chain.id] = rpcUrls;
-    }
+      if (rpcUrls.length > 0) {
+        acc[chain.id] = rpcUrls;
+      }
 
-    return acc;
-  }, {} as Record<number, string[]>);
+      return acc;
+    },
+    {} as Record<number, string[]>,
+  );
 };
 
 /**
@@ -51,7 +54,7 @@ export const createJumperWidgetConfig = (chainId: number, asset: string, onConne
   const filters = createFilters(chainId);
 
   return {
-    integrator: "JokeRace",
+    integrator: "Confetti",
     toChain: chainId,
     toToken: asset,
     variant: "compact",
