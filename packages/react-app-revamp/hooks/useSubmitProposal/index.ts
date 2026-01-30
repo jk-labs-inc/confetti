@@ -15,21 +15,14 @@ import useRewardsModule from "@hooks/useRewards";
 import { useTotalRewards } from "@hooks/useTotalRewards";
 import { useWallet } from "@hooks/useWallet";
 import { simulateContract, waitForTransactionReceipt, writeContract } from "@wagmi/core";
+import { compareVersions } from "compare-versions";
 import { addUserActionForAnalytics } from "lib/analytics/participants";
 import { updateRewardAnalytics } from "lib/analytics/rewards";
 import { useRouter } from "next/navigation";
 import { useMediaQuery } from "react-responsive";
 import { useShallow } from "zustand/shallow";
 import { useSubmitProposalStore } from "./store";
-
-const targetMetadata = {
-  targetAddress: "0x0000000000000000000000000000000000000000",
-};
-
-const safeMetadata = {
-  signers: ["0x0000000000000000000000000000000000000000"],
-  threshold: 1,
-};
+import { safeMetadata, targetMetadata } from "./constants";
 
 interface UserAnalyticsParams {
   address: string;
@@ -103,12 +96,15 @@ export function useSubmitProposal() {
       try {
         const contractConfig = getContractConfig();
         const fieldsMetadata = processFieldInputs(metadataFields);
+        const isVersionBelowMetadataRemoval = compareVersions(contestConfig.version, "6.14") < 0;
         const proposalCore = {
           author: userAddress,
           exists: true,
           description: fullProposalContent,
-          targetMetadata: targetMetadata,
-          safeMetadata: safeMetadata,
+          ...(isVersionBelowMetadataRemoval && {
+            targetMetadata: targetMetadata,
+            safeMetadata: safeMetadata,
+          }),
           fieldsMetadata: fieldsMetadata,
         };
 
