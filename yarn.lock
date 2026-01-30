@@ -2493,14 +2493,29 @@
     node-forge "^1.3.1"
     uuid "^11.1.0"
 
-"@getpara/evm-wallet-connectors@2.7.0":
-  version "2.7.0"
-  resolved "https://registry.yarnpkg.com/@getpara/evm-wallet-connectors/-/evm-wallet-connectors-2.7.0.tgz#d5745752b4fbef4c3ffb0be865c775cc1995952d"
-  integrity sha512-cvssBqVcnLR/rBGCD9/l3Hcyjh7srYOwuV2NV9mSAvwqqavubijD//898Z+4sRbK+cKsIJ0bx7AUYLOKvLQwlQ==
+"@getpara/core-sdk@2.8.0":
+  version "2.8.0"
+  resolved "https://registry.yarnpkg.com/@getpara/core-sdk/-/core-sdk-2.8.0.tgz#49b3010e6d89cf476eae1c2e3eda7d7aa4ff234f"
+  integrity sha512-zJKl3feRVvZyTMyPDIyxrIAK0kWKFTlQMqLMabTi/gqHWEteXLzJU2WVdeOwIyjxsH5CT5XL4ivuUSL7HAmmcw==
+  dependencies:
+    "@celo/utils" "^8.0.2"
+    "@cosmjs/encoding" "^0.32.4"
+    "@ethereumjs/util" "^9.1.0"
+    "@getpara/user-management-client" "2.8.0"
+    "@noble/hashes" "^1.5.0"
+    base64url "^3.0.1"
+    libphonenumber-js "^1.11.7"
+    node-forge "^1.3.1"
+    uuid "^11.1.0"
+
+"@getpara/evm-wallet-connectors@2.8.0":
+  version "2.8.0"
+  resolved "https://registry.yarnpkg.com/@getpara/evm-wallet-connectors/-/evm-wallet-connectors-2.8.0.tgz#9eff4d4aaee442a0f8d7cc31dc4ceffde51d4ac3"
+  integrity sha512-/CcyFTcS4NHU3xkgT9pYQ3kFmQMEFhVksopDPVwBxU5nMJCQTn0qtQMAAGyIsDXcdrgfleVPYUP75ezdKdwbkw==
   dependencies:
     "@coinbase/wallet-sdk" "4.3.0"
-    "@getpara/wagmi-v2-connector" "2.7.0"
-    "@getpara/web-sdk" "2.7.0"
+    "@getpara/wagmi-v2-connector" "2.8.0"
+    "@getpara/web-sdk" "2.8.0"
     "@walletconnect/ethereum-provider" "2.23.0"
     zustand "^4.5.2"
     zustand-sync-tabs "^0.2.2"
@@ -2554,20 +2569,29 @@
     axios "^1.8.4"
     libphonenumber-js "^1.11.7"
 
-"@getpara/viem-v2-integration@2.7.0":
-  version "2.7.0"
-  resolved "https://registry.yarnpkg.com/@getpara/viem-v2-integration/-/viem-v2-integration-2.7.0.tgz#5c133ec9dac607a78db92431c9e90c94d5cf65b9"
-  integrity sha512-QYleR8gIgJvbEnxdEUZRj3R5kZYshT29Hg0UvJPz1Hi+ffgqAQTzUHIDFGr75AJ8ZLVXlmnxSWLSkauQz+zTyA==
+"@getpara/user-management-client@2.8.0":
+  version "2.8.0"
+  resolved "https://registry.yarnpkg.com/@getpara/user-management-client/-/user-management-client-2.8.0.tgz#270fa0ce697af8d5395a75470cb13b3b753029fb"
+  integrity sha512-b86cDR9PiwEyBGLLUrZnb98M1QKI5Qc35dJfubEYjhuUzhYYgV3qCYkkNPu+9SFxbCE1Jvu65v8M6dPD9E+LyQ==
   dependencies:
-    "@getpara/core-sdk" "2.7.0"
+    "@getpara/shared" "1.9.0"
+    axios "^1.8.4"
+    libphonenumber-js "^1.11.7"
 
-"@getpara/wagmi-v2-connector@2.7.0":
-  version "2.7.0"
-  resolved "https://registry.yarnpkg.com/@getpara/wagmi-v2-connector/-/wagmi-v2-connector-2.7.0.tgz#24ec90061337fd56ade8526ee2f3df1942ab7863"
-  integrity sha512-GJEylybTTwUsO7wcMGySpmw+/uRJlRTFXTxUfFBovMmFD1NPriQcRGm4ymQ0i/v6vU4E3/PYcYGZuNcJfd9zyA==
+"@getpara/viem-v2-integration@2.8.0":
+  version "2.8.0"
+  resolved "https://registry.yarnpkg.com/@getpara/viem-v2-integration/-/viem-v2-integration-2.8.0.tgz#bc6af3308310ec5a8edc7e252c1f21ee388443e3"
+  integrity sha512-bevpy5rFU/cU8Bm+ocM7FCI+ap7XXJvIMKVJCegfxw8ibekbOwHlxyhg8vy5iN0VAjEHloY+T+WLEGHocNpMCQ==
   dependencies:
-    "@getpara/viem-v2-integration" "2.7.0"
-    "@getpara/web-sdk" "2.7.0"
+    "@getpara/core-sdk" "2.8.0"
+
+"@getpara/wagmi-v2-connector@2.8.0":
+  version "2.8.0"
+  resolved "https://registry.yarnpkg.com/@getpara/wagmi-v2-connector/-/wagmi-v2-connector-2.8.0.tgz#aa45da28c8afe624b637a00363364589a6ce8e32"
+  integrity sha512-45qpL2gGC+mnw3aXSd+223oOIbUvD+QDt+9/mxj3gxikBWprsBoJrPj5gapunlpcQlXKmr/ZKpWfrnaDsyz9ww==
+  dependencies:
+    "@getpara/viem-v2-integration" "2.8.0"
+    "@getpara/web-sdk" "2.8.0"
 
 "@getpara/web-sdk@2.7.0":
   version "2.7.0"
@@ -2576,6 +2600,19 @@
   dependencies:
     "@getpara/core-sdk" "2.7.0"
     "@getpara/user-management-client" "2.7.0"
+    base64url "^3.0.1"
+    buffer "6.0.3"
+    cbor-web "^9.0.2"
+    node-forge "1.3.1"
+    ua-parser-js "^2.0.2"
+
+"@getpara/web-sdk@2.8.0":
+  version "2.8.0"
+  resolved "https://registry.yarnpkg.com/@getpara/web-sdk/-/web-sdk-2.8.0.tgz#ad03496fc6ef72096f7182d77759932d4f00afcd"
+  integrity sha512-8czkLtT+yn7nDALDt4lCt43NbC7wHK5lEYf0GHcOWpf+sa45R7o9ObCrsA0O70Gj42a3atvzf2b4GFkRDfJ09w==
+  dependencies:
+    "@getpara/core-sdk" "2.8.0"
+    "@getpara/user-management-client" "2.8.0"
     base64url "^3.0.1"
     buffer "6.0.3"
     cbor-web "^9.0.2"
