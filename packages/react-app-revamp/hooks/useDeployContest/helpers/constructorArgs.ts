@@ -44,6 +44,7 @@ export const prepareConstructorArgs = (params: ConstructorArgsParams) => {
     votingPeriod: differenceInSeconds(votingClose, votingOpen),
     numAllowedProposalSubmissions: MAX_SUBMISSIONS_LIMIT,
     maxProposalCount: MAX_SUBMISSIONS_LIMIT,
+    sortingEnabled: 1,
     rankLimit: advancedOptions.rankLimit,
     percentageToRewards: charge.percentageToRewards,
     creatorSplitEnabled: charge.creatorSplitEnabled,
