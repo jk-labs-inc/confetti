@@ -5,8 +5,8 @@ import { s3 } from "@config/s3";
 const IMAGE_UPLOAD_BUCKET = process.env.NEXT_PUBLIC_IMAGE_UPLOAD_BUCKET as string;
 
 const IMAGE_PUBLIC_URL = IMAGE_UPLOAD_BUCKET.includes("dev")
-  ? "https://dev.images.jokerace.io"
-  : "https://images.jokerace.io";
+  ? "https://dev.images.confetti.win"
+  : "https://images.confetti.win";
 
 interface SaveImageOptions {
   fileId: string;

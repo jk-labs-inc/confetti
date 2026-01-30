@@ -24,7 +24,7 @@ export const createContestInfoSlice = (set: any): ContestInfoSlice => ({
   prompt: {
     summarize: "",
     evaluateVoters: "Voters should evaluate based on 50% relevance to the prompt and 50% originality.",
-    contactDetails: "Join the JokeRace telegram: https://t.co/j7Fp3u7pqS.",
+    contactDetails: "Join the confetti telegram: https://t.co/j7Fp3u7pqS.",
   },
   emailSubscriptionAddress: "",
 

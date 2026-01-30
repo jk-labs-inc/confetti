@@ -5,7 +5,7 @@ interface VotingWidgetRewardsProjectionTooltipProps {
   tooltipId: string;
 }
 
-const LINK_MATH_DOCS = "https://docs.jokerace.io/calculating-roi";
+const LINK_MATH_DOCS = "https://docs.confetti.win/calculating-roi";
 
 const VotingWidgetRewardsProjectionTooltip: FC<VotingWidgetRewardsProjectionTooltipProps> = ({ tooltipId }) => {
   return (

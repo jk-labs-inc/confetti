@@ -28,7 +28,7 @@ const ContestExtensions = () => {
         </p>
       ) : (
         <p className="text-neutral-11 text-[20px] normal-case">
-          extensions are JokeRace integrations built by other services on top of our contests that let you access new
+          extensions are Confetti integrations built by other services on top of our contests that let you access new
           forms of analytics, incentives, and <br />
           rewards. <i>anyone</i> can build an extension, and we feature our favorites here.
         </p>

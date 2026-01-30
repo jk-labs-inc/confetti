@@ -11,15 +11,15 @@ import SubmissionWrapper from "./wrapper";
 const REGEX_ETHEREUM_ADDRESS = /^0x[a-fA-F0-9]{40}$/;
 
 const defaultMetadata = {
-  title: "Contest Entry on JokeRace",
-  description: "Contest Entry on JokeRace",
+  title: "Contest Entry on Confetti",
+  description: "Contest Entry on Confetti",
   openGraph: {
-    title: "Contest Entry on JokeRace",
-    description: "Contest Entry on JokeRace",
+    title: "Contest Entry on Confetti",
+    description: "Contest Entry on Confetti",
   },
   twitter: {
-    title: "Contest Entry on JokeRace",
-    description: "Contest Entry on JokeRace",
+    title: "Contest Entry on Confetti",
+    description: "Contest Entry on Confetti",
   },
 };
 
@@ -58,8 +58,8 @@ export async function generateMetadata(props: {
 
   try {
     const contestName = await getContestName(address, chain);
-    const title = `Entry for ${contestName} contest on JokeRace`;
-    const description = `Entry for ${contestName} contest on JokeRace`;
+    const title = `Entry for ${contestName} contest on Confetti`;
+    const description = `Entry for ${contestName} contest on Confetti`;
 
     return {
       title,

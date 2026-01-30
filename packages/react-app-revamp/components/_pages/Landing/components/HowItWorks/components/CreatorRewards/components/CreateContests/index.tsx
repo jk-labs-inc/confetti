@@ -22,7 +22,7 @@ const CreateContests = () => {
             <p>
               opt in to earn 5% of <span className="font-bold text-true-white">all volume</span> on the contest.
             </p>
-          </div>          
+          </div>
           <div className="block 2xl:hidden">
             <FundsDistribution />
           </div>
