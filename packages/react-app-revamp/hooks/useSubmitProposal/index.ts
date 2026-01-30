@@ -22,15 +22,6 @@ import { useMediaQuery } from "react-responsive";
 import { useShallow } from "zustand/shallow";
 import { useSubmitProposalStore } from "./store";
 
-const targetMetadata = {
-  targetAddress: "0x0000000000000000000000000000000000000000",
-};
-
-const safeMetadata = {
-  signers: ["0x0000000000000000000000000000000000000000"],
-  threshold: 1,
-};
-
 interface UserAnalyticsParams {
   address: string;
   userAddress: `0x${string}` | undefined;
@@ -107,8 +98,6 @@ export function useSubmitProposal() {
           author: userAddress,
           exists: true,
           description: fullProposalContent,
-          targetMetadata: targetMetadata,
-          safeMetadata: safeMetadata,
           fieldsMetadata: fieldsMetadata,
         };
 
