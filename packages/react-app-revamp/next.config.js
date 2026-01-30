@@ -14,7 +14,7 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "images.jokerace.io",
+        hostname: "images.confetti.win",
         pathname: "/**",
       },
       {

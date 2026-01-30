@@ -1,5 +1,6 @@
 import Ticker from "@components/UI/Ticker";
 import TickerText from "./components/TickerText";
+import Image from "next/image";
 
 const LandingPageTicker = () => {
   return (
@@ -7,7 +8,7 @@ const LandingPageTicker = () => {
       className="bg-positive-18 h-12 flex items-center"
       items={[
         <TickerText>THE EARLIER YOU VOTE THE MORE YOU CAN EARN</TickerText>,
-        <img src="/landing/confetti.svg" alt="confetti" className="w-12 h-12" />,
+        <Image src="/confetti/confetti-pixelated.svg" alt="confetti" width={41} height={43} />,
         <TickerText>
           <span
             className="text-[14px] font-lato font-black"

@@ -189,7 +189,7 @@ const TokenWidget: FC<TokenWidgetProps> = ({ tokenWidget, index, chain }) => {
                       ) : isEtherChainNativeCurrency ? (
                         <img src="/tokens/ether.svg" alt="ether" width={16} height={16} />
                       ) : (
-                        <img src="/contest/mona-lisa-moustache.png" alt="ether" width={16} height={16} />
+                        <img src="/confetti/loader/frame-1.svg" alt="ether" width={16} height={16} />
                       )}
 
                       <p className="text-[16px] text-neutral-11 font-bold uppercase">

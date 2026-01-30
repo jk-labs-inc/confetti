@@ -4,9 +4,9 @@
   "display": "standalone",
   "scope": "/",
   "start_url": "/",
-  "name": "JokeRace",
-  "short_name": "JokeRace",
-  "description": "contests for communities to run, grow, and monetize",
+  "name": "Confetti",
+  "short_name": "Confetti",
+  "description": "Confetti - vote. rally. earn.",
   "icons": [
     {
       "src": "/icon-192x192.png",

@@ -1,7 +1,7 @@
 import SearchContests from "./search";
 
 export const metadata = {
-  title: "Contests - jokerace",
+  title: "Contests - Confetti",
 };
 
 const Page = () => {
