@@ -184,9 +184,7 @@ contract VoterRewardsModuleTest is Test {
 
         payPerVoteExpCurveContest.setOfficialRewardsModule(address(voterRewardsModule));
         payPerVoteExpCurveAltContest.setOfficialRewardsModule(address(voterRewardsModuleAlt));
-        payPerVoteExpCurveRankLimitOneContest.setOfficialRewardsModule(
-            address(voterRewardsModuleToRankLimitOneContest)
-        );
+        payPerVoteExpCurveRankLimitOneContest.setOfficialRewardsModule(address(voterRewardsModuleToRankLimitOneContest));
 
         testERC20 = new ERC20PresetFixedSupply("test", "TEST", INITIAL_TEST_ERC20_SUPPLY, CREATOR_ADDRESS);
 

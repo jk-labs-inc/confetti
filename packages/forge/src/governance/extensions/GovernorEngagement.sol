@@ -73,10 +73,7 @@ abstract contract GovernorEngagement is Governor {
         }
 
         CommentCore memory commentObject = CommentCore({
-            author: msg.sender,
-            timestamp: block.timestamp,
-            proposalId: proposalId,
-            commentContent: commentContent
+            author: msg.sender, timestamp: block.timestamp, proposalId: proposalId, commentContent: commentContent
         });
         uint256 commentId = hashComment(commentObject);
 
