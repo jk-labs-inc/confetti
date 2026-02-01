@@ -12,8 +12,8 @@
   "dependencies": {
     "@aws-sdk/client-s3": "3.980.0",
     "@aws-sdk/s3-request-presigner": "3.980.0",
-    "@babel/core": "7.28.6",
-    "@babel/preset-env": "7.28.6",
+    "@babel/core": "7.29.0",
+    "@babel/preset-env": "7.29.0",
     "@bigmi/react": "0.6.5",
     "@clustersxyz/sdk": "1.0.2",
     "@coinbase/wallet-sdk": "4.3.7",
