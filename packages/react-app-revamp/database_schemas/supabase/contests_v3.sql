@@ -17,6 +17,7 @@ create table
     anyone_can_submit smallint null,
     percentage_to_rewards numeric null,
     creator_split_enabled smallint null,
+    disabled boolean null default false,
     constraint contests_v3_pkey primary key (uuid)
   ) tablespace pg_default;
 
