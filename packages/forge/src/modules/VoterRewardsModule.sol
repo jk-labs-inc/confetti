@@ -49,7 +49,7 @@ contract VoterRewardsModule {
     string public constant MODULE_TYPE = "VOTER_REWARDS";
     address public constant JK_LABS_ADDRESS = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738; // Our hot wallet that we collect revenue to.
     uint256 public constant JK_LABS_CANCEL_DELAY = 604800; // One week
-    string private constant VERSION = "6.12"; // Private as to not clutter the ABI
+    string private constant VERSION = "6.13"; // Private as to not clutter the ABI
 
     GovernorCountingSimple public underlyingContest;
     address public creator;
@@ -85,9 +85,7 @@ contract VoterRewardsModule {
      * All rankings in `payees` must be non-zero. Both arrays must have the same non-zero length, and there must be no
      * duplicates in `payees`.
      */
-    constructor(uint256[] memory payees_, uint256[] memory shares_, GovernorCountingSimple underlyingContest_)
-        payable
-    {
+    constructor(uint256[] memory payees_, uint256[] memory shares_, GovernorCountingSimple underlyingContest_) payable {
         if (payees_.length != shares_.length) revert PayeesSharesLengthMismatch();
         if (payees_.length == 0) revert MustHaveAtLeastOnePayee();
 
