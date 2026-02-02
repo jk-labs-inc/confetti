@@ -293,8 +293,6 @@ export async function checkIfContestExists(address: string, networkName: string)
         return true;
       }
 
-      console.log("in here");
-
       ({ data, error } = await supabase
         .from("contests_v3")
         .select("address")
