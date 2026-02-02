@@ -13,7 +13,7 @@ const LINK_HOW_IT_WORKS = "/#how-it-works";
 export const LINK_FAQ = "https://docs.confetti.win/faq";
 export const LINK_BRIDGE_DOCS = "https://docs.confetti.win/user-how-tos/bridging";
 export const LINK_DOCS = "https://docs.confetti.win/";
-export const LINK_LINKTREE = "https://linktr.ee/jokerace_io";
+export const LINK_LINKTREE = "https://linktr.ee/confetti_win";
 export const LINK_ROI_CALCULATOR = "https://docs.confetti.win/calculating-roi";
 
 export const FOOTER_LINKS = [

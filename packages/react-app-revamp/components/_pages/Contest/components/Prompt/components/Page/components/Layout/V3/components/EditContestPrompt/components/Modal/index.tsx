@@ -1,9 +1,11 @@
+import CreateGradientTitle from "@components/_pages/Create/components/GradientTitle";
 import CreateFlowPromptPreview from "@components/_pages/Create/components/PromptPreview";
 import CreateFlowPreviewToggle from "@components/_pages/Create/components/PreviewToggle";
 import DialogModalV4 from "@components/UI/DialogModalV4";
+import ResizableEditor from "@components/UI/ResizableEditor";
 import TipTapEditorControls from "@components/UI/TipTapEditorControls";
 import { createEditorConfig } from "@helpers/createEditorConfig";
-import { Editor, EditorContent, useEditor } from "@tiptap/react";
+import { Editor, useEditor } from "@tiptap/react";
 import { FC, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 
@@ -74,7 +76,7 @@ const EditContestPromptModal: FC<EditContestPromptModalProps> = ({
     ...createEditorConfig({
       content: prompt.contestContactDetails,
       placeholderText: isMobile
-        ? "i’m on telegram: @me"
+        ? "i'm on telegram: @me"
         : "we have a telegram group for everyone to coordinate at tgexample.com",
       onUpdate: ({ editor }: { editor: Editor }) => {
         const content = editor.getHTML();
@@ -126,61 +128,34 @@ const EditContestPromptModal: FC<EditContestPromptModalProps> = ({
           </div>
         ) : (
           <>
-            <div className="flex flex-col gap-12">
-              <div
-                className="flex justify-start w-full md:w-[656px] px-1 py-2 sticky top-0 z-10
-            bg-true-black/20 backdrop-blur border-y border-neutral-10/30
-            shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1),0_2px_4px_-2px_rgba(0,0,0,0.1)]
-            transition-all duration-300"
-              >
+            <div className="flex flex-col gap-4">
+              <div className="flex bg-true-black z-10 justify-start w-full md:w-[640px] p-1 border-y border-neutral-2">
                 <TipTapEditorControls editor={activeEditor ? activeEditor : editorSummarize} />
               </div>
-
               <div className="flex flex-col gap-4">
                 <div className="flex flex-col gap-4">
-                  <p className="text-neutral-11 text-[20px] font-bold">
-                    what’s the best way for players to reach you? <span className="font-normal">(recommended)</span>
-                  </p>
-                  <div
-                    className={`w-full md:w-[656px] bg-true-black rounded-[16px] border-true-black ${
-                      isMobile ? "" : "shadow-file-upload p-2"
-                    }`}
-                  >
-                    <EditorContent
-                      editor={editorContactDetails}
-                      className="p-4 text-[16px] bg-secondary-1 outline-none rounded-[16px] w-full md:w-[640px] overflow-y-auto h-20"
-                    />
-                  </div>
-                </div>
-                <div className="flex flex-col gap-4">
-                  <p className="text-neutral-11 text-[20px] font-bold">summarize the contest, rewards, and voters:</p>
-                  <div className="flex flex-col gap-2">
-                    <div
-                      className={`w-full md:w-[656px] bg-true-black rounded-[16px] border-true-black ${
-                        isMobile ? "" : "shadow-file-upload p-2"
-                      }`}
-                    >
-                      <EditorContent
-                        editor={editorSummarize}
-                        className="p-4 text-[16px] bg-secondary-1 outline-none rounded-[16px] w-full md:w-[640px] overflow-y-auto h-52 md:h-36"
-                      />
+                  <div className="flex flex-col gap-4">
+                    <CreateGradientTitle additionalInfo="required">
+                      summarize the contest, rewards, and voters
+                    </CreateGradientTitle>
+                    <div className="flex flex-col gap-2 w-full md:w-[640px]">
+                      <ResizableEditor editor={editorSummarize} minHeight={80} />
                     </div>
                   </div>
-                </div>
-                <div className="flex flex-col gap-4">
-                  <p className="text-[20px] text-neutral-11 font-bold">
-                    how should voters evaluate if an entry is <i>good</i> ?
-                  </p>
-                  <div className="flex flex-col gap-2">
-                    <div
-                      className={`w-full md:w-[656px] bg-true-black rounded-[16px] border-true-black ${
-                        isMobile ? "" : "shadow-file-upload p-2"
-                      }`}
-                    >
-                      <EditorContent
-                        editor={editorEvaluateVoters}
-                        className="p-4 text-[16px] bg-secondary-1 outline-none rounded-[16px] w-full md:w-[640px] overflow-y-auto h-52 md:h-36"
-                      />
+                  <div className="flex flex-col gap-4">
+                    <CreateGradientTitle additionalInfo="required">
+                      how should voters evaluate if an entry is <i>good</i> ?
+                    </CreateGradientTitle>
+                    <div className="w-full md:w-[640px]">
+                      <ResizableEditor editor={editorEvaluateVoters} minHeight={80} />
+                    </div>
+                  </div>
+                  <div className="flex flex-col gap-4">
+                    <CreateGradientTitle additionalInfo="recommended">
+                      what's the best way for players to reach you?
+                    </CreateGradientTitle>
+                    <div className="w-full md:w-[640px]">
+                      <ResizableEditor editor={editorContactDetails} minHeight={80} />
                     </div>
                   </div>
                 </div>

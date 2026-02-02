@@ -68,8 +68,7 @@ export const metadata: Metadata = {
     description: "Confetti - vote. rally. earn.",
     title: "Confetti",
     card: "summary_large_image",
-    //TODO: update this to the actual twitter handle
-    site: "@jokerace_io",
+    site: "@confetti_win",
   },
 };
 

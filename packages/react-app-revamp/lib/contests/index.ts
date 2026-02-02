@@ -282,6 +282,7 @@ export async function checkIfContestExists(address: string, networkName: string)
         .from("contests_v3")
         .select("address")
         .eq("address", address.toLowerCase())
+        .or("disabled.eq.false,disabled.is.null")
         .eq("network_name", networkName);
 
       if (error) {
@@ -296,6 +297,7 @@ export async function checkIfContestExists(address: string, networkName: string)
         .from("contests_v3")
         .select("address")
         .eq("address", address)
+        .or("disabled.eq.false,disabled.is.null")
         .eq("network_name", networkName));
 
       if (error) {
