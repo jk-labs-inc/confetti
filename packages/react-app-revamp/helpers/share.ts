@@ -21,7 +21,7 @@ const buildUrl = (baseUrl: string, params: UrlParams): string => {
 };
 
 const contestShareText = (contestName: string) => {
-  return `Come play ${contestName} on @jokerace_io with me!\n`;
+  return `Come play ${contestName} on @confetti_win with me!\n`;
 };
 
 const farcasterContestShareText = (contestName: string) => {
@@ -77,7 +77,7 @@ export const generateLensShareUrlForSubmission = (contestAddress: string, chain:
 export const generateTwitterShareUrlForSubmission = (contestAddress: string, chain: string, submissionId: string) => {
   const params = {
     url: `${BASE_JOKERACE_URL}${chain}/${contestAddress}/submission/${submissionId}`,
-    via: "jokerace_io",
+    via: "confetti_win",
   };
   return buildUrl(BASE_TWITTER_URL, params);
 };
