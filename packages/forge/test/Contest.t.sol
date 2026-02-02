@@ -30,6 +30,7 @@ contract ContestTest is Test {
     address public constant JK_LABS_SPLIT_DESTINATION = JK_LABS_ADDRESS;
 
     // SORTING INT PARAMS
+    uint256 public constant SORTING_ENABLED = 1;
     uint256 public constant RANK_LIMIT_250 = 250;
 
     // METADATA CONSTRUCTOR PARAMS
@@ -43,6 +44,7 @@ contract ContestTest is Test {
         VOTING_PERIOD,
         NUM_ALLOWED_PROPOSAL_SUBMISSIONS,
         MAX_PROPOSAL_COUNT,
+        SORTING_ENABLED,
         RANK_LIMIT_250,
         NINETY_PERCENT_TO_REWARDS,
         STANDARD_COST_TO_VOTE,
@@ -266,10 +268,8 @@ contract ContestTest is Test {
 
         assertEq(
             CREATOR_ADDRESS.balance,
-            (
-                10 * payPerVoteExpCurveContest.currentPricePerVote()
-                    * (100 - payPerVoteExpCurveContest.percentageToRewards()) / (2 * 100)
-            )
+            (10 * payPerVoteExpCurveContest.currentPricePerVote()
+                    * (100 - payPerVoteExpCurveContest.percentageToRewards()) / (2 * 100))
         ); // the 2 is the denominator is because of split with creator, the 100 is because we're using a percent.
     }
 

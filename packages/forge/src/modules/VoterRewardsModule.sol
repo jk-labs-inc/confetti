@@ -59,6 +59,7 @@ contract VoterRewardsModule {
     error PayeesSharesLengthMismatch();
     error MustHaveAtLeastOnePayee();
     error TotalSharesCannotBeZero();
+    error MustHaveSortingEnabled();
     error ContestMustBeCompleted();
     error PayoutRankCannotBeZero();
     error RankingHasNoShares();
@@ -84,9 +85,7 @@ contract VoterRewardsModule {
      * All rankings in `payees` must be non-zero. Both arrays must have the same non-zero length, and there must be no
      * duplicates in `payees`.
      */
-    constructor(uint256[] memory payees_, uint256[] memory shares_, GovernorCountingSimple underlyingContest_)
-        payable
-    {
+    constructor(uint256[] memory payees_, uint256[] memory shares_, GovernorCountingSimple underlyingContest_) payable {
         if (payees_.length != shares_.length) revert PayeesSharesLengthMismatch();
         if (payees_.length == 0) revert MustHaveAtLeastOnePayee();
 
@@ -171,6 +170,7 @@ contract VoterRewardsModule {
      * @dev Run release checks.
      */
     function runReleaseChecks(uint256 ranking) public view {
+        if (underlyingContest.sortingEnabled() != 1) revert MustHaveSortingEnabled();
         if (underlyingContest.state() != Governor.ContestState.Completed) revert ContestMustBeCompleted();
         if (ranking == 0) revert PayoutRankCannotBeZero();
         if (shares[ranking] == 0) revert RankingHasNoShares();
