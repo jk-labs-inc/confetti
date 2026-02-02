@@ -10,10 +10,10 @@
     "postinstall": "npx setup-para"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "3.978.0",
-    "@aws-sdk/s3-request-presigner": "3.978.0",
-    "@babel/core": "7.28.6",
-    "@babel/preset-env": "7.28.6",
+    "@aws-sdk/client-s3": "3.980.0",
+    "@aws-sdk/s3-request-presigner": "3.980.0",
+    "@babel/core": "7.29.0",
+    "@babel/preset-env": "7.29.0",
     "@bigmi/react": "0.6.5",
     "@clustersxyz/sdk": "1.0.2",
     "@coinbase/wallet-sdk": "4.3.7",
@@ -55,8 +55,8 @@
     "@visx/responsive": "3.12.0",
     "@visx/scale": "3.12.0",
     "@visx/shape": "3.12.0",
-    "@wagmi/core": "3.3.1",
-    "autoprefixer": "10.4.23",
+    "@wagmi/core": "3.3.2",
+    "autoprefixer": "10.4.24",
     "cheerio": "1.2.0",
     "class-variance-authority": "0.7.1",
     "compare-versions": "6.1.1",
@@ -98,7 +98,7 @@
     "react-tooltip": "5.30.0",
     "react-tweet": "3.3.0",
     "react-use": "17.6.0",
-    "react-window": "2.2.5",
+    "react-window": "2.2.6",
     "safe-json-utils": "1.1.1",
     "simplebar-react": "3.3.2",
     "tailwindcss": "4.1.18",
@@ -111,6 +111,6 @@
     "wagmi": "3.4.1",
     "webpack": "5.104.1",
     "zod": "4.3.6",
-    "zustand": "5.0.10"
+    "zustand": "5.0.11"
   }
 }

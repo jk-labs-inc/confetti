@@ -60,6 +60,7 @@ export function useContest() {
     setVotesOpen,
     setSubmissionsOpen,
     setCharge,
+    setSortingEnabled,
     setCanEditTitleAndDescription,
     setContestMaxNumberSubmissionsPerUser,
   } = useContestStore(state => state);
@@ -121,6 +122,11 @@ export function useContest() {
       const votesOpenDate = new Date(Number(getResultByName("voteStart")) * 1000 + 1000);
       const contestPrompt = getResultByName("prompt") as string;
       const contestState = getResultByName("state") as ContestStateEnum;
+
+      if (compareVersions(version, "4.2") >= 0) {
+        const sortingEnabled = Number(getResultByName("sortingEnabled")) === 1;
+        setSortingEnabled(sortingEnabled);
+      }
 
       if (compareVersions(version, "4.27") >= 0) {
         setCanEditTitleAndDescription(true);
