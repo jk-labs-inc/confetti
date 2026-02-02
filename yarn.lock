@@ -6602,13 +6602,6 @@
     "@types/prop-types" "*"
     "@types/react" "*"
 
-"@types/react-window@2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@types/react-window/-/react-window-2.0.0.tgz#9fe45015d6f98ec98a069362518c855fcc1fa8d0"
-  integrity sha512-E8hMDtImEpMk1SjswSvqoSmYvk7GEtyVaTa/GJV++FdDNuMVVEzpAClyJ0nqeKYBrMkGiyH6M1+rPLM0Nu1exQ==
-  dependencies:
-    react-window "*"
-
 "@types/react@*":
   version "19.2.9"
   resolved "https://registry.yarnpkg.com/@types/react/-/react-19.2.9.tgz#84ec7669742bb3e7e2e8d6a5258d95ead7764200"
@@ -6649,13 +6642,6 @@
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/@types/use-sync-external-store/-/use-sync-external-store-0.0.6.tgz#60be8d21baab8c305132eb9cb912ed497852aadc"
   integrity sha512-zFDAD+tlpf2r4asuHEj0XH6pY6i0g5NeAHPn+15wk3BV6JA69eERFXC1gyGThDkVa1zCyKr5jox1+2LbV/AMLg==
-
-"@types/uuid@11.0.0":
-  version "11.0.0"
-  resolved "https://registry.yarnpkg.com/@types/uuid/-/uuid-11.0.0.tgz#f4fa34bbf2af941148ef1973c4361fc43617971c"
-  integrity sha512-HVyk8nj2m+jcFRNazzqyVKiZezyhDKrGUA3jlEcg/nZ6Ms+qHwocba1Y/AaVaznJTAM9xpdFSh+ptbNrhOGvZA==
-  dependencies:
-    uuid "*"
 
 "@types/uuid@^8.3.4":
   version "8.3.4"
@@ -12694,11 +12680,6 @@ react-use@17.6.0:
     ts-easing "^0.2.0"
     tslib "^2.1.0"
 
-react-window@*:
-  version "2.2.5"
-  resolved "https://registry.yarnpkg.com/react-window/-/react-window-2.2.5.tgz#425a29609980083aafd5a48a1711a2af9319c1d2"
-  integrity sha512-6viWvPSZvVuMIe9hrl4IIZoVfO/npiqOb03m4Z9w+VihmVzBbiudUrtUqDpsWdKvd/Ai31TCR25CBcFFAUm28w==
-
 react-window@2.2.6:
   version "2.2.6"
   resolved "https://registry.yarnpkg.com/react-window/-/react-window-2.2.6.tgz#00ca174346b5146d3c33a752d888181250c71d9f"
@@ -14102,7 +14083,7 @@ util-deprecate@^1.0.2, util-deprecate@~1.0.1:
   resolved "https://registry.yarnpkg.com/util-deprecate/-/util-deprecate-1.0.2.tgz#450d4dc9fa70de732762fbd2d4a28981419a0ccf"
   integrity sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==
 
-uuid@*, uuid@13.0.0:
+uuid@13.0.0:
   version "13.0.0"
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-13.0.0.tgz#263dc341b19b4d755eb8fe36b78d95a6b65707e8"
   integrity sha512-XQegIaBTVUjSHliKqcnFqYypAd4S+WCYt5NIeRs6w/UAry7z8Y9j5ZwRRL4kzq9U3sD6v+85er9FvkEaBpji2w==
