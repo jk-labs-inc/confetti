@@ -22,8 +22,6 @@ abstract contract Governor is GovernorSorting {
     }
 
     enum Metadatas {
-        Target,
-        Safe,
         Fields
     }
 
@@ -60,15 +58,6 @@ abstract contract Governor is GovernorSorting {
         string metadataFieldsSchema;
     }
 
-    struct TargetMetadata {
-        address targetAddress;
-    }
-
-    struct SafeMetadata {
-        address[] signers;
-        uint256 threshold;
-    }
-
     struct FieldsMetadata {
         // all of these have max length of MAX_FIELDS_METADATA_LENGTH as enforced in validateProposalData()
         address[] addressArray;
@@ -80,8 +69,6 @@ abstract contract Governor is GovernorSorting {
         address author;
         bool exists;
         string description;
-        TargetMetadata targetMetadata;
-        SafeMetadata safeMetadata;
         FieldsMetadata fieldsMetadata;
     }
 
@@ -108,7 +95,7 @@ abstract contract Governor is GovernorSorting {
     address public constant JK_LABS_ADDRESS = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738; // Our hot wallet that we collect revenue to.
     uint256 public constant PRICE_CURVE_UPDATE_INTERVAL = 60; // How often the price curve updates if applicable.
     uint256 public constant COST_ROUNDING_VALUE = 1e12; // Used for rounding costs, means cost to propose or vote can't be less than 1e18/this.
-    string private constant VERSION = "6.13"; // Private as to not clutter the ABI.
+    string private constant VERSION = "6.14"; // Private as to not clutter the ABI.
 
     string public name; // The title of the contest
     string public prompt;
@@ -137,8 +124,6 @@ abstract contract Governor is GovernorSorting {
     address[] public addressesThatHaveVoted;
 
     error AuthorIsNotSender(address author, address sender);
-    error ZeroSignersInSafeMetadata();
-    error ZeroThresholdInSafeMetadata();
     error AddressFieldMetadataArrayTooLong();
     error StringFieldMetadataArrayTooLong();
     error UintFieldMetadataArrayTooLong();
@@ -341,12 +326,7 @@ abstract contract Governor is GovernorSorting {
         if (proposal.author != msg.sender) revert AuthorIsNotSender(proposal.author, msg.sender);
         for (uint256 index = 0; index < METADATAS_COUNT; index++) {
             Metadatas currentMetadata = Metadatas(index);
-            if (currentMetadata == Metadatas.Target) {
-                continue; // nothing to check here since strictly typed to address
-            } else if (currentMetadata == Metadatas.Safe) {
-                if (proposal.safeMetadata.signers.length == 0) revert ZeroSignersInSafeMetadata();
-                if (proposal.safeMetadata.threshold == 0) revert ZeroThresholdInSafeMetadata();
-            } else if (currentMetadata == Metadatas.Fields) {
+            if (currentMetadata == Metadatas.Fields) {
                 if (proposal.fieldsMetadata.addressArray.length > MAX_FIELDS_METADATA_LENGTH) {
                     revert AddressFieldMetadataArrayTooLong();
                 }
