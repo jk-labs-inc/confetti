@@ -285,8 +285,6 @@ export async function checkIfContestExists(address: string, networkName: string)
         .or("disabled.eq.false,disabled.is.null")
         .eq("network_name", networkName);
 
-      console.log("data", data);
-
       if (error) {
         throw new Error(error.message);
       }
