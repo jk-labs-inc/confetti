@@ -9966,12 +9966,12 @@ framer-motion@^12.28.1:
     motion-utils "^12.27.2"
     tslib "^2.4.0"
 
-framer-motion@^12.29.2:
-  version "12.29.2"
-  resolved "https://registry.yarnpkg.com/framer-motion/-/framer-motion-12.29.2.tgz#462d5ff8f9a21803794add0fd5e703de17ed6946"
-  integrity sha512-lSNRzBJk4wuIy0emYQ/nfZ7eWhqud2umPKw2QAQki6uKhZPKm2hRQHeQoHTG9MIvfobb+A/LbEWPJU794ZUKrg==
+framer-motion@^12.30.0:
+  version "12.30.0"
+  resolved "https://registry.yarnpkg.com/framer-motion/-/framer-motion-12.30.0.tgz#fa0af544255878901cfebc74f4df03a55a263f6d"
+  integrity sha512-S7t3UjvghrFiJzFJ30ncX6keUipexw9f7DRpauhW9bXPNxg0dMxoPbNIDpLuxK1NvxF2wswFEMEm7WiNAcdELg==
   dependencies:
-    motion-dom "^12.29.2"
+    motion-dom "^12.30.0"
     motion-utils "^12.29.2"
     tslib "^2.4.0"
 
@@ -11433,10 +11433,10 @@ motion-dom@^12.19.0, motion-dom@^12.23.23, motion-dom@^12.28.1:
   dependencies:
     motion-utils "^12.27.2"
 
-motion-dom@^12.29.2:
-  version "12.29.2"
-  resolved "https://registry.yarnpkg.com/motion-dom/-/motion-dom-12.29.2.tgz#0949409df0e776b9d56d57faeea1ff10228904a0"
-  integrity sha512-/k+NuycVV8pykxyiTCoFzIVLA95Nb1BFIVvfSu9L50/6K6qNeAYtkxXILy/LRutt7AzaYDc2myj0wkCVVYAPPA==
+motion-dom@^12.30.0:
+  version "12.30.0"
+  resolved "https://registry.yarnpkg.com/motion-dom/-/motion-dom-12.30.0.tgz#1bf27e1f62e4600127cfe77545142e2601b95a35"
+  integrity sha512-p6Mp+lxm+mK4O86YVyL6KAlFDVCIqpmcBt+uMVapMBqltPXpwZ5Wj2crnN2VE7lwsas0ONCPIW9YVpMigu4F5g==
   dependencies:
     motion-utils "^12.29.2"
 
@@ -11482,12 +11482,12 @@ motion-utils@^12.29.2:
   resolved "https://registry.yarnpkg.com/motion-utils/-/motion-utils-12.29.2.tgz#8fdd28babe042c2456b078ab33b32daa3bf5938b"
   integrity sha512-G3kc34H2cX2gI63RqU+cZq+zWRRPSsNIOjpdl9TN4AQwC4sgwYPl/Q/Obf/d53nOm569T0fYK+tcoSV50BWx8A==
 
-motion@12.29.2:
-  version "12.29.2"
-  resolved "https://registry.yarnpkg.com/motion/-/motion-12.29.2.tgz#e820aaf7fb7424bb69cf45c7b641a777a96b2be0"
-  integrity sha512-jMpHdAzEDF1QQ055cB+1lOBLdJ6ialVWl6QQzpJI2OvmHequ7zFVHM2mx0HNAy+Tu4omUlApfC+4vnkX0geEOg==
+motion@12.30.0:
+  version "12.30.0"
+  resolved "https://registry.yarnpkg.com/motion/-/motion-12.30.0.tgz#5550aa2df9f4bd1c92c785cd63b72e3ca9876e1f"
+  integrity sha512-5D2ERK0dnZjXPcmKFVEoyToa/BR1FpHzVP508yOeU+mH3fsSVYP6P2qmbF+opUXLetxHy0GVgH9NEZxBdXpe+A==
   dependencies:
-    framer-motion "^12.29.2"
+    framer-motion "^12.30.0"
     tslib "^2.4.0"
 
 motion@^12.19.0, motion@^12.23.24:
