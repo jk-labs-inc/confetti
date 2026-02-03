@@ -102,10 +102,10 @@
     "@smithy/util-utf8" "^2.0.0"
     tslib "^2.6.2"
 
-"@aws-sdk/client-s3@3.980.0":
-  version "3.980.0"
-  resolved "https://registry.yarnpkg.com/@aws-sdk/client-s3/-/client-s3-3.980.0.tgz#9d4d1993abd3390476fb44fc3608f8e1d3edc05f"
-  integrity sha512-ch8QqKehyn1WOYbd8LyDbWjv84Z9OEj9qUxz8q3IOCU3ftAVkVR0wAuN96a1xCHnpOJcQZo3rOB08RlyKdkGxQ==
+"@aws-sdk/client-s3@3.981.0":
+  version "3.981.0"
+  resolved "https://registry.yarnpkg.com/@aws-sdk/client-s3/-/client-s3-3.981.0.tgz#f196476ddd02b60e905bf7c712b9b4a8989b2632"
+  integrity sha512-zX3Xqm7V30J1D2II7WBL23SyqIIMD0wMzpiE+VosBxH6fAeXgrjIwSudCypNgnE1EK9OZoZMT3mJtkbUqUDdaA==
   dependencies:
     "@aws-crypto/sha1-browser" "5.2.0"
     "@aws-crypto/sha256-browser" "5.2.0"
@@ -123,9 +123,9 @@
     "@aws-sdk/middleware-ssec" "^3.972.3"
     "@aws-sdk/middleware-user-agent" "^3.972.5"
     "@aws-sdk/region-config-resolver" "^3.972.3"
-    "@aws-sdk/signature-v4-multi-region" "3.980.0"
+    "@aws-sdk/signature-v4-multi-region" "3.981.0"
     "@aws-sdk/types" "^3.973.1"
-    "@aws-sdk/util-endpoints" "3.980.0"
+    "@aws-sdk/util-endpoints" "3.981.0"
     "@aws-sdk/util-user-agent-browser" "^3.972.3"
     "@aws-sdk/util-user-agent-node" "^3.972.3"
     "@smithy/config-resolver" "^4.4.6"
@@ -531,12 +531,12 @@
     "@smithy/types" "^4.12.0"
     tslib "^2.6.2"
 
-"@aws-sdk/s3-request-presigner@3.980.0":
-  version "3.980.0"
-  resolved "https://registry.yarnpkg.com/@aws-sdk/s3-request-presigner/-/s3-request-presigner-3.980.0.tgz#eb06d1b4fb6b3b732d4b0447b5eebc09740d8794"
-  integrity sha512-qX1Ptvja9Le0Wt1VadgsJ7Kw8Xf57pTIVmIcvYD5HrdAot71qgXdfBtcbuvNKZPeD+HfcUITwxxHpDiXfSoTsA==
+"@aws-sdk/s3-request-presigner@3.981.0":
+  version "3.981.0"
+  resolved "https://registry.yarnpkg.com/@aws-sdk/s3-request-presigner/-/s3-request-presigner-3.981.0.tgz#388d4433aa79737213a0ab4b538f55ce83161dc0"
+  integrity sha512-p4XPExNNDCDus+65YgjBUvQPQek9zZfxullsIBre22cVa7yq3VBDtXsyVTTfTjKnIWW2K89gVEd7e7S7Xkm6jQ==
   dependencies:
-    "@aws-sdk/signature-v4-multi-region" "3.980.0"
+    "@aws-sdk/signature-v4-multi-region" "3.981.0"
     "@aws-sdk/types" "^3.973.1"
     "@aws-sdk/util-format-url" "^3.972.3"
     "@smithy/middleware-endpoint" "^4.4.12"
@@ -545,10 +545,10 @@
     "@smithy/types" "^4.12.0"
     tslib "^2.6.2"
 
-"@aws-sdk/signature-v4-multi-region@3.980.0":
-  version "3.980.0"
-  resolved "https://registry.yarnpkg.com/@aws-sdk/signature-v4-multi-region/-/signature-v4-multi-region-3.980.0.tgz#dfcb3eb7fa85d4e2149f29d73aa7c8ebbc560b3e"
-  integrity sha512-tO2jBj+ZIVM0nEgi1SyxWtaYGpuAJdsrugmWcI3/U2MPWCYsrvKasUo0026NvJJao38wyUq9B8XTG8Xu53j/VA==
+"@aws-sdk/signature-v4-multi-region@3.981.0":
+  version "3.981.0"
+  resolved "https://registry.yarnpkg.com/@aws-sdk/signature-v4-multi-region/-/signature-v4-multi-region-3.981.0.tgz#f04d19c8599301987143f416006b6a70b9a17ce1"
+  integrity sha512-T/+h9df0DALAXXP+YfZ8bgmH6cEN7HAg6BqHe3t38GhHgQ1HULXwK5XMhiLWiHpytDdhLqiVH41SRgW8ynBl6Q==
   dependencies:
     "@aws-sdk/middleware-sdk-s3" "^3.972.5"
     "@aws-sdk/types" "^3.973.1"
@@ -597,6 +597,17 @@
   version "3.980.0"
   resolved "https://registry.yarnpkg.com/@aws-sdk/util-endpoints/-/util-endpoints-3.980.0.tgz#0d2665ad75f92f3f208541f6fa88451d2a2e96ce"
   integrity sha512-AjKBNEc+rjOZQE1HwcD9aCELqg1GmUj1rtICKuY8cgwB73xJ4U/kNyqKKpN2k9emGqlfDY2D8itIp/vDc6OKpw==
+  dependencies:
+    "@aws-sdk/types" "^3.973.1"
+    "@smithy/types" "^4.12.0"
+    "@smithy/url-parser" "^4.2.8"
+    "@smithy/util-endpoints" "^3.2.8"
+    tslib "^2.6.2"
+
+"@aws-sdk/util-endpoints@3.981.0":
+  version "3.981.0"
+  resolved "https://registry.yarnpkg.com/@aws-sdk/util-endpoints/-/util-endpoints-3.981.0.tgz#b303a735877e0e63dcc9da1ab9c2a84153a6ce96"
+  integrity sha512-a8nXh/H3/4j+sxhZk+N3acSDlgwTVSZbX9i55dx41gI1H+geuonuRG+Shv3GZsCb46vzc08RK2qC78ypO8uRlg==
   dependencies:
     "@aws-sdk/types" "^3.973.1"
     "@smithy/types" "^4.12.0"
@@ -9955,12 +9966,12 @@ framer-motion@^12.28.1:
     motion-utils "^12.27.2"
     tslib "^2.4.0"
 
-framer-motion@^12.29.2:
-  version "12.29.2"
-  resolved "https://registry.yarnpkg.com/framer-motion/-/framer-motion-12.29.2.tgz#462d5ff8f9a21803794add0fd5e703de17ed6946"
-  integrity sha512-lSNRzBJk4wuIy0emYQ/nfZ7eWhqud2umPKw2QAQki6uKhZPKm2hRQHeQoHTG9MIvfobb+A/LbEWPJU794ZUKrg==
+framer-motion@^12.30.0:
+  version "12.30.0"
+  resolved "https://registry.yarnpkg.com/framer-motion/-/framer-motion-12.30.0.tgz#fa0af544255878901cfebc74f4df03a55a263f6d"
+  integrity sha512-S7t3UjvghrFiJzFJ30ncX6keUipexw9f7DRpauhW9bXPNxg0dMxoPbNIDpLuxK1NvxF2wswFEMEm7WiNAcdELg==
   dependencies:
-    motion-dom "^12.29.2"
+    motion-dom "^12.30.0"
     motion-utils "^12.29.2"
     tslib "^2.4.0"
 
@@ -11422,10 +11433,10 @@ motion-dom@^12.19.0, motion-dom@^12.23.23, motion-dom@^12.28.1:
   dependencies:
     motion-utils "^12.27.2"
 
-motion-dom@^12.29.2:
-  version "12.29.2"
-  resolved "https://registry.yarnpkg.com/motion-dom/-/motion-dom-12.29.2.tgz#0949409df0e776b9d56d57faeea1ff10228904a0"
-  integrity sha512-/k+NuycVV8pykxyiTCoFzIVLA95Nb1BFIVvfSu9L50/6K6qNeAYtkxXILy/LRutt7AzaYDc2myj0wkCVVYAPPA==
+motion-dom@^12.30.0:
+  version "12.30.0"
+  resolved "https://registry.yarnpkg.com/motion-dom/-/motion-dom-12.30.0.tgz#1bf27e1f62e4600127cfe77545142e2601b95a35"
+  integrity sha512-p6Mp+lxm+mK4O86YVyL6KAlFDVCIqpmcBt+uMVapMBqltPXpwZ5Wj2crnN2VE7lwsas0ONCPIW9YVpMigu4F5g==
   dependencies:
     motion-utils "^12.29.2"
 
@@ -11471,12 +11482,12 @@ motion-utils@^12.29.2:
   resolved "https://registry.yarnpkg.com/motion-utils/-/motion-utils-12.29.2.tgz#8fdd28babe042c2456b078ab33b32daa3bf5938b"
   integrity sha512-G3kc34H2cX2gI63RqU+cZq+zWRRPSsNIOjpdl9TN4AQwC4sgwYPl/Q/Obf/d53nOm569T0fYK+tcoSV50BWx8A==
 
-motion@12.29.2:
-  version "12.29.2"
-  resolved "https://registry.yarnpkg.com/motion/-/motion-12.29.2.tgz#e820aaf7fb7424bb69cf45c7b641a777a96b2be0"
-  integrity sha512-jMpHdAzEDF1QQ055cB+1lOBLdJ6ialVWl6QQzpJI2OvmHequ7zFVHM2mx0HNAy+Tu4omUlApfC+4vnkX0geEOg==
+motion@12.30.0:
+  version "12.30.0"
+  resolved "https://registry.yarnpkg.com/motion/-/motion-12.30.0.tgz#5550aa2df9f4bd1c92c785cd63b72e3ca9876e1f"
+  integrity sha512-5D2ERK0dnZjXPcmKFVEoyToa/BR1FpHzVP508yOeU+mH3fsSVYP6P2qmbF+opUXLetxHy0GVgH9NEZxBdXpe+A==
   dependencies:
-    framer-motion "^12.29.2"
+    framer-motion "^12.30.0"
     tslib "^2.4.0"
 
 motion@^12.19.0, motion@^12.23.24:
@@ -12497,10 +12508,10 @@ react-dom@19.2.4:
   dependencies:
     scheduler "^0.27.0"
 
-react-error-boundary@6.0.3:
-  version "6.0.3"
-  resolved "https://registry.yarnpkg.com/react-error-boundary/-/react-error-boundary-6.0.3.tgz#e84bb9e67e692f83d3ea0fc35612db68d7d804c6"
-  integrity sha512-5guqn2UYpCFjE8UDMA8J7Kke+YSGBFrKQRJb3XdcaGZXYINZfQXgBt3ifY6MvjkN7QROc5A8zclyoSCwrcRUKw==
+react-error-boundary@6.1.0:
+  version "6.1.0"
+  resolved "https://registry.yarnpkg.com/react-error-boundary/-/react-error-boundary-6.1.0.tgz#d2965de0723d65d60d20aef2e120bd2c171ae4d7"
+  integrity sha512-02k9WQ/mUhdbXir0tC1NiMesGzRPaCsJEWU/4bcFrbY1YMZOtHShtZP6zw0SJrBWA/31H0KT9/FgdL8+sPKgHA==
 
 react-headless-pagination@1.1.6:
   version "1.1.6"

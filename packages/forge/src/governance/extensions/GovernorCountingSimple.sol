@@ -185,22 +185,21 @@ abstract contract GovernorCountingSimple is Governor {
         if (firstTimeVoting) {
             proposalVote.addressesVoted.push(account);
         }
+
         addressTotalCastVoteCount[account] += numVotes;
         totalVotesCast += numVotes;
 
-        // sorting and consequently rewards module compatibility is only available if sorting enabled
-        if (sortingEnabled == 1) {
-            uint256 newVotes = proposalVote.proposalVoteCount; // only check state var once to save on gas
-            uint256 oldVotes = newVotes - numVotes;
+        // this point down is maintaining sorting
+        uint256 newVotes = proposalVote.proposalVoteCount; // only check state var once to save on gas
+        uint256 oldVotes = newVotes - numVotes;
 
-            // update map of forVotes => proposalId[] to be able to go from rank => proposalId.
-            // if oldVotes is 0, then this proposal will not already be in this map, so we don't need to rm it
-            if (oldVotes > 0) {
-                _rmProposalIdFromVotesMap(proposalId, oldVotes);
-            }
-            votesToProposalIds[newVotes].push(proposalId);
-
-            _updateRanks(oldVotes, newVotes);
+        // update map of forVotes => proposalId[] to be able to go from rank => proposalId.
+        // if oldVotes is 0, then this proposal will not already be in this map, so we don't need to rm it
+        if (oldVotes > 0) {
+            _rmProposalIdFromVotesMap(proposalId, oldVotes);
         }
+        votesToProposalIds[newVotes].push(proposalId);
+
+        _updateRanks(oldVotes, newVotes);
     }
 }

@@ -939,12 +939,14 @@ abstract contract GovernorSorting {
     // TTs that may occur in your contest. The thing to consider with regard to making it too high is just
     // that it is more gas for users on average the higher that RANK_LIMIT is set.
 
+    uint256 public sortingEnabled; // Either 0 for false or 1 for true
     uint256 public rankLimit; // RULE: Cannot be 0
 
     // RULE: array length can never end lower than it started a transaction, otherwise erroneous ranking can happen
     uint256[] public sortedRanks; // value is votes counts, has the constraint of no duplicate values.
 
-    constructor(uint256 rankLimit_) {
+    constructor(uint256 sortingEnabled_, uint256 rankLimit_) {
+        sortingEnabled = sortingEnabled_;
         rankLimit = rankLimit_;
     }
 
@@ -4907,6 +4909,7 @@ abstract contract Governor is GovernorSorting {
         uint256 votingPeriod;
         uint256 numAllowedProposalSubmissions;
         uint256 maxProposalCount;
+        uint256 sortingEnabled;
         uint256 rankLimit;
         uint256 percentageToRewards;
         uint256 costToVote;
@@ -4960,7 +4963,7 @@ abstract contract Governor is GovernorSorting {
     address public constant JK_LABS_ADDRESS = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738; // Our hot wallet that we collect revenue to.
     uint256 public constant PRICE_CURVE_UPDATE_INTERVAL = 60; // How often the price curve updates if applicable.
     uint256 public constant COST_ROUNDING_VALUE = 1e12; // Used for rounding costs, means cost to propose or vote can't be less than 1e18/this.
-    string private constant VERSION = "6.15"; // Private as to not clutter the ABI.
+    string private constant VERSION = "6.14"; // Private as to not clutter the ABI.
 
     string public name; // The title of the contest
     string public prompt;
@@ -5579,22 +5582,137 @@ abstract contract GovernorCountingSimple is Governor {
         if (firstTimeVoting) {
             proposalVote.addressesVoted.push(account);
         }
-
         addressTotalCastVoteCount[account] += numVotes;
         totalVotesCast += numVotes;
 
-        // this point down is maintaining sorting
-        uint256 newVotes = proposalVote.proposalVoteCount; // only check state var once to save on gas
-        uint256 oldVotes = newVotes - numVotes;
+        // sorting and consequently rewards module compatibility is only available if sorting enabled
+        if (sortingEnabled == 1) {
+            uint256 newVotes = proposalVote.proposalVoteCount; // only check state var once to save on gas
+            uint256 oldVotes = newVotes - numVotes;
 
-        // update map of forVotes => proposalId[] to be able to go from rank => proposalId.
-        // if oldVotes is 0, then this proposal will not already be in this map, so we don't need to rm it
-        if (oldVotes > 0) {
-            _rmProposalIdFromVotesMap(proposalId, oldVotes);
+            // update map of forVotes => proposalId[] to be able to go from rank => proposalId.
+            // if oldVotes is 0, then this proposal will not already be in this map, so we don't need to rm it
+            if (oldVotes > 0) {
+                _rmProposalIdFromVotesMap(proposalId, oldVotes);
+            }
+            votesToProposalIds[newVotes].push(proposalId);
+
+            _updateRanks(oldVotes, newVotes);
         }
-        votesToProposalIds[newVotes].push(proposalId);
+    }
+}
 
-        _updateRanks(oldVotes, newVotes);
+// src/governance/extensions/GovernorEngagement.sol
+
+/**
+ * @dev Extension of {Governor} for engagement features.
+ */
+abstract contract GovernorEngagement is Governor {
+    struct CommentCore {
+        address author;
+        uint256 timestamp;
+        uint256 proposalId;
+        string commentContent;
+    }
+
+    event CommentCreated(uint256 commentId);
+    event CommentsDeleted(uint256[] commentIds);
+
+    uint256[] public commentIds;
+    uint256[] public deletedCommentIds;
+    mapping(uint256 => CommentCore) public comments;
+    mapping(uint256 => uint256[]) public proposalComments;
+    mapping(uint256 => bool) public commentIsDeleted;
+
+    error OnlyCreatorOrAuthorCanDeleteComments(uint256 failedToDeleteCommentId);
+    error CannotCommentWhenCompletedOrCanceled();
+    error CannotDeleteWhenCompletedOrCanceled();
+
+    /**
+     * @dev Hashing function used to build the comment id from the comment details.
+     */
+    function hashComment(CommentCore memory commentObj) public pure returns (uint256) {
+        return uint256(keccak256(abi.encode(commentObj)));
+    }
+
+    /**
+     * @dev Return all commentIds.
+     */
+    function getAllCommentIds() public view returns (uint256[] memory) {
+        return commentIds;
+    }
+
+    /**
+     * @dev Return all deleted commentIds.
+     */
+    function getAllDeletedCommentIds() public view returns (uint256[] memory) {
+        return deletedCommentIds;
+    }
+
+    /**
+     * @dev Return a comment object.
+     */
+    function getComment(uint256 commentId) public view returns (CommentCore memory) {
+        return comments[commentId];
+    }
+
+    /**
+     * @dev Return the array of commentIds on a given proposalId.
+     */
+    function getProposalComments(uint256 proposalId) public view returns (uint256[] memory) {
+        return proposalComments[proposalId];
+    }
+
+    /**
+     * @dev Comment on a proposal.
+     *
+     * Emits a {CommentCreated} event.
+     */
+    function comment(uint256 proposalId, string memory commentContent) public returns (uint256) {
+        if (state() == ContestState.Completed || state() == ContestState.Canceled) {
+            revert CannotCommentWhenCompletedOrCanceled();
+        }
+
+        CommentCore memory commentObject = CommentCore({
+            author: msg.sender, timestamp: block.timestamp, proposalId: proposalId, commentContent: commentContent
+        });
+        uint256 commentId = hashComment(commentObject);
+
+        commentIds.push(commentId);
+        comments[commentId] = commentObject;
+        proposalComments[proposalId].push(commentId);
+
+        emit CommentCreated(commentId);
+
+        return commentId;
+    }
+
+    /**
+     * @dev Delete comments.
+     *
+     * Emits a {CommentsDeleted} event.
+     */
+    function deleteComments(uint256[] memory commentIdsParam) public {
+        if (state() == ContestState.Completed || state() == ContestState.Canceled) {
+            revert CannotDeleteWhenCompletedOrCanceled();
+        }
+
+        uint256 commentIdsParamMemVar = commentIdsParam.length;
+
+        for (uint256 index = 0; index < commentIdsParamMemVar; index++) {
+            uint256 currentCommentId = commentIdsParam[index];
+
+            if ((msg.sender != creator) && (msg.sender != comments[currentCommentId].author)) {
+                revert OnlyCreatorOrAuthorCanDeleteComments(currentCommentId);
+            }
+
+            if (!commentIsDeleted[currentCommentId]) {
+                commentIsDeleted[currentCommentId] = true;
+                deletedCommentIds.push(currentCommentId);
+            }
+        }
+
+        emit CommentsDeleted(commentIdsParam);
     }
 }
 
@@ -5645,7 +5763,7 @@ contract VoterRewardsModule {
     string public constant MODULE_TYPE = "VOTER_REWARDS";
     address public constant JK_LABS_ADDRESS = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738; // Our hot wallet that we collect revenue to.
     uint256 public constant JK_LABS_CANCEL_DELAY = 604800; // One week
-    string private constant VERSION = "6.15"; // Private as to not clutter the ABI
+    string private constant VERSION = "6.14"; // Private as to not clutter the ABI
 
     GovernorCountingSimple public underlyingContest;
     address public creator;
@@ -5655,6 +5773,7 @@ contract VoterRewardsModule {
     error PayeesSharesLengthMismatch();
     error MustHaveAtLeastOnePayee();
     error TotalSharesCannotBeZero();
+    error MustHaveSortingEnabled();
     error ContestMustBeCompleted();
     error PayoutRankCannotBeZero();
     error RankingHasNoShares();
@@ -5765,6 +5884,7 @@ contract VoterRewardsModule {
      * @dev Run release checks.
      */
     function runReleaseChecks(uint256 ranking) public view {
+        if (underlyingContest.sortingEnabled() != 1) revert MustHaveSortingEnabled();
         if (underlyingContest.state() != Governor.ContestState.Completed) revert ContestMustBeCompleted();
         if (ranking == 0) revert PayoutRankCannotBeZero();
         if (shares[ranking] == 0) revert RankingHasNoShares();
@@ -5943,6 +6063,67 @@ contract VoterRewardsModule {
         shares[ranking] = shares_;
         totalShares = totalShares + shares_;
         emit PayeeAdded(ranking, shares_);
+    }
+}
+
+// src/governance/extensions/GovernorModuleRegistry.sol
+
+/**
+ * @dev Extension of {Governor} for module management.
+ */
+abstract contract GovernorModuleRegistry is Governor {
+    event OfficialRewardsModuleSet(address oldOfficialRewardsModule, address newOfficialRewardsModule);
+
+    address public officialRewardsModule;
+
+    error OnlyCreatorCanSetRewardsModule();
+    error OfficialRewardsModuleCanOnlyBeSetOnce();
+    error OfficialRewardsModuleMustPointToThisContest();
+
+    /**
+     * @dev Returns the official rewards module.
+     */
+    function _getOfficialRewardsModule() internal view override returns (address) {
+        return officialRewardsModule;
+    }
+
+    /**
+     * @dev Get the official rewards module contract for this contest (effectively reverse record).
+     */
+    function setOfficialRewardsModule(address officialRewardsModule_) public {
+        if (msg.sender != creator) revert OnlyCreatorCanSetRewardsModule();
+        if (officialRewardsModule != address(0)) revert OfficialRewardsModuleCanOnlyBeSetOnce();
+        if (address(VoterRewardsModule(payable(officialRewardsModule_)).underlyingContest()) != address(this)) {
+            revert OfficialRewardsModuleMustPointToThisContest();
+        }
+        address oldOfficialRewardsModule = officialRewardsModule;
+        officialRewardsModule = officialRewardsModule_;
+        emit OfficialRewardsModuleSet(oldOfficialRewardsModule, officialRewardsModule_);
+    }
+}
+
+// src/Contest.sol
+
+contract Contest is GovernorCountingSimple, GovernorModuleRegistry, GovernorEngagement {
+    uint256 public constant SECONDS_IN_DAY = 86400;
+
+    error PeriodsOutsideBounds();
+    error RankLimitCannotBeZero();
+
+    constructor(ConstructorArgs memory _constructorArgs)
+        Governor(_constructorArgs)
+        GovernorSorting(
+            _constructorArgs.intConstructorArgs.sortingEnabled, _constructorArgs.intConstructorArgs.rankLimit
+        )
+    {
+        if (
+            (_constructorArgs.intConstructorArgs.votingDelay > (30 * SECONDS_IN_DAY))
+                || (_constructorArgs.intConstructorArgs.votingPeriod > SECONDS_IN_DAY)
+        ) {
+            revert PeriodsOutsideBounds();
+        }
+
+        if (_constructorArgs.intConstructorArgs.rankLimit == 0) revert RankLimitCannotBeZero();
     }
 }
 

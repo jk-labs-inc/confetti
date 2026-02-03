@@ -7,7 +7,7 @@ import {
 } from "@config/routes";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { ErrorBoundary } from "react-error-boundary";
+import { ErrorBoundary, getErrorMessage } from "react-error-boundary";
 
 interface LayoutContestsProps {
   children: React.ReactNode;
@@ -81,7 +81,7 @@ const LayoutContests = (props: LayoutContestsProps) => {
         fallbackRender={({ error, resetErrorBoundary }) => (
           <div role="alert" className="container m-auto sm:text-center">
             <p className="text-4xl font-black mb-3 text-neutral-11">Something went wrong</p>
-            <p className="text-neutral-12 mb-4">{error?.message ?? error}</p>
+            <p className="text-neutral-12 mb-4">{getErrorMessage(error)}</p>
             <p className="mb-6">
               This site&apos;s current deployment does not have access to Confetti&apos;s reference database of
               contests, but you can check out our Supabase backups{" "}
