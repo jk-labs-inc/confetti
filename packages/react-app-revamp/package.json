@@ -10,8 +10,8 @@
     "postinstall": "npx setup-para"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "3.980.0",
-    "@aws-sdk/s3-request-presigner": "3.980.0",
+    "@aws-sdk/client-s3": "3.981.0",
+    "@aws-sdk/s3-request-presigner": "3.981.0",
     "@babel/core": "7.29.0",
     "@babel/preset-env": "7.29.0",
     "@bigmi/react": "0.6.5",
