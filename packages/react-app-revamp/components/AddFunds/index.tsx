@@ -1,7 +1,9 @@
 import { getChainLogo } from "@helpers/getChainLogo";
 import Image from "next/image";
-import { FC } from "react";
+import { FC, useMemo, useState } from "react";
+import AddFundsToggle from "./components/Toggle";
 import AddFundsProviders, { AddFundsProviderType } from "./providers";
+import { isOnrampSupportedForChain } from "./providers/onramp/utils";
 
 interface AddFundsProps {
   chain: string;
@@ -9,10 +11,19 @@ interface AddFundsProps {
   showBackButton?: boolean;
   className?: string;
   onGoBack?: () => void;
+  onCloseModal?: () => void;
 }
 
-const AddFunds: FC<AddFundsProps> = ({ chain, asset, onGoBack, showBackButton = true, className }) => {
+const AddFunds: FC<AddFundsProps> = ({ chain, asset, onGoBack, showBackButton = true, className, onCloseModal }) => {
+  const supportsOnramp = useMemo(() => isOnrampSupportedForChain(chain), [chain]);
+  const [providerType, setProviderType] = useState<AddFundsProviderType>(
+    supportsOnramp ? AddFundsProviderType.ONRAMP : AddFundsProviderType.BRIDGE,
+  );
   const chainLogo = getChainLogo(chain);
+
+  const handleToggleChange = (type: AddFundsProviderType) => {
+    setProviderType(type);
+  };
 
   return (
     <div className={`flex flex-col gap-4 md:gap-6 w-full ${className}`}>
@@ -28,7 +39,16 @@ const AddFunds: FC<AddFundsProps> = ({ chain, asset, onGoBack, showBackButton = 
             </div>
           </div>
         </div>
-        <AddFundsProviders chain={chain} asset={asset} type={AddFundsProviderType.BRIDGE} />
+
+        <AddFundsToggle value={providerType} onChange={handleToggleChange} bridgeFirst={!supportsOnramp} />
+
+        <AddFundsProviders
+          chain={chain}
+          asset={asset}
+          type={providerType}
+          onCloseModal={onCloseModal}
+          onrampDisabled={!supportsOnramp}
+        />
       </div>
       <div className="flex items-start flex-col gap-4 md:gap-2">
         {showBackButton && (

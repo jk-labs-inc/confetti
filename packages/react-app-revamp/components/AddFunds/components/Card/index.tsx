@@ -1,6 +1,8 @@
-import { ChevronUpIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
+import { ChevronUpIcon, ChevronDownIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import { FC, ReactNode, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
+
+type AddFundsCardVariant = "expandable" | "modal";
 
 interface AddFundsCardProps {
   name: string;
@@ -11,7 +13,9 @@ interface AddFundsCardProps {
   disabled?: boolean;
   disabledMessage?: string;
   expanded?: boolean;
+  variant?: AddFundsCardVariant;
   children?: ReactNode;
+  onClick?: () => void;
 }
 
 const AddFundsCard: FC<AddFundsCardProps> = ({
@@ -23,30 +27,59 @@ const AddFundsCard: FC<AddFundsCardProps> = ({
   disabled = false,
   disabledMessage = "",
   expanded = false,
+  variant = "expandable",
+  onClick,
   children,
 }) => {
   const [isExpanded, setIsExpanded] = useState(expanded);
+  const isModalVariant = variant === "modal";
 
   const handleClick = () => {
     if (disabled) return;
 
-    setIsExpanded(!isExpanded);
+    if (isModalVariant) {
+      onClick?.();
+    } else {
+      setIsExpanded(!isExpanded);
+    }
+  };
+
+  const renderIcon = () => {
+    if (disabled) return null;
+
+    if (isModalVariant) {
+      return (
+        <ChevronRightIcon
+          className={`w-6 h-6 text-neutral-9 transition-colors duration-300 ease-in-out group-hover:text-neutral-11`}
+        />
+      );
+    }
+
+    return isExpanded ? (
+      <ChevronUpIcon className="w-6 h-6 text-neutral-9 transition-colors duration-300 ease-in-out" />
+    ) : (
+      <ChevronDownIcon
+        className={`w-6 h-6 text-neutral-9 transition-colors duration-300 ease-in-out group-hover:text-neutral-11`}
+      />
+    );
   };
 
   return (
     <div className="relative">
       <div
         className={`${disabled ? "filter blur-[1px] opacity-50" : ""} ${
-          isExpanded && children ? "shadow-entry-card rounded-2xl" : ""
-        } ${isExpanded && children ? "border border-transparent" : ""}`}
+          isExpanded && children && !isModalVariant ? "shadow-entry-card rounded-2xl" : ""
+        } ${isExpanded && children && !isModalVariant ? "border border-transparent" : ""}`}
       >
         <button
           onClick={handleClick}
           disabled={disabled}
-          className={`group flex w-full p-4 ${isExpanded ? "rounded-t-2xl" : "rounded-2xl"} border border-transparent ${
-            !isExpanded && !disabled ? "hover:border-neutral-9" : ""
+          className={`group flex w-full p-4 ${
+            isExpanded && !isModalVariant ? "rounded-t-2xl" : "rounded-2xl"
+          } border border-transparent ${
+            (!isExpanded || isModalVariant) && !disabled ? "hover:border-neutral-9" : ""
           } transition-colors duration-300 ease-in-out ${disabled ? "cursor-not-allowed" : "cursor-pointer"} ${
-            !isExpanded || !children ? "shadow-entry-card" : ""
+            !isExpanded || !children || isModalVariant ? "shadow-entry-card" : ""
           }`}
         >
           <div className="flex gap-4 items-center w-full">
@@ -62,34 +95,25 @@ const AddFundsCard: FC<AddFundsCardProps> = ({
                 {description}
               </p>
             </div>
-            <div className="ml-auto">
-              {!disabled &&
-                (isExpanded ? (
-                  <ChevronUpIcon className="w-6 h-6 text-neutral-9 transition-colors duration-300 ease-in-out" />
-                ) : (
-                  <ChevronDownIcon
-                    className={`w-6 h-6 text-neutral-9 transition-colors duration-300 ease-in-out ${
-                      !disabled ? "group-hover:text-neutral-11" : ""
-                    }`}
-                  />
-                ))}
-            </div>
+            <div className="ml-auto">{renderIcon()}</div>
           </div>
         </button>
 
-        <AnimatePresence>
-          {isExpanded && children && (
-            <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: "auto", opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.3, ease: "easeInOut" }}
-              className="overflow-hidden border-l border-r border-b border-transparent rounded-b-2xl w-full max-w-full"
-            >
-              <div className="w-full max-w-full overflow-x-hidden">{children}</div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {!isModalVariant && (
+          <AnimatePresence>
+            {isExpanded && children && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+                className="overflow-hidden border-l border-r border-b border-transparent rounded-b-2xl w-full max-w-full"
+              >
+                <div className="w-full max-w-full overflow-x-hidden">{children}</div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        )}
       </div>
 
       {disabled && disabledMessage && (
