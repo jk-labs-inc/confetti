@@ -2695,14 +2695,14 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
-"@lifi/sdk@^3.15.4":
-  version "3.15.4"
-  resolved "https://registry.yarnpkg.com/@lifi/sdk/-/sdk-3.15.4.tgz#85bcc4c3ef442cddfc2fa460d6912f44521f984d"
-  integrity sha512-6/BrtIie/EE1hBFYCLJvkEwR2tMUW9oQZqNfcA1h5V8+cXhoTFwaXhm2qCQLknY9U40ooZtdw1kUyFbBom7WCQ==
+"@lifi/sdk@^3.15.5":
+  version "3.15.5"
+  resolved "https://registry.yarnpkg.com/@lifi/sdk/-/sdk-3.15.5.tgz#871dd466ab0a68b178f2cfa1298562df58843453"
+  integrity sha512-hbFA6s6woWBtn8qSPC1OeAoXkrzWOT+1M+tCXMlz/VE1nVBj/lI4Rc/TkEuxW12GF8t1GwJMAE0sANxEEDqReg==
   dependencies:
     "@bigmi/core" "^0.6.5"
     "@bitcoinerlab/secp256k1" "^1.2.0"
-    "@lifi/types" "17.57.0"
+    "@lifi/types" "17.59.0"
     "@mysten/sui" "^1.45.2"
     "@mysten/wallet-standard" "^0.19.9"
     "@noble/curves" "^1.9.7"
@@ -2711,49 +2711,49 @@
     bech32 "^2.0.0"
     bitcoinjs-lib "^7.0.1"
     bs58 "^6.0.0"
-    viem "^2.44.4"
+    viem "^2.45.1"
 
-"@lifi/types@17.57.0":
-  version "17.57.0"
-  resolved "https://registry.yarnpkg.com/@lifi/types/-/types-17.57.0.tgz#d77bf2b299a75d76fdd35214b05d7c0586ddd36c"
-  integrity sha512-zfLyJIJfNr9dvIxfsVkhXRZvh7+rZ9o1gUTgHs2MPtf5dLMhUrHY6DdE1qejw7ckBRkJCZ2wXM5sQ19yRsPOUw==
+"@lifi/types@17.59.0":
+  version "17.59.0"
+  resolved "https://registry.yarnpkg.com/@lifi/types/-/types-17.59.0.tgz#d94ed7121d58cb45f7eee4a33f1877a970e7bc90"
+  integrity sha512-skXdBgQgp0Fc10vrNVp4EkYAYkwUy2jnt1hd3MbrbOGbP8rjeEys4iarAWin/pRWkRht/+JEtAje9MWlBOuWFg==
   dependencies:
     viem "^2.33.2"
 
-"@lifi/wallet-management@^3.22.4":
-  version "3.22.4"
-  resolved "https://registry.yarnpkg.com/@lifi/wallet-management/-/wallet-management-3.22.4.tgz#1afb053a4682dbdb94c3646b9aad833da838777a"
-  integrity sha512-Hc8qZZG8Nc5tt+ZUNUkyShMfrVPCET9iXdKUcGo3lGCUJcIcbaay++gP87shd1UCOuJbkgpo5pZMIwIQOakkIw==
+"@lifi/wallet-management@^3.22.5":
+  version "3.22.5"
+  resolved "https://registry.yarnpkg.com/@lifi/wallet-management/-/wallet-management-3.22.5.tgz#a613b5006829e68e6365eeb8f5bfb62fe0f2f51e"
+  integrity sha512-Fgml91NpR4r4uC0NAWF1lKyM6lagNiyotgD/UJkR2yDelnkPKf8qXdkgrpHO93mywVVqOjj72MyxQgkjh+VROA==
   dependencies:
     "@bigmi/client" "^0.6.5"
     "@bigmi/core" "^0.6.5"
     "@emotion/react" "^11.14.0"
     "@emotion/styled" "^11.14.1"
-    "@lifi/sdk" "^3.15.4"
+    "@lifi/sdk" "^3.15.5"
     "@mui/icons-material" "^7.3.7"
     "@mui/material" "^7.3.7"
     "@mui/system" "^7.3.7"
     "@mysten/wallet-standard" "^0.19.9"
     "@solana/wallet-adapter-base" "^0.9.27"
     "@solana/web3.js" "^1.98.4"
-    i18next "^25.7.4"
+    i18next "^25.8.1"
     mitt "^3.0.1"
-    react-i18next "^16.5.3"
+    react-i18next "^16.5.4"
     use-sync-external-store "^1.6.0"
-    viem "^2.44.4"
-    zustand "^5.0.10"
+    viem "^2.45.1"
+    zustand "^5.0.11"
 
-"@lifi/widget@3.40.5":
-  version "3.40.5"
-  resolved "https://registry.yarnpkg.com/@lifi/widget/-/widget-3.40.5.tgz#0e8b059b48911398232f381ba5db875fe15c4949"
-  integrity sha512-0JC+W/44GXZ0Qkf1Gu96QXIRxbJ60IcehK4cVj4STowrZb0bnXqpz1pyE5/Z1bkTQ/hmfIyzJuBCzRar5bV+Eg==
+"@lifi/widget@3.40.6":
+  version "3.40.6"
+  resolved "https://registry.yarnpkg.com/@lifi/widget/-/widget-3.40.6.tgz#3b0113bfbc2b715bc3d4738d5bcb1cfbc4768028"
+  integrity sha512-BNLCFXKxlsSoh6Qd97EeIe5JjotKh8Hm7Q0yiHukr6T3kygBdSrZQJmZYrmXxcxAIVSdcCTIoqqhwH4cJoUTTQ==
   dependencies:
     "@bigmi/client" "^0.6.5"
     "@bigmi/core" "^0.6.5"
     "@emotion/react" "^11.14.0"
     "@emotion/styled" "^11.14.1"
-    "@lifi/sdk" "^3.15.4"
-    "@lifi/wallet-management" "^3.22.4"
+    "@lifi/sdk" "^3.15.5"
+    "@lifi/wallet-management" "^3.22.5"
     "@mui/icons-material" "^7.3.7"
     "@mui/material" "^7.3.7"
     "@mui/system" "^7.3.7"
@@ -2762,15 +2762,15 @@
     "@solana/wallet-adapter-coinbase" "^0.1.23"
     "@solana/web3.js" "^1.98.4"
     "@tanstack/react-virtual" "^3.13.18"
-    i18next "^25.7.4"
+    i18next "^25.8.1"
     microdiff "^1.5.0"
     mitt "^3.0.1"
-    react-i18next "^16.5.3"
+    react-i18next "^16.5.4"
     react-intersection-observer "^9.16.0"
     react-router-dom "^6.30.3"
     react-transition-group "^4.4.5"
-    viem "^2.44.4"
-    zustand "^5.0.10"
+    viem "^2.45.1"
+    zustand "^5.0.11"
 
 "@lit-labs/ssr-dom-shim@^1.5.0":
   version "1.5.1"
@@ -5687,55 +5687,55 @@
     "@rollup/rollup-win32-arm64-msvc" "4.34.9"
     "@rollup/rollup-win32-x64-msvc" "4.34.9"
 
-"@supabase/auth-js@2.93.3":
-  version "2.93.3"
-  resolved "https://registry.yarnpkg.com/@supabase/auth-js/-/auth-js-2.93.3.tgz#1e289b91fa7ea5b9fd4e78ec1680d1fa49c4b22a"
-  integrity sha512-JdnkHZPKexVGSNONtu89RHU4bxz3X9kxx+f5ZnR5osoCIX+vs/MckwWRPZEybAEvlJXt5xjomDb3IB876QCxWQ==
+"@supabase/auth-js@2.94.1":
+  version "2.94.1"
+  resolved "https://registry.yarnpkg.com/@supabase/auth-js/-/auth-js-2.94.1.tgz#5044f9075f38d7374c5d148d5c912325a555e21d"
+  integrity sha512-Wt/SdmAtNNiqrcBbPlzWojLcE1bQ9OYb8PTaYF6QccFX5JeXZI0sZ01MLNE+E83UK6cK0lw4YznX0D2g08UQng==
   dependencies:
     tslib "2.8.1"
 
-"@supabase/functions-js@2.93.3":
-  version "2.93.3"
-  resolved "https://registry.yarnpkg.com/@supabase/functions-js/-/functions-js-2.93.3.tgz#d5a738ec1703ad356c7138f81796b42189eb2e90"
-  integrity sha512-qWO0gHNDm/5jRjROv/nv9L6sYabCWS1kzorOLUv3kqCwRvEJLYZga93ppJPrZwOgoZfXmJzvpjY8fODA4HQfBw==
+"@supabase/functions-js@2.94.1":
+  version "2.94.1"
+  resolved "https://registry.yarnpkg.com/@supabase/functions-js/-/functions-js-2.94.1.tgz#41c8a6fd442eacfa1173f24c07d8e967b31d9460"
+  integrity sha512-A7Bx0gnclDNZ4m8+mnO2IEEzMxtUSg7cpPEBF6Ek1LpjIQkC7vvoidiV/RuntnKX43IiVcWV1f2FsAppMagEmQ==
   dependencies:
     tslib "2.8.1"
 
-"@supabase/postgrest-js@2.93.3":
-  version "2.93.3"
-  resolved "https://registry.yarnpkg.com/@supabase/postgrest-js/-/postgrest-js-2.93.3.tgz#2b45d1c49896998c1fced008519d729e8fc9e0a1"
-  integrity sha512-+iJ96g94skO2e4clsRSmEXg22NUOjh9BziapsJSAvnB1grOBf/BA8vGtCHjNOA+Z6lvKXL1jwBqcL9+fS1W/Lg==
+"@supabase/postgrest-js@2.94.1":
+  version "2.94.1"
+  resolved "https://registry.yarnpkg.com/@supabase/postgrest-js/-/postgrest-js-2.94.1.tgz#3b450117d5b7ce663691c9a69df561f6f1a36cc6"
+  integrity sha512-N6MTghjHnMZddT48rAj8dIFgedCU97cc1ahQM74Tc+DF4UH7y2+iEfdYV3unJsylpaiWlu92Fy8Lj14Jbrmxog==
   dependencies:
     tslib "2.8.1"
 
-"@supabase/realtime-js@2.93.3":
-  version "2.93.3"
-  resolved "https://registry.yarnpkg.com/@supabase/realtime-js/-/realtime-js-2.93.3.tgz#71bb4c57b1fcd7a2d8dfbe60c009d9d403a545ce"
-  integrity sha512-gnYpcFzwy8IkezRP4CDbT5I8jOsiOjrWrqTY1B+7jIriXsnpifmlM6RRjLBm9oD7OwPG0/WksniGPdKW67sXOA==
+"@supabase/realtime-js@2.94.1":
+  version "2.94.1"
+  resolved "https://registry.yarnpkg.com/@supabase/realtime-js/-/realtime-js-2.94.1.tgz#3e6e1d519189e26ecdac7a33a8fd77bc6d116069"
+  integrity sha512-Wq8olpCAGmN4y2DH2kUdlcakdzNHRCde72BFS8zK5ub46bBeSUoE9DqrfeNFWKaF2gCE/cmK8aTUTorZD9jdtQ==
   dependencies:
     "@types/phoenix" "^1.6.6"
     "@types/ws" "^8.18.1"
     tslib "2.8.1"
     ws "^8.18.2"
 
-"@supabase/storage-js@2.93.3":
-  version "2.93.3"
-  resolved "https://registry.yarnpkg.com/@supabase/storage-js/-/storage-js-2.93.3.tgz#31a4811a366b3ce1d3df30439d53c19fc53ad0b6"
-  integrity sha512-cw4qXiLrx3apglDM02Tx/w/stvFlrkKocC6vCvuFAz3JtVEl1zH8MUfDQDTH59kJAQVaVdbewrMWSoBob7REnA==
+"@supabase/storage-js@2.94.1":
+  version "2.94.1"
+  resolved "https://registry.yarnpkg.com/@supabase/storage-js/-/storage-js-2.94.1.tgz#e13891dd20212b55d714974122f149732d4596c2"
+  integrity sha512-/Mi18LGyrugPwtfqETfAqEGcBQotY/7IMsTGYgEFdqr8cQq280BVQWjN2wI9KibWtshPp0Ryvil5Uzd5YfM7kA==
   dependencies:
     iceberg-js "^0.8.1"
     tslib "2.8.1"
 
-"@supabase/supabase-js@2.93.3":
-  version "2.93.3"
-  resolved "https://registry.yarnpkg.com/@supabase/supabase-js/-/supabase-js-2.93.3.tgz#c66d07914f6a6490668d42ee64f3c2fe97a104fb"
-  integrity sha512-paUqEqdBI9ztr/4bbMoCgeJ6M8ZTm2fpfjSOlzarPuzYveKFM20ZfDZqUpi9CFfYagYj5Iv3m3ztUjaI9/tM1w==
+"@supabase/supabase-js@2.94.1":
+  version "2.94.1"
+  resolved "https://registry.yarnpkg.com/@supabase/supabase-js/-/supabase-js-2.94.1.tgz#1b49879f3be10e0510d8cd8e013b67d8865e430d"
+  integrity sha512-87vOY8n3WHB3m+a/KeySj07djOQVuRA5qgX5E7db1eDkaZ1of5M+3t/tv6eYYy4BfqxuHMZuCe5uVrO/oyvoow==
   dependencies:
-    "@supabase/auth-js" "2.93.3"
-    "@supabase/functions-js" "2.93.3"
-    "@supabase/postgrest-js" "2.93.3"
-    "@supabase/realtime-js" "2.93.3"
-    "@supabase/storage-js" "2.93.3"
+    "@supabase/auth-js" "2.94.1"
+    "@supabase/functions-js" "2.94.1"
+    "@supabase/postgrest-js" "2.94.1"
+    "@supabase/realtime-js" "2.94.1"
+    "@supabase/storage-js" "2.94.1"
 
 "@surma/rollup-plugin-off-main-thread@^2.2.3":
   version "2.2.3"
@@ -6399,10 +6399,10 @@
   dependencies:
     csstype "^3.2.2"
 
-"@types/react@19.2.10":
-  version "19.2.10"
-  resolved "https://registry.yarnpkg.com/@types/react/-/react-19.2.10.tgz#f3ea799e6b4cebad6dfd231c238fc9de7652e2d2"
-  integrity sha512-WPigyYuGhgZ/cTPRXB2EwUw+XvsRA3GqHlsP4qteqrnnjDrApbS7MxcGr/hke5iUoeB7E/gQtrs9I37zAJ0Vjw==
+"@types/react@19.2.13":
+  version "19.2.13"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-19.2.13.tgz#7cea30d7f60a01d97e4ece039c04e9056682218a"
+  integrity sha512-KkiJeU6VbYbUOp5ITMIc7kBfqlYkKA5KhEHVrGMmUUMt7NeaZg65ojdPk+FtNrBAOXNVM5QM72jnADjM+XVRAQ==
   dependencies:
     csstype "^3.2.2"
 
@@ -6685,10 +6685,10 @@
   resolved "https://registry.yarnpkg.com/@vanilla-extract/recipes/-/recipes-0.5.7.tgz#6677a267ca278e2277ac8ab41b64e57e84c1150c"
   integrity sha512-Fvr+htdyb6LVUu+PhH61UFPhwkjgDEk8L4Zq9oIdte42sntpKrgFy90MyTRtGwjVALmrJ0pwRUVr8UoByYeW8A==
 
-"@vercel/build-utils@13.2.16":
-  version "13.2.16"
-  resolved "https://registry.yarnpkg.com/@vercel/build-utils/-/build-utils-13.2.16.tgz#9c945611c0ae356bce605f033a39c40356b53483"
-  integrity sha512-5i6q9xXhDaZ75bQ/VMMCyeXtRY1HTJXj47ch3BEN42BgNdvFoDSL0eQVMzi80yRjyTvJ1bzGpn1A1K5aswLZVQ==
+"@vercel/build-utils@13.3.0":
+  version "13.3.0"
+  resolved "https://registry.yarnpkg.com/@vercel/build-utils/-/build-utils-13.3.0.tgz#38c9e37d11ddf606f05035e2e0bcff73609d2114"
+  integrity sha512-xU43eZIARY9lvGkg14UGnmHrqKo3gQKjTs9x5ADj7jAzllgBaPI8ty/qUh1e6my3xPoOgRJlEA4bml2MknKUXQ==
 
 "@vercel/error-utils@2.0.3":
   version "2.0.3"
@@ -6713,16 +6713,16 @@
     picomatch "^4.0.2"
     resolve-from "^5.0.0"
 
-"@vercel/node@5.5.28":
-  version "5.5.28"
-  resolved "https://registry.yarnpkg.com/@vercel/node/-/node-5.5.28.tgz#c9611c419d8c046b1e9d059881b56631a2d38dae"
-  integrity sha512-zuhUKqFdeoTz+o6S5zyKKXERrxbJpFmbt5qMrsg7t2pfxJZSAR6xg+HRSJd710uJnKpmi4h89hp/TIu1CuvAUQ==
+"@vercel/node@5.5.30":
+  version "5.5.30"
+  resolved "https://registry.yarnpkg.com/@vercel/node/-/node-5.5.30.tgz#9350afed9a4a0c384dc7158d6d35297b78589a02"
+  integrity sha512-ofkVDx8CzWefwFH+wK36r7K2dPZqbW1k9eoVZhJkXgfLaPhb5BRd2QEHMNSlsDsTqDB9WK3CZ8J82Vp24VbPEw==
   dependencies:
     "@edge-runtime/node-utils" "2.3.0"
     "@edge-runtime/primitives" "4.1.0"
     "@edge-runtime/vm" "3.2.0"
     "@types/node" "20.11.0"
-    "@vercel/build-utils" "13.2.16"
+    "@vercel/build-utils" "13.3.0"
     "@vercel/error-utils" "2.0.3"
     "@vercel/nft" "1.1.1"
     "@vercel/static-config" "3.1.2"
@@ -10012,10 +10012,10 @@ hyphenate-style-name@^1.0.0, hyphenate-style-name@^1.0.3:
   resolved "https://registry.yarnpkg.com/hyphenate-style-name/-/hyphenate-style-name-1.1.0.tgz#1797bf50369588b47b72ca6d5e65374607cf4436"
   integrity sha512-WDC/ui2VVRrz3jOVi+XtjqkDjiVjTtFaAGiW37k6b+ohyQ5wYDOGkvCZa8+H0nx3gyvv0+BST9xuOgIyGQ00gw==
 
-i18next@^25.7.4:
-  version "25.8.1"
-  resolved "https://registry.yarnpkg.com/i18next/-/i18next-25.8.1.tgz#fb5f417bef6280a07efcf51065a3405efab6ffaa"
-  integrity sha512-nFFxhwcRNggIrkv2hx/xMYVMG7Z8iMUA4ZuH4tgcbZiI0bK1jn3kSDIXNWuQDt1xVAu7mb7Qn82TpH7ZAk/okA==
+i18next@^25.8.1:
+  version "25.8.3"
+  resolved "https://registry.yarnpkg.com/i18next/-/i18next-25.8.3.tgz#81ca4a57b12c436b0877658b914dd97b5f099cbb"
+  integrity sha512-IC/pp2vkczdu1sBheq1eC92bLavN6fM5jH61c7Xa23PGio5ePEd+EP+re1IkO7KEM9eyeJHUxvIRxsaYTlsSyQ==
   dependencies:
     "@babel/runtime" "^7.28.4"
 
@@ -12181,7 +12181,7 @@ react-html-props@2.1.1:
   resolved "https://registry.yarnpkg.com/react-html-props/-/react-html-props-2.1.1.tgz#0fded09fab434e17a7dd0ed25515b93dc0f565a6"
   integrity sha512-tM+YCYlr90m3JontKUAa+gNVU2zkyprlCS7OQ9aa3z2MfyJjAioJzrSmi1Vef/+UCTE6CQlPqLX4ebdLIJDKxw==
 
-react-i18next@^16.5.3:
+react-i18next@^16.5.4:
   version "16.5.4"
   resolved "https://registry.yarnpkg.com/react-i18next/-/react-i18next-16.5.4.tgz#4f458b1baab274dca439ab67629c854203bf97c6"
   integrity sha512-6yj+dcfMncEC21QPhOTsW8mOSO+pzFmT6uvU7XXdvM/Cp38zJkmTeMeKmTrmCMD5ToT79FmiE/mRWiYWcJYW4g==
@@ -13787,10 +13787,24 @@ vaul@1.1.2:
   dependencies:
     "@radix-ui/react-dialog" "^1.1.1"
 
-viem@2.44.4, viem@>=2.37.9, viem@^2.23.15, viem@^2.27.2, viem@^2.33.2, viem@^2.44.4:
+viem@2.44.4, viem@>=2.37.9, viem@^2.23.15, viem@^2.27.2, viem@^2.33.2:
   version "2.44.4"
   resolved "https://registry.yarnpkg.com/viem/-/viem-2.44.4.tgz#f749f038f9bd5a93b959319a35a1554803a09c2e"
   integrity sha512-sJDLVl2EsS5Fo7GSWZME5CXEV7QRYkUJPeBw7ac+4XI3D4ydvMw/gjulTsT5pgqcpu70BploFnOAC6DLpan1Yg==
+  dependencies:
+    "@noble/curves" "1.9.1"
+    "@noble/hashes" "1.8.0"
+    "@scure/bip32" "1.7.0"
+    "@scure/bip39" "1.6.0"
+    abitype "1.2.3"
+    isows "1.0.7"
+    ox "0.11.3"
+    ws "8.18.3"
+
+viem@2.45.1, viem@^2.45.1:
+  version "2.45.1"
+  resolved "https://registry.yarnpkg.com/viem/-/viem-2.45.1.tgz#c1c373efcf2a0b30f5e454cfb4a9c18ac5bb5452"
+  integrity sha512-LN6Pp7vSfv50LgwhkfSbIXftAM5J89lP9x8TeDa8QM7o41IxlHrDh0F9X+FfnCWtsz11pEVV5sn+yBUoOHNqYA==
   dependencies:
     "@noble/curves" "1.9.1"
     "@noble/hashes" "1.8.0"
@@ -14321,7 +14335,7 @@ zustand@5.0.0:
   resolved "https://registry.yarnpkg.com/zustand/-/zustand-5.0.0.tgz#71f8aaecf185592a3ba2743d7516607361899da9"
   integrity sha512-LE+VcmbartOPM+auOjCCLQOsQ05zUTp8RkgwRzefUk+2jISdMMFnxvyTjA4YNWr5ZGXYbVsEMZosttuxUBkojQ==
 
-zustand@5.0.11, zustand@^5.0.1, zustand@^5.0.10, zustand@^5.0.9:
+zustand@5.0.11, zustand@^5.0.11:
   version "5.0.11"
   resolved "https://registry.yarnpkg.com/zustand/-/zustand-5.0.11.tgz#99f912e590de1ca9ce6c6d1cab6cdb1f034ab494"
   integrity sha512-fdZY+dk7zn/vbWNCYmzZULHRrss0jx5pPFiOuMZ/5HJN6Yv3u+1Wswy/4MpZEkEGhtNH+pwxZB8OKgUBPzYAGg==
@@ -14332,3 +14346,8 @@ zustand@^4.5.2, zustand@^4.5.4:
   integrity sha512-CHOUy7mu3lbD6o6LJLfllpjkzhHXSBlX8B9+qPddUsIfeF5S/UZ5q0kmCsnRqT1UHFQZchNFDDzMbQsuesHWlw==
   dependencies:
     use-sync-external-store "^1.2.2"
+
+zustand@^5.0.1, zustand@^5.0.9:
+  version "5.0.10"
+  resolved "https://registry.yarnpkg.com/zustand/-/zustand-5.0.10.tgz#4db510c0c4c25a5f1ae43227b307ddf1641a3210"
+  integrity sha512-U1AiltS1O9hSy3rul+Ub82ut2fqIAefiSuwECWt6jlMVUGejvf+5omLcRBSzqbRagSM3hQZbtzdeRc6QVScXTg==

@@ -12,7 +12,7 @@ const EarnForBeliefs = () => {
           <div className="flex flex-col gap-4 text-base lg:text-lg 2xl:text-xl text-neutral-11 max-w-[400px]">
             <p>buy votes on whatever you believe.</p>
             <p>
-              90% of what you spend goes into the <br className="hidden 2xl:block" />
+              90% of what you spend goes into the <br className="hidden lg:block" />
               rewards pool.
             </p>
             <p>you earn a share of the rewards pool for voting on winners, proportionate to your vote.</p>
