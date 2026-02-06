@@ -48,7 +48,7 @@ const DUNE_SUPPORTED_CHAIN_NAMES = [
 ];
 
 //TODO: update this to the actual dune link?
-const DUNE_EXTENSION_LINK = "https://dune.com/socialgraphvc/jokerace-creator";
+const DUNE_EXTENSION_LINK = "https://dune.com/socialgraphventures/jokerace-creator";
 const DUNE_CONTRACT_ADDRESS_PARAM = "contract_address";
 const DUNE_CHAIN_NAME_PARAM = "chain_name";
 
