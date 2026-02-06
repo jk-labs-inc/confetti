@@ -1,9 +1,6 @@
-export enum ParaOnrampProvider {
-  RAMP = "ramp",
-  STRIPE = "stripe",
-  MOONPAY = "moonpay",
-}
-
+/**
+ * Supported networks for Para onramp
+ */
 export enum ParaOnrampNetwork {
   ETHEREUM = "ethereum",
   ARBITRUM = "arbitrum",
@@ -12,41 +9,18 @@ export enum ParaOnrampNetwork {
   CELO = "celo",
 }
 
-export interface OnrampProviderConfig {
-  id: ParaOnrampProvider;
+/**
+ * Para onramp provider configuration
+ * Para is the wallet manager that handles onramping through Stripe and MoonPay
+ */
+export interface ParaOnrampConfig {
   name: string;
-  fees: string;
+  description: string;
   logo: string;
-  logoBorderColor?: string;
-  enabled: boolean;
-  restrictions?: string;
 }
 
-export const ONRAMP_PROVIDERS_CONFIG: OnrampProviderConfig[] = [
-  {
-    id: ParaOnrampProvider.RAMP,
-    name: "ramp",
-    fees: "2.5% fees",
-    //TODO: add ramp logo?
-    logo: "/add-funds/ramp.svg",
-    logoBorderColor: "#21bf73",
-    enabled: false, // TODO: enable when ready
-  },
-  {
-    id: ParaOnrampProvider.MOONPAY,
-    name: "moonpay",
-    fees: "2.7% fees",
-    logo: "/add-funds/moonpay.svg",
-    logoBorderColor: "#7D00FF",
-    enabled: false, // TODO: enable when ready
-    restrictions: "NY citizens excluded",
-  },
-  {
-    id: ParaOnrampProvider.STRIPE,
-    name: "stripe",
-    fees: "0.99% fees",
-    logo: "/add-funds/stripe.svg",
-    logoBorderColor: "#635BFF",
-    enabled: true,
-  },
-];
+export const PARA_ONRAMP_CONFIG: ParaOnrampConfig = {
+  name: "para",
+  description: "stripe and moonpay included",
+  logo: "/add-funds/para.svg",
+};

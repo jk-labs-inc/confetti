@@ -1,4 +1,4 @@
-import { OnrampProviderConfig, ParaOnrampNetwork, ParaOnrampProvider, ONRAMP_PROVIDERS_CONFIG } from "./types";
+import { ParaOnrampNetwork } from "./types";
 
 const CHAIN_TO_ONRAMP_NETWORK: Record<string, ParaOnrampNetwork> = {
   mainnet: ParaOnrampNetwork.ETHEREUM,
@@ -7,20 +7,6 @@ const CHAIN_TO_ONRAMP_NETWORK: Record<string, ParaOnrampNetwork> = {
   base: ParaOnrampNetwork.BASE,
   polygon: ParaOnrampNetwork.POLYGON,
   celo: ParaOnrampNetwork.CELO,
-};
-
-/**
- * Get all enabled onramp providers
- */
-export const getEnabledOnrampProviders = (): OnrampProviderConfig[] => {
-  return ONRAMP_PROVIDERS_CONFIG.filter(provider => provider.enabled);
-};
-
-/**
- * Get a specific provider config by ID
- */
-export const getOnrampProviderConfig = (id: ParaOnrampProvider): OnrampProviderConfig | undefined => {
-  return ONRAMP_PROVIDERS_CONFIG.find(provider => provider.id === id);
 };
 
 /**

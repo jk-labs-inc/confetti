@@ -8,7 +8,6 @@ interface AddFundsCardProps {
   name: string;
   description: string;
   logo: string;
-  logoBorderColor?: string;
   descriptionClassName?: string;
   disabled?: boolean;
   disabledMessage?: string;
@@ -22,7 +21,6 @@ const AddFundsCard: FC<AddFundsCardProps> = ({
   name,
   description,
   logo,
-  logoBorderColor,
   descriptionClassName = "",
   disabled = false,
   disabledMessage = "",
@@ -83,12 +81,7 @@ const AddFundsCard: FC<AddFundsCardProps> = ({
           }`}
         >
           <div className="flex gap-4 items-center w-full">
-            <img
-              src={logo}
-              alt={name}
-              className="w-10 h-10 rounded-full border px-[3px]"
-              style={logoBorderColor ? { borderColor: logoBorderColor } : {}}
-            />
+            <img src={logo} alt={name} className="w-10 h-10" />
             <div className="flex flex-col items-start">
               <p className="text-neutral-11 font-bold text-[24px]">{name}</p>
               <p className={`text-neutral-9 font-bold normal-case ${descriptionClassName || "text-[12px]"}`}>
