@@ -2920,34 +2920,31 @@
     "@mysten/utils" "0.2.0"
     "@scure/base" "^1.2.6"
 
-"@mysten/dapp-kit@0.20.0":
-  version "0.20.0"
-  resolved "https://registry.yarnpkg.com/@mysten/dapp-kit/-/dapp-kit-0.20.0.tgz#7d1187fcb23b972eb07d0436bc5cd898e64fceec"
-  integrity sha512-Pho3fda4UvLQJA1Bqbm9iE6zYq4FCUshuacdd4kNO87aFAC7E+n07iRG9RxVSHGAwWeuILKIxRbrwASxPKTA6w==
+"@mysten/dapp-kit@1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@mysten/dapp-kit/-/dapp-kit-1.0.1.tgz#40dfbae33faa239c06fa9842cfe679d42d7f3ff4"
+  integrity sha512-Qa/cSs2e403VL/AMfXE5O3dtHUXI/E/LkOjB5h0RrPG3ysSR7Y/wzDOEKHGK78MkbHKOxFMXj+oSeVOmXoxGrQ==
   dependencies:
-    "@mysten/slush-wallet" "0.3.0"
-    "@mysten/sui" "1.45.2"
-    "@mysten/utils" "0.2.0"
-    "@mysten/wallet-standard" "0.19.9"
+    "@mysten/slush-wallet" "^1.0.1"
+    "@mysten/utils" "^0.3.0"
+    "@mysten/wallet-standard" "^0.20.0"
     "@radix-ui/react-dialog" "^1.1.15"
     "@radix-ui/react-dropdown-menu" "^2.1.16"
     "@radix-ui/react-slot" "^1.2.4"
-    "@vanilla-extract/css" "^1.17.5"
+    "@vanilla-extract/css" "^1.18.0"
     "@vanilla-extract/dynamic" "^2.1.5"
     "@vanilla-extract/recipes" "^0.5.7"
     clsx "^2.1.1"
-    zustand "^4.5.4"
+    zustand "^5.0.10"
 
-"@mysten/slush-wallet@0.3.0":
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/@mysten/slush-wallet/-/slush-wallet-0.3.0.tgz#1271819d61065d733059aed823a08c5f14e7da3b"
-  integrity sha512-XxEFDpJrrlgEt6cayOtFEEqsbI/2lqMl+QATvsT4TYQJ7B3FkBHPeKsyG+GVuvhVDhqXaVlGXwWrk66ri0uzhQ==
+"@mysten/slush-wallet@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@mysten/slush-wallet/-/slush-wallet-1.0.1.tgz#a293738fd8b27053b65f06be749d103d93667870"
+  integrity sha512-ry6RX20mSvaeDFclHdWZOr3vkyvGqb8WwhXndx5hEafv11JCrzqNpv/4FAGFdEPLt1HzMu51bQ/MyHtbxZXULA==
   dependencies:
-    "@mysten/sui" "1.45.2"
-    "@mysten/utils" "0.2.0"
-    "@mysten/wallet-standard" "0.19.9"
-    "@mysten/window-wallet-core" "0.1.1"
-    mitt "^3.0.1"
+    "@mysten/utils" "^0.3.0"
+    "@mysten/wallet-standard" "^0.20.0"
+    "@mysten/window-wallet-core" "^0.1.2"
     valibot "^1.2.0"
 
 "@mysten/sui@1.45.2", "@mysten/sui@^1.45.2":
@@ -2978,7 +2975,14 @@
   dependencies:
     "@scure/base" "^1.2.6"
 
-"@mysten/wallet-standard@0.19.9", "@mysten/wallet-standard@^0.19.9":
+"@mysten/utils@^0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@mysten/utils/-/utils-0.3.0.tgz#a51244d40415b5d7eacf0e22201b4ba5d350a055"
+  integrity sha512-paVyFTP+1yHXDO8uorU6YuT1EAIh/GMKXeHbxtGFPJbLzwc5jk1qfUMrks/S7MAwJHMOHcSOx+e2Mwx8ejaIew==
+  dependencies:
+    "@scure/base" "^2.0.0"
+
+"@mysten/wallet-standard@^0.19.9":
   version "0.19.9"
   resolved "https://registry.yarnpkg.com/@mysten/wallet-standard/-/wallet-standard-0.19.9.tgz#c0e64fcfbebc6e58c447df2161d3174a72a514f1"
   integrity sha512-jHFt+62os7x7y+4ZVMLck8WSanEO9b8deCD+VApUQkdAHA99TuxbREaujQTjnGQN5DaGEz8wQgeBPqxRY/vKQA==
@@ -2986,13 +2990,20 @@
     "@mysten/sui" "1.45.2"
     "@wallet-standard/core" "1.1.1"
 
-"@mysten/window-wallet-core@0.1.1":
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/@mysten/window-wallet-core/-/window-wallet-core-0.1.1.tgz#b612adcb2aae5c6fed21a72de1f1e0775fb0ed56"
-  integrity sha512-TboJvuqXvJbKy0sqK72kR3RXp7SLkgNfEaNsKWsSUwD+wV9+h/S3wtO+E+yFmPgHgOr8c7HJIQLAdunMssKZtg==
+"@mysten/wallet-standard@^0.20.0":
+  version "0.20.0"
+  resolved "https://registry.yarnpkg.com/@mysten/wallet-standard/-/wallet-standard-0.20.0.tgz#5cb5f9825ee9eee0a7ee3c4b30043e1e425f9f3a"
+  integrity sha512-GtPDZu212uRjcKFEgYh6sOkSOIv1jhO62DqmDYQ+IyzHb2Kqa/6pzaWsKBY0Ij2FYUQPrTdo4PJuoASPbqpICw==
   dependencies:
-    "@mysten/utils" "0.2.0"
-    jose "^6.1.0"
+    "@wallet-standard/core" "1.1.1"
+
+"@mysten/window-wallet-core@^0.1.2":
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/@mysten/window-wallet-core/-/window-wallet-core-0.1.2.tgz#5657146199fcc6c099a150e1530905475d300d7d"
+  integrity sha512-pZCz62cIdptSjpeafEBeHVB908aoe5pfgreJLa/GrnSszIHkGECw7jA27urISuyCq5T+OYS3360Hg6YmLhgZVg==
+  dependencies:
+    "@mysten/utils" "^0.3.0"
+    jose "^6.1.3"
     valibot "^1.2.0"
 
 "@napi-rs/wasm-runtime@^0.2.11":
@@ -4910,6 +4921,11 @@
   resolved "https://registry.yarnpkg.com/@scure/base/-/base-1.2.6.tgz#ca917184b8231394dd8847509c67a0be522e59f6"
   integrity sha512-g/nm5FgUa//MCj1gV09zTJTaM6KBAHqLN907YVQqf7zC49+DcO4B1so4ZX07Ef10Twr6nuqYEH9GEggFXA4Fmg==
 
+"@scure/base@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@scure/base/-/base-2.0.0.tgz#ba6371fddf92c2727e88ad6ab485db6e624f9a98"
+  integrity sha512-3E1kpuZginKkek01ovG8krQ0Z44E3DHPjc5S2rjJw9lZn3KSQOs8S7wqikF/AH7iRanHypj85uGyxk0XAyC37w==
+
 "@scure/base@~1.1.0", "@scure/base@~1.1.6":
   version "1.1.9"
   resolved "https://registry.yarnpkg.com/@scure/base/-/base-1.1.9.tgz#e5e142fbbfe251091f9c5f1dd4c834ac04c3dbd1"
@@ -6664,7 +6680,7 @@
   resolved "https://registry.yarnpkg.com/@unrs/resolver-binding-win32-x64-msvc/-/resolver-binding-win32-x64-msvc-1.11.1.tgz#538b1e103bf8d9864e7b85cc96fa8d6fb6c40777"
   integrity sha512-lrW200hZdbfRtztbygyaq/6jP6AKE8qQN2KvPcJ+x7wiD038YtnYtZ82IMNJ69GJibV7bwL3y9FgK+5w/pYt6g==
 
-"@vanilla-extract/css@^1.17.5":
+"@vanilla-extract/css@^1.18.0":
   version "1.18.0"
   resolved "https://registry.yarnpkg.com/@vanilla-extract/css/-/css-1.18.0.tgz#470c81b7df6b9bcdf804897ee0f58c72b5c6d463"
   integrity sha512-/p0dwOjr0o8gE5BRQ5O9P0u/2DjUd6Zfga2JGmE4KaY7ZITWMszTzk4x4CPlM5cKkRr2ZGzbE6XkuPNfp9shSQ==
@@ -10538,7 +10554,7 @@ jiti@^2.6.1:
   resolved "https://registry.yarnpkg.com/jiti/-/jiti-2.6.1.tgz#178ef2fc9a1a594248c20627cd820187a4d78d92"
   integrity sha512-ekilCSN1jwRvIbgeg/57YFh8qQDNbwDb9xT/qu2DAHbFFZUicIl4ygVaAvzveMhMVr3LnpSKTNnwt8PoOfmKhQ==
 
-jose@^6.1.0:
+jose@^6.1.3:
   version "6.1.3"
   resolved "https://registry.yarnpkg.com/jose/-/jose-6.1.3.tgz#8453d7be88af7bb7d64a0481d6a35a0145ba3ea5"
   integrity sha512-0TpaTfihd4QMNwrz/ob2Bp7X04yuxJkjRGi4aKmOqwhov54i6u79oCv7T+C7lo70MKH6BesI3vscD1yb/yzKXQ==
@@ -14376,12 +14392,12 @@ zustand@5.0.0:
   resolved "https://registry.yarnpkg.com/zustand/-/zustand-5.0.0.tgz#71f8aaecf185592a3ba2743d7516607361899da9"
   integrity sha512-LE+VcmbartOPM+auOjCCLQOsQ05zUTp8RkgwRzefUk+2jISdMMFnxvyTjA4YNWr5ZGXYbVsEMZosttuxUBkojQ==
 
-zustand@5.0.11, zustand@^5.0.1, zustand@^5.0.11, zustand@^5.0.9:
+zustand@5.0.11, zustand@^5.0.1, zustand@^5.0.10, zustand@^5.0.11, zustand@^5.0.9:
   version "5.0.11"
   resolved "https://registry.yarnpkg.com/zustand/-/zustand-5.0.11.tgz#99f912e590de1ca9ce6c6d1cab6cdb1f034ab494"
   integrity sha512-fdZY+dk7zn/vbWNCYmzZULHRrss0jx5pPFiOuMZ/5HJN6Yv3u+1Wswy/4MpZEkEGhtNH+pwxZB8OKgUBPzYAGg==
 
-zustand@^4.5.2, zustand@^4.5.4:
+zustand@^4.5.2:
   version "4.5.7"
   resolved "https://registry.yarnpkg.com/zustand/-/zustand-4.5.7.tgz#7d6bb2026a142415dd8be8891d7870e6dbe65f55"
   integrity sha512-CHOUy7mu3lbD6o6LJLfllpjkzhHXSBlX8B9+qPddUsIfeF5S/UZ5q0kmCsnRqT1UHFQZchNFDDzMbQsuesHWlw==
