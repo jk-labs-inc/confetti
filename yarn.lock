@@ -1682,6 +1682,11 @@
   dependencies:
     "@noble/curves" "^1.7.0"
 
+"@bytecodealliance/preview2-shim@0.17.6":
+  version "0.17.6"
+  resolved "https://registry.yarnpkg.com/@bytecodealliance/preview2-shim/-/preview2-shim-0.17.6.tgz#3d60f3fde44582b022643fafcee38077594069e5"
+  integrity sha512-n3cM88gTen5980UOBAD6xDcNNL3ocTK8keab21bpx1ONdA+ARj7uD1qoFxOWCyKlkpSi195FH+GeAut7Oc6zZw==
+
 "@celo/base@^7.0.3":
   version "7.0.4"
   resolved "https://registry.yarnpkg.com/@celo/base/-/base-7.0.4.tgz#92b8c1ebf81a8500918458fcd5b0d0d9d77a00a1"
@@ -4896,6 +4901,11 @@
   resolved "https://registry.yarnpkg.com/@remix-run/router/-/router-1.23.2.tgz#156c4b481c0bee22a19f7924728a67120de06971"
   integrity sha512-Ic6m2U/rMjTkhERIa/0ZtXJP17QUi2CbWE7cqx4J58M8aA3QTfW+2UlQ4psvTX9IO1RfNVhK3pcpdjej7L+t2w==
 
+"@renovatebot/pep440@4.2.1":
+  version "4.2.1"
+  resolved "https://registry.yarnpkg.com/@renovatebot/pep440/-/pep440-4.2.1.tgz#41182c943be779687b9daddb4f16294f61009001"
+  integrity sha512-2FK1hF93Fuf1laSdfiEmJvSJPVIDHEUTz68D3Fi9s0IZrrpaEcj6pTFBTbYvsgC5du4ogrtf5re7yMMvrKNgkw==
+
 "@reown/appkit-common@1.8.11":
   version "1.8.11"
   resolved "https://registry.yarnpkg.com/@reown/appkit-common/-/appkit-common-1.8.11.tgz#90e350d024c82d711b42319eb7d6768568287e0d"
@@ -6963,10 +6973,12 @@
   resolved "https://registry.yarnpkg.com/@vanilla-extract/recipes/-/recipes-0.5.7.tgz#6677a267ca278e2277ac8ab41b64e57e84c1150c"
   integrity sha512-Fvr+htdyb6LVUu+PhH61UFPhwkjgDEk8L4Zq9oIdte42sntpKrgFy90MyTRtGwjVALmrJ0pwRUVr8UoByYeW8A==
 
-"@vercel/build-utils@13.3.0":
-  version "13.3.0"
-  resolved "https://registry.yarnpkg.com/@vercel/build-utils/-/build-utils-13.3.0.tgz#38c9e37d11ddf606f05035e2e0bcff73609d2114"
-  integrity sha512-xU43eZIARY9lvGkg14UGnmHrqKo3gQKjTs9x5ADj7jAzllgBaPI8ty/qUh1e6my3xPoOgRJlEA4bml2MknKUXQ==
+"@vercel/build-utils@13.3.2":
+  version "13.3.2"
+  resolved "https://registry.yarnpkg.com/@vercel/build-utils/-/build-utils-13.3.2.tgz#57c2b991da67653ba0509259733d2ca2f9036e78"
+  integrity sha512-M673T22Jp6Bj5uh3wMxNeTBxZ7uLS2JFFTjJIbgMhSkMlQWy99JUQLlkfFEITexaQk4zxhCkE8JrkYsw4eBYsA==
+  dependencies:
+    "@vercel/python-analysis" "0.3.1"
 
 "@vercel/error-utils@2.0.3":
   version "2.0.3"
@@ -6991,16 +7003,16 @@
     picomatch "^4.0.2"
     resolve-from "^5.0.0"
 
-"@vercel/node@5.5.30":
-  version "5.5.30"
-  resolved "https://registry.yarnpkg.com/@vercel/node/-/node-5.5.30.tgz#9350afed9a4a0c384dc7158d6d35297b78589a02"
-  integrity sha512-ofkVDx8CzWefwFH+wK36r7K2dPZqbW1k9eoVZhJkXgfLaPhb5BRd2QEHMNSlsDsTqDB9WK3CZ8J82Vp24VbPEw==
+"@vercel/node@5.5.32":
+  version "5.5.32"
+  resolved "https://registry.yarnpkg.com/@vercel/node/-/node-5.5.32.tgz#1ebf1299a5e9ff7a54a4a72bac3a1ce2c7f1fec4"
+  integrity sha512-KlUWQkTIjX9R0yU/uaDptn6MUIdYRInkTJRSqaoY/QmDyu0XlNfxWA7JfMbKf94JTHwlym96ma9OKzcq2yRNVw==
   dependencies:
     "@edge-runtime/node-utils" "2.3.0"
     "@edge-runtime/primitives" "4.1.0"
     "@edge-runtime/vm" "3.2.0"
     "@types/node" "20.11.0"
-    "@vercel/build-utils" "13.3.0"
+    "@vercel/build-utils" "13.3.2"
     "@vercel/error-utils" "2.0.3"
     "@vercel/nft" "1.1.1"
     "@vercel/static-config" "3.1.2"
@@ -7019,6 +7031,20 @@
     typescript "4.9.5"
     typescript5 "npm:typescript@5.9.3"
     undici "5.28.4"
+
+"@vercel/python-analysis@0.3.1":
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/@vercel/python-analysis/-/python-analysis-0.3.1.tgz#74f37ab3eb34182bb95be268bcc559c15c2d76d4"
+  integrity sha512-QbEDTKxE7lJB2UqcDaMGvQSy5OjtRAsIn/vhaAdIZ0Fo1wIRexdPNeYtlTmbuCsAib+gS53D5VEJYekJD5vdEA==
+  dependencies:
+    "@bytecodealliance/preview2-shim" "0.17.6"
+    "@renovatebot/pep440" "4.2.1"
+    fs-extra "11.1.1"
+    js-yaml "4.1.1"
+    minimatch "10.1.1"
+    pip-requirements-js "1.0.2"
+    smol-toml "1.5.2"
+    zod "3.22.4"
 
 "@vercel/static-config@3.1.2":
   version "3.1.2"
@@ -9971,6 +9997,15 @@ framer-motion@^12.30.0:
     motion-utils "^12.29.2"
     tslib "^2.4.0"
 
+fs-extra@11.1.1:
+  version "11.1.1"
+  resolved "https://registry.yarnpkg.com/fs-extra/-/fs-extra-11.1.1.tgz#da69f7c39f3b002378b0954bb6ae7efdc0876e2d"
+  integrity sha512-MGIE4HOvQCeUCzmlHs0vXpih4ysz4wg9qiSAu6cd42lVwPbTM1TjV7RusoyQqMmk/95gdQZX72u+YW+c3eEpFQ==
+  dependencies:
+    graceful-fs "^4.2.0"
+    jsonfile "^6.0.1"
+    universalify "^2.0.0"
+
 fs-extra@^9.0.1:
   version "9.1.0"
   resolved "https://registry.yarnpkg.com/fs-extra/-/fs-extra-9.1.0.tgz#5954460c764a8da2094ba3554bf839e6b9a7c86d"
@@ -10847,7 +10882,7 @@ js-sha3@0.8.0:
   resolved "https://registry.yarnpkg.com/js-tokens/-/js-tokens-4.0.0.tgz#19203fb59991df98e3a287050d4647cdeaf32499"
   integrity sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==
 
-js-yaml@^4.1.0, js-yaml@^4.1.1:
+js-yaml@4.1.1, js-yaml@^4.1.0, js-yaml@^4.1.1:
   version "4.1.1"
   resolved "https://registry.yarnpkg.com/js-yaml/-/js-yaml-4.1.1.tgz#854c292467705b699476e1a2decc0c8a3458806b"
   integrity sha512-qQKT4zQxXl8lLwBtHMWwaTcGfFOZviOJet3Oy/xmGk2gZH677CJM9EvtfdSkgWcATZhj/55JZ0rmy3myCT5lsA==
@@ -11338,7 +11373,7 @@ minimalistic-crypto-utils@^1.0.1:
   resolved "https://registry.yarnpkg.com/minimalistic-crypto-utils/-/minimalistic-crypto-utils-1.0.1.tgz#f6c00c1c0b082246e5c4d99dfb8c7c083b2b582a"
   integrity sha512-JIYlbt6g8i5jKfJ3xz7rF0LXmv2TkDxBLUkiBeZ7bAx4GnnNMr8xFpGnOxn6GhTEHx3SjRrZEoU+j04prX1ktg==
 
-minimatch@*, minimatch@^10.1.1:
+minimatch@*, minimatch@10.1.1, minimatch@^10.1.1:
   version "10.1.1"
   resolved "https://registry.yarnpkg.com/minimatch/-/minimatch-10.1.1.tgz#e6e61b9b0c1dcab116b5a7d1458e8b6ae9e73a55"
   integrity sha512-enIvLvRAFZYXJzkCYG5RKmPfrFArdLv+R+lbQ53BmIMLIry74bjKzX6iHAm8WYamJkhSSEabrWN5D97XnKObjQ==
@@ -11789,6 +11824,11 @@ ofetch@^1.5.1:
     node-fetch-native "^1.6.7"
     ufo "^1.6.1"
 
+ohm-js@^17.1.0:
+  version "17.3.0"
+  resolved "https://registry.yarnpkg.com/ohm-js/-/ohm-js-17.3.0.tgz#6a68feb8f823b33acda89352925b21ef722dd535"
+  integrity sha512-LySMdjweN1hKBMMV8lM44+1wiewkndDNNJxtgVAscs7y683MXCdQZLsIaw64/p8NuqYbKOWZoHIOA5DU/xchoA==
+
 on-exit-leak-free@^2.1.0:
   version "2.1.2"
   resolved "https://registry.yarnpkg.com/on-exit-leak-free/-/on-exit-leak-free-2.1.2.tgz#fed195c9ebddb7d9e4c3842f93f281ac8dadd3b8"
@@ -12084,6 +12124,13 @@ pino@10.0.0:
     slow-redact "^0.3.0"
     sonic-boom "^4.0.1"
     thread-stream "^3.0.0"
+
+pip-requirements-js@1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/pip-requirements-js/-/pip-requirements-js-1.0.2.tgz#c737295dbf970ad4cea8b7cfbda6bcc47fecbf46"
+  integrity sha512-awqoNOSOl4Blu4E4Hzp7jL0g8WKEhCwO+s7C2ibtIW3CAJMwspgoTXd4vnHd21UmhdrsI44Pn8FFSuA8QKrzvg==
+  dependencies:
+    ohm-js "^17.1.0"
 
 pkg-dir@^4.1.0:
   version "4.2.0"
@@ -13231,6 +13278,11 @@ slow-redact@^0.3.0:
   version "0.3.2"
   resolved "https://registry.yarnpkg.com/slow-redact/-/slow-redact-0.3.2.tgz#d06e25195aa5c492d32631c53d9ae86043b8b0e2"
   integrity sha512-MseHyi2+E/hBRqdOi5COy6wZ7j7DxXRz9NkseavNYSvvWC06D8a5cidVZX3tcG5eCW3NIyVU4zT63hw0Q486jw==
+
+smol-toml@1.5.2:
+  version "1.5.2"
+  resolved "https://registry.yarnpkg.com/smol-toml/-/smol-toml-1.5.2.tgz#70d4324d47b7cccbc67d611829c9b3f6d528b02f"
+  integrity sha512-QlaZEqcAH3/RtNyet1IPIYPsEWAaYyXXv1Krsi+1L/QHppjX4Ifm8MQsBISz9vE8cHicIq3clogsheili5vhaQ==
 
 sonic-boom@^4.0.1:
   version "4.2.0"
