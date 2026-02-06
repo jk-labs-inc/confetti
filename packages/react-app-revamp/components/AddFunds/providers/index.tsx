@@ -39,7 +39,7 @@ const AddFundsProviders: FC<AddFundsProvidersProps> = ({
         {SECONDARY_TEXT[type] && <span className="text-neutral-9 ml-2 font-bold">{SECONDARY_TEXT[type]}</span>}
       </p>
       {type === AddFundsProviderType.ONRAMP ? (
-        <AddFundsOnrampProvider onCloseModal={onCloseModal} disabled={onrampDisabled} />
+        <AddFundsOnrampProvider chain={chain} onCloseModal={onCloseModal} disabled={onrampDisabled} />
       ) : (
         <AddFundsJumperProvider chain={chain} asset={asset} />
       )}

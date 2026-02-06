@@ -16,9 +16,7 @@ interface AddFundsProps {
 
 const AddFunds: FC<AddFundsProps> = ({ chain, asset, onGoBack, showBackButton = true, className, onCloseModal }) => {
   const supportsOnramp = useMemo(() => isOnrampSupportedForChain(chain), [chain]);
-  const [providerType, setProviderType] = useState<AddFundsProviderType>(
-    supportsOnramp ? AddFundsProviderType.ONRAMP : AddFundsProviderType.BRIDGE,
-  );
+  const [providerType, setProviderType] = useState<AddFundsProviderType>(AddFundsProviderType.ONRAMP);
   const chainLogo = getChainLogo(chain);
 
   const handleToggleChange = (type: AddFundsProviderType) => {
@@ -40,7 +38,7 @@ const AddFunds: FC<AddFundsProps> = ({ chain, asset, onGoBack, showBackButton = 
           </div>
         </div>
 
-        <AddFundsToggle value={providerType} onChange={handleToggleChange} bridgeFirst={!supportsOnramp} />
+        <AddFundsToggle value={providerType} onChange={handleToggleChange} />
 
         <AddFundsProviders
           chain={chain}

@@ -1,21 +1,19 @@
 import { animate, motion, useMotionValue } from "motion/react";
-import { FC, useEffect, useMemo, useRef } from "react";
+import { FC, useEffect, useRef } from "react";
 import { AddFundsProviderType } from "../../providers";
 
 interface AddFundsToggleProps {
   value: AddFundsProviderType;
   onChange: (value: AddFundsProviderType) => void;
-  bridgeFirst?: boolean;
 }
 
-const AddFundsToggle: FC<AddFundsToggleProps> = ({ value, onChange, bridgeFirst = false }) => {
-  const toggleOptions = useMemo(() => {
-    const options = [
-      { id: AddFundsProviderType.ONRAMP, label: "add from scratch" },
-      { id: AddFundsProviderType.BRIDGE, label: "bridge funds" },
-    ];
-    return bridgeFirst ? options.reverse() : options;
-  }, [bridgeFirst]);
+const TOGGLE_OPTIONS = [
+  { id: AddFundsProviderType.ONRAMP, label: "add from scratch" },
+  { id: AddFundsProviderType.BRIDGE, label: "bridge funds" },
+];
+
+const AddFundsToggle: FC<AddFundsToggleProps> = ({ value, onChange }) => {
+  const toggleOptions = TOGGLE_OPTIONS;
 
   const selectedIndex = toggleOptions.findIndex(option => option.id === value);
   const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);

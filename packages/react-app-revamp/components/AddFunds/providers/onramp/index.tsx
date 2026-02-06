@@ -3,14 +3,13 @@ import { FC } from "react";
 import AddFundsCard from "../../components/Card";
 import { PARA_ONRAMP_CONFIG } from "./types";
 
-const DISABLED_MESSAGE = "not available on this chain";
-
 interface AddFundsOnrampProviderProps {
+  chain: string;
   onCloseModal?: () => void;
   disabled?: boolean;
 }
 
-const AddFundsOnrampProvider: FC<AddFundsOnrampProviderProps> = ({ onCloseModal, disabled = false }) => {
+const AddFundsOnrampProvider: FC<AddFundsOnrampProviderProps> = ({ chain, onCloseModal, disabled = false }) => {
   const { openModal } = useModal();
 
   const handleClick = () => {
@@ -28,7 +27,7 @@ const AddFundsOnrampProvider: FC<AddFundsOnrampProviderProps> = ({ onCloseModal,
       variant="modal"
       onClick={handleClick}
       disabled={disabled}
-      disabledMessage={disabled ? DISABLED_MESSAGE : undefined}
+      disabledMessage={disabled ? `not available on ${chain}` : undefined}
     />
   );
 };
