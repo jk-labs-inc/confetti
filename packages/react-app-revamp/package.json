@@ -6,8 +6,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
-    "postinstall": "npx setup-para"
+    "start": "next start"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "3.984.0",
