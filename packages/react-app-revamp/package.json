@@ -14,7 +14,7 @@
     "@aws-sdk/s3-request-presigner": "3.982.0",
     "@babel/core": "7.29.0",
     "@babel/preset-env": "7.29.0",
-    "@bigmi/react": "0.6.5",
+    "@bigmi/react": "0.7.0",
     "@clustersxyz/sdk": "1.0.2",
     "@coinbase/wallet-sdk": "4.3.7",
     "@getbrevo/brevo": "3.0.1",
