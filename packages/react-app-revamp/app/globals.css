@@ -195,6 +195,7 @@
   --background-image-gradient-comments-area-purple: linear-gradient(215.62deg, #000000 25.09%, #381d4c 128.94%);
   --background-image-gradient-voting-area: linear-gradient(190.68deg, #2b8b8b 8.06%, #000000 57.27%);
   --background-image-gradient-voting-area-not-open: linear-gradient(174.18deg, #66deff 1.65%, #000000 15.6%);
+  --background-image-gradient-add-funds-toggle: linear-gradient(90deg, #9747ff 0%, #c1abdd 100%);
   --background-image-gradient-timer: radial-gradient(
     99% 99% at 8.93% 19.92%,
     #381d4c 0%,
@@ -552,7 +553,6 @@ li {
   .markdown * {
     text-transform: none !important;
   }
-
 
   html {
     --brand: #bb65ff;

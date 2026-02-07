@@ -13,8 +13,7 @@ interface AddFundsJumperProviderProps {
 const JUMPER_PARAMS = {
   name: "jumper exchange",
   description: "0% fees",
-  logo: "/add-funds/jumper.png",
-  logoBorderColor: "#BFA1EB",
+  logo: "/add-funds/jumper.svg",
 };
 
 const AddFundsJumperProvider: FC<AddFundsJumperProviderProps> = ({ chain, asset }) => {
