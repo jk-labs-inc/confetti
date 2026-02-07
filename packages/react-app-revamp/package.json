@@ -22,7 +22,7 @@
     "@headlessui/react": "2.2.9",
     "@heroicons/react": "2.2.0",
     "@lifi/widget": "3.40.6",
-    "@mysten/dapp-kit": "0.20.0",
+    "@mysten/dapp-kit": "1.0.1",
     "@next/third-parties": "15.5.12",
     "@solana/wallet-adapter-react": "0.15.39",
     "@supabase/supabase-js": "2.95.3",
