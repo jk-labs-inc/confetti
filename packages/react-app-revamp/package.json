@@ -58,7 +58,7 @@
     "class-variance-authority": "0.7.1",
     "compare-versions": "6.1.1",
     "date-fns": "4.1.0",
-    "eslint": "9.39.2",
+    "eslint": "10.0.0",
     "eslint-config-next": "15.5.12",
     "fuse.js": "7.1.0",
     "interweave": "13.1.1",
