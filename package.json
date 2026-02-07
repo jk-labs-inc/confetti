@@ -29,6 +29,6 @@
     "packages/*"
   ],
   "dependencies": {
-    "husky": "9.1.5"
+    "husky": "9.1.7"
   }
 }
