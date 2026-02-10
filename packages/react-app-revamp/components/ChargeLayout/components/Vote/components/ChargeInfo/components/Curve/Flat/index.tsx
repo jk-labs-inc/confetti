@@ -1,4 +1,5 @@
 import useContestConfigStore from "@hooks/useContestConfig/store";
+import useDisplayPrice from "@hooks/useCurrency/useDisplayPrice";
 import { FC } from "react";
 import { formatEther } from "viem";
 import { useShallow } from "zustand/shallow";
@@ -12,9 +13,11 @@ const ChargeInfoFlat: FC<ChargeInfoFlatProps> = ({ costToVote }) => {
     useShallow(state => state.contestConfig.chainNativeCurrencySymbol),
   );
 
+  const { displayValue, displaySymbol } = useDisplayPrice(costToVote, chainNativeCurrencySymbol);
+
   return (
     <p>
-      {costToVote} {chainNativeCurrencySymbol}
+      {displaySymbol === "$" ? `$${displayValue}` : `${displayValue} ${displaySymbol}`}
     </p>
   );
 };

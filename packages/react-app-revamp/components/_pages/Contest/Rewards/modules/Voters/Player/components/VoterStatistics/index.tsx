@@ -1,6 +1,8 @@
+import DualPriceDisplay from "@components/UI/DualPriceDisplay";
 import { extractPathSegments } from "@helpers/extractPath";
-import { formatBalance } from "@helpers/formatBalance";
+
 import { getChainId } from "@helpers/getChainId";
+import useDisplayPrice from "@hooks/useCurrency/useDisplayPrice";
 import useRewardsModule from "@hooks/useRewards";
 import { useTotalRewardsForRank } from "@hooks/useTotalRewardsForRank";
 import { useVoterRewardsStatistics } from "@hooks/useVoterRewardsStatistics";
@@ -12,6 +14,34 @@ import RankingSuffix from "./components/RankingSuffix";
 import StatisticsRow from "./components/StatisticsRow";
 import StatisticsSkeleton from "./components/StatisticsSkeleton";
 import VotesInfo from "./components/VotesInfo";
+
+interface TokenRewardDisplayProps {
+  formatted: string;
+  symbol: string;
+  address: string;
+  chainName: string;
+}
+
+const TokenRewardDisplay: FC<TokenRewardDisplayProps> = ({ formatted, symbol, address, chainName }) => {
+  const { displayValue, displaySymbol, secondaryValue, secondarySymbol } = useDisplayPrice(
+    formatted,
+    symbol,
+    address,
+    chainName,
+  );
+
+  return (
+    <span>
+      <DualPriceDisplay
+        displayValue={displayValue}
+        displaySymbol={displaySymbol}
+        secondaryValue={secondaryValue}
+        secondarySymbol={secondarySymbol}
+        secondaryClassName="text-[14px] text-neutral-9"
+      />
+    </span>
+  );
+};
 
 interface VoterStatisticsProps {
   ranking: number;
@@ -47,6 +77,12 @@ const VoterStatistics: FC<VoterStatisticsProps> = ({ ranking, myReward, isActive
     ranking,
   });
 
+  const nativeRewardRaw = totalRewardsForRank?.native.formatted ?? "0";
+  const nativeRewardDisplay = useDisplayPrice(nativeRewardRaw, totalRewardsForRank?.native.symbol ?? "ETH");
+
+  const myRewardRaw = formatUnits(myReward.value, myReward.decimals);
+  const myRewardDisplay = useDisplayPrice(myRewardRaw, myReward.symbol);
+
   if (isLoading || isTotalRewardsForRankLoading) return <StatisticsSkeleton />;
 
   if (isError || isTotalRewardsForRankError)
@@ -55,12 +91,16 @@ const VoterStatistics: FC<VoterStatisticsProps> = ({ ranking, myReward, isActive
   const renderTotalRewards = () => (
     <div className="flex flex-col items-end font-bold">
       <span>
-        {formatBalance(totalRewardsForRank?.native.formatted ?? "0")} {totalRewardsForRank?.native.symbol}
+        <DualPriceDisplay
+          displayValue={nativeRewardDisplay.displayValue}
+          displaySymbol={nativeRewardDisplay.displaySymbol}
+          secondaryValue={nativeRewardDisplay.secondaryValue}
+          secondarySymbol={nativeRewardDisplay.secondarySymbol}
+          secondaryClassName="text-[14px] text-neutral-9"
+        />
       </span>
       {Object.entries(totalRewardsForRank?.tokens ?? {}).map(([address, token]) => (
-        <span key={address}>
-          {formatBalance(token.formatted ?? "0")} {token.symbol}
-        </span>
+        <TokenRewardDisplay key={address} formatted={token.formatted ?? "0"} symbol={token.symbol} address={address} chainName={chainName} />
       ))}
     </div>
   );
@@ -79,7 +119,13 @@ const VoterStatistics: FC<VoterStatisticsProps> = ({ ranking, myReward, isActive
           label={<RankingSuffix ranking={ranking} text="place rewards" prefix="my" />}
           value={
             <b>
-              {formatBalance(formatUnits(myReward.value, myReward.decimals))} {myReward.symbol}
+              <DualPriceDisplay
+                displayValue={myRewardDisplay.displayValue}
+                displaySymbol={myRewardDisplay.displaySymbol}
+                secondaryValue={myRewardDisplay.secondaryValue}
+                secondarySymbol={myRewardDisplay.secondarySymbol}
+                secondaryClassName="text-[14px] text-neutral-9 font-normal"
+              />
             </b>
           }
           isLast={true}

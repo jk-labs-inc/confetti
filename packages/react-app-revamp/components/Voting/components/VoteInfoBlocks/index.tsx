@@ -1,4 +1,3 @@
-import VotingQualifierError from "@components/_pages/Contest/components/StickyCards/components/VotingQualifier/shared/Error";
 import ChargeInfo from "@components/ChargeLayout/components/Vote/components/ChargeInfo";
 import MyVotes from "@components/ChargeLayout/components/Vote/components/MyVotes";
 import TotalVotes from "@components/Voting/components/TotalVotes";

@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import { formatNumber } from "@helpers/formatNumber";
+import useDisplayPrice from "@hooks/useCurrency/useDisplayPrice";
 import { FilteredToken } from "@hooks/useTokenList";
 import { FC, useEffect, useState } from "react";
 
@@ -24,21 +24,11 @@ const TokenSearchListToken: FC<TokenSearchListTokenProps> = ({ token, isChainDro
     return name;
   };
 
-  const displayBalance = () => {
-    if (!token.balance) return;
-
-    const balanceNum = token.balance;
-    if (balanceNum > 0 && balanceNum < 1) {
-      const balanceStr = balanceNum.toString();
-      const dotIndex = balanceStr.indexOf(".");
-      if (dotIndex !== -1 && balanceStr.length > dotIndex + 8) {
-        return balanceStr.substring(0, dotIndex + 8);
-      }
-      return balanceStr;
-    } else if (balanceNum >= 1) {
-      return formatNumber(balanceNum);
-    }
-  };
+  const nativeBalanceRaw = token.balance?.toString() ?? "0";
+  const { displayValue: balanceDisplayValue, displaySymbol: balanceDisplaySymbol } = useDisplayPrice(
+    nativeBalanceRaw,
+    token.symbol,
+  );
 
   const handleImageError = () => {
     setImgSrc("/confetti/loader/frame-1.svg");
@@ -93,7 +83,7 @@ const TokenSearchListToken: FC<TokenSearchListTokenProps> = ({ token, isChainDro
             isHovered ? "text-positive-11" : ""
           }`}
         >
-          {displayBalance()}
+          {balanceDisplaySymbol === "$" ? `$${balanceDisplayValue}` : balanceDisplayValue}
         </p>
       ) : null}
     </div>

@@ -1,6 +1,7 @@
 import { EMPTY_MERKLE_ROOT } from "@components/_pages/Contest/Parameters/constants";
 import { useContestStore } from "@hooks/useContest/store";
 import useContestConfigStore from "@hooks/useContestConfig/store";
+import useDisplayPrice from "@hooks/useCurrency/useDisplayPrice";
 import Skeleton from "react-loading-skeleton";
 import { formatEther } from "viem";
 import { useReadContract } from "wagmi";
@@ -20,6 +21,9 @@ const ContestParametersVotingLegacy = () => {
     abi: contestConfig.abi,
     functionName: "votingMerkleRoot",
   });
+
+  const costFormatted = formatEther(BigInt(charge.costToVote));
+  const { displayValue, displaySymbol } = useDisplayPrice(costFormatted, contestConfig.chainNativeCurrencySymbol);
 
   if (isLoadingVotingMerkleRoot) {
     return <Skeleton width={100} height={24} baseColor="#6A6A6A" highlightColor="#BB65FF" />;
@@ -45,7 +49,7 @@ const ContestParametersVotingLegacy = () => {
             {votingMerkleRoot === EMPTY_MERKLE_ROOT ? "anyone can vote" : "voting was allowlisted"}
           </li>
           <li className="list-disc">
-            {formatEther(BigInt(charge.costToVote))} {contestConfig.chainNativeCurrencySymbol} to vote
+            {displaySymbol === "$" ? `$${displayValue}` : `${displayValue} ${displaySymbol}`} to vote
           </li>
         </>
       </ul>

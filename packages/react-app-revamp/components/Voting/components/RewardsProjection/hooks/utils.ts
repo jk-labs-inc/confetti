@@ -1,4 +1,3 @@
-import { formatBalance } from "@helpers/formatBalance";
 import { calculateEndPrice } from "lib/priceCurve";
 import { formatEther, parseEther } from "viem";
 
@@ -38,7 +37,7 @@ export const calculateVotingRewardsProjection = ({
 
   const totalPoolProjection = finalPricePerVote * numberOfVotes * submissionsCount * percentToPool * firstPlaceShare;
 
-  return formatBalance(totalPoolProjection.toString());
+  return totalPoolProjection.toString();
 };
 
 export const validateVotingRewardsProjectionData = (

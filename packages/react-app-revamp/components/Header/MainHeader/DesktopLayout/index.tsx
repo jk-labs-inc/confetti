@@ -1,4 +1,5 @@
 import { ConnectButtonCustom } from "@components/Connect";
+import CurrencyToggle from "@components/Header/CurrencyToggle";
 import CustomLink from "@components/UI/Link";
 import Logo from "@components/UI/Logo";
 import { ROUTE_CREATE_CONTEST, ROUTE_VIEW_LIVE_CONTESTS } from "@config/routes";
@@ -18,7 +19,8 @@ const MainHeaderDesktopLayout: FC = () => {
           create
         </CustomLink>
       </div>
-      <div className="justify-self-end">
+      <div className="flex items-center gap-3 justify-self-end">
+        <CurrencyToggle />
         <ConnectButtonCustom />
       </div>
     </header>

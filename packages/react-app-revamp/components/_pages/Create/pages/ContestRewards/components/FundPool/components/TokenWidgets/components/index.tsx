@@ -4,6 +4,7 @@ import { ChainWithIcon } from "@config/wagmi";
 import { formatBalance } from "@helpers/formatBalance";
 import { ArrowPathIcon, ChevronDownIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { useTokenOrNativeBalance } from "@hooks/useBalance";
+import useDisplayPrice from "@hooks/useCurrency/useDisplayPrice";
 import { FilteredToken } from "@hooks/useTokenList";
 import { FC, useEffect, useMemo, useState } from "react";
 import { FundPoolToken, useFundPoolStore } from "../../../store";
@@ -16,11 +17,10 @@ interface TokenWidgetProps {
   chain: ChainWithIcon;
 }
 
-const getFormattedBalance = (balance: string) => {
+const getRawBalance = (balance: string) => {
   const parsedBalance = parseFloat(balance);
   if (parsedBalance === 0) return "0";
-  if (parsedBalance < 0.001) return "< 0.001";
-  return formatBalance(balance);
+  return balance;
 };
 
 const getTokenSymbol = (
@@ -54,6 +54,10 @@ const TokenWidget: FC<TokenWidgetProps> = ({ tokenWidget, index, chain }) => {
     chainId: chainId,
   });
   const [isExceedingBalance, setIsExceedingBalance] = useState(false);
+  const { displayValue: balanceDisplay, displaySymbol: balanceSymbol } = useDisplayPrice(
+    getRawBalance(balance?.value ?? ""),
+    getTokenSymbol(localSelectedToken, chainNativeCurrencySymbol ?? "", "long"),
+  );
 
   useEffect(() => {
     if (isAmountExceedingBalance(localAmount, balance?.value ?? "")) {
@@ -200,10 +204,15 @@ const TokenWidget: FC<TokenWidgetProps> = ({ tokenWidget, index, chain }) => {
                   </div>
                   <div className="flex gap-2 items-center group">
                     <p className="text-[16px] text-neutral-14 font-bold">
-                      balance: {getFormattedBalance(balance?.value ?? "")}{" "}
-                      <span className="uppercase">
-                        {getTokenSymbol(localSelectedToken, chainNativeCurrencySymbol ?? "", "long")}
-                      </span>
+                      balance:{" "}
+                      {balanceSymbol === "$" ? (
+                        `$${balanceDisplay}`
+                      ) : (
+                        <>
+                          {balanceDisplay}{" "}
+                          <span className="uppercase">{balanceSymbol}</span>
+                        </>
+                      )}
                     </p>
 
                     {balance?.value && parseFloat(balance.value) > 0 ? (

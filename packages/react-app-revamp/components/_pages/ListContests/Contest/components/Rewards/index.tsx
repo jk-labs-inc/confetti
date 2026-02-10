@@ -1,7 +1,8 @@
+import { formatBalance } from "@helpers/formatBalance";
+import useTotalRewardsUsd, { TokenItem } from "@hooks/useCurrency/useTotalRewardsUsd";
 import { ContestWithTotalRewards } from "lib/contests/types";
-import { FC, useEffect, useMemo, useState } from "react";
+import { FC, useMemo } from "react";
 import Skeleton from "react-loading-skeleton";
-import { AnimatePresence, motion } from "motion/react";
 
 interface ContestRewardsProps {
   rewards: ContestWithTotalRewards;
@@ -10,72 +11,45 @@ interface ContestRewardsProps {
 }
 
 const ContestRewards: FC<ContestRewardsProps> = ({ rewards, loading, rewardsLoading }) => {
-  const [currentRewardIndex, setCurrentRewardIndex] = useState(0);
-
-  const rewardsToDisplay = useMemo(() => {
+  const tokenItems: TokenItem[] = useMemo(() => {
     if (!rewards?.hasRewards || !rewards.rewardsData) return [];
 
-    const rewardsArray = [];
+    const items: TokenItem[] = [];
     const { native, tokens } = rewards.rewardsData;
 
     if (native && native.value > 0n) {
-      rewardsArray.push({
-        amount: native.value,
-        decimals: native.decimals,
-        symbol: native.symbol,
-        formatted: native.formatted,
-      });
+      items.push({ value: native.formatted, symbol: native.symbol });
     }
 
     if (tokens) {
       Object.entries(tokens).forEach(([address, tokenData]) => {
         if (tokenData.value > 0n) {
-          rewardsArray.push({
-            amount: tokenData.value,
-            decimals: tokenData.decimals,
-            symbol: tokenData.symbol,
-            formatted: tokenData.formatted,
-          });
+          items.push({ value: tokenData.formatted, symbol: tokenData.symbol, tokenAddress: address });
         }
       });
     }
 
-    return rewardsArray;
+    return items;
   }, [rewards]);
 
-  const currentReward = rewardsToDisplay[currentRewardIndex];
-
-  // Cycle through rewards if there are multiple
-  useEffect(() => {
-    if (rewardsToDisplay.length > 1) {
-      const interval = setInterval(() => {
-        setCurrentRewardIndex(prevIndex => (prevIndex + 1) % rewardsToDisplay.length);
-      }, 2000);
-
-      return () => clearInterval(interval);
-    } else if (rewardsToDisplay.length === 1) {
-      setCurrentRewardIndex(0);
-    }
-  }, [rewardsToDisplay]);
+  const totalUsd = useTotalRewardsUsd(tokenItems, rewards.chain);
+  const hasRewards = tokenItems.length > 0;
 
   return (
     <div className="flex flex-col">
       {rewardsLoading || loading ? (
         <Skeleton />
-      ) : currentReward ? (
+      ) : hasRewards ? (
         <div className="flex flex-col">
-          <AnimatePresence mode="wait">
-            <motion.p
-              key={`reward-${currentRewardIndex}`}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.3 }}
-              className="font-bold w-full text-neutral-11"
-            >
-              {currentReward.formatted} <span className="uppercase">{currentReward.symbol}</span>
-            </motion.p>
-          </AnimatePresence>
+          <p className="font-bold w-full text-neutral-11">
+            {totalUsd !== null ? (
+              `$${totalUsd}`
+            ) : (
+              <>
+                {formatBalance(tokenItems[0].value)} <span className="uppercase">{tokenItems[0].symbol}</span>
+              </>
+            )}
+          </p>
           <p className="text-[16px] text-neutral-9">in rewards</p>
         </div>
       ) : null}

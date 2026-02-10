@@ -1,3 +1,4 @@
+import CurrencyToggle from "@components/Header/CurrencyToggle";
 import { IconMagnifyingGlassSolid } from "@components/UI/Icons";
 import CustomLink from "@components/UI/Link";
 import { MobileProfileDrawer } from "@components/UI/MobileWalletPortal";
@@ -77,6 +78,10 @@ const MainHeaderMobileLayout: FC<MainHeaderMobileLayoutProps> = ({ isConnected, 
 
   return (
     <>
+      <div className="fixed top-4 right-4 z-50">
+        <CurrencyToggle />
+      </div>
+
       <nav className="fixed bottom-0 left-0 right-0 z-50 flex flex-col bg-true-black">
         {/* Portal target for create flow buttons */}
         <div id="mobile-create-nav-slot" />

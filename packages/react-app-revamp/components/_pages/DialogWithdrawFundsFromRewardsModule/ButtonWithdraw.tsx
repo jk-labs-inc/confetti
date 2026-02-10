@@ -2,8 +2,8 @@ import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import { chains } from "@config/wagmi";
 import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import { extractPathSegments } from "@helpers/extractPath";
-import { formatBalance } from "@helpers/formatBalance";
 import { transform } from "@helpers/transform";
+import useDisplayPrice from "@hooks/useCurrency/useDisplayPrice";
 import { TokenInfo } from "@hooks/useReleasableRewards";
 import { useWithdrawReward } from "@hooks/useWithdrawRewards";
 import { switchChain } from "@wagmi/core";
@@ -48,7 +48,9 @@ export const ButtonWithdraw = (props: ButtonWithdrawErc20RewardProps) => {
     () => onWithdrawError?.(token.address),
   );
 
-  const formattedAmount = formatBalance(transform(token.amount ?? 0n, token.address, token.decimals ?? 18).toString());
+  const rawAmount = transform(token.amount ?? 0n, token.address, token.decimals ?? 18).toString();
+  const tokenAddress = token.address !== "native" ? token.address : undefined;
+  const { displayValue, displaySymbol } = useDisplayPrice(rawAmount, token.symbol, tokenAddress, chainName);
 
   const onHandleWithdraw = async () => {
     if (!chainId) return;
@@ -64,7 +66,13 @@ export const ButtonWithdraw = (props: ButtonWithdrawErc20RewardProps) => {
     <li className="flex items-center">
       <section className="flex justify-between w-full">
         <p>
-          {formattedAmount} <span className="uppercase">${token.symbol}</span>
+          {displaySymbol === "$" ? (
+            `$${displayValue}`
+          ) : (
+            <>
+              {displayValue} <span className="uppercase">{displaySymbol}</span>
+            </>
+          )}
         </p>
         <ButtonV3
           isDisabled={isLoading}

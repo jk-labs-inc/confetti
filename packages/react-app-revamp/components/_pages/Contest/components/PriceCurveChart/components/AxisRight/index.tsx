@@ -1,8 +1,14 @@
-import { formatBalance } from "@helpers/formatBalance";
+import { useCurrencyStore } from "@hooks/useCurrency/store";
+import { convertToDisplayPrice } from "@hooks/useCurrency/useDisplayPrice";
+import useNativeRates from "@hooks/useCurrency/useNativeRates";
 import { AxisRight as VisxAxisRight } from "@visx/axis";
 import { ScaleLinear } from "d3-scale";
-import React from "react";
+import React, { useCallback } from "react";
 import { formatEther, parseEther } from "viem";
+
+const CHAR_WIDTH = 5.5;
+const LABEL_H_PADDING = 8 * 2;
+const estimateLabelWidth = (text: string): number => text.length * CHAR_WIDTH + LABEL_H_PADDING;
 
 interface AxisRightProps {
   yScale: ScaleLinear<number, number>;
@@ -21,6 +27,31 @@ const AxisRight: React.FC<AxisRightProps> = ({
   hoveredPrice,
   currency,
 }) => {
+  const displayCurrency = useCurrencyStore(state => state.displayCurrency);
+  const { data: nativeRates } = useNativeRates();
+
+  const formatPriceLabel = useCallback(
+    (nativeFormatted: string, symbol: string): { full: string; primary: string; secondary: string | null } => {
+      const { displayValue, displaySymbol, secondaryValue, secondarySymbol } = convertToDisplayPrice(
+        nativeFormatted,
+        symbol,
+        displayCurrency,
+        nativeRates ?? {},
+      );
+
+      const primary = displaySymbol === "$" ? `$${displayValue}` : `${displayValue} ${displaySymbol}`;
+
+      if (!secondaryValue || !secondarySymbol) {
+        return { full: primary, primary, secondary: null };
+      }
+
+      const secondary = secondarySymbol === "$" ? `$${secondaryValue}` : `${secondaryValue} ${secondarySymbol}`;
+
+      return { full: `${primary} | ${secondary}`, primary, secondary: `| ${secondary}` };
+    },
+    [displayCurrency, nativeRates],
+  );
+
   return (
     <g>
       <VisxAxisRight
@@ -29,8 +60,7 @@ const AxisRight: React.FC<AxisRightProps> = ({
         tickValues={visibleTicks}
         tickFormat={(value: { toString: () => string }) => {
           const priceInWei = parseEther(value.toString());
-          const formattedEther = formatEther(priceInWei);
-          return `${formatBalance(formattedEther)} eth`;
+          return formatPriceLabel(formatEther(priceInWei), currency).full;
         }}
         tickLabelProps={() => {
           return {
@@ -52,12 +82,12 @@ const AxisRight: React.FC<AxisRightProps> = ({
 
         const yPos = yScale(tick);
         const priceInWei = parseEther(tick.toString());
-        const formattedPrice = `${formatBalance(formatEther(priceInWei))} ${currency}`;
+        const { full, primary, secondary } = formatPriceLabel(formatEther(priceInWei), currency);
 
         return (
           <g key={`current-tick-${tick}`}>
             {/* Current price background (always rendered) */}
-            <rect x={chartWidth + 8} y={yPos - 14} width={90} height={24} rx={8} fill="#BB65FF" />
+            <rect x={chartWidth + 8} y={yPos - 14} width={estimateLabelWidth(full)} height={24} rx={8} fill="#BB65FF" />
             <text
               x={chartWidth + 16}
               y={yPos}
@@ -66,7 +96,8 @@ const AxisRight: React.FC<AxisRightProps> = ({
               textAnchor="start"
               dominantBaseline="middle"
             >
-              {formattedPrice}
+              {primary}
+              {secondary && <tspan fill="#3d3d3d"> {secondary}</tspan>}
             </text>
           </g>
         );
@@ -80,12 +111,19 @@ const AxisRight: React.FC<AxisRightProps> = ({
 
           const yPos = yScale(tick);
           const priceInWei = parseEther(tick.toString());
-          const formattedPrice = `${formatBalance(formatEther(priceInWei))} ${currency}`;
+          const { full, primary, secondary } = formatPriceLabel(formatEther(priceInWei), currency);
 
           return (
             <g key={`hovered-tick-${tick}`}>
               {/* Hovered price background (renders on top) */}
-              <rect x={chartWidth + 8} y={yPos - 14} width={90} height={24} rx={8} fill="#212121" />
+              <rect
+                x={chartWidth + 8}
+                y={yPos - 14}
+                width={estimateLabelWidth(full)}
+                height={24}
+                rx={8}
+                fill="#212121"
+              />
               <text
                 x={chartWidth + 16}
                 y={yPos}
@@ -94,7 +132,8 @@ const AxisRight: React.FC<AxisRightProps> = ({
                 textAnchor="start"
                 dominantBaseline="middle"
               >
-                {formattedPrice}
+                {primary}
+                {secondary && <tspan fill="#9d9d9d"> {secondary}</tspan>}
               </text>
             </g>
           );

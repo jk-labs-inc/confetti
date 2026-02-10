@@ -3,7 +3,7 @@ import { FC, useState } from "react";
 import CreateTextInput from "components/_pages/Create/components/TextInput";
 import CreateGradientTitle from "@components/_pages/Create/components/GradientTitle";
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
-import { formatBalance } from "@helpers/formatBalance";
+import useDisplayPrice from "@hooks/useCurrency/useDisplayPrice";
 import { addressRegex } from "@helpers/regex";
 
 interface TokenSearchModalERC20MultiStepFormProps {
@@ -20,6 +20,12 @@ const TokenSearchModalERC20MultiStepForm: FC<TokenSearchModalERC20MultiStepFormP
   const [recipient, setRecipient] = useState("");
   const [amount, setAmount] = useState("");
   const [errors, setErrors] = useState<{ recipient?: string; amount?: string }>({});
+
+  const balanceRaw = token.balance?.toString() ?? "0";
+  const { displayValue: balanceDisplayValue, displaySymbol: balanceDisplaySymbol } = useDisplayPrice(
+    balanceRaw,
+    token.symbol,
+  );
 
   const handleSubmit = () => {
     const newErrors: { recipient?: string; amount?: string } = {};
@@ -121,8 +127,14 @@ const TokenSearchModalERC20MultiStepForm: FC<TokenSearchModalERC20MultiStepFormP
           )}
           <div className="flex justify-end">
             <span className="text-[14px] text-neutral-9">
-              Available: {formatBalance(token.balance?.toString() ?? "0")}{" "}
-              <span className="uppercase">{token.symbol}</span>
+              Available:{" "}
+              {balanceDisplaySymbol === "$" ? (
+                `$${balanceDisplayValue}`
+              ) : (
+                <>
+                  {balanceDisplayValue} <span className="uppercase">{balanceDisplaySymbol}</span>
+                </>
+              )}
             </span>
           </div>
         </div>

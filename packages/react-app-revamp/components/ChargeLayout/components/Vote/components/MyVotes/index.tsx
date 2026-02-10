@@ -1,4 +1,4 @@
-import { formatBalance } from "@helpers/formatBalance";
+import useDisplayPrice from "@hooks/useCurrency/useDisplayPrice";
 import { FC } from "react";
 import { motion } from "motion/react";
 
@@ -11,6 +11,8 @@ interface MyVotesProps {
 }
 
 const MyVotes: FC<MyVotesProps> = ({ balance, symbol, insufficientBalance, isConnected, onAddFunds }) => {
+  const { displayValue, displaySymbol } = useDisplayPrice(balance, symbol);
+
   return (
     <div
       className={`flex justify-between pl-6 pr-4 items-center text-[16px] ${
@@ -18,7 +20,12 @@ const MyVotes: FC<MyVotesProps> = ({ balance, symbol, insufficientBalance, isCon
       } transition-colors duration-300`}
     >
       <p className="text-neutral-9 font-bold normal-case">
-        balance: {isConnected ? formatBalance(balance) : "N/A"} {isConnected && symbol}
+        balance:{" "}
+        {isConnected
+          ? displaySymbol === "$"
+            ? `$${displayValue}`
+            : `${displayValue} ${displaySymbol}`
+          : "N/A"}
       </p>
 
       {!insufficientBalance && (

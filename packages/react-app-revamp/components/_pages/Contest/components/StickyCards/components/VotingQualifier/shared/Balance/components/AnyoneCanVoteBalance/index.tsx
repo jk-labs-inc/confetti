@@ -1,9 +1,9 @@
 import AddFundsModal from "@components/AddFunds/components/Modal";
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
-import { formatBalance } from "@helpers/formatBalance";
 import { formatNumberAbbreviated } from "@helpers/formatNumber";
 import { useContestStore } from "@hooks/useContest/store";
 import useContestConfigStore from "@hooks/useContestConfig/store";
+import useDisplayPrice from "@hooks/useCurrency/useDisplayPrice";
 import useCurrentPricePerVote from "@hooks/useCurrentPricePerVote";
 import { useCurrentUserVotes } from "@hooks/useCurrentUserVotes";
 import { useVoteBalance } from "@hooks/useVoteBalance";
@@ -20,6 +20,11 @@ const BalanceOrSkeleton = ({
   userBalance: string;
   nativeCurrencySymbol?: string;
 }) => {
+  const { displayValue, displaySymbol } = useDisplayPrice(
+    userBalance,
+    nativeCurrencySymbol ?? "",
+  );
+
   return isUserBalanceLoading ? (
     <span className="flex items-center gap-1 text-neutral-9">
       <Skeleton
@@ -34,7 +39,7 @@ const BalanceOrSkeleton = ({
     </span>
   ) : (
     <span className="text-neutral-9">
-      {formatBalance(userBalance)} {nativeCurrencySymbol} =
+      {displaySymbol === "$" ? `$${displayValue}` : `${displayValue} ${displaySymbol}`} =
     </span>
   );
 };

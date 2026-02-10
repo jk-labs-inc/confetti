@@ -1,6 +1,7 @@
 import GradientText from "@components/UI/GradientText";
 import { InformationCircleIcon } from "@heroicons/react/24/outline";
 import useContestConfigStore from "@hooks/useContestConfig/store";
+import useDisplayPrice from "@hooks/useCurrency/useDisplayPrice";
 import { FC } from "react";
 import { useShallow } from "zustand/shallow";
 import VotingWidgetRewardsProjectionContainer from "./components/Container";
@@ -28,6 +29,11 @@ const VotingWidgetRewardsProjection: FC<VotingWidgetRewardsProjectionProps> = ({
     submissionsCount,
   });
 
+  const { displayValue, displaySymbol } = useDisplayPrice(
+    winUpToFormatted,
+    contestConfig.chainNativeCurrencySymbol,
+  );
+
   if (!shouldShow) return null;
 
   return (
@@ -45,7 +51,7 @@ const VotingWidgetRewardsProjection: FC<VotingWidgetRewardsProjectionProps> = ({
       <VotingWidgetRewardsProjectionTooltip tooltipId={TOOLTIP_ID} />
       <div className="ml-auto">
         <GradientText textSizeClassName="text-[24px] font-bold" isFontSabo={false}>
-          {winUpToFormatted} {contestConfig.chainNativeCurrencySymbol.toLowerCase()}
+          {displaySymbol === "$" ? `$${displayValue}` : `${displayValue} ${displaySymbol.toLowerCase()}`}
         </GradientText>
       </div>
     </VotingWidgetRewardsProjectionContainer>
