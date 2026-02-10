@@ -2851,10 +2851,10 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
-"@lifi/sdk@^3.15.5":
-  version "3.15.5"
-  resolved "https://registry.yarnpkg.com/@lifi/sdk/-/sdk-3.15.5.tgz#871dd466ab0a68b178f2cfa1298562df58843453"
-  integrity sha512-hbFA6s6woWBtn8qSPC1OeAoXkrzWOT+1M+tCXMlz/VE1nVBj/lI4Rc/TkEuxW12GF8t1GwJMAE0sANxEEDqReg==
+"@lifi/sdk@^3.15.6":
+  version "3.15.6"
+  resolved "https://registry.yarnpkg.com/@lifi/sdk/-/sdk-3.15.6.tgz#e7e115e1a642ae5dbaf8ab8be2a7406327937bed"
+  integrity sha512-rs6w5DUFN6XMblUECnxa1+TmIQH5+tmXDjifwHyLc3l8XJckfhorIGMVzlDwLIF0O+aPOh+PciFvpjiyo82RKQ==
   dependencies:
     "@bigmi/core" "^0.6.5"
     "@bitcoinerlab/secp256k1" "^1.2.0"
@@ -2876,16 +2876,16 @@
   dependencies:
     viem "^2.33.2"
 
-"@lifi/wallet-management@^3.22.5":
-  version "3.22.5"
-  resolved "https://registry.yarnpkg.com/@lifi/wallet-management/-/wallet-management-3.22.5.tgz#a613b5006829e68e6365eeb8f5bfb62fe0f2f51e"
-  integrity sha512-Fgml91NpR4r4uC0NAWF1lKyM6lagNiyotgD/UJkR2yDelnkPKf8qXdkgrpHO93mywVVqOjj72MyxQgkjh+VROA==
+"@lifi/wallet-management@^3.22.6":
+  version "3.22.6"
+  resolved "https://registry.yarnpkg.com/@lifi/wallet-management/-/wallet-management-3.22.6.tgz#c5f8094d57f4ebdb8ccd8472e0bb65c9e8f67ace"
+  integrity sha512-UYXzBi8M9xBErHAnN0pHYJP68e0OvtsAHiibFcDEBWN2NpZIyFkHK7+ZDzQsC7NdCn/SV2SebDbYEXQgZDPVwg==
   dependencies:
     "@bigmi/client" "^0.6.5"
     "@bigmi/core" "^0.6.5"
     "@emotion/react" "^11.14.0"
     "@emotion/styled" "^11.14.1"
-    "@lifi/sdk" "^3.15.5"
+    "@lifi/sdk" "^3.15.6"
     "@mui/icons-material" "^7.3.7"
     "@mui/material" "^7.3.7"
     "@mui/system" "^7.3.7"
@@ -2899,17 +2899,17 @@
     viem "^2.45.1"
     zustand "^5.0.11"
 
-"@lifi/widget@3.40.6":
-  version "3.40.6"
-  resolved "https://registry.yarnpkg.com/@lifi/widget/-/widget-3.40.6.tgz#3b0113bfbc2b715bc3d4738d5bcb1cfbc4768028"
-  integrity sha512-BNLCFXKxlsSoh6Qd97EeIe5JjotKh8Hm7Q0yiHukr6T3kygBdSrZQJmZYrmXxcxAIVSdcCTIoqqhwH4cJoUTTQ==
+"@lifi/widget@3.40.8":
+  version "3.40.8"
+  resolved "https://registry.yarnpkg.com/@lifi/widget/-/widget-3.40.8.tgz#2dc739084d020db134923963dc90c56c996eb9ec"
+  integrity sha512-a5HjfDPD/U5+Umih0J/JI1l/q8oPZhvGKmQoK9Lnzpoq3eO/lMmLojMfXEKVzPrbwzjWiSyIHEaROPlU1mhEFg==
   dependencies:
     "@bigmi/client" "^0.6.5"
     "@bigmi/core" "^0.6.5"
     "@emotion/react" "^11.14.0"
     "@emotion/styled" "^11.14.1"
-    "@lifi/sdk" "^3.15.5"
-    "@lifi/wallet-management" "^3.22.5"
+    "@lifi/sdk" "^3.15.6"
+    "@lifi/wallet-management" "^3.22.6"
     "@mui/icons-material" "^7.3.7"
     "@mui/material" "^7.3.7"
     "@mui/system" "^7.3.7"
