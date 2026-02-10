@@ -15,7 +15,7 @@ const LandingPageHowItWorks = () => {
       >
         how it works
       </motion.p>
-      <div className="flex flex-col gap-20 max-w-[1352px]">
+      <div className="flex flex-col gap-20">
         <LandingPageHowItWorksProcessFlow />
         <div className="flex flex-col gap-12 lg:gap-20 2xl:gap-40">
           <LandingPageHowItWorksEarningBenefits />
