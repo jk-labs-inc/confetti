@@ -102,10 +102,10 @@
     "@smithy/util-utf8" "^2.0.0"
     tslib "^2.6.2"
 
-"@aws-sdk/client-s3@3.985.0":
-  version "3.985.0"
-  resolved "https://registry.yarnpkg.com/@aws-sdk/client-s3/-/client-s3-3.985.0.tgz#e5ebe2f341c3d4225677cbfd173a8b04a07342ea"
-  integrity sha512-S9TqjzzZEEIKBnC7yFpvqM7CG9ALpY5qhQ5BnDBJtdG20NoGpjKLGUUfD2wmZItuhbrcM4Z8c6m6Fg0XYIOVvw==
+"@aws-sdk/client-s3@3.986.0":
+  version "3.986.0"
+  resolved "https://registry.yarnpkg.com/@aws-sdk/client-s3/-/client-s3-3.986.0.tgz#38ecea36c41b36748b7c703ba09d77ce95c7d6ee"
+  integrity sha512-IcDJ8shVVvbxgMe8+dLWcv6uhSwmX65PHTVGX81BhWAElPnp3CL8w/5uzOPRo4n4/bqIk9eskGVEIicw2o+SrA==
   dependencies:
     "@aws-crypto/sha1-browser" "5.2.0"
     "@aws-crypto/sha256-browser" "5.2.0"
@@ -123,9 +123,9 @@
     "@aws-sdk/middleware-ssec" "^3.972.3"
     "@aws-sdk/middleware-user-agent" "^3.972.7"
     "@aws-sdk/region-config-resolver" "^3.972.3"
-    "@aws-sdk/signature-v4-multi-region" "3.985.0"
+    "@aws-sdk/signature-v4-multi-region" "3.986.0"
     "@aws-sdk/types" "^3.973.1"
-    "@aws-sdk/util-endpoints" "3.985.0"
+    "@aws-sdk/util-endpoints" "3.986.0"
     "@aws-sdk/util-user-agent-browser" "^3.972.3"
     "@aws-sdk/util-user-agent-node" "^3.972.5"
     "@smithy/config-resolver" "^4.4.6"
@@ -531,12 +531,12 @@
     "@smithy/types" "^4.12.0"
     tslib "^2.6.2"
 
-"@aws-sdk/s3-request-presigner@3.985.0":
-  version "3.985.0"
-  resolved "https://registry.yarnpkg.com/@aws-sdk/s3-request-presigner/-/s3-request-presigner-3.985.0.tgz#a4976a8b6630d3fce6ec18b88fda492a63ab0b68"
-  integrity sha512-lPnf977GFM4cMLJ7X+ThktKMe/0CXIfX+wz1z+sUT7yagPL2IRyiNUPFZ0VTEGBo1gRhHEDPWy6yzk8WWRFsvg==
+"@aws-sdk/s3-request-presigner@3.986.0":
+  version "3.986.0"
+  resolved "https://registry.yarnpkg.com/@aws-sdk/s3-request-presigner/-/s3-request-presigner-3.986.0.tgz#57d04ee3f54062f0a1a6164c74a1ba9ac9c5977d"
+  integrity sha512-+yopxtoXwRXZ2Ai9H4GzkN+T2D07sGrURYcm7Eh2OQe3p+Ys/3VrR6UrzILssaJGYtR2vQqVKnGJBHVYqaM1EQ==
   dependencies:
-    "@aws-sdk/signature-v4-multi-region" "3.985.0"
+    "@aws-sdk/signature-v4-multi-region" "3.986.0"
     "@aws-sdk/types" "^3.973.1"
     "@aws-sdk/util-format-url" "^3.972.3"
     "@smithy/middleware-endpoint" "^4.4.13"
@@ -545,10 +545,10 @@
     "@smithy/types" "^4.12.0"
     tslib "^2.6.2"
 
-"@aws-sdk/signature-v4-multi-region@3.985.0":
-  version "3.985.0"
-  resolved "https://registry.yarnpkg.com/@aws-sdk/signature-v4-multi-region/-/signature-v4-multi-region-3.985.0.tgz#0c6ca19831602c39da427209eba189ca1f26961f"
-  integrity sha512-W6hTSOPiSbh4IdTYVxN7xHjpCh0qvfQU1GKGBzGQm0ZEIOaMmWqiDEvFfyGYKmfBvumT8vHKxQRTX0av9omtIg==
+"@aws-sdk/signature-v4-multi-region@3.986.0":
+  version "3.986.0"
+  resolved "https://registry.yarnpkg.com/@aws-sdk/signature-v4-multi-region/-/signature-v4-multi-region-3.986.0.tgz#bd34f23daee028905640023c483fdc12eda9a4e6"
+  integrity sha512-Upw+rw7wCH93E6QWxqpAqJLrUmJYVUAWrk4tCOBnkeuwzGERZvJFL5UQ6TAJFj9T18Ih+vNFaACh8J5aP4oTBw==
   dependencies:
     "@aws-sdk/middleware-sdk-s3" "^3.972.7"
     "@aws-sdk/types" "^3.973.1"
@@ -589,6 +589,17 @@
   version "3.985.0"
   resolved "https://registry.yarnpkg.com/@aws-sdk/util-endpoints/-/util-endpoints-3.985.0.tgz#a6393811e86aaf71e17aa3313551c19e54ed59f8"
   integrity sha512-vth7UfGSUR3ljvaq8V4Rc62FsM7GUTH/myxPWkaEgOrprz1/Pc72EgTXxj+cPPPDAfHFIpjhkB7T7Td0RJx+BA==
+  dependencies:
+    "@aws-sdk/types" "^3.973.1"
+    "@smithy/types" "^4.12.0"
+    "@smithy/url-parser" "^4.2.8"
+    "@smithy/util-endpoints" "^3.2.8"
+    tslib "^2.6.2"
+
+"@aws-sdk/util-endpoints@3.986.0":
+  version "3.986.0"
+  resolved "https://registry.yarnpkg.com/@aws-sdk/util-endpoints/-/util-endpoints-3.986.0.tgz#16d3bd7227e5c3797a10a95d37898e511e75a72a"
+  integrity sha512-Mqi79L38qi1gCG3adlVdbNrSxvcm1IPDLiJPA3OBypY5ewxUyWbaA3DD4goG+EwET6LSFgZJcRSIh6KBNpP5pA==
   dependencies:
     "@aws-sdk/types" "^3.973.1"
     "@smithy/types" "^4.12.0"
@@ -2416,10 +2427,10 @@
     bluebird "^3.5.0"
     rewire "^7.0.0"
 
-"@getpara/core-components@2.8.0":
-  version "2.8.0"
-  resolved "https://registry.yarnpkg.com/@getpara/core-components/-/core-components-2.8.0.tgz#2176c13fb02ca53073091d4031627fa6faef9d3f"
-  integrity sha512-ec3BM4xfahgu4/gAep4sitJZYEkne8vxW1TMVhvcZYimp7g52Xw18tLuF3v45aKPD/JDZgD8Z+3cqvwmyluMxA==
+"@getpara/core-components@2.9.0":
+  version "2.9.0"
+  resolved "https://registry.yarnpkg.com/@getpara/core-components/-/core-components-2.9.0.tgz#7ebf765198b3b44285122a3571c3a906fd394390"
+  integrity sha512-t60RCFcncqRtAwLy12XEeKEvMGtG2svCEXo0aPIXsmyl2dWd7lHU303w6APRH9vsx5QKjPnppVX14tM4Hs1+Lg==
   dependencies:
     "@stencil/core" "^4.7.0"
     color-blend "^4.0.0"
@@ -2428,61 +2439,61 @@
     inputmask "5.0.9"
     qrcode-with-logos "1.1.1"
 
-"@getpara/core-sdk@2.8.0":
-  version "2.8.0"
-  resolved "https://registry.yarnpkg.com/@getpara/core-sdk/-/core-sdk-2.8.0.tgz#49b3010e6d89cf476eae1c2e3eda7d7aa4ff234f"
-  integrity sha512-zJKl3feRVvZyTMyPDIyxrIAK0kWKFTlQMqLMabTi/gqHWEteXLzJU2WVdeOwIyjxsH5CT5XL4ivuUSL7HAmmcw==
+"@getpara/core-sdk@2.9.0":
+  version "2.9.0"
+  resolved "https://registry.yarnpkg.com/@getpara/core-sdk/-/core-sdk-2.9.0.tgz#804223b4f30cd932be072732af48e4718b74dd5b"
+  integrity sha512-PMjIVs28cBxEph7mm4dkU2Fhcoeah+8DXxUW3C7iuTqiz04EwWMtq0IvQJGW7oCAPuJ7oRL4vP2rpBgUWIgg0w==
   dependencies:
     "@celo/utils" "^8.0.2"
     "@cosmjs/encoding" "^0.32.4"
     "@ethereumjs/util" "^9.1.0"
-    "@getpara/user-management-client" "2.8.0"
+    "@getpara/user-management-client" "2.9.0"
     "@noble/hashes" "^1.5.0"
     base64url "^3.0.1"
     libphonenumber-js "^1.11.7"
     node-forge "^1.3.1"
     uuid "^11.1.0"
 
-"@getpara/evm-wallet-connectors@2.8.0":
-  version "2.8.0"
-  resolved "https://registry.yarnpkg.com/@getpara/evm-wallet-connectors/-/evm-wallet-connectors-2.8.0.tgz#9eff4d4aaee442a0f8d7cc31dc4ceffde51d4ac3"
-  integrity sha512-/CcyFTcS4NHU3xkgT9pYQ3kFmQMEFhVksopDPVwBxU5nMJCQTn0qtQMAAGyIsDXcdrgfleVPYUP75ezdKdwbkw==
+"@getpara/evm-wallet-connectors@2.9.0":
+  version "2.9.0"
+  resolved "https://registry.yarnpkg.com/@getpara/evm-wallet-connectors/-/evm-wallet-connectors-2.9.0.tgz#b74c92c4f574fb87a117a0b7dc02a6c7eeb62f1c"
+  integrity sha512-uPbUn9zCaOc6lta0uAsvuG8y0vkbTMcUDX5QU5W1Z3q2EKhlopZWKJQt3c0Xfpst8vd708GD9hTAr/tBgKZ4tg==
   dependencies:
     "@coinbase/wallet-sdk" "4.3.0"
-    "@getpara/wagmi-v2-connector" "2.8.0"
-    "@getpara/web-sdk" "2.8.0"
+    "@getpara/wagmi-v2-connector" "2.9.0"
+    "@getpara/web-sdk" "2.9.0"
     "@walletconnect/ethereum-provider" "2.23.0"
     zustand "^4.5.2"
     zustand-sync-tabs "^0.2.2"
 
-"@getpara/react-common@2.8.0":
-  version "2.8.0"
-  resolved "https://registry.yarnpkg.com/@getpara/react-common/-/react-common-2.8.0.tgz#6e75200d9044cf7b6c6c5ed17427d014d8bf2666"
-  integrity sha512-qBAc2P4ChLZOlvx4YlAkwyQaOche6hMMFlyW+kFQslWPDoH6b+BzFBwuX1/V+xVuB68mgO3tAFmeZQ8KRs9SLQ==
+"@getpara/react-common@2.9.0":
+  version "2.9.0"
+  resolved "https://registry.yarnpkg.com/@getpara/react-common/-/react-common-2.9.0.tgz#ad303d3d67792e7802e95ea49a061de875ed964d"
+  integrity sha512-/KVzAKi5WAAQ2V4o65TeBll+gjzNOEVmMV7KnpsFzBk1YRlgcRBmgdFBwM7EKVg6n0XMJtlpQ6jr6ZguCcs6tQ==
   dependencies:
-    "@getpara/react-components" "2.8.0"
-    "@getpara/web-sdk" "2.8.0"
+    "@getpara/react-components" "2.9.0"
+    "@getpara/web-sdk" "2.9.0"
     "@moonpay/moonpay-react" "^1.10.6"
     "@ramp-network/ramp-instant-sdk" "^4.0.5"
     libphonenumber-js "^1.11.7"
     styled-components "^6.1.8"
     ua-parser-js "^2.0.2"
 
-"@getpara/react-components@2.8.0":
-  version "2.8.0"
-  resolved "https://registry.yarnpkg.com/@getpara/react-components/-/react-components-2.8.0.tgz#747187de19dac054189265e1fa411da9f052db55"
-  integrity sha512-xjFquu/mmNszeRqoINm7KEh8nIl91BUsAcM8NfHUjfct+FjgGJCOd2TY3ADZj2CwCUZ9z9kM3Zpdx1HEGPZzkg==
+"@getpara/react-components@2.9.0":
+  version "2.9.0"
+  resolved "https://registry.yarnpkg.com/@getpara/react-components/-/react-components-2.9.0.tgz#867293145f7154d34c7690ff20b6a4874a86678f"
+  integrity sha512-4GIp2PTiPvMYmhxYC6npCrln74fjlvzbyefwwP4wsDzwhUjOKOfWKjvOs3W6VKoMjY/AeZ5f2MHNAdLSsJLL1g==
   dependencies:
-    "@getpara/core-components" "2.8.0"
+    "@getpara/core-components" "2.9.0"
 
-"@getpara/react-sdk-lite@2.8.0":
-  version "2.8.0"
-  resolved "https://registry.yarnpkg.com/@getpara/react-sdk-lite/-/react-sdk-lite-2.8.0.tgz#848a738d0b15cb57b3422f2fb17019bf9017b885"
-  integrity sha512-OG8oT3D4hpaSLMrjk0uRkt7EQ9Xfl5teG8TsTxS9F3ASG8Nc4MWHw7qSinK5JY+FQ8FrGlsKvpyzp6HjvdcOfw==
+"@getpara/react-sdk-lite@2.9.0":
+  version "2.9.0"
+  resolved "https://registry.yarnpkg.com/@getpara/react-sdk-lite/-/react-sdk-lite-2.9.0.tgz#f140159db4a60f86f47c5d90849c503bea917031"
+  integrity sha512-cWld5fO1TWuISclRlVZ/Kiv2Jfg3NbFsu7LOvavekyZVq+37DdsGgnhhCS8oe5rkkx/Ln3lBydlDB9hKCVs5kg==
   dependencies:
-    "@getpara/react-common" "2.8.0"
-    "@getpara/react-components" "2.8.0"
-    "@getpara/web-sdk" "2.8.0"
+    "@getpara/react-common" "2.9.0"
+    "@getpara/react-components" "2.9.0"
+    "@getpara/web-sdk" "2.9.0"
     date-fns "^3.6.0"
     framer-motion "^11.3.31"
     libphonenumber-js "^1.11.7"
@@ -2490,42 +2501,42 @@
     zustand "^4.5.2"
     zustand-sync-tabs "^0.2.2"
 
-"@getpara/shared@1.9.0":
-  version "1.9.0"
-  resolved "https://registry.yarnpkg.com/@getpara/shared/-/shared-1.9.0.tgz#a3e8bb65b682013e154b933b1ed1207396934e8a"
-  integrity sha512-HiW+4tpACqhZeg2VjR428uGm9YMV1/CBh+NFemabKj+3B+fdOcI3y+7/MAhZMT7sa/7PemBdUNOJnc+Tbcxifg==
+"@getpara/shared@1.10.0":
+  version "1.10.0"
+  resolved "https://registry.yarnpkg.com/@getpara/shared/-/shared-1.10.0.tgz#5c1f477e3409d5117fd31b28458db9df9a42dbad"
+  integrity sha512-xSBzCrQEbm+p32aoIjZcKL+TrfNRRYvuwGQrzvEMLB+vUxvkPMWz2n1uifRKzIVb/1MtIX4lDv5WiNe8xqFS9A==
 
-"@getpara/user-management-client@2.8.0":
-  version "2.8.0"
-  resolved "https://registry.yarnpkg.com/@getpara/user-management-client/-/user-management-client-2.8.0.tgz#270fa0ce697af8d5395a75470cb13b3b753029fb"
-  integrity sha512-b86cDR9PiwEyBGLLUrZnb98M1QKI5Qc35dJfubEYjhuUzhYYgV3qCYkkNPu+9SFxbCE1Jvu65v8M6dPD9E+LyQ==
+"@getpara/user-management-client@2.9.0":
+  version "2.9.0"
+  resolved "https://registry.yarnpkg.com/@getpara/user-management-client/-/user-management-client-2.9.0.tgz#9423eae5492bde88b4d9c9d9736de9c0a44e2fbf"
+  integrity sha512-/DDueC/aMGdqAHmPWze52uvvfE6yKGKjieVYysWs8/RYFUBvs6IwGeQl/Flf2Luu/GDqyO2nZ4n6DTDiOXYptw==
   dependencies:
-    "@getpara/shared" "1.9.0"
+    "@getpara/shared" "1.10.0"
     axios "^1.8.4"
     libphonenumber-js "^1.11.7"
 
-"@getpara/viem-v2-integration@2.8.0":
-  version "2.8.0"
-  resolved "https://registry.yarnpkg.com/@getpara/viem-v2-integration/-/viem-v2-integration-2.8.0.tgz#bc6af3308310ec5a8edc7e252c1f21ee388443e3"
-  integrity sha512-bevpy5rFU/cU8Bm+ocM7FCI+ap7XXJvIMKVJCegfxw8ibekbOwHlxyhg8vy5iN0VAjEHloY+T+WLEGHocNpMCQ==
+"@getpara/viem-v2-integration@2.9.0":
+  version "2.9.0"
+  resolved "https://registry.yarnpkg.com/@getpara/viem-v2-integration/-/viem-v2-integration-2.9.0.tgz#b1d4d690fa036b13ddfc29303b1ec35932c4f3bd"
+  integrity sha512-9fLTqKl8g4s3aBU3A4n5jp8nir/rpQvWwFVU/3TZlsla+d1Nq9/CwA+SjOuYKpe7KHW0agZoYIYlYNfq8ThMCg==
   dependencies:
-    "@getpara/core-sdk" "2.8.0"
+    "@getpara/core-sdk" "2.9.0"
 
-"@getpara/wagmi-v2-connector@2.8.0":
-  version "2.8.0"
-  resolved "https://registry.yarnpkg.com/@getpara/wagmi-v2-connector/-/wagmi-v2-connector-2.8.0.tgz#aa45da28c8afe624b637a00363364589a6ce8e32"
-  integrity sha512-45qpL2gGC+mnw3aXSd+223oOIbUvD+QDt+9/mxj3gxikBWprsBoJrPj5gapunlpcQlXKmr/ZKpWfrnaDsyz9ww==
+"@getpara/wagmi-v2-connector@2.9.0":
+  version "2.9.0"
+  resolved "https://registry.yarnpkg.com/@getpara/wagmi-v2-connector/-/wagmi-v2-connector-2.9.0.tgz#044f4e768263afc01404ed559d70c06864c18742"
+  integrity sha512-wshgsU7sCK8GorVLnGlxDWi2PdJOJTnHySm28bu45fcNVyLTqro6mATuM8deJtcj+Woprqjvkq4NotdIG2k8rQ==
   dependencies:
-    "@getpara/viem-v2-integration" "2.8.0"
-    "@getpara/web-sdk" "2.8.0"
+    "@getpara/viem-v2-integration" "2.9.0"
+    "@getpara/web-sdk" "2.9.0"
 
-"@getpara/web-sdk@2.8.0":
-  version "2.8.0"
-  resolved "https://registry.yarnpkg.com/@getpara/web-sdk/-/web-sdk-2.8.0.tgz#ad03496fc6ef72096f7182d77759932d4f00afcd"
-  integrity sha512-8czkLtT+yn7nDALDt4lCt43NbC7wHK5lEYf0GHcOWpf+sa45R7o9ObCrsA0O70Gj42a3atvzf2b4GFkRDfJ09w==
+"@getpara/web-sdk@2.9.0":
+  version "2.9.0"
+  resolved "https://registry.yarnpkg.com/@getpara/web-sdk/-/web-sdk-2.9.0.tgz#8ed1863cd86c5e89ea80818e40a977ca6d855511"
+  integrity sha512-2FR9P6ArAUrQdKWiu3FvYSYaWN7/EJPxjA8awh20KOhV1md/AV7atdhiXpXhXfkXYiDYVPIGe6smVP9wVjmOsQ==
   dependencies:
-    "@getpara/core-sdk" "2.8.0"
-    "@getpara/user-management-client" "2.8.0"
+    "@getpara/core-sdk" "2.9.0"
+    "@getpara/user-management-client" "2.9.0"
     base64url "^3.0.1"
     buffer "6.0.3"
     cbor-web "^9.0.2"
@@ -2851,10 +2862,10 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
-"@lifi/sdk@^3.15.5":
-  version "3.15.5"
-  resolved "https://registry.yarnpkg.com/@lifi/sdk/-/sdk-3.15.5.tgz#871dd466ab0a68b178f2cfa1298562df58843453"
-  integrity sha512-hbFA6s6woWBtn8qSPC1OeAoXkrzWOT+1M+tCXMlz/VE1nVBj/lI4Rc/TkEuxW12GF8t1GwJMAE0sANxEEDqReg==
+"@lifi/sdk@^3.15.6":
+  version "3.15.6"
+  resolved "https://registry.yarnpkg.com/@lifi/sdk/-/sdk-3.15.6.tgz#e7e115e1a642ae5dbaf8ab8be2a7406327937bed"
+  integrity sha512-rs6w5DUFN6XMblUECnxa1+TmIQH5+tmXDjifwHyLc3l8XJckfhorIGMVzlDwLIF0O+aPOh+PciFvpjiyo82RKQ==
   dependencies:
     "@bigmi/core" "^0.6.5"
     "@bitcoinerlab/secp256k1" "^1.2.0"
@@ -2876,16 +2887,16 @@
   dependencies:
     viem "^2.33.2"
 
-"@lifi/wallet-management@^3.22.5":
-  version "3.22.5"
-  resolved "https://registry.yarnpkg.com/@lifi/wallet-management/-/wallet-management-3.22.5.tgz#a613b5006829e68e6365eeb8f5bfb62fe0f2f51e"
-  integrity sha512-Fgml91NpR4r4uC0NAWF1lKyM6lagNiyotgD/UJkR2yDelnkPKf8qXdkgrpHO93mywVVqOjj72MyxQgkjh+VROA==
+"@lifi/wallet-management@^3.22.6":
+  version "3.22.6"
+  resolved "https://registry.yarnpkg.com/@lifi/wallet-management/-/wallet-management-3.22.6.tgz#c5f8094d57f4ebdb8ccd8472e0bb65c9e8f67ace"
+  integrity sha512-UYXzBi8M9xBErHAnN0pHYJP68e0OvtsAHiibFcDEBWN2NpZIyFkHK7+ZDzQsC7NdCn/SV2SebDbYEXQgZDPVwg==
   dependencies:
     "@bigmi/client" "^0.6.5"
     "@bigmi/core" "^0.6.5"
     "@emotion/react" "^11.14.0"
     "@emotion/styled" "^11.14.1"
-    "@lifi/sdk" "^3.15.5"
+    "@lifi/sdk" "^3.15.6"
     "@mui/icons-material" "^7.3.7"
     "@mui/material" "^7.3.7"
     "@mui/system" "^7.3.7"
@@ -2899,17 +2910,17 @@
     viem "^2.45.1"
     zustand "^5.0.11"
 
-"@lifi/widget@3.40.6":
-  version "3.40.6"
-  resolved "https://registry.yarnpkg.com/@lifi/widget/-/widget-3.40.6.tgz#3b0113bfbc2b715bc3d4738d5bcb1cfbc4768028"
-  integrity sha512-BNLCFXKxlsSoh6Qd97EeIe5JjotKh8Hm7Q0yiHukr6T3kygBdSrZQJmZYrmXxcxAIVSdcCTIoqqhwH4cJoUTTQ==
+"@lifi/widget@3.40.8":
+  version "3.40.8"
+  resolved "https://registry.yarnpkg.com/@lifi/widget/-/widget-3.40.8.tgz#2dc739084d020db134923963dc90c56c996eb9ec"
+  integrity sha512-a5HjfDPD/U5+Umih0J/JI1l/q8oPZhvGKmQoK9Lnzpoq3eO/lMmLojMfXEKVzPrbwzjWiSyIHEaROPlU1mhEFg==
   dependencies:
     "@bigmi/client" "^0.6.5"
     "@bigmi/core" "^0.6.5"
     "@emotion/react" "^11.14.0"
     "@emotion/styled" "^11.14.1"
-    "@lifi/sdk" "^3.15.5"
-    "@lifi/wallet-management" "^3.22.5"
+    "@lifi/sdk" "^3.15.6"
+    "@lifi/wallet-management" "^3.22.6"
     "@mui/icons-material" "^7.3.7"
     "@mui/material" "^7.3.7"
     "@mui/system" "^7.3.7"
@@ -6501,10 +6512,10 @@
   dependencies:
     undici-types "~5.26.4"
 
-"@types/node@24.10.12":
-  version "24.10.12"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-24.10.12.tgz#a51b49260a045c08ac761cbde7e407ef144d2b2a"
-  integrity sha512-68e+T28EbdmLSTkPgs3+UacC6rzmqrcWFPQs1C8mwJhI/r5Uxr0yEuQotczNRROd1gq30NGxee+fo0rSIxpyAw==
+"@types/node@24.10.13":
+  version "24.10.13"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-24.10.13.tgz#2fac25c0e30f3848e19912c3b8791a28370e9e07"
+  integrity sha512-oH72nZRfDv9lADUBSo104Aq7gPHpQZc4BTx38r9xf9pg5LfP6EzSyH2n7qFmmxRQXh7YlUXODcYsg6PuTDSxGg==
   dependencies:
     undici-types "~7.16.0"
 
