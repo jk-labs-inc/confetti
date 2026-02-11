@@ -62,19 +62,6 @@ const LandingHeaderMobileFooter = () => {
     }
   }, [closeWalletPortal]);
 
-  const WalletDrawer = () => {
-    if (!isClient) return null;
-
-    return (
-      <MobileProfileDrawer
-        isOpen={showWalletPortal}
-        onClose={closeWalletPortal}
-        address={userAddress ?? ""}
-        onDisconnect={handleDisconnect}
-      />
-    );
-  };
-
   return (
     <footer className="bg-true-black">
       <div
@@ -155,7 +142,14 @@ const LandingHeaderMobileFooter = () => {
           </div>
         </div>
       </div>
-      <WalletDrawer />
+      {isClient && (
+        <MobileProfileDrawer
+          isOpen={showWalletPortal}
+          onClose={closeWalletPortal}
+          address={userAddress ?? ""}
+          onDisconnect={handleDisconnect}
+        />
+      )}
     </footer>
   );
 };

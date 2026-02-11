@@ -63,19 +63,6 @@ const MainHeaderMobileLayout: FC<MainHeaderMobileLayoutProps> = ({ isConnected, 
     }
   }, [closeWalletPortal]);
 
-  const WalletDrawer = () => {
-    if (!isClient) return null;
-
-    return (
-      <MobileProfileDrawer
-        isOpen={showWalletPortal}
-        onClose={closeWalletPortal}
-        address={address}
-        onDisconnect={handleDisconnect}
-      />
-    );
-  };
-
   return (
     <>
       <div className="fixed top-4 right-4 z-50">
@@ -141,7 +128,14 @@ const MainHeaderMobileLayout: FC<MainHeaderMobileLayoutProps> = ({ isConnected, 
         </div>
       </nav>
 
-      <WalletDrawer />
+      {isClient && (
+        <MobileProfileDrawer
+          isOpen={showWalletPortal}
+          onClose={closeWalletPortal}
+          address={address}
+          onDisconnect={handleDisconnect}
+        />
+      )}
     </>
   );
 };
