@@ -7061,6 +7061,15 @@
     mipd "0.0.7"
     zustand "5.0.0"
 
+"@wagmi/core@3.3.3":
+  version "3.3.3"
+  resolved "https://registry.yarnpkg.com/@wagmi/core/-/core-3.3.3.tgz#2ced528c85bacfc8badfaa66ba4904850cae9f29"
+  integrity sha512-Yg7fZgLDReh5TzCyFEHsaoDgk9FaQ0lAI+RSGYk7qFBs3SAnRXlHzc9NxEsv9E91JEzWaEzYI0WvgDFALT0Msw==
+  dependencies:
+    eventemitter3 "5.0.1"
+    mipd "0.0.7"
+    zustand "5.0.0"
+
 "@wallet-standard/app@^1.1.0":
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@wallet-standard/app/-/app-1.1.0.tgz#2ca32e4675536224ebe55a00ad533b7923d7380a"
