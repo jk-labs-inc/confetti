@@ -23,12 +23,12 @@
     "coverage": "yarn workspace @scaffold-eth/forge forgecoverage",
     "smartcheck": "yarn format && yarn test -vv && yarn deploy",
     "fecheck": "turbo build",
-    "postinstall": "husky"
+    "postinstall": "husky && npm_config_loglevel=error npx setup-para"
   },
   "workspaces": [
     "packages/*"
   ],
   "dependencies": {
-    "husky": "9.1.5"
+    "husky": "9.1.7"
   }
 }

@@ -7,8 +7,8 @@ const LandingHeaderDesktop = () => {
   return (
     <>
       <LandingPageTicker />
-      <header className="pl-8 3xl:pl-20 mt-6">
-        <div className="grid grid-cols-[auto_1fr] items-center gap-x-6 max-w-(--landing-content-max-width)">
+      <header className="mt-6 px-4">
+        <div className="grid grid-cols-[auto_1fr] items-center gap-x-6 max-w-(--landing-content-max-width) mx-auto">
           <CustomLink href="/">
             <Logo />
           </CustomLink>
