@@ -24,10 +24,6 @@ interface AlchemyBySymbolResponse {
 /**
  * Fetches live USD prices for all supported native tokens directly from
  * the Alchemy Prices API `/tokens/by-symbol` endpoint.
- *
- * Returns a `Record<string, number>` keyed by **lowercase** symbol,
- * e.g. `{ eth: 2035.09, pol: 0.09, ... }` — the same shape the rest of
- * the currency system expects.
  */
 const fetchNativePrices = async (): Promise<Record<string, number>> => {
   if (!ALCHEMY_KEY) {

@@ -52,14 +52,14 @@ const ConnectDropdown: FC<ConnectDropdownProps> = ({
         return (
           <>
             <MenuButton
-              className={`${menuButtonWidth} flex items-center gap-4 justify-between rounded-2xl bg-primary-1 p-4 h-10 text-[16px] text-neutral-11 font-bold focus:not-data-focus:outline-none data-focus:outline data-focus:outline-white border border-transparent hover:border-neutral-17 transition-all duration-200 ease-in-out`}
+              className={`${menuButtonWidth} flex items-center gap-2 bg-secondary-1 p-4 h-8 text-base text-neutral-9 font-bold focus:not-data-focus:outline-none data-focus:outline data-focus:outline-white border border-primary-3 rounded-4xl`}
             >
               {selectedImage && (
                 <Image src={selectedImage} alt={selectedOption} width={20} height={20} className="rounded-full mt-1" />
               )}
               <span>{selectedOption}</span>
               <ChevronDownIcon
-                className={`text-neutral-11 w-6 h-5 mt-1 transition-transform duration-200 ease-out ${
+                className={`text-neutral-9 w-6 h-5 mt-1 transition-transform duration-200 ease-out ${
                   open ? "rotate-180" : "rotate-0"
                 }`}
               />
@@ -68,7 +68,7 @@ const ConnectDropdown: FC<ConnectDropdownProps> = ({
             <MenuItems
               transition
               anchor="bottom end"
-              className={`${menuItemsWidth} origin-top-right rounded-2xl  bg-primary-1 text-[16px] text-neutral-11 transition duration-100 ease-out [--anchor-gap:--spacing(2)] focus:outline-none data-closed:scale-95 data-closed:opacity-0`}
+              className={`${menuItemsWidth} origin-top-right rounded-2xl  bg-secondary-1 text-base text-neutral-9 transition duration-100 ease-out [--anchor-gap:--spacing(2)] focus:outline-none data-closed:scale-95 data-closed:opacity-0`}
             >
               <div
                 ref={scrollContainerRef}

@@ -23,9 +23,6 @@ interface AlchemyByAddressResponse {
 /**
  * Fetches ERC-20 token USD prices directly from the Alchemy Prices API
  * `/tokens/by-address` endpoint.
- *
- * Returns `Record<string, number>` keyed by lowercase address,
- * e.g. `{ "0xa0b8...": 1.00, ... }`.
  */
 export const fetchErc20Prices = async (addresses: string[], chain: string): Promise<Record<string, number>> => {
   const network = CHAIN_TO_ALCHEMY_NETWORK[chain];
@@ -75,11 +72,6 @@ export const fetchErc20Prices = async (addresses: string[], chain: string): Prom
 /**
  * Fetches live USD prices for ERC-20 tokens on a given chain via the
  * Alchemy Prices API.
- *
- * - Deduplicates via React Query key (same addresses + chain won't re-fetch).
- * - `staleTime: Infinity` means once fetched, data is never refetched.
- * - Skips chains that have no Alchemy network mapping.
- * - Falls back gracefully: if prices fail, display hooks show native values.
  */
 const useErc20Rates = (tokenAddresses: string[], chainName: string) => {
   const sorted = [...tokenAddresses].map(a => a.toLowerCase()).sort();

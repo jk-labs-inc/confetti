@@ -15,34 +15,26 @@ const CurrencyToggle: FC = () => {
   };
 
   return (
-    <div
-      role="button"
+    <button
+      type="button"
       onClick={toggleCurrency}
       onKeyDown={handleKeyDown}
-      tabIndex={0}
       aria-label={`Switch to ${isUsd ? "native crypto" : "USD"} pricing`}
-      className="relative grid h-10 grid-cols-2 items-center rounded-2xl bg-primary-1 p-1 border border-transparent hover:border-neutral-17 transition-all duration-200 ease-in-out cursor-pointer"
+      className="relative flex h-8 w-[88px] items-center rounded-full border border-primary-3 bg-true-black p-1 cursor-pointer transition-all duration-200 ease-in-out"
     >
       <span
-        className={`absolute inset-y-1 w-[calc(50%-6px)] rounded-xl bg-neutral-17 transition-all duration-200 ease-in-out ${
-          isUsd ? "left-1" : "left-[calc(50%+2px)]"
+        className={`absolute size-6 rounded-full transition-all duration-200 ease-in-out ${
+          isUsd ? "left-[calc(100%-24px-4px)] bg-gradient-purple-pastel" : "left-1 bg-gradient-gray-dark"
         }`}
       />
       <span
-        className={`z-10 flex h-8 items-center justify-center px-4 text-[14px] font-bold transition-colors duration-200 ${
-          isUsd ? "text-neutral-11" : "text-neutral-10"
+        className={`z-10 flex w-full items-center text-base uppercase font-bold text-neutral-9 transition-all duration-200 ${
+          isUsd ? "justify-start pl-2" : "justify-end pr-2"
         }`}
       >
-        usd
+        {isUsd ? "$USD" : "$ETH"}
       </span>
-      <span
-        className={`z-10 flex h-8 items-center justify-center px-4 text-[14px] font-bold transition-colors duration-200 ${
-          !isUsd ? "text-neutral-11" : "text-neutral-10"
-        }`}
-      >
-        crypto
-      </span>
-    </div>
+    </button>
   );
 };
 

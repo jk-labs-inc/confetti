@@ -10,8 +10,6 @@ export const ALCHEMY_PRICES_BASE_URL = "https://api.g.alchemy.com/prices/v1";
  * Uppercase symbols for every native token we want USD prices for.
  * Passed directly to the Alchemy `/tokens/by-symbol` endpoint.
  *
- * Alchemy supports the top 1 000+ symbols by market cap, so standard
- * native-gas-token tickers work out of the box.
  */
 export const NATIVE_TOKEN_SYMBOLS = [
   "ETH",
