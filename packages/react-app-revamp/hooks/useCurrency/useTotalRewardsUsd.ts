@@ -11,8 +11,6 @@ export interface TokenItem {
 
 /**
  * Combines a single combined USD value across all provided token items.
- *
- *
  * Returns formatted USD string or null if no rates are available, allowing components to fall back to native display.
  */
 const useTotalRewardsUsd = (items: TokenItem[], chainName: string): string | null => {

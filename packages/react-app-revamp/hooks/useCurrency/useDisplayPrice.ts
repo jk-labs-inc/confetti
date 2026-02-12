@@ -31,11 +31,6 @@ const resolveRate = (
 /**
  * Pure function that converts a native crypto value to a display format
  * based on the provided currency preference and rates.
- *
- * Accepts a RAW numeric string (e.g. from `formatUnits`). Formatting for
- * human display (abbreviation, rounding) is applied internally via
- * `formatBalance`, so callers should NOT pre-format with `formatBalance`.
- *
  * Returns both a primary display (based on toggle) and a secondary display
  * (the "other" format) so components can show both simultaneously.
  */
@@ -63,7 +58,6 @@ export const convertToDisplayPrice = (
     };
   }
 
-  // USD mode
   if (!hasValidRate) {
     return {
       displayValue: formattedNative,
@@ -87,14 +81,8 @@ export const convertToDisplayPrice = (
 /**
  * React hook that returns the display value and symbol for a given native crypto amount,
  * converting to USD if the user has toggled USD mode.
- *
- * Self-contained: fetches native rates via `useNativeRates()` and, when both
- * `tokenAddress` and `chainName` are provided, fetches the ERC-20 rate via
- * `useErc20Rates()`. React Query deduplicates and caches all fetches.
- *
  * Returns both primary and secondary display values so components can render both
  * (e.g. "$6,900.00 | 3.25 ETH").
- *
  * Falls back to native display if no USD rate is available.
  */
 const useDisplayPrice = (
