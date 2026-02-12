@@ -31,23 +31,15 @@ const AxisRight: React.FC<AxisRightProps> = ({
   const { data: nativeRates } = useNativeRates();
 
   const formatPriceLabel = useCallback(
-    (nativeFormatted: string, symbol: string): { full: string; primary: string; secondary: string | null } => {
-      const { displayValue, displaySymbol, secondaryValue, secondarySymbol } = convertToDisplayPrice(
+    (nativeFormatted: string, symbol: string): string => {
+      const { displayValue, displaySymbol } = convertToDisplayPrice(
         nativeFormatted,
         symbol,
         displayCurrency,
         nativeRates ?? {},
       );
 
-      const primary = displaySymbol === "$" ? `$${displayValue}` : `${displayValue} ${displaySymbol}`;
-
-      if (!secondaryValue || !secondarySymbol) {
-        return { full: primary, primary, secondary: null };
-      }
-
-      const secondary = secondarySymbol === "$" ? `$${secondaryValue}` : `${secondaryValue} ${secondarySymbol}`;
-
-      return { full: `${primary} | ${secondary}`, primary, secondary: `| ${secondary}` };
+      return displaySymbol === "$" ? `$${displayValue}` : `${displayValue} ${displaySymbol}`;
     },
     [displayCurrency, nativeRates],
   );
@@ -60,7 +52,7 @@ const AxisRight: React.FC<AxisRightProps> = ({
         tickValues={visibleTicks}
         tickFormat={(value: { toString: () => string }) => {
           const priceInWei = parseEther(value.toString());
-          return formatPriceLabel(formatEther(priceInWei), currency).full;
+          return formatPriceLabel(formatEther(priceInWei), currency);
         }}
         tickLabelProps={() => {
           return {
@@ -82,22 +74,20 @@ const AxisRight: React.FC<AxisRightProps> = ({
 
         const yPos = yScale(tick);
         const priceInWei = parseEther(tick.toString());
-        const { full, primary, secondary } = formatPriceLabel(formatEther(priceInWei), currency);
+        const label = formatPriceLabel(formatEther(priceInWei), currency);
 
         return (
           <g key={`current-tick-${tick}`}>
-            {/* Current price background (always rendered) */}
-            <rect x={chartWidth + 8} y={yPos - 14} width={estimateLabelWidth(full)} height={24} rx={8} fill="#BB65FF" />
+            <rect x={chartWidth + 8} y={yPos - 14} width={estimateLabelWidth(label)} height={24} rx={8} fill="#BB65FF" />
             <text
-              x={chartWidth + 16}
+              x={chartWidth + 8 + estimateLabelWidth(label) / 2}
               y={yPos}
               fill="#000000"
               fontSize={12}
-              textAnchor="start"
+              textAnchor="middle"
               dominantBaseline="middle"
             >
-              {primary}
-              {secondary && <tspan fill="#3d3d3d"> {secondary}</tspan>}
+              {label}
             </text>
           </g>
         );
@@ -111,29 +101,27 @@ const AxisRight: React.FC<AxisRightProps> = ({
 
           const yPos = yScale(tick);
           const priceInWei = parseEther(tick.toString());
-          const { full, primary, secondary } = formatPriceLabel(formatEther(priceInWei), currency);
+          const label = formatPriceLabel(formatEther(priceInWei), currency);
 
           return (
             <g key={`hovered-tick-${tick}`}>
-              {/* Hovered price background (renders on top) */}
               <rect
                 x={chartWidth + 8}
                 y={yPos - 14}
-                width={estimateLabelWidth(full)}
+                width={estimateLabelWidth(label)}
                 height={24}
                 rx={8}
                 fill="#212121"
               />
               <text
-                x={chartWidth + 16}
+                x={chartWidth + 8 + estimateLabelWidth(label) / 2}
                 y={yPos}
                 fill="#ffffff"
                 fontSize={12}
-                textAnchor="start"
+                textAnchor="middle"
                 dominantBaseline="middle"
               >
-                {primary}
-                {secondary && <tspan fill="#9d9d9d"> {secondary}</tspan>}
+                {label}
               </text>
             </g>
           );

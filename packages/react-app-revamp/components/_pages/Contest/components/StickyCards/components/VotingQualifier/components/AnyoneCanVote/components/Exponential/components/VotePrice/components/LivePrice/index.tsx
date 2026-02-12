@@ -30,13 +30,7 @@ const VotingQualifierAnyoneCanVoteExponentialLivePrice = () => {
   return (
     <p className="text-[16px] md:text-[24px] font-bold">
       <AnimatedBlinkText value={displayValue} className="text-neutral-11" blinkColor="#78FFC6" duration={0.6}>
-        <DualPriceDisplay
-          displayValue={displayValue}
-          displaySymbol={displaySymbol}
-          secondaryValue={secondaryValue}
-          secondarySymbol={secondarySymbol}
-          secondaryClassName="text-[12px] text-neutral-9"
-        />
+        {displayValue} {displaySymbol}
       </AnimatedBlinkText>{" "}
       {isMobile && <span className="text-[12px] text-neutral-11">/ vote</span>}
     </p>

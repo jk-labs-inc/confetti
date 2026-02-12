@@ -38,9 +38,6 @@ const resolveRate = (
  *
  * Returns both a primary display (based on toggle) and a secondary display
  * (the "other" format) so components can show both simultaneously.
- *
- * Use this in non-hook contexts (e.g. callbacks, SVG render functions).
- * For React components, prefer the `useDisplayPrice` hook instead.
  */
 export const convertToDisplayPrice = (
   nativeValue: string,
@@ -108,10 +105,7 @@ const useDisplayPrice = (
 ): DisplayPriceResult => {
   const displayCurrency = useCurrencyStore(state => state.displayCurrency);
   const { data: nativeRates } = useNativeRates();
-  const { data: erc20Rates } = useErc20Rates(
-    tokenAddress && chainName ? [tokenAddress] : [],
-    chainName ?? "",
-  );
+  const { data: erc20Rates } = useErc20Rates(tokenAddress && chainName ? [tokenAddress] : [], chainName ?? "");
 
   return convertToDisplayPrice(
     nativeValue,

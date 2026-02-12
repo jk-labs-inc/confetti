@@ -28,17 +28,14 @@ const VotingQualifierAnyoneCanVoteExponentialEndPrice: FC = () => {
   const startPriceRaw = formatEther(BigInt(costToVote ?? 0));
   const endPriceRaw = formatEther(calculateEndPrice(costToVote ?? 0, Number(priceCurveMultiple)));
 
-  const { displayValue: startDisplay, displaySymbol, secondaryValue: startSecondary, secondarySymbol } =
-    useDisplayPrice(startPriceRaw, contestConfig.chainNativeCurrencySymbol);
-  const { displayValue: endDisplay, secondaryValue: endSecondary } = useDisplayPrice(
-    endPriceRaw,
+  const { displayValue: startDisplay, displaySymbol } = useDisplayPrice(
+    startPriceRaw,
     contestConfig.chainNativeCurrencySymbol,
   );
+  const { displayValue: endDisplay } = useDisplayPrice(endPriceRaw, contestConfig.chainNativeCurrencySymbol);
 
   if (isLoading) return <VotingQualifierSkeleton />;
   if (isError) return <VotingQualifierError onClick={() => refetch()} />;
-
-  const showSecondary = !isMobile && startSecondary && endSecondary && secondarySymbol;
 
   const formatRangeValue = (value: string, symbol: string) => (symbol === "$" ? `$${value}` : value);
 
@@ -47,12 +44,6 @@ const VotingQualifierAnyoneCanVoteExponentialEndPrice: FC = () => {
       {formatRangeValue(startDisplay, displaySymbol)} → {formatRangeValue(endDisplay, displaySymbol)}
       {displaySymbol !== "$" && (
         <span className="text-[16px] md:text-[24px] text-neutral-9 uppercase"> {displaySymbol}</span>
-      )}
-      {showSecondary && (
-        <span className="text-[12px] text-neutral-9 font-bold ml-1.5">
-          | {formatRangeValue(startSecondary, secondarySymbol)} → {formatRangeValue(endSecondary, secondarySymbol)}
-          {secondarySymbol !== "$" && <span className="uppercase"> {secondarySymbol}</span>}
-        </span>
       )}
     </p>
   );

@@ -10,22 +10,15 @@ export interface TokenItem {
 }
 
 /**
- * Computes a single combined USD value across all provided token items.
+ * Combines a single combined USD value across all provided token items.
  *
- * Self-contained: fetches native rates via `useNativeRates()` and ERC-20
- * rates via `useErc20Rates()` for the given chain. React Query deduplicates
- * and caches all fetches (`staleTime: Infinity`).
  *
- * Returns formatted USD string (e.g. "7,400.00") or null if no rates
- * are available, allowing components to fall back to native display.
+ * Returns formatted USD string or null if no rates are available, allowing components to fall back to native display.
  */
 const useTotalRewardsUsd = (items: TokenItem[], chainName: string): string | null => {
   const { data: nativeRates } = useNativeRates();
 
-  const erc20Addresses = useMemo(
-    () => items.filter(i => i.tokenAddress).map(i => i.tokenAddress!),
-    [items],
-  );
+  const erc20Addresses = useMemo(() => items.filter(i => i.tokenAddress).map(i => i.tokenAddress!), [items]);
 
   const { data: erc20Rates } = useErc20Rates(erc20Addresses, chainName);
 
