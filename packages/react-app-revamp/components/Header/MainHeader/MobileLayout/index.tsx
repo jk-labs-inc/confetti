@@ -1,7 +1,9 @@
 import CurrencyToggle from "@components/Header/CurrencyToggle";
+import BurgerMenu from "@components/UI/BurgerMenu";
 import { IconMagnifyingGlassSolid } from "@components/UI/Icons";
 import CustomLink from "@components/UI/Link";
 import { MobileProfileDrawer } from "@components/UI/MobileWalletPortal";
+import { FOOTER_LINKS } from "@config/links";
 import {
   ROUTE_CREATE_CONTEST,
   ROUTE_LANDING,
@@ -24,7 +26,9 @@ import {
   UserCircleIcon as UserCircleIconSolid,
 } from "@heroicons/react/24/solid";
 import { usePathname } from "next/navigation";
-import { FC, useCallback, useEffect, useState } from "react";
+import { FC, useCallback, useEffect, useMemo, useState } from "react";
+
+const BURGER_MENU_LINKS = ["Github", "Linktree", "Docs", "Report a bug", "Terms", "Privacy Policy", "Media Kit", "FAQ"];
 
 interface MainHeaderMobileLayoutProps {
   isConnected: boolean;
@@ -40,6 +44,7 @@ const MainHeaderMobileLayout: FC<MainHeaderMobileLayoutProps> = ({ isConnected, 
   const isActive = (route: string) => (pathname === route ? "font-bold" : "");
   const isOneOfActive = (routes: string[]) => (routes.includes(pathname ?? "") ? "font-bold" : "");
   const { logoutAsync } = useLogout();
+  const filteredLinks = useMemo(() => FOOTER_LINKS.filter(link => BURGER_MENU_LINKS.includes(link.label)), []);
 
   useEffect(() => {
     setIsClient(true);
@@ -66,7 +71,26 @@ const MainHeaderMobileLayout: FC<MainHeaderMobileLayoutProps> = ({ isConnected, 
   return (
     <>
       <div className="fixed top-4 right-4 z-50">
-        <CurrencyToggle />
+        <BurgerMenu>
+          <div className="flex flex-col gap-6 px-6">
+            <div className="flex items-center gap-2">
+              <CurrencyToggle />
+            </div>
+            <div className="flex flex-col gap-2">
+              {filteredLinks.map((link, key) => (
+                <a
+                  className="font-sabo-filled text-neutral-11 text-[24px]"
+                  key={`footer-link-${key}`}
+                  href={link.href}
+                  rel="nofollow noreferrer"
+                  target="_blank"
+                >
+                  {link.label}
+                </a>
+              ))}
+            </div>
+          </div>
+        </BurgerMenu>
       </div>
 
       <nav className="fixed bottom-0 left-0 right-0 z-50 flex flex-col bg-true-black">
