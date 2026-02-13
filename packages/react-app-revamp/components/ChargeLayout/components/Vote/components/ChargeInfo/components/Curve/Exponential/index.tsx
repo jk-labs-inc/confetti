@@ -1,5 +1,4 @@
 import AnimatedBlinkText from "@components/UI/AnimatedBlinkText";
-import DualPriceDisplay from "@components/UI/DualPriceDisplay";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import useDisplayPrice from "@hooks/useCurrency/useDisplayPrice";
 import { FC } from "react";
@@ -14,20 +13,11 @@ const ChargeInfoExponential: FC<ChargeInfoExponentialProps> = ({ costToVote }) =
     useShallow(state => state.contestConfig.chainNativeCurrencySymbol),
   );
 
-  const { displayValue, displaySymbol, secondaryValue, secondarySymbol } = useDisplayPrice(
-    costToVote,
-    chainNativeCurrencySymbol,
-  );
+  const { displayValue, displaySymbol } = useDisplayPrice(costToVote, chainNativeCurrencySymbol);
 
   return (
     <AnimatedBlinkText value={costToVote} blinkColor="#78FFC6">
-      <DualPriceDisplay
-        displayValue={displayValue}
-        displaySymbol={displaySymbol}
-        secondaryValue={secondaryValue}
-        secondarySymbol={secondarySymbol}
-        secondaryClassName="text-[12px]"
-      />
+      <p>{displaySymbol === "$" ? `$${displayValue}` : `${displayValue} ${displaySymbol}`}</p>
     </AnimatedBlinkText>
   );
 };

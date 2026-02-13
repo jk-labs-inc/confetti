@@ -23,21 +23,15 @@ interface TokenRewardDisplayProps {
 }
 
 const TokenRewardDisplay: FC<TokenRewardDisplayProps> = ({ formatted, symbol, address, chainName }) => {
-  const { displayValue, displaySymbol, secondaryValue, secondarySymbol } = useDisplayPrice(
-    formatted,
-    symbol,
-    address,
-    chainName,
-  );
+  const { displayValue, displaySymbol } = useDisplayPrice(formatted, symbol, address, chainName);
 
   return (
     <span>
       <DualPriceDisplay
         displayValue={displayValue}
         displaySymbol={displaySymbol}
-        secondaryValue={secondaryValue}
-        secondarySymbol={secondarySymbol}
-        secondaryClassName="text-[14px] text-neutral-9"
+        secondaryValue={null}
+        secondarySymbol={null}
       />
     </span>
   );
@@ -94,13 +88,18 @@ const VoterStatistics: FC<VoterStatisticsProps> = ({ ranking, myReward, isActive
         <DualPriceDisplay
           displayValue={nativeRewardDisplay.displayValue}
           displaySymbol={nativeRewardDisplay.displaySymbol}
-          secondaryValue={nativeRewardDisplay.secondaryValue}
-          secondarySymbol={nativeRewardDisplay.secondarySymbol}
-          secondaryClassName="text-[14px] text-neutral-9"
+          secondaryValue={null}
+          secondarySymbol={null}
         />
       </span>
       {Object.entries(totalRewardsForRank?.tokens ?? {}).map(([address, token]) => (
-        <TokenRewardDisplay key={address} formatted={token.formatted ?? "0"} symbol={token.symbol} address={address} chainName={chainName} />
+        <TokenRewardDisplay
+          key={address}
+          formatted={token.formatted ?? "0"}
+          symbol={token.symbol}
+          address={address}
+          chainName={chainName}
+        />
       ))}
     </div>
   );
@@ -122,9 +121,8 @@ const VoterStatistics: FC<VoterStatisticsProps> = ({ ranking, myReward, isActive
               <DualPriceDisplay
                 displayValue={myRewardDisplay.displayValue}
                 displaySymbol={myRewardDisplay.displaySymbol}
-                secondaryValue={myRewardDisplay.secondaryValue}
-                secondarySymbol={myRewardDisplay.secondarySymbol}
-                secondaryClassName="text-[14px] text-neutral-9 font-normal"
+                secondaryValue={null}
+                secondarySymbol={null}
               />
             </b>
           }

@@ -20,7 +20,7 @@ const CurrencyToggle: FC = () => {
       onClick={toggleCurrency}
       onKeyDown={handleKeyDown}
       aria-label={`Switch to ${isUsd ? "native crypto" : "USD"} pricing`}
-      className="relative flex h-8 w-[88px] items-center rounded-full border border-primary-3 bg-true-black p-1 cursor-pointer transition-all duration-200 ease-in-out"
+      className="relative flex h-8 w-[88px] items-center rounded-full border border-primary-3 bg-secondary-1 p-1 cursor-pointer transition-all duration-200 ease-in-out"
     >
       <span
         className={`absolute size-6 rounded-full transition-all duration-200 ease-in-out ${

@@ -18,19 +18,19 @@ const VotingQualifierAnyoneCanVoteExponentialLivePrice = () => {
     votingClose,
   });
 
-  const { displayValue, displaySymbol, secondaryValue, secondarySymbol } = useDisplayPrice(
-    currentPricePerVote,
-    contestConfig.chainNativeCurrencySymbol,
-  );
+  const { displayValue, displaySymbol } = useDisplayPrice(currentPricePerVote, contestConfig.chainNativeCurrencySymbol);
 
   if (isError) {
     return <div className="text-red-500">Failed to load price</div>;
   }
 
+  const isUsd = displaySymbol === "$";
+
   return (
     <p className="text-[16px] md:text-[24px] font-bold">
       <AnimatedBlinkText value={displayValue} className="text-neutral-11" blinkColor="#78FFC6" duration={0.6}>
-        {displayValue} {displaySymbol}
+        {isUsd ? `$${displayValue}` : displayValue}
+        {!isUsd && <span className="text-[16px] md:text-[24px] text-neutral-9 uppercase"> {displaySymbol}</span>}
       </AnimatedBlinkText>{" "}
       {isMobile && <span className="text-[12px] text-neutral-11">/ vote</span>}
     </p>

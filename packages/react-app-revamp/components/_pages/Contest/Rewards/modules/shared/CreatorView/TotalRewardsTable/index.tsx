@@ -8,17 +8,11 @@ import { FC } from "react";
 import { formatUnits } from "viem";
 
 const NativeRewardCell: FC<{ amount: string; symbol: string }> = ({ amount, symbol }) => {
-  const { displayValue, displaySymbol, secondaryValue, secondarySymbol } = useDisplayPrice(amount, symbol);
+  const { displayValue, displaySymbol } = useDisplayPrice(amount, symbol);
 
   return (
     <p>
-      <DualPriceDisplay
-        displayValue={displayValue}
-        displaySymbol={displaySymbol}
-        secondaryValue={secondaryValue}
-        secondarySymbol={secondarySymbol}
-        secondaryClassName="text-[12px] text-neutral-9"
-      />
+      <DualPriceDisplay displayValue={displayValue} displaySymbol={displaySymbol} secondaryValue={null} secondarySymbol={null} />
     </p>
   );
 };
@@ -30,22 +24,11 @@ const TokenRewardCell: FC<{ amount: string; symbol: string; address: string; isL
   isLast,
 }) => {
   const { contestConfig } = useContestConfigStore(state => state);
-  const { displayValue, displaySymbol, secondaryValue, secondarySymbol } = useDisplayPrice(
-    amount,
-    symbol,
-    address,
-    contestConfig.chainName,
-  );
+  const { displayValue, displaySymbol } = useDisplayPrice(amount, symbol, address, contestConfig.chainName);
 
   return (
     <div key={address} className="text-[14px] font-bold">
-      <DualPriceDisplay
-        displayValue={displayValue}
-        displaySymbol={displaySymbol}
-        secondaryValue={secondaryValue}
-        secondarySymbol={secondarySymbol}
-        secondaryClassName="text-[14px] text-neutral-9"
-      />
+      <DualPriceDisplay displayValue={displayValue} displaySymbol={displaySymbol} secondaryValue={null} secondarySymbol={null} />
       {!isLast ? ", " : ""}
     </div>
   );
