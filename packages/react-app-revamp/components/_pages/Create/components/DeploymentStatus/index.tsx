@@ -3,6 +3,7 @@ import useDisplayPrice from "@hooks/useCurrency/useDisplayPrice";
 import { DeploymentProcessState } from "@hooks/useDeployContest/types";
 import { motion } from "motion/react";
 import React, { FC } from "react";
+import Skeleton from "react-loading-skeleton";
 import { useShallow } from "zustand/shallow";
 import BaseTransactions from "./components/BaseTransactions";
 import TransactionStatusIcons from "./components/TransactionStatusIcons";
@@ -10,7 +11,11 @@ import { getTransactionStatus } from "./helpers";
 import { Transaction, TransactionKey } from "./types";
 
 const FundingLabel: FC<{ amount: string; symbol: string }> = ({ amount, symbol }) => {
-  const { displayValue, displaySymbol } = useDisplayPrice(amount, symbol);
+  const { displayValue, displaySymbol, isLoading } = useDisplayPrice(amount, symbol);
+
+  if (isLoading) {
+    return <>Funding pool with <Skeleton width={60} height={16} baseColor="#706f78" highlightColor="#FFE25B" inline />...</>;
+  }
 
   return (
     <>

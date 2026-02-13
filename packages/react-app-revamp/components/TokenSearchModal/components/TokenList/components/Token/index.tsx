@@ -2,6 +2,7 @@
 import useDisplayPrice from "@hooks/useCurrency/useDisplayPrice";
 import { FilteredToken } from "@hooks/useTokenList";
 import { FC, useEffect, useState } from "react";
+import Skeleton from "react-loading-skeleton";
 
 interface TokenSearchListTokenProps {
   token: FilteredToken;
@@ -25,7 +26,7 @@ const TokenSearchListToken: FC<TokenSearchListTokenProps> = ({ token, isChainDro
   };
 
   const nativeBalanceRaw = token.balance?.toString() ?? "0";
-  const { displayValue: balanceDisplayValue, displaySymbol: balanceDisplaySymbol } = useDisplayPrice(
+  const { displayValue: balanceDisplayValue, displaySymbol: balanceDisplaySymbol, isLoading: isPriceLoading } = useDisplayPrice(
     nativeBalanceRaw,
     token.symbol,
   );
@@ -83,7 +84,11 @@ const TokenSearchListToken: FC<TokenSearchListTokenProps> = ({ token, isChainDro
             isHovered ? "text-positive-11" : ""
           }`}
         >
-          {balanceDisplaySymbol === "$" ? `$${balanceDisplayValue}` : balanceDisplayValue}
+          {isPriceLoading ? (
+            <Skeleton width={60} height={20} baseColor="#706f78" highlightColor="#FFE25B" />
+          ) : (
+            balanceDisplaySymbol === "$" ? `$${balanceDisplayValue}` : balanceDisplayValue
+          )}
         </p>
       ) : null}
     </div>

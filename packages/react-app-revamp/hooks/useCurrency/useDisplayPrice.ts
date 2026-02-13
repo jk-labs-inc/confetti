@@ -8,6 +8,7 @@ export type DisplayPriceResult = {
   displaySymbol: string;
   secondaryValue: string | null;
   secondarySymbol: string | null;
+  isLoading: boolean;
 };
 
 /**
@@ -55,6 +56,7 @@ export const convertToDisplayPrice = (
       displaySymbol: nativeCurrencySymbol,
       secondaryValue: secondaryUsd,
       secondarySymbol: secondaryUsd !== null ? "$" : null,
+      isLoading: false,
     };
   }
 
@@ -64,6 +66,7 @@ export const convertToDisplayPrice = (
       displaySymbol: nativeCurrencySymbol,
       secondaryValue: null,
       secondarySymbol: null,
+      isLoading: false,
     };
   }
 
@@ -75,6 +78,7 @@ export const convertToDisplayPrice = (
     displaySymbol: "$",
     secondaryValue: formattedNative,
     secondarySymbol: nativeCurrencySymbol,
+    isLoading: false,
   };
 };
 
@@ -92,10 +96,16 @@ const useDisplayPrice = (
   chainName?: string,
 ): DisplayPriceResult => {
   const displayCurrency = useCurrencyStore(state => state.displayCurrency);
-  const { data: nativeRates } = useNativeRates();
-  const { data: erc20Rates } = useErc20Rates(tokenAddress && chainName ? [tokenAddress] : [], chainName ?? "");
+  const { data: nativeRates, isLoading: isNativeRatesLoading } = useNativeRates();
+  const { data: erc20Rates, isLoading: isErc20RatesLoading } = useErc20Rates(
+    tokenAddress && chainName ? [tokenAddress] : [],
+    chainName ?? "",
+  );
 
-  return convertToDisplayPrice(
+  const isLoading =
+    displayCurrency === "usd" && (tokenAddress ? isErc20RatesLoading : isNativeRatesLoading);
+
+  const result = convertToDisplayPrice(
     nativeValue,
     nativeCurrencySymbol,
     displayCurrency,
@@ -103,6 +113,8 @@ const useDisplayPrice = (
     erc20Rates ?? {},
     tokenAddress,
   );
+
+  return { ...result, isLoading };
 };
 
 export default useDisplayPrice;

@@ -10,7 +10,7 @@ interface RewardCounterProps {
 }
 
 const RewardCounter: FC<RewardCounterProps> = ({ valueFormatted, symbol, index }) => {
-  const { displayValue, displaySymbol } = useDisplayPrice(valueFormatted, symbol);
+  const { displayValue, displaySymbol, isLoading } = useDisplayPrice(valueFormatted, symbol);
 
   return (
     <motion.div
@@ -33,6 +33,9 @@ const RewardCounter: FC<RewardCounterProps> = ({ valueFormatted, symbol, index }
           displaySymbol={displaySymbol}
           secondaryValue={null}
           secondarySymbol={null}
+          isLoading={isLoading}
+          skeletonWidth={80}
+          skeletonHeight={24}
         />
       </p>
     </motion.div>

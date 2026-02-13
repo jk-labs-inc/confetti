@@ -1,5 +1,6 @@
 import useDisplayPrice from "@hooks/useCurrency/useDisplayPrice";
 import { FC } from "react";
+import Skeleton from "react-loading-skeleton";
 import { formatUnits } from "viem";
 
 interface RewardsNumberDisplayProps {
@@ -22,7 +23,11 @@ const RewardsNumberDisplay: FC<RewardsNumberDisplayProps> = ({
   chainName,
 }) => {
   const nativeRaw = formatUnits(value, decimals);
-  const { displayValue, displaySymbol } = useDisplayPrice(nativeRaw, symbol, tokenAddress, chainName);
+  const { displayValue, displaySymbol, isLoading } = useDisplayPrice(nativeRaw, symbol, tokenAddress, chainName);
+
+  if (isLoading) {
+    return <Skeleton width={120} height={40} baseColor="#706f78" highlightColor="#FFE25B" />;
+  }
 
   return (
     <p key={index} className={`text-[40px] leading-none text-neutral-11 ${isBold ? "font-bold" : ""}`}>

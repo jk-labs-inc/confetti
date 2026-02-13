@@ -20,24 +20,28 @@ const BalanceOrSkeleton = ({
   userBalance: string;
   nativeCurrencySymbol?: string;
 }) => {
-  const { displayValue, displaySymbol } = useDisplayPrice(
+  const { displayValue, displaySymbol, isLoading: isPriceLoading } = useDisplayPrice(
     userBalance,
     nativeCurrencySymbol ?? "",
   );
 
-  return isUserBalanceLoading ? (
-    <span className="flex items-center gap-1 text-neutral-9">
-      <Skeleton
-        width={100}
-        height={16}
-        baseColor="#242424"
-        highlightColor="#78FFC6"
-        duration={1}
-        style={{ lineHeight: "normal", fontSize: "inherit", verticalAlign: "middle" }}
-      />
-      =
-    </span>
-  ) : (
+  if (isUserBalanceLoading || isPriceLoading) {
+    return (
+      <span className="flex items-center gap-1 text-neutral-9">
+        <Skeleton
+          width={100}
+          height={16}
+          baseColor="#242424"
+          highlightColor="#78FFC6"
+          duration={1}
+          style={{ lineHeight: "normal", fontSize: "inherit", verticalAlign: "middle" }}
+        />
+        =
+      </span>
+    );
+  }
+
+  return (
     <span className="text-neutral-9">
       {displaySymbol === "$" ? `$${displayValue}` : `${displayValue} ${displaySymbol}`} =
     </span>

@@ -34,13 +34,13 @@ const ContestParametersVotingPrice = () => {
   const startPriceRaw = formatEther(BigInt(charge.costToVote));
   const endPriceRaw = formatEther(calculateEndPrice(charge.costToVote, Number(priceCurveMultiple)));
 
-  const { displayValue: startDisplay, displaySymbol } = useDisplayPrice(
+  const { displayValue: startDisplay, displaySymbol, isLoading: isPriceLoading } = useDisplayPrice(
     startPriceRaw,
     contestConfig.chainNativeCurrencySymbol,
   );
   const { displayValue: endDisplay } = useDisplayPrice(endPriceRaw, contestConfig.chainNativeCurrencySymbol);
 
-  if (isPriceCurveMultipleLoading) return <VotingQualifierSkeleton />;
+  if (isPriceCurveMultipleLoading || isPriceLoading) return <VotingQualifierSkeleton />;
   if (isPriceCurveMultipleError) return <VotingQualifierError onClick={() => refetchPriceCurveMultiple()} />;
 
   const pricePrefix = displaySymbol === "$" ? "$" : "";

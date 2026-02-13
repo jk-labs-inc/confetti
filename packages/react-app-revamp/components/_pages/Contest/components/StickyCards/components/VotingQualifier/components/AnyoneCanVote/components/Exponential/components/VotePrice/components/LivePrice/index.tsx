@@ -1,9 +1,9 @@
 import AnimatedBlinkText from "@components/UI/AnimatedBlinkText";
-import DualPriceDisplay from "@components/UI/DualPriceDisplay";
 import { useContestStore } from "@hooks/useContest/store";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import useDisplayPrice from "@hooks/useCurrency/useDisplayPrice";
 import useCurrentPricePerVote from "@hooks/useCurrentPricePerVote";
+import Skeleton from "react-loading-skeleton";
 import { useMediaQuery } from "react-responsive";
 import { useShallow } from "zustand/shallow";
 
@@ -18,10 +18,17 @@ const VotingQualifierAnyoneCanVoteExponentialLivePrice = () => {
     votingClose,
   });
 
-  const { displayValue, displaySymbol } = useDisplayPrice(currentPricePerVote, contestConfig.chainNativeCurrencySymbol);
+  const { displayValue, displaySymbol, isLoading } = useDisplayPrice(
+    currentPricePerVote,
+    contestConfig.chainNativeCurrencySymbol,
+  );
 
   if (isError) {
     return <div className="text-red-500">Failed to load price</div>;
+  }
+
+  if (isLoading) {
+    return <Skeleton width={100} height={24} baseColor="#706f78" highlightColor="#FFE25B" />;
   }
 
   const isUsd = displaySymbol === "$";

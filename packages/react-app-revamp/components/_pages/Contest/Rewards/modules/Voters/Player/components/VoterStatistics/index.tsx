@@ -23,7 +23,7 @@ interface TokenRewardDisplayProps {
 }
 
 const TokenRewardDisplay: FC<TokenRewardDisplayProps> = ({ formatted, symbol, address, chainName }) => {
-  const { displayValue, displaySymbol } = useDisplayPrice(formatted, symbol, address, chainName);
+  const { displayValue, displaySymbol, isLoading } = useDisplayPrice(formatted, symbol, address, chainName);
 
   return (
     <span>
@@ -32,6 +32,7 @@ const TokenRewardDisplay: FC<TokenRewardDisplayProps> = ({ formatted, symbol, ad
         displaySymbol={displaySymbol}
         secondaryValue={null}
         secondarySymbol={null}
+        isLoading={isLoading}
       />
     </span>
   );
@@ -90,6 +91,7 @@ const VoterStatistics: FC<VoterStatisticsProps> = ({ ranking, myReward, isActive
           displaySymbol={nativeRewardDisplay.displaySymbol}
           secondaryValue={null}
           secondarySymbol={null}
+          isLoading={nativeRewardDisplay.isLoading}
         />
       </span>
       {Object.entries(totalRewardsForRank?.tokens ?? {}).map(([address, token]) => (
@@ -123,6 +125,7 @@ const VoterStatistics: FC<VoterStatisticsProps> = ({ ranking, myReward, isActive
                 displaySymbol={myRewardDisplay.displaySymbol}
                 secondaryValue={null}
                 secondarySymbol={null}
+                isLoading={myRewardDisplay.isLoading}
               />
             </b>
           }

@@ -1,6 +1,7 @@
 import useDisplayPrice from "@hooks/useCurrency/useDisplayPrice";
 import { FC } from "react";
 import { motion } from "motion/react";
+import Skeleton from "react-loading-skeleton";
 
 interface MyVotesProps {
   balance: string;
@@ -11,7 +12,7 @@ interface MyVotesProps {
 }
 
 const MyVotes: FC<MyVotesProps> = ({ balance, symbol, insufficientBalance, isConnected, onAddFunds }) => {
-  const { displayValue, displaySymbol } = useDisplayPrice(balance, symbol);
+  const { displayValue, displaySymbol, isLoading } = useDisplayPrice(balance, symbol);
 
   return (
     <div
@@ -21,11 +22,13 @@ const MyVotes: FC<MyVotesProps> = ({ balance, symbol, insufficientBalance, isCon
     >
       <p className="text-neutral-9 font-bold normal-case">
         balance:{" "}
-        {isConnected
-          ? displaySymbol === "$"
-            ? `$${displayValue}`
-            : `${displayValue} ${displaySymbol}`
-          : "N/A"}
+        {!isConnected
+          ? "N/A"
+          : isLoading
+            ? <Skeleton width={80} height={16} baseColor="#706f78" highlightColor="#FFE25B" inline />
+            : displaySymbol === "$"
+              ? `$${displayValue}`
+              : `${displayValue} ${displaySymbol}`}
       </p>
 
       {!insufficientBalance && (

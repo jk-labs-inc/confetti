@@ -23,9 +23,9 @@ const ContestParametersVotingLegacy = () => {
   });
 
   const costFormatted = formatEther(BigInt(charge.costToVote));
-  const { displayValue, displaySymbol } = useDisplayPrice(costFormatted, contestConfig.chainNativeCurrencySymbol);
+  const { displayValue, displaySymbol, isLoading: isPriceLoading } = useDisplayPrice(costFormatted, contestConfig.chainNativeCurrencySymbol);
 
-  if (isLoadingVotingMerkleRoot) {
+  if (isLoadingVotingMerkleRoot || isPriceLoading) {
     return <Skeleton width={100} height={24} baseColor="#6A6A6A" highlightColor="#BB65FF" />;
   }
 

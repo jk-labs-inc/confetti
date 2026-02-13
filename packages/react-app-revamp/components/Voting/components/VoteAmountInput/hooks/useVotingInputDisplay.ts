@@ -13,6 +13,7 @@ interface UseVotingInputDisplayProps {
 interface UseVotingInputDisplayReturn {
   displayValue: string;
   displaySymbol: string;
+  isLoading: boolean;
   isInvalid: boolean;
   handleDisplayChange: (value: string) => void;
   handleDisplayMax: () => void;
@@ -39,10 +40,11 @@ const useVotingInputDisplay = ({
   isConnected,
 }: UseVotingInputDisplayProps): UseVotingInputDisplayReturn => {
   const displayCurrency = useCurrencyStore(state => state.displayCurrency);
-  const { data: nativeRates } = useNativeRates();
+  const { data: nativeRates, isLoading: isNativeRatesLoading } = useNativeRates();
   const rate = nativeRates?.[nativeCurrencySymbol.toLowerCase()];
   const isUsd = displayCurrency === "usd" && rate !== undefined;
   const usdRate = isUsd ? rate : undefined;
+  const isLoading = displayCurrency === "usd" && isNativeRatesLoading;
 
   const { inputValue, setInputValue, setIsFocused, isInvalid, handleMaxClick } = useVotingStore(
     useShallow(state => ({
@@ -80,6 +82,7 @@ const useVotingInputDisplay = ({
   return {
     displayValue,
     displaySymbol,
+    isLoading,
     isInvalid,
     handleDisplayChange,
     handleDisplayMax,

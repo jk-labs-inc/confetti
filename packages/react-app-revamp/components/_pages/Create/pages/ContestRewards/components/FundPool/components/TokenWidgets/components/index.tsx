@@ -7,6 +7,7 @@ import { useTokenOrNativeBalance } from "@hooks/useBalance";
 import useDisplayPrice from "@hooks/useCurrency/useDisplayPrice";
 import { FilteredToken } from "@hooks/useTokenList";
 import { FC, useEffect, useMemo, useState } from "react";
+import Skeleton from "react-loading-skeleton";
 import { FundPoolToken, useFundPoolStore } from "../../../store";
 import { generateNativeToken } from "../../../utils";
 import { useWallet } from "@hooks/useWallet";
@@ -54,7 +55,7 @@ const TokenWidget: FC<TokenWidgetProps> = ({ tokenWidget, index, chain }) => {
     chainId: chainId,
   });
   const [isExceedingBalance, setIsExceedingBalance] = useState(false);
-  const { displayValue: balanceDisplay, displaySymbol: balanceSymbol } = useDisplayPrice(
+  const { displayValue: balanceDisplay, displaySymbol: balanceSymbol, isLoading: isPriceLoading } = useDisplayPrice(
     getRawBalance(balance?.value ?? ""),
     getTokenSymbol(localSelectedToken, chainNativeCurrencySymbol ?? "", "long"),
   );
@@ -205,7 +206,9 @@ const TokenWidget: FC<TokenWidgetProps> = ({ tokenWidget, index, chain }) => {
                   <div className="flex gap-2 items-center group">
                     <p className="text-[16px] text-neutral-14 font-bold">
                       balance:{" "}
-                      {balanceSymbol === "$" ? (
+                      {isPriceLoading ? (
+                        <Skeleton width={80} height={16} baseColor="#706f78" highlightColor="#FFE25B" inline />
+                      ) : balanceSymbol === "$" ? (
                         `$${balanceDisplay}`
                       ) : (
                         <>

@@ -1,6 +1,7 @@
 import { VotingWidgetStyle } from "@components/Voting";
 import { FC, RefObject } from "react";
 import { motion } from "motion/react";
+import Skeleton from "react-loading-skeleton";
 import useVotingInputDisplay from "./hooks/useVotingInputDisplay";
 
 interface VoteAmountInputProps {
@@ -29,7 +30,7 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
   inputRef,
   onKeyDown,
 }) => {
-  const { displayValue, displaySymbol, isInvalid, handleDisplayChange, handleDisplayMax, setIsFocused } =
+  const { displayValue, displaySymbol, isLoading, isInvalid, handleDisplayChange, handleDisplayMax, setIsFocused } =
     useVotingInputDisplay({
       nativeCurrencySymbol: symbol,
       maxBalance,
@@ -49,23 +50,29 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
       className={`flex w-full h-[72px] items-center justify-between px-6 text-[16px] ${styleConfig.background} font-bold ${textColor} border ${borderColor} rounded-[40px] transition-colors duration-300`}
     >
       <div className="flex items-baseline">
-        {displaySymbol === "$" && (
-          <span className="text-[40px] text-neutral-9 whitespace-nowrap mr-1">{displaySymbol}</span>
-        )}
-        <input
-          ref={inputRef}
-          type="text"
-          value={displayValue}
-          onChange={e => handleDisplayChange(e.target.value)}
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
-          placeholder="0.00"
-          onKeyDown={onKeyDown}
-          className="text-[40px] bg-transparent outline-none placeholder-primary-5 max-w-42 md:max-w-48"
-          style={{ width: `${width || 1}ch` }}
-        />
-        {displaySymbol !== "$" && (
-          <span className="text-[16px] text-neutral-9 whitespace-nowrap ml-2">{displaySymbol}</span>
+        {isLoading ? (
+          <Skeleton width={120} height={40} baseColor="#706f78" highlightColor="#FFE25B" borderRadius={8} />
+        ) : (
+          <>
+            {displaySymbol === "$" && (
+              <span className="text-[40px] text-neutral-9 whitespace-nowrap mr-1">{displaySymbol}</span>
+            )}
+            <input
+              ref={inputRef}
+              type="text"
+              value={displayValue}
+              onChange={e => handleDisplayChange(e.target.value)}
+              onFocus={() => setIsFocused(true)}
+              onBlur={() => setIsFocused(false)}
+              placeholder="0.00"
+              onKeyDown={onKeyDown}
+              className="text-[40px] bg-transparent outline-none placeholder-primary-5 max-w-42 md:max-w-48"
+              style={{ width: `${width || 1}ch` }}
+            />
+            {displaySymbol !== "$" && (
+              <span className="text-[16px] text-neutral-9 whitespace-nowrap ml-2">{displaySymbol}</span>
+            )}
+          </>
         )}
       </div>
       <motion.button

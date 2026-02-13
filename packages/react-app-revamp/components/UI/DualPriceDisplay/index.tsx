@@ -1,4 +1,5 @@
 import { FC } from "react";
+import Skeleton from "react-loading-skeleton";
 
 interface DualPriceDisplayProps {
   displayValue: string;
@@ -7,6 +8,9 @@ interface DualPriceDisplayProps {
   secondarySymbol: string | null;
   primaryClassName?: string;
   secondaryClassName?: string;
+  isLoading?: boolean;
+  skeletonWidth?: number;
+  skeletonHeight?: number;
 }
 
 /**
@@ -23,7 +27,14 @@ const DualPriceDisplay: FC<DualPriceDisplayProps> = ({
   secondarySymbol,
   primaryClassName = "",
   secondaryClassName = "",
+  isLoading = false,
+  skeletonWidth = 100,
+  skeletonHeight = 16,
 }) => {
+  if (isLoading) {
+    return <Skeleton width={skeletonWidth} height={skeletonHeight} baseColor="#706f78" highlightColor="#FFE25B" />;
+  }
+
   const primaryFormatted = displaySymbol === "$" ? `$${displayValue}` : `${displayValue} ${displaySymbol}`;
 
   if (!secondaryValue || !secondarySymbol) {

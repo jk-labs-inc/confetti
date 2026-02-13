@@ -2,6 +2,7 @@ import { returnOnlySuffix } from "@helpers/ordinalSuffix";
 import useDisplayPrice from "@hooks/useCurrency/useDisplayPrice";
 import { RewardPoolData } from "@hooks/useDeployContest/slices/contestCreateRewards";
 import { FC, useMemo } from "react";
+import Skeleton from "react-loading-skeleton";
 import { useFundPoolStore } from "@components/_pages/Create/pages/ContestRewards/components/FundPool/store";
 import CreateContestConfirmLayout from "../Layout";
 
@@ -11,8 +12,9 @@ interface TokenAmountDisplayProps {
 }
 
 const TokenAmountDisplay: FC<TokenAmountDisplayProps> = ({ amount, symbol }) => {
-  const { displayValue, displaySymbol } = useDisplayPrice(amount, symbol);
+  const { displayValue, displaySymbol, isLoading } = useDisplayPrice(amount, symbol);
 
+  if (isLoading) return <Skeleton width={60} height={16} baseColor="#706f78" highlightColor="#FFE25B" inline />;
   if (displaySymbol === "$") return <>${displayValue}</>;
   return (
     <>

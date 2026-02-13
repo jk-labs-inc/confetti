@@ -25,13 +25,13 @@ const VotingQualifierAnyoneCanVoteExponentialEndPrice: FC = () => {
   const startPriceRaw = formatEther(BigInt(costToVote ?? 0));
   const endPriceRaw = formatEther(calculateEndPrice(costToVote ?? 0, Number(priceCurveMultiple)));
 
-  const { displayValue: startDisplay, displaySymbol } = useDisplayPrice(
+  const { displayValue: startDisplay, displaySymbol, isLoading: isPriceLoading } = useDisplayPrice(
     startPriceRaw,
     contestConfig.chainNativeCurrencySymbol,
   );
   const { displayValue: endDisplay } = useDisplayPrice(endPriceRaw, contestConfig.chainNativeCurrencySymbol);
 
-  if (isLoading) return <VotingQualifierSkeleton />;
+  if (isLoading || isPriceLoading) return <VotingQualifierSkeleton />;
   if (isError) return <VotingQualifierError onClick={() => refetch()} />;
 
   const isUsd = displaySymbol === "$";

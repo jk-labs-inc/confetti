@@ -5,6 +5,7 @@ import CreateGradientTitle from "@components/_pages/Create/components/GradientTi
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import useDisplayPrice from "@hooks/useCurrency/useDisplayPrice";
 import { addressRegex } from "@helpers/regex";
+import Skeleton from "react-loading-skeleton";
 
 interface TokenSearchModalERC20MultiStepFormProps {
   token: FilteredToken;
@@ -22,7 +23,7 @@ const TokenSearchModalERC20MultiStepForm: FC<TokenSearchModalERC20MultiStepFormP
   const [errors, setErrors] = useState<{ recipient?: string; amount?: string }>({});
 
   const balanceRaw = token.balance?.toString() ?? "0";
-  const { displayValue: balanceDisplayValue, displaySymbol: balanceDisplaySymbol } = useDisplayPrice(
+  const { displayValue: balanceDisplayValue, displaySymbol: balanceDisplaySymbol, isLoading: isPriceLoading } = useDisplayPrice(
     balanceRaw,
     token.symbol,
   );
@@ -128,7 +129,9 @@ const TokenSearchModalERC20MultiStepForm: FC<TokenSearchModalERC20MultiStepFormP
           <div className="flex justify-end">
             <span className="text-[14px] text-neutral-9">
               Available:{" "}
-              {balanceDisplaySymbol === "$" ? (
+              {isPriceLoading ? (
+                <Skeleton width={60} height={14} baseColor="#706f78" highlightColor="#FFE25B" inline />
+              ) : balanceDisplaySymbol === "$" ? (
                 `$${balanceDisplayValue}`
               ) : (
                 <>

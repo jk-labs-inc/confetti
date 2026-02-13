@@ -1,5 +1,6 @@
 import useDisplayPrice from "@hooks/useCurrency/useDisplayPrice";
 import { FC } from "react";
+import Skeleton from "react-loading-skeleton";
 
 interface CostToVoteMessageProps {
   costToVote?: number;
@@ -20,6 +21,7 @@ const CostToVoteMessage: FC<CostToVoteMessageProps> = ({ costToVote, costToVoteE
     displaySymbol: startSymbol,
     secondaryValue: startSecondary,
     secondarySymbol: startSecondarySymbol,
+    isLoading: isStartLoading,
   } = useDisplayPrice(startRaw, nativeCurrencySymbol ?? "");
 
   const {
@@ -27,7 +29,16 @@ const CostToVoteMessage: FC<CostToVoteMessageProps> = ({ costToVote, costToVoteE
     displaySymbol: endSymbol,
     secondaryValue: endSecondary,
     secondarySymbol: endSecondarySymbol,
+    isLoading: isEndLoading,
   } = useDisplayPrice(endRaw, nativeCurrencySymbol ?? "");
+
+  if (isStartLoading || isEndLoading) {
+    return (
+      <li className="text-[16px]">
+        <Skeleton width={200} height={16} baseColor="#706f78" highlightColor="#FFE25B" inline />
+      </li>
+    );
+  }
 
   const startPrimary = formatPrice(startDisplay, startSymbol);
   const endPrimary = formatPrice(endDisplay, endSymbol);
