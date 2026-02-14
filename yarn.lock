@@ -2408,15 +2408,15 @@
     inputmask "5.0.9"
     qrcode-with-logos "1.1.1"
 
-"@getpara/core-sdk@2.10.0":
-  version "2.10.0"
-  resolved "https://registry.yarnpkg.com/@getpara/core-sdk/-/core-sdk-2.10.0.tgz#2ec067e39fc29faf8cfa2532968d619c14629eec"
-  integrity sha512-KSAo9rX+xkFP+AStjLhkuBUrRDgC0EpG4tcVumChSEQzreL/dg/m8K+B3ICet4LWflpj3EqlTaemVPSIMSd45g==
+"@getpara/core-sdk@2.11.0":
+  version "2.11.0"
+  resolved "https://registry.yarnpkg.com/@getpara/core-sdk/-/core-sdk-2.11.0.tgz#c26f63e3951c64b4688f62355e748ad70260a0b8"
+  integrity sha512-3GqYXKD+3rDwhTS9cR4ERJTUgr5/mz0ETiUoq6osH9IbE8Bx1EpX5Y0U84+UUJdKXE4tku2Rji/b6VN0jwJtCA==
   dependencies:
     "@celo/utils" "^8.0.2"
     "@cosmjs/encoding" "^0.32.4"
     "@ethereumjs/util" "^9.1.0"
-    "@getpara/user-management-client" "2.10.0"
+    "@getpara/user-management-client" "2.11.0"
     "@noble/hashes" "^1.5.0"
     base64url "^3.0.1"
     libphonenumber-js "^1.11.7"
@@ -2438,14 +2438,14 @@
     node-forge "^1.3.1"
     uuid "^11.1.0"
 
-"@getpara/evm-wallet-connectors@2.10.0":
-  version "2.10.0"
-  resolved "https://registry.yarnpkg.com/@getpara/evm-wallet-connectors/-/evm-wallet-connectors-2.10.0.tgz#6fb2d9462758a2e11d58f5ce9068fbe4c3500fd8"
-  integrity sha512-hmGS+mRaZp4BDkypFqXbbZAm48oWFRD0+hkdsBcn9UV8FdCL0BbSHHP2dFs2nsSYh3c2q77WRA9JsG+Vtp+oRQ==
+"@getpara/evm-wallet-connectors@2.11.0":
+  version "2.11.0"
+  resolved "https://registry.yarnpkg.com/@getpara/evm-wallet-connectors/-/evm-wallet-connectors-2.11.0.tgz#5d49989002c64a575c943e9360d0d384f4755b1e"
+  integrity sha512-RW5tkFGgE2sxP+xUF3ul3Dy1zj4tB3vIfguykz7L/EAZBmXd3YxicIw8l+bXCjkzcSN4CoUO6VeVCHgp9mgkOA==
   dependencies:
     "@coinbase/wallet-sdk" "4.3.0"
-    "@getpara/wagmi-v2-connector" "2.10.0"
-    "@getpara/web-sdk" "2.10.0"
+    "@getpara/wagmi-v2-connector" "2.11.0"
+    "@getpara/web-sdk" "2.11.0"
     "@walletconnect/ethereum-provider" "2.23.0"
     zustand "^4.5.2"
     zustand-sync-tabs "^0.2.2"
@@ -2490,10 +2490,10 @@
   resolved "https://registry.yarnpkg.com/@getpara/shared/-/shared-1.10.0.tgz#5c1f477e3409d5117fd31b28458db9df9a42dbad"
   integrity sha512-xSBzCrQEbm+p32aoIjZcKL+TrfNRRYvuwGQrzvEMLB+vUxvkPMWz2n1uifRKzIVb/1MtIX4lDv5WiNe8xqFS9A==
 
-"@getpara/user-management-client@2.10.0":
-  version "2.10.0"
-  resolved "https://registry.yarnpkg.com/@getpara/user-management-client/-/user-management-client-2.10.0.tgz#d9a92ccc81bfce3a72aee5a0b631e7214b7b58ad"
-  integrity sha512-R/Q4njav1Ed/24Y23UjXb32fTLWE43kt7yZhKcd4LLJ+j6LWk7cb1QpB8MAe5nTF8DfKU3rDPmmVSwdTPIeZDQ==
+"@getpara/user-management-client@2.11.0":
+  version "2.11.0"
+  resolved "https://registry.yarnpkg.com/@getpara/user-management-client/-/user-management-client-2.11.0.tgz#a1f40ca8fcbae5471f067d13b06d3bff8ab759b6"
+  integrity sha512-c18UZE0AOmTszMmok9EJ+mAp5S/SCVdyXarc6XBIv2977aonl1hBe0pqUXYrvuWIqRk/GovaRNPSlDVxZMzl4A==
   dependencies:
     "@getpara/shared" "1.10.0"
     axios "^1.8.4"
@@ -2508,28 +2508,28 @@
     axios "^1.8.4"
     libphonenumber-js "^1.11.7"
 
-"@getpara/viem-v2-integration@2.10.0":
-  version "2.10.0"
-  resolved "https://registry.yarnpkg.com/@getpara/viem-v2-integration/-/viem-v2-integration-2.10.0.tgz#8e0019d02fcf60ff1a2bdf0348ec9da437b6ba6b"
-  integrity sha512-fg1LbtaRP6PwaTZy1nMLyASX9cB/Qth7hACTZNbLugvCgY3hOrkoMGOTFTYp0QGrys81NCawHLDa9WnszgOKZA==
+"@getpara/viem-v2-integration@2.11.0":
+  version "2.11.0"
+  resolved "https://registry.yarnpkg.com/@getpara/viem-v2-integration/-/viem-v2-integration-2.11.0.tgz#43bd8718b6df0e78576735a94dc702fa44cdc19a"
+  integrity sha512-N4s6cMpDcbvwLgqKxAt8pGcQw4r6tzVRjaxQ4xnXB2JGiL2Va7+BL9gLx2Z8BpJbmce3rZ0++kmQehoJIVFvNQ==
   dependencies:
-    "@getpara/core-sdk" "2.10.0"
+    "@getpara/core-sdk" "2.11.0"
 
-"@getpara/wagmi-v2-connector@2.10.0":
-  version "2.10.0"
-  resolved "https://registry.yarnpkg.com/@getpara/wagmi-v2-connector/-/wagmi-v2-connector-2.10.0.tgz#325483b0407a9e51d15233c86582911182c33bfc"
-  integrity sha512-/L9E07qF28K4QComnaJKiuQeXYAOoG5aXll2WEAKp1e5W0ecuy5iqZmPLO8y4jIV/yc0N4+RdgBjxxBcfjepmA==
+"@getpara/wagmi-v2-connector@2.11.0":
+  version "2.11.0"
+  resolved "https://registry.yarnpkg.com/@getpara/wagmi-v2-connector/-/wagmi-v2-connector-2.11.0.tgz#2ef8cff3c7f305c9179d8ad25bb2d6fc6079bd01"
+  integrity sha512-/CLAVFobo/1g1VOL1K0xbn5EQrd+cLwxKm6OhVJ5L6JCC0di9LGJNjqZKwO9o0PA1iciqaRfXFYcv48vJ6PK0A==
   dependencies:
-    "@getpara/viem-v2-integration" "2.10.0"
-    "@getpara/web-sdk" "2.10.0"
+    "@getpara/viem-v2-integration" "2.11.0"
+    "@getpara/web-sdk" "2.11.0"
 
-"@getpara/web-sdk@2.10.0":
-  version "2.10.0"
-  resolved "https://registry.yarnpkg.com/@getpara/web-sdk/-/web-sdk-2.10.0.tgz#33760425f08d631b781823787e6a184b8569d824"
-  integrity sha512-y9PvG+AYN5tLmx32SUuS220/jnek6jWsJ/BfLjkDbTp+Hyy1rUwIZauSuZYx82mwAzgf3kFDwWHfmYld/uFkWg==
+"@getpara/web-sdk@2.11.0":
+  version "2.11.0"
+  resolved "https://registry.yarnpkg.com/@getpara/web-sdk/-/web-sdk-2.11.0.tgz#53cd9a7ff75c5841cd36eca281eedc0e4ec8f71e"
+  integrity sha512-tDE+84OFXG6UfXDtXGO7lFMqqKuOdZ3Fz74cn5x9DfTCgKSE8xo4ofKZG8SABIwB3jB0OUFMSIE8LbenVJWb1w==
   dependencies:
-    "@getpara/core-sdk" "2.10.0"
-    "@getpara/user-management-client" "2.10.0"
+    "@getpara/core-sdk" "2.11.0"
+    "@getpara/user-management-client" "2.11.0"
     base64url "^3.0.1"
     buffer "6.0.3"
     cbor-web "^9.0.2"
