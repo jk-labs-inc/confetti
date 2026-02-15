@@ -67,7 +67,7 @@
     "lodash": "4.17.23",
     "lokijs": "1.5.12",
     "masonic": "4.1.0",
-    "minimatch": "10.1.2",
+    "minimatch": "10.2.0",
     "moment": "2.30.1",
     "moment-timezone": "0.6.0",
     "motion": "12.33.0",
