@@ -16,7 +16,7 @@ interface VotingStore {
 }
 
 const INITIAL_STATE = {
-  inputValue: "0.00",
+  inputValue: "",
   sliderValue: 0,
   isInvalid: false,
   isFocused: true,

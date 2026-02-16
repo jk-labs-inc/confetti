@@ -34,25 +34,30 @@ const ContestParametersVotingPrice = () => {
   const startPriceRaw = formatEther(BigInt(charge.costToVote));
   const endPriceRaw = formatEther(calculateEndPrice(charge.costToVote, Number(priceCurveMultiple)));
 
-  const { displayValue: startDisplay, displaySymbol, isLoading: isPriceLoading } = useDisplayPrice(
-    startPriceRaw,
-    contestConfig.chainNativeCurrencySymbol,
-  );
+  const {
+    displayValue: startDisplay,
+    displaySymbol,
+    isLoading: isPriceLoading,
+  } = useDisplayPrice(startPriceRaw, contestConfig.chainNativeCurrencySymbol);
   const { displayValue: endDisplay } = useDisplayPrice(endPriceRaw, contestConfig.chainNativeCurrencySymbol);
 
   if (isPriceCurveMultipleLoading || isPriceLoading) return <VotingQualifierSkeleton />;
   if (isPriceCurveMultipleError) return <VotingQualifierError onClick={() => refetchPriceCurveMultiple()} />;
 
-  const pricePrefix = displaySymbol === "$" ? "$" : "";
-  const priceSuffix = displaySymbol === "$" ? "" : ` ${displaySymbol}`;
+  const isUsd = displaySymbol === "$";
+
+  const renderPrice = (value: string) =>
+    isUsd ? (
+      <span>${value}</span>
+    ) : (
+      <span className="uppercase">
+        {value} {displaySymbol}
+      </span>
+    );
 
   return (
     <li className="list-disc">
-      {pricePrefix}
-      {startDisplay}
-      {priceSuffix} (at start) to {pricePrefix}
-      {endDisplay}
-      {priceSuffix} (at finish) per vote
+      {renderPrice(startDisplay)}/vote at start to {renderPrice(endDisplay)}/vote at finish
     </li>
   );
 };

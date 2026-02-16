@@ -49,9 +49,10 @@ const CostToVoteMessage: FC<CostToVoteMessageProps> = ({ costToVote, costToVoteE
 
   return (
     <li className="text-[16px]">
-      <span>{startPrimary}</span> at start
-      {startSecondaryFormatted && <span> ({startSecondaryFormatted})</span>} to <span>{endPrimary}</span> at finish
-      {endSecondaryFormatted && <span> ({endSecondaryFormatted})</span>} per vote
+      <span>{startPrimary}/vote</span> at start
+      {startSecondaryFormatted && <span className="uppercase"> ({startSecondaryFormatted})</span>} to{" "}
+      <span>{endPrimary}/vote</span> at finish
+      {endSecondaryFormatted && <span className="uppercase"> ({endSecondaryFormatted})</span>}
     </li>
   );
 };

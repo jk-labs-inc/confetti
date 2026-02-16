@@ -37,7 +37,8 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
       isConnected,
     });
 
-  const valueString = displayValue || "0.00";
+  const placeholder = "0.00";
+  const valueString = displayValue || placeholder;
   const dotCount = (valueString.match(/\./g) || []).length;
   const width = valueString.length - dotCount * 0.5;
 
@@ -64,9 +65,9 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
               onChange={e => handleDisplayChange(e.target.value)}
               onFocus={() => setIsFocused(true)}
               onBlur={() => setIsFocused(false)}
-              placeholder="0.00"
+              placeholder={placeholder}
               onKeyDown={onKeyDown}
-              className="text-[40px] bg-transparent outline-none placeholder-primary-5 max-w-42 md:max-w-48"
+              className="text-[40px] bg-transparent outline-none placeholder-neutral-9 max-w-42 md:max-w-48"
               style={{ width: `${width || 1}ch` }}
             />
             {displaySymbol !== "$" && (
