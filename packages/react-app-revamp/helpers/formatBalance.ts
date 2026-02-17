@@ -3,6 +3,15 @@ import { formatNumberAbbreviated } from "./formatNumber";
 
 const MIN_VALUE_FOR_ABBREVIATION = 10_000;
 
+/**
+ * Converts a number to a fixed-point decimal string, never using scientific notation.
+ * e.g. 5.038e-8 → "0.00000005038..." instead of "5.038e-8"
+ */
+export const toFixedString = (num: number): string => {
+  if (isNaN(num) || num === 0) return "0";
+  return new BigNumber(num).toFixed();
+};
+
 export function formatBalance(balance: string): string {
   const num = new BigNumber(balance);
 

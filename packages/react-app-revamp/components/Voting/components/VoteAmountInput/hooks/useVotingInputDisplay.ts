@@ -1,4 +1,5 @@
 import { useVotingStore } from "@components/Voting/store";
+import { toFixedString } from "@helpers/formatBalance";
 import { useCurrencyStore } from "@hooks/useCurrency/store";
 import useNativeRates from "@hooks/useCurrency/useNativeRates";
 import { useEffect, useRef, useState } from "react";
@@ -24,14 +25,14 @@ const convertNativeToDisplay = (nativeValue: string, rate: number | undefined): 
   if (rate === undefined) return nativeValue;
   const num = parseFloat(nativeValue);
   if (isNaN(num) || num === 0) return nativeValue;
-  return (num * rate).toString();
+  return toFixedString(num * rate);
 };
 
 const convertDisplayToNative = (displayValue: string, rate: number | undefined): string => {
   if (rate === undefined) return displayValue;
   const num = parseFloat(displayValue);
   if (isNaN(num) || num === 0) return displayValue;
-  return (num / rate).toString();
+  return toFixedString(num / rate);
 };
 
 const useVotingInputDisplay = ({

@@ -9,6 +9,7 @@ interface VoteAmountInputProps {
   symbol: string;
   inputRef: RefObject<HTMLInputElement>;
   isConnected: boolean;
+  isBelowMinimum?: boolean;
   style?: VotingWidgetStyle;
   onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 }
@@ -26,6 +27,7 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
   maxBalance,
   symbol,
   isConnected,
+  isBelowMinimum = false,
   style = VotingWidgetStyle.classic,
   inputRef,
   onKeyDown,
@@ -43,8 +45,9 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
   const width = valueString.length - dotCount * 0.5;
 
   const styleConfig = STYLE_CONFIG[style];
-  const textColor = isInvalid ? "text-negative-11" : "text-neutral-11";
-  const borderColor = isInvalid ? "border-negative-11" : "border-secondary-14";
+  const hasError = isInvalid || isBelowMinimum;
+  const textColor = hasError ? "text-negative-11" : "text-neutral-11";
+  const borderColor = hasError ? "border-negative-11" : "border-secondary-14";
 
   return (
     <div

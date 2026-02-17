@@ -19,7 +19,7 @@ const VoteInfoBlocks: FC<VoteInfoBlocksProps> = props => {
     case "charge-info":
       return <ChargeInfo costToVote={props.costToVote} costToVoteRaw={props.costToVoteRaw} />;
     case "total-votes":
-      return <TotalVotes costToVote={props.costToVote} spendableBalance={props.spendableBalance} />;
+      return <TotalVotes costToVote={props.costToVote} spendableBalance={props.spendableBalance} isBelowMinimum={props.isBelowMinimum} />;
     default:
       return null;
   }

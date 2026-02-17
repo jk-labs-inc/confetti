@@ -1,3 +1,4 @@
+import { toFixedString } from "@helpers/formatBalance";
 import { emailRegex } from "@helpers/regex";
 import { create } from "zustand";
 
@@ -49,7 +50,7 @@ export const useVotingStore = create<VotingStore>((set, get) => ({
 
     const maxBalanceNum = parseFloat(maxBalance);
     const calculatedBalance = (value / 100) * maxBalanceNum;
-    const balanceString = calculatedBalance === 0 ? "" : calculatedBalance.toString();
+    const balanceString = calculatedBalance === 0 ? "" : toFixedString(calculatedBalance);
 
     set({
       inputValue: balanceString,

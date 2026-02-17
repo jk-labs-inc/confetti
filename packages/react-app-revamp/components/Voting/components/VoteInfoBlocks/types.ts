@@ -23,6 +23,7 @@ export interface TotalVotesProps extends BaseVoteInfoBlocksProps {
   type: "total-votes";
   costToVote: string;
   spendableBalance: string;
+  isBelowMinimum?: boolean;
 }
 
 export type VoteInfoBlocksProps = MyVotesProps | ChargeInfoProps | TotalVotesProps;
