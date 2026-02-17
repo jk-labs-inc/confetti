@@ -34,7 +34,7 @@ export function formatBalance(balance: string): string {
  * multiplier ratios stay visually correct.
  */
 export function formatUsd(value: number): string {
-  if (value === 0) return "0.00";
+  if (value === 0) return "0";
 
   if (value > 0 && value < 0.001) return "<0.001";
 
