@@ -37,7 +37,7 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
       isConnected,
     });
 
-  const placeholder = "0.00";
+  const placeholder = "0";
   const valueString = displayValue || placeholder;
   const dotCount = (valueString.match(/\./g) || []).length;
   const width = valueString.length - dotCount * 0.5;

@@ -55,7 +55,11 @@ const TokenWidget: FC<TokenWidgetProps> = ({ tokenWidget, index, chain }) => {
     chainId: chainId,
   });
   const [isExceedingBalance, setIsExceedingBalance] = useState(false);
-  const { displayValue: balanceDisplay, displaySymbol: balanceSymbol, isLoading: isPriceLoading } = useDisplayPrice(
+  const {
+    displayValue: balanceDisplay,
+    displaySymbol: balanceSymbol,
+    isLoading: isPriceLoading,
+  } = useDisplayPrice(
     getRawBalance(balance?.value ?? ""),
     getTokenSymbol(localSelectedToken, chainNativeCurrencySymbol ?? "", "long"),
   );
@@ -174,7 +178,7 @@ const TokenWidget: FC<TokenWidgetProps> = ({ tokenWidget, index, chain }) => {
                       className={`text-[32px] w-2/3 placeholder-neutral-10 placeholder-bold bg-transparent border-none focus:outline-none ${
                         isExceedingBalance ? "text-negative-11" : "text-neutral-11"
                       }`}
-                      placeholder="0.00"
+                      placeholder="0"
                       onChange={handleAmountChange}
                       value={isMaxPressed ? formatBalance(balance?.value ?? "") : localAmount}
                       autoFocus
@@ -212,8 +216,7 @@ const TokenWidget: FC<TokenWidgetProps> = ({ tokenWidget, index, chain }) => {
                         `$${balanceDisplay}`
                       ) : (
                         <>
-                          {balanceDisplay}{" "}
-                          <span className="uppercase">{balanceSymbol}</span>
+                          {balanceDisplay} <span className="uppercase">{balanceSymbol}</span>
                         </>
                       )}
                     </p>
