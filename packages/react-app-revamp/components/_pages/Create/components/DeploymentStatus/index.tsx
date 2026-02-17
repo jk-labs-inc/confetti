@@ -1,13 +1,36 @@
 import { useFundPoolStore } from "@components/_pages/Create/pages/ContestRewards/components/FundPool/store";
-import { formatBalance } from "@helpers/formatBalance";
+import useDisplayPrice from "@hooks/useCurrency/useDisplayPrice";
 import { DeploymentProcessState } from "@hooks/useDeployContest/types";
 import { motion } from "motion/react";
-import React from "react";
+import React, { FC } from "react";
+import Skeleton from "react-loading-skeleton";
 import { useShallow } from "zustand/shallow";
 import BaseTransactions from "./components/BaseTransactions";
 import TransactionStatusIcons from "./components/TransactionStatusIcons";
 import { getTransactionStatus } from "./helpers";
 import { Transaction, TransactionKey } from "./types";
+
+const FundingLabel: FC<{ amount: string; symbol: string }> = ({ amount, symbol }) => {
+  const { displayValue, displaySymbol, isLoading } = useDisplayPrice(amount, symbol);
+
+  if (isLoading) {
+    return <>Funding pool with <Skeleton width={60} height={16} baseColor="#706f78" highlightColor="#FFE25B" inline />...</>;
+  }
+
+  return (
+    <>
+      Funding pool with{" "}
+      {displaySymbol === "$" ? (
+        `$${displayValue}`
+      ) : (
+        <>
+          {displayValue} <span className="uppercase">{displaySymbol}</span>
+        </>
+      )}
+      ...
+    </>
+  );
+};
 
 interface DeploymentStatusProps {
   deploymentProcess: DeploymentProcessState;
@@ -26,11 +49,7 @@ export const DeploymentStatus: React.FC<DeploymentStatusProps> = ({
     .filter(token => parseFloat(token.amount) > 0)
     .map(token => ({
       key: `fund_${token.symbol}` as TransactionKey,
-      label: (
-        <>
-          Funding pool with {formatBalance(token.amount)} <span className="uppercase">{token.symbol}</span>...
-        </>
-      ),
+      label: <FundingLabel amount={token.amount} symbol={token.symbol} />,
     }));
 
   const baseTransactionCount = 3;

@@ -1,8 +1,38 @@
 import RewardsNumberDisplay from "@components/_pages/Contest/Rewards/components/UI/Display/Number";
-import { formatBalance } from "@helpers/formatBalance";
+import DualPriceDisplay from "@components/UI/DualPriceDisplay";
 import { returnOnlySuffix } from "@helpers/ordinalSuffix";
+import useContestConfigStore from "@hooks/useContestConfig/store";
+import useDisplayPrice from "@hooks/useCurrency/useDisplayPrice";
 import { RankShare, TotalRewardsData } from "lib/rewards/types";
+import { FC } from "react";
 import { formatUnits } from "viem";
+
+const NativeRewardCell: FC<{ amount: string; symbol: string }> = ({ amount, symbol }) => {
+  const { displayValue, displaySymbol, isLoading } = useDisplayPrice(amount, symbol);
+
+  return (
+    <p>
+      <DualPriceDisplay displayValue={displayValue} displaySymbol={displaySymbol} secondaryValue={null} secondarySymbol={null} isLoading={isLoading} />
+    </p>
+  );
+};
+
+const TokenRewardCell: FC<{ amount: string; symbol: string; address: string; isLast: boolean }> = ({
+  amount,
+  symbol,
+  address,
+  isLast,
+}) => {
+  const { contestConfig } = useContestConfigStore(state => state);
+  const { displayValue, displaySymbol, isLoading } = useDisplayPrice(amount, symbol, address, contestConfig.chainName);
+
+  return (
+    <div key={address} className="text-[14px] font-bold">
+      <DualPriceDisplay displayValue={displayValue} displaySymbol={displaySymbol} secondaryValue={null} secondarySymbol={null} isLoading={isLoading} />
+      {!isLast ? ", " : ""}
+    </div>
+  );
+};
 
 interface TotalRewardsTableProps {
   totalRewards: TotalRewardsData;
@@ -10,6 +40,7 @@ interface TotalRewardsTableProps {
 }
 
 const TotalRewardsTable = ({ totalRewards, shares }: TotalRewardsTableProps) => {
+  const { contestConfig } = useContestConfigStore(state => state);
   const totalSharesValue = shares.reduce((acc, { share }) => acc + share, 0n);
   const { value: totalValue, symbol, decimals } = totalRewards?.native || { value: 0n, symbol: "ETH", decimals: 18 };
 
@@ -19,11 +50,11 @@ const TotalRewardsTable = ({ totalRewards, shares }: TotalRewardsTableProps) => 
     const percentage = totalSharesValue > 0n ? Number((share * 100n) / totalSharesValue) : 0;
 
     const rewardValue = totalSharesValue > 0n ? (totalValue * share) / totalSharesValue : 0n;
-    const formattedReward = formatBalance(formatUnits(rewardValue, decimals));
+    const formattedReward = formatUnits(rewardValue, decimals);
 
     const tokenRewards = tokenEntries.map(([address, tokenData]) => {
       const tokenRewardValue = totalSharesValue > 0n ? (tokenData.value * share) / totalSharesValue : 0n;
-      const formattedTokenReward = formatBalance(formatUnits(tokenRewardValue, tokenData.decimals));
+      const formattedTokenReward = formatUnits(tokenRewardValue, tokenData.decimals);
 
       return {
         address,
@@ -58,6 +89,8 @@ const TotalRewardsTable = ({ totalRewards, shares }: TotalRewardsTableProps) => 
                 decimals={tokenData.decimals}
                 index={index + 1}
                 isBold={true}
+                tokenAddress={address}
+                chainName={contestConfig.chainName}
               />
             ))}
           </div>
@@ -77,19 +110,19 @@ const TotalRewardsTable = ({ totalRewards, shares }: TotalRewardsTableProps) => 
                 {rank}
                 <sup>{returnOnlySuffix(rank)}</sup> place voters ({percentage}%)
               </p>
-              <p>
-                {rewardAmount} <span className="text-[12px] text-neutral-9 font-bold">{symbol}</span>
-              </p>
+              <NativeRewardCell amount={rewardAmount} symbol={symbol} />
             </div>
 
             {tokenRewards.length > 0 && (
               <div className="flex flex-wrap gap-2 justify-end">
                 {tokenRewards.map((tokenReward, index) => (
-                  <div key={tokenReward.address} className="text-[14px] font-bold">
-                    {tokenReward.amount}{" "}
-                    <span className="text-[10px] text-neutral-9 font-bold">{tokenReward.symbol}</span>
-                    {index < tokenRewards.length - 1 ? ", " : ""}
-                  </div>
+                  <TokenRewardCell
+                    key={tokenReward.address}
+                    amount={tokenReward.amount}
+                    symbol={tokenReward.symbol}
+                    address={tokenReward.address}
+                    isLast={index === tokenRewards.length - 1}
+                  />
                 ))}
               </div>
             )}

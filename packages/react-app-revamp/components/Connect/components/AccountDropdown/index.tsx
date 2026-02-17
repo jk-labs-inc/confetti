@@ -23,12 +23,12 @@ const AccountDropdown: FC<AccountDropdownProps> = ({ address, displayName, onDis
   return (
     <>
       <Menu>
-        <AccountButton ensAvatar={ensAvatar} ensName={ensName} displayName={displayName} />
+        <AccountButton ensName={ensName} displayName={displayName} />
 
         <MenuItems
           transition
           anchor="bottom end"
-          className="w-80 origin-top-right rounded-2xl bg-primary-1 text-[16px] text-neutral-11 transition duration-100 ease-out [--anchor-gap:--spacing(2)] focus:outline-none data-closed:scale-95 data-closed:opacity-0"
+          className="w-80 origin-top-right rounded-2xl bg-secondary-1 text-[16px] text-neutral-11 transition duration-100 ease-out [--anchor-gap:--spacing(2)] focus:outline-none data-closed:scale-95 data-closed:opacity-0"
         >
           <div className="flex flex-col">
             <ProfileSection
