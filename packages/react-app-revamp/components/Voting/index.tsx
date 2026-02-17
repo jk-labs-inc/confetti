@@ -78,6 +78,7 @@ const VotingWidget: FC<VotingWidgetProps> = ({
     }
   }, [isMobile]);
 
+  const hasBalance = parseFloat(balance?.formatted || "0") > 0;
   const totalVotes = useVotesFromInput({ inputValue, costToVote });
   const isZeroValue = !inputValue || parseFloat(inputValue) === 0;
   const isBelowMinimum = isConnected && !isZeroValue && totalVotes === 0;
@@ -119,11 +120,13 @@ const VotingWidget: FC<VotingWidgetProps> = ({
             onAddFunds={onAddFunds}
           />
         </div>
-        <VoteSlider
-          value={sliderValue}
-          onChange={value => setSliderValue(value, balance?.formatted || "0", isConnected)}
-          onKeyDown={handleKeyDownSlider}
-        />
+        {hasBalance && (
+          <VoteSlider
+            value={sliderValue}
+            onChange={value => setSliderValue(value, balance?.formatted || "0", isConnected)}
+            onKeyDown={handleKeyDownSlider}
+          />
+        )}
         <div className="flex flex-col gap-2">
           <VoteInfoBlocks type="charge-info" costToVote={costToVote} costToVoteRaw={costToVoteRaw} />
           <VoteInfoBlocks
