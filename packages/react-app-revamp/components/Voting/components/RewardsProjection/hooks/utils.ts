@@ -1,4 +1,4 @@
-import { formatBalance } from "@helpers/formatBalance";
+import { toFixedString } from "@helpers/formatBalance";
 import { calculateEndPrice } from "lib/priceCurve";
 import { formatEther, parseEther } from "viem";
 
@@ -21,10 +21,14 @@ export const calculateVotingRewardsProjection = ({
   firstPlaceSharePercentage,
   submissionsCount,
 }: CalculateWinUpToParams): string => {
-  const spendingAmountWei = parseEther(spendingAmount.toString());
+  if (!spendingAmount || spendingAmount <= 0 || currentPricePerVote <= 0n) return "0";
+
+  const spendingAmountWei = parseEther(toFixedString(spendingAmount));
 
   // Calculate number of votes user is buying at current price (in wei)
   const numberOfVotes = Math.floor(Number(spendingAmountWei) / Number(currentPricePerVote));
+
+  if (numberOfVotes <= 0) return "0";
 
   // Calculate final price per vote (end of exponential curve) - returns bigint in wei
   const finalPricePerVoteWei = calculateEndPrice(Number(costToVoteAtStart), multiple);
@@ -38,7 +42,7 @@ export const calculateVotingRewardsProjection = ({
 
   const totalPoolProjection = finalPricePerVote * numberOfVotes * submissionsCount * percentToPool * firstPlaceShare;
 
-  return formatBalance(totalPoolProjection.toString());
+  return toFixedString(totalPoolProjection);
 };
 
 export const validateVotingRewardsProjectionData = (

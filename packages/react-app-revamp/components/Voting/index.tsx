@@ -1,5 +1,6 @@
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import { useVoteBalance } from "@hooks/useVoteBalance";
+import { useVotesFromInput } from "@hooks/useVotesFromInput";
 import { useWallet } from "@hooks/useWallet";
 import { FC, RefObject, useEffect, useRef, useCallback } from "react";
 import { useMediaQuery } from "react-responsive";
@@ -77,8 +78,10 @@ const VotingWidget: FC<VotingWidgetProps> = ({
     }
   }, [isMobile]);
 
+  const totalVotes = useVotesFromInput({ inputValue, costToVote });
   const isZeroValue = !inputValue || parseFloat(inputValue) === 0;
-  const voteDisabled = isBalanceLoading || isLoading || isInvalid || isZeroValue;
+  const isBelowMinimum = isConnected && !isZeroValue && totalVotes === 0;
+  const voteDisabled = isBalanceLoading || isLoading || isInvalid || isZeroValue || isBelowMinimum;
 
   const handleKeyDownSlider = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === "Enter") {
@@ -102,6 +105,7 @@ const VotingWidget: FC<VotingWidgetProps> = ({
             maxBalance={balance?.formatted || "0"}
             symbol={contestConfig.chainNativeCurrencySymbol}
             isConnected={isConnected}
+            isBelowMinimum={isBelowMinimum}
             style={style}
             inputRef={inputRef as RefObject<HTMLInputElement>}
             onKeyDown={handleKeyDownInputWithVote}
@@ -122,7 +126,12 @@ const VotingWidget: FC<VotingWidgetProps> = ({
         />
         <div className="flex flex-col gap-2">
           <VoteInfoBlocks type="charge-info" costToVote={costToVote} costToVoteRaw={costToVoteRaw} />
-          <VoteInfoBlocks type="total-votes" costToVote={costToVote} spendableBalance={balance?.formatted || "0"} />
+          <VoteInfoBlocks
+            type="total-votes"
+            costToVote={costToVote}
+            spendableBalance={balance?.formatted || "0"}
+            isBelowMinimum={isBelowMinimum}
+          />
         </div>
         <VotingWidgetRewardsProjection
           currentPricePerVote={costToVoteRaw}

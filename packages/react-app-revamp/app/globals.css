@@ -203,6 +203,8 @@
     #381d4c 100%
   );
   --background-image-gradient-under-construction: linear-gradient(to bottom, #bb65ff 0%, #251f2a 67%, #000000 100%);
+  --background-image-gradient-purple-pastel: linear-gradient(90deg, #9747ff 0%, #c1abdd 100%);
+  --background-image-gradient-gray-dark: linear-gradient(90deg, #6a6a6a 0%, #9d9d9d 100%);
 
   /* Box Shadows */
   --shadow-create-header: 0 3px 4px 0 rgba(106, 106, 106, 1);

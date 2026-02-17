@@ -1,11 +1,34 @@
 import React, { FC } from "react";
 import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/24/outline";
-import { formatBalance } from "@helpers/formatBalance";
+import useDisplayPrice from "@hooks/useCurrency/useDisplayPrice";
 import { useShallow } from "zustand/shallow";
 import MotionSpinner from "@components/UI/MotionSpinner";
 import { motion } from "motion/react";
+import Skeleton from "react-loading-skeleton";
 import { DeploymentProcessState, TransactionState } from "@hooks/useDeployContest/types";
 import { useFundPoolStore } from "@components/_pages/Create/pages/ContestRewards/components/FundPool/store";
+
+const FundingLabel: FC<{ amount: string; symbol: string }> = ({ amount, symbol }) => {
+  const { displayValue, displaySymbol, isLoading } = useDisplayPrice(amount, symbol);
+
+  if (isLoading) {
+    return <>Funding pool with <Skeleton width={60} height={16} baseColor="#706f78" highlightColor="#FFE25B" inline />...</>;
+  }
+
+  return (
+    <>
+      Funding pool with{" "}
+      {displaySymbol === "$" ? (
+        `$${displayValue}`
+      ) : (
+        <>
+          {displayValue} <span className="uppercase">{displaySymbol}</span>
+        </>
+      )}
+      ...
+    </>
+  );
+};
 
 type TransactionKey = "deployRewards" | "attachRewards" | `fund_${string}`;
 
@@ -55,11 +78,7 @@ export const RewardsDeploymentStatus: FC<RewardsDeploymentStatusProps> = ({ depl
     .filter(token => parseFloat(token.amount) > 0)
     .map(token => ({
       key: `fund_${token.symbol}` as TransactionKey,
-      label: (
-        <>
-          Funding pool with {formatBalance(token.amount)} <span className="uppercase">{token.symbol}</span>...
-        </>
-      ),
+      label: <FundingLabel amount={token.amount} symbol={token.symbol} />,
     }));
 
   const transactions: Transaction[] = [...baseTransactions, ...(addFundsToRewards ? tokenTransactions : [])];
