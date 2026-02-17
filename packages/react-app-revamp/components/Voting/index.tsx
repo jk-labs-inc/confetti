@@ -1,7 +1,7 @@
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import { useVoteBalance } from "@hooks/useVoteBalance";
 import { useWallet } from "@hooks/useWallet";
-import { FC, RefObject, useEffect, useRef } from "react";
+import { FC, RefObject, useEffect, useRef, useCallback } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useShallow } from "zustand/shallow";
 import VotingWidgetEmailSignup from "./components/EmailSignup";
@@ -42,16 +42,15 @@ const VotingWidget: FC<VotingWidgetProps> = ({
   onAddFunds,
 }) => {
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
-  const { userAddress, isConnected } = useWallet();
+  const { isConnected } = useWallet();
   const contestConfig = useContestConfigStore(useShallow(state => state.contestConfig));
   const inputRef = useRef<HTMLInputElement>(null);
-  const { inputValue, sliderValue, setSliderValue, isInvalid, reset } = useVotingStore(
+  const { inputValue, sliderValue, setSliderValue, isInvalid } = useVotingStore(
     useShallow(state => ({
       inputValue: state.inputValue,
       sliderValue: state.sliderValue,
       setSliderValue: state.setSliderValue,
       isInvalid: state.isInvalid,
-      reset: state.reset,
     })),
   );
   const {
@@ -77,10 +76,6 @@ const VotingWidget: FC<VotingWidgetProps> = ({
       inputRef.current.focus();
     }
   }, [isMobile]);
-
-  useEffect(() => {
-    reset();
-  }, [userAddress, reset]);
 
   const isZeroValue = !inputValue || parseFloat(inputValue) === 0;
   const voteDisabled = isBalanceLoading || isLoading || isInvalid || isZeroValue;
