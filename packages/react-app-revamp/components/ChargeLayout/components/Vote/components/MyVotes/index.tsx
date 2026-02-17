@@ -31,7 +31,7 @@ const MyVotes: FC<MyVotesProps> = ({ balance, symbol, insufficientBalance, isCon
               : `${displayValue} ${displaySymbol}`}
       </p>
 
-      {!insufficientBalance && (
+      {isConnected && !insufficientBalance && (
         <motion.button
           onClick={onAddFunds}
           className="w-24 h-6 flex items-center justify-center bg-positive-15 border border-positive-16 rounded-[40px] text-positive-11 font-bold"

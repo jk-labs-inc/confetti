@@ -882,6 +882,8 @@ li {
   max-height: calc(100vh - 60px);
 }
 
-#para-modal > cpsl-auth-modal {
+cpsl-auth-modal {
+  position: relative;
   z-index: 9999999999;
+  pointer-events: auto;
 }

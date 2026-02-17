@@ -1,5 +1,4 @@
 import { toastInfo } from "@components/UI/Toast";
-import { useModal } from "@getpara/react-sdk-lite";
 import { extractPathSegments } from "@helpers/extractPath";
 import { Tweet as TweetType } from "@helpers/isContentTweet";
 import { useCastVotesStore } from "@hooks/useCastVotes/store";
@@ -51,7 +50,7 @@ const ProposalContent: FC<ProposalContentProps> = ({
   toggleProposalSelection,
   enabledPreview,
 }) => {
-  const { isConnected, userAddress } = useWallet();
+  const { userAddress } = useWallet();
   const { canDeleteProposal } = useDeleteProposal();
   const contestStatus = useContestStatusStore(useShallow(state => state.contestStatus));
   const allowDelete = canDeleteProposal(
@@ -60,7 +59,6 @@ const ProposalContent: FC<ProposalContentProps> = ({
     proposal.authorEthereumAddress,
     contestStatus,
   );
-  const { openModal } = useModal();
   const isMobile = useMediaQuery({ maxWidth: 768 });
   const asPath = usePathname();
   const { chainName, address: contestAddress } = extractPathSegments(asPath ?? "");
@@ -99,11 +97,6 @@ const ProposalContent: FC<ProposalContentProps> = ({
       toastInfo({
         message: "Voting is closed for this contest.",
       });
-      return;
-    }
-
-    if (!isConnected) {
-      openModal();
       return;
     }
 
