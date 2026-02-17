@@ -82,6 +82,7 @@ const VotingWidget: FC<VotingWidgetProps> = ({
     reset();
   }, [userAddress, reset]);
 
+  const hasBalance = parseFloat(balance?.formatted || "0") > 0;
   const isZeroValue = !inputValue || parseFloat(inputValue) === 0;
   const voteDisabled = isBalanceLoading || isLoading || isInvalid || isZeroValue;
 
@@ -120,11 +121,13 @@ const VotingWidget: FC<VotingWidgetProps> = ({
             onAddFunds={onAddFunds}
           />
         </div>
-        <VoteSlider
-          value={sliderValue}
-          onChange={value => setSliderValue(value, balance?.formatted || "0", isConnected)}
-          onKeyDown={handleKeyDownSlider}
-        />
+        {hasBalance && (
+          <VoteSlider
+            value={sliderValue}
+            onChange={value => setSliderValue(value, balance?.formatted || "0", isConnected)}
+            onKeyDown={handleKeyDownSlider}
+          />
+        )}
         <div className="flex flex-col gap-2">
           <VoteInfoBlocks type="charge-info" costToVote={costToVote} costToVoteRaw={costToVoteRaw} />
           <VoteInfoBlocks type="total-votes" costToVote={costToVote} spendableBalance={balance?.formatted || "0"} />

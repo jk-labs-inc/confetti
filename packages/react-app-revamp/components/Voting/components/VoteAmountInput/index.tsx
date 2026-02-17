@@ -44,6 +44,7 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
   const dotCount = (valueString.match(/\./g) || []).length;
   const width = valueString.length - dotCount * 0.5;
 
+  const hasBalance = parseFloat(maxBalance) > 0;
   const styleConfig = STYLE_CONFIG[style];
   const textColor = isInvalid ? "text-negative-11" : "text-neutral-11";
   const borderColor = isInvalid ? "border-negative-11" : "border-secondary-14";
@@ -67,14 +68,16 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
         />
         <span className="text-[16px] text-neutral-9 whitespace-nowrap ml-2">{symbol}</span>
       </div>
-      <motion.button
-        onClick={() => handleMaxClick(maxBalance, isConnected)}
-        className="w-20 h-6 bg-primary-14 rounded-[40px] text-positive-11 text-[16px] border-secondary-14 border font-bold flex items-center justify-center"
-        style={{ willChange: "transform" }}
-        whileTap={{ scale: 0.97 }}
-      >
-        max
-      </motion.button>
+      {hasBalance && (
+        <motion.button
+          onClick={() => handleMaxClick(maxBalance, isConnected)}
+          className="w-20 h-6 bg-primary-14 rounded-[40px] text-positive-11 text-[16px] border-secondary-14 border font-bold flex items-center justify-center"
+          style={{ willChange: "transform" }}
+          whileTap={{ scale: 0.97 }}
+        >
+          max
+        </motion.button>
+      )}
     </div>
   );
 };
