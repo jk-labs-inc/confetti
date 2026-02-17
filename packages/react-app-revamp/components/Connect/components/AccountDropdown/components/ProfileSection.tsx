@@ -1,8 +1,9 @@
 import { Avatar } from "@components/UI/Avatar";
 import { CheckCircleIcon, DocumentDuplicateIcon } from "@heroicons/react/24/outline";
+import useDisplayPrice from "@hooks/useCurrency/useDisplayPrice";
 import { FC, useState } from "react";
+import Skeleton from "react-loading-skeleton";
 import { formatUnits } from "viem";
-import { formatBalance } from "@helpers/formatBalance";
 
 interface ProfileSectionProps {
   address: string;
@@ -20,6 +21,8 @@ interface ProfileSectionProps {
 
 const ProfileSection: FC<ProfileSectionProps> = ({ address, ensAvatar, ensName, displayName, balance }) => {
   const [isAddressCopied, setIsAddressCopied] = useState(false);
+  const nativeRaw = formatUnits(balance?.value ?? 0n, balance?.decimals ?? 18);
+  const { displayValue, displaySymbol, isLoading: isPriceLoading } = useDisplayPrice(nativeRaw, balance?.symbol ?? "ETH");
 
   const handleCopyAddress = () => {
     navigator.clipboard.writeText(address);
@@ -52,9 +55,13 @@ const ProfileSection: FC<ProfileSectionProps> = ({ address, ensAvatar, ensName, 
           </div>
           <div className="flex items-center gap-2 text-[14px] font-bold text-neutral-11">
             <span className="text-neutral-9">Balance:</span>
-            <span>
-              {formatBalance(formatUnits(balance?.value ?? 0n, balance?.decimals ?? 18))} {balance?.symbol}
-            </span>
+            {isPriceLoading ? (
+              <Skeleton width={80} height={14} baseColor="#706f78" highlightColor="#FFE25B" />
+            ) : (
+              <span>
+                {displaySymbol === "$" ? `$${displayValue}` : `${displayValue} ${displaySymbol}`}
+              </span>
+            )}
           </div>
         </div>
       </div>

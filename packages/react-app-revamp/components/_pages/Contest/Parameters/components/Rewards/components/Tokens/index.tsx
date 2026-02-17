@@ -1,21 +1,31 @@
 import { useTotalRewards } from "@hooks/useTotalRewards";
-import { formatBalance } from "@helpers/formatBalance";
+import useContestConfigStore from "@hooks/useContestConfig/store";
+import useDisplayPrice from "@hooks/useCurrency/useDisplayPrice";
 import { FC } from "react";
 import { formatUnits } from "viem";
 import Skeleton from "react-loading-skeleton";
 import RewardsError from "@components/_pages/Contest/Rewards/modules/shared/Error";
 import { RewardModuleInfo } from "lib/rewards/types";
 
+const RewardAmount: FC<{ value: bigint; decimals: number; symbol: string; tokenAddress?: string }> = ({
+  value,
+  decimals,
+  symbol,
+  tokenAddress,
+}) => {
+  const { contestConfig } = useContestConfigStore(state => state);
+  const nativeRaw = formatUnits(value, decimals);
+  const { displayValue, displaySymbol, isLoading } = useDisplayPrice(nativeRaw, symbol, tokenAddress, contestConfig.chainName);
+
+  if (isLoading) return <Skeleton width={60} height={16} baseColor="#706f78" highlightColor="#FFE25B" inline />;
+  if (displaySymbol === "$") return <>${displayValue}</>;
+  return <>{displayValue} {displaySymbol}</>;
+};
+
 interface RewardsParametersTokensProps {
   rewardsStore: RewardModuleInfo;
   chainId: number;
 }
-
-const formatReward = (value: bigint, decimals: number, symbol: string) => (
-  <>
-    {formatBalance(formatUnits(value, decimals))} {symbol}
-  </>
-);
 
 const RewardsParametersTokens: FC<RewardsParametersTokensProps> = ({ rewardsStore, chainId }) => {
   const {
@@ -51,17 +61,28 @@ const RewardsParametersTokens: FC<RewardsParametersTokensProps> = ({ rewardsStor
     const allRewards = [
       {
         key: "native",
-        content: formatReward(totalRewards.native.value, totalRewards.native.decimals, totalRewards.native.symbol),
+        value: totalRewards.native.value,
+        decimals: totalRewards.native.decimals,
+        symbol: totalRewards.native.symbol,
+        tokenAddress: undefined,
       },
       ...Object.entries(totalRewards.tokens).map(([address, token]) => ({
         key: address,
-        content: formatReward(token.value, token.decimals, token.symbol),
+        value: token.value,
+        decimals: token.decimals,
+        symbol: token.symbol,
+        tokenAddress: address,
       })),
     ];
 
     return allRewards.map((reward, index) => (
       <span key={reward.key}>
-        {reward.content}
+        <RewardAmount
+          value={reward.value}
+          decimals={reward.decimals}
+          symbol={reward.symbol}
+          tokenAddress={reward.tokenAddress}
+        />
         {index < allRewards.length - 1 && ", "}
       </span>
     ));

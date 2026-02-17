@@ -49,7 +49,7 @@ const VoteButton: FC<VoteButtonProps> = ({ isDisabled, isInvalidBalance, isConne
     <ButtonV3
       type={ButtonType.TX_ACTION}
       isDisabled={isInvalidBalance ? false : isDisabled}
-      colorClass="px-[20px] text-[24px] font-bold bg-gradient-purple rounded-[40px] w-full"
+      colorClass="px-[20px] text-[20px] font-bold bg-gradient-purple rounded-[40px] w-full"
       size={ButtonSize.FULL}
       onClick={handleClick}
     >
