@@ -17,9 +17,9 @@ const TokenAmountDisplay: FC<TokenAmountDisplayProps> = ({ amount, symbol }) => 
   if (isLoading) return <Skeleton width={60} height={16} baseColor="#706f78" highlightColor="#FFE25B" inline />;
   if (displaySymbol === "$") return <>${displayValue}</>;
   return (
-    <>
-      {displayValue} {displaySymbol.toLowerCase()}
-    </>
+    <span className="uppercase">
+      {displayValue} {displaySymbol}
+    </span>
   );
 };
 

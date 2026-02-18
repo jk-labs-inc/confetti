@@ -64,7 +64,7 @@ const ContestRewards: FC<ContestRewardsProps> = ({ contestData, rewardsData, isR
           </>
         ) : (
           <>
-            {formatBalance(tokenItems[0].value)} <span className="uppercase">{tokenItems[0].symbol}</span>
+            {formatBalance(tokenItems[0].value)} <span className="uppercase">${tokenItems[0].symbol}</span>
             {contestIsActive && <span className="inline-block -translate-y-0.5 ml-1">🚀</span>}
           </>
         )}

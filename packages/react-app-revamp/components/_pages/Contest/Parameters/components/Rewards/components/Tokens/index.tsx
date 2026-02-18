@@ -19,7 +19,7 @@ const RewardAmount: FC<{ value: bigint; decimals: number; symbol: string; tokenA
 
   if (isLoading) return <Skeleton width={60} height={16} baseColor="#706f78" highlightColor="#FFE25B" inline />;
   if (displaySymbol === "$") return <>${displayValue}</>;
-  return <>{displayValue} {displaySymbol}</>;
+  return <span className="uppercase">{displayValue} {displaySymbol}</span>;
 };
 
 interface RewardsParametersTokensProps {

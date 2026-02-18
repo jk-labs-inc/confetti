@@ -24,11 +24,11 @@ const PriceDisplay: FC<PriceDisplayProps> = ({ price, label, chainUnitLabel }) =
           <Skeleton width={100} height={24} baseColor="#706f78" highlightColor="#FFE25B" />
         ) : (
           <>
-            <p className="text-xl md:text-2xl font-bold text-neutral-11">
+            <p className="text-xl md:text-2xl font-bold text-neutral-11 uppercase">
               {formatPrice(displayValue, displaySymbol)}
             </p>
             {secondaryValue && secondarySymbol ? (
-              <p className="absolute top-full mt-1 text-sm font-bold text-neutral-9">
+              <p className="absolute top-full mt-1 text-sm font-bold text-neutral-9 uppercase">
                 {formatPrice(secondaryValue, secondarySymbol)}
               </p>
             ) : null}

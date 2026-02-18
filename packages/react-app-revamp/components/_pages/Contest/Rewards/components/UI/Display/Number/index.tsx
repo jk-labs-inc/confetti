@@ -32,7 +32,7 @@ const RewardsNumberDisplay: FC<RewardsNumberDisplayProps> = ({
   return (
     <p key={index} className={`text-[40px] leading-none text-neutral-11 ${isBold ? "font-bold" : ""}`}>
       {displaySymbol === "$" ? `$${displayValue}` : displayValue}
-      <span className="text-[16px] text-neutral-9 font-bold ml-1">{displaySymbol === "$" ? "" : displaySymbol}</span>
+      <span className="text-[16px] text-neutral-9 font-bold ml-1 uppercase">{displaySymbol === "$" ? "" : displaySymbol}</span>
     </p>
   );
 };
