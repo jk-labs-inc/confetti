@@ -72,18 +72,16 @@ export const DrawerVoteForProposal: FC<DrawerVoteForProposalProps> = ({ isOpen, 
             />
           </div>
         ) : (
-          <>
-            <VotingWidget
-              costToVote={currentPricePerVote}
-              costToVoteRaw={currentPricePerVoteRaw}
-              isLoading={isCurrentPricePerVoteLoading || isLoading}
-              isVotingClosed={contestStatus === ContestStatus.VotingClosed}
-              isContestCanceled={contestState === ContestStateEnum.Canceled}
-              onVote={onVote}
-              onAddFunds={onAddFunds}
-              submissionsCount={submissionsCount}
-            />
-          </>
+          <VotingWidget
+            costToVote={currentPricePerVote}
+            costToVoteRaw={currentPricePerVoteRaw}
+            isLoading={isCurrentPricePerVoteLoading || isLoading}
+            isVotingClosed={contestStatus === ContestStatus.VotingClosed}
+            isContestCanceled={contestState === ContestStateEnum.Canceled}
+            onVote={onVote}
+            onAddFunds={onAddFunds}
+            submissionsCount={submissionsCount}
+          />
         )}
       </div>
     </Drawer>

@@ -1,8 +1,8 @@
+import { formatBalance } from "@helpers/formatBalance";
+import useTotalRewardsUsd, { TokenItem } from "@hooks/useCurrency/useTotalRewardsUsd";
 import { ContestWithTotalRewards, ProcessedContest } from "lib/contests/types";
-import { AnimatePresence, motion } from "motion/react";
-import { FC } from "react";
-import { getContestState, isContestActive } from "../../helpers";
-import { useRewardsCycle } from "./hooks/useRewardsCycle";
+import { FC, useMemo } from "react";
+import { isContestActive } from "../../helpers";
 
 interface ContestRewardsProps {
   contestData: ProcessedContest;
@@ -11,7 +11,30 @@ interface ContestRewardsProps {
 }
 
 const ContestRewards: FC<ContestRewardsProps> = ({ contestData, rewardsData, isRewardsFetching }) => {
-  const { currentReward, currentRewardIndex } = useRewardsCycle(rewardsData);
+  const tokenItems: TokenItem[] = useMemo(() => {
+    if (!rewardsData?.hasRewards || !rewardsData.rewardsData) return [];
+
+    const items: TokenItem[] = [];
+    const { native, tokens } = rewardsData.rewardsData;
+
+    if (native && native.value > 0n) {
+      items.push({ value: native.formatted, symbol: native.symbol });
+    }
+
+    if (tokens) {
+      Object.entries(tokens).forEach(([address, tokenData]) => {
+        if (tokenData.value > 0n) {
+          items.push({ value: tokenData.formatted, symbol: tokenData.symbol, tokenAddress: address });
+        }
+      });
+    }
+
+    return items;
+  }, [rewardsData]);
+
+  const totalUsd = useTotalRewardsUsd(tokenItems, rewardsData?.chain ?? "");
+  const contestIsActive = isContestActive(contestData);
+  const hasRewards = tokenItems.length > 0;
 
   if (isRewardsFetching) {
     return (
@@ -24,40 +47,28 @@ const ContestRewards: FC<ContestRewardsProps> = ({ contestData, rewardsData, isR
     );
   }
 
-  if (!currentReward) return null;
-
-  const contestIsActive = isContestActive(contestData);
-  const showTrendingIcon = currentReward.isNative && contestIsActive;
+  if (!hasRewards) return null;
 
   return (
     <div className="flex items-center gap-1">
       <span role="img" aria-label="money bag" className="shrink-0">
         💰
       </span>
-      <div className="relative h-4 overflow-hidden">
-        <AnimatePresence mode="popLayout" initial={false}>
-          <motion.p
-            key={`reward-${currentRewardIndex}`}
-            initial={{ y: "100%", opacity: 0.5 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: "-100%", opacity: 0.5 }}
-            transition={{
-              type: "spring",
-              stiffness: 500,
-              damping: 30,
-              mass: 1,
-            }}
-            className={`text-xs font-bold whitespace-nowrap ${contestIsActive ? "text-neutral-11" : "text-neutral-9"}`}
-            style={{ willChange: "transform" }}
-          >
-            {currentReward.formatted}
-            {showTrendingIcon && <sup className="text-neutral-11">+</sup>}
-            {"  "}
-            <span className="uppercase">{currentReward.symbol}</span>
-            {showTrendingIcon && <span className="inline-block -translate-y-0.5 ml-1">🚀</span>}
-          </motion.p>
-        </AnimatePresence>
-      </div>
+      <p
+        className={`text-xs font-bold whitespace-nowrap ${contestIsActive ? "text-neutral-11" : "text-neutral-9"}`}
+      >
+        {totalUsd !== null ? (
+          <>
+            ${totalUsd}
+            {contestIsActive && <span className="inline-block -translate-y-0.5 ml-1">🚀</span>}
+          </>
+        ) : (
+          <>
+            {formatBalance(tokenItems[0].value)} <span className="uppercase">${tokenItems[0].symbol}</span>
+            {contestIsActive && <span className="inline-block -translate-y-0.5 ml-1">🚀</span>}
+          </>
+        )}
+      </p>
     </div>
   );
 };

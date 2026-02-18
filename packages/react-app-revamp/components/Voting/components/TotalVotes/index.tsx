@@ -7,19 +7,22 @@ import { useShallow } from "zustand/shallow";
 interface TotalVotesProps {
   costToVote: string;
   spendableBalance: string;
+  isBelowMinimum?: boolean;
 }
 
-const TotalVotes: FC<TotalVotesProps> = ({ costToVote, spendableBalance }) => {
+const TotalVotes: FC<TotalVotesProps> = ({ costToVote, spendableBalance, isBelowMinimum = false }) => {
   const inputValue = useVotingStore(useShallow(state => state.inputValue));
   const totalVotes = useVotesFromInput({
     costToVote: costToVote,
     inputValue: inputValue,
   });
 
+  const votesColor = isBelowMinimum ? "text-negative-11" : "text-neutral-9";
+
   return (
     <div className="flex items-center justify-between text-neutral-9 text-[16px]">
-      <p className="">total votes</p>
-      <p>{formatNumberAbbreviated(totalVotes)}</p>
+      <p>total votes</p>
+      <p className={`${votesColor} transition-colors duration-300`}>{formatNumberAbbreviated(totalVotes)}</p>
     </div>
   );
 };

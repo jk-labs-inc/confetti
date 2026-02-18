@@ -1,6 +1,7 @@
-import { formatBalance } from "@helpers/formatBalance";
+import useDisplayPrice from "@hooks/useCurrency/useDisplayPrice";
 import { FC } from "react";
 import { motion } from "motion/react";
+import Skeleton from "react-loading-skeleton";
 
 interface MyVotesProps {
   balance: string;
@@ -11,6 +12,8 @@ interface MyVotesProps {
 }
 
 const MyVotes: FC<MyVotesProps> = ({ balance, symbol, insufficientBalance, isConnected, onAddFunds }) => {
+  const { displayValue, displaySymbol, isLoading } = useDisplayPrice(balance, symbol);
+
   return (
     <div
       className={`flex justify-between pl-6 pr-4 items-center text-[16px] ${
@@ -18,10 +21,17 @@ const MyVotes: FC<MyVotesProps> = ({ balance, symbol, insufficientBalance, isCon
       } transition-colors duration-300`}
     >
       <p className="text-neutral-9 font-bold normal-case">
-        balance: {isConnected ? formatBalance(balance) : "N/A"} {isConnected && symbol}
+        balance:{" "}
+        {!isConnected
+          ? "N/A"
+          : isLoading
+            ? <Skeleton width={80} height={16} baseColor="#706f78" highlightColor="#FFE25B" inline />
+            : displaySymbol === "$"
+              ? `$${displayValue}`
+              : <><span>{displayValue}</span> <span className="uppercase">{displaySymbol}</span></>}
       </p>
 
-      {!insufficientBalance && (
+      {isConnected && !insufficientBalance && (
         <motion.button
           onClick={onAddFunds}
           className="w-24 h-6 flex items-center justify-center bg-positive-15 border border-positive-16 rounded-[40px] text-positive-11 font-bold"

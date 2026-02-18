@@ -1,5 +1,6 @@
-import { formatBalance } from "@helpers/formatBalance";
+import useDisplayPrice from "@hooks/useCurrency/useDisplayPrice";
 import { FC } from "react";
+import Skeleton from "react-loading-skeleton";
 
 interface CostToVoteMessageProps {
   costToVote?: number;
@@ -7,12 +8,51 @@ interface CostToVoteMessageProps {
   nativeCurrencySymbol?: string;
 }
 
+const formatPrice = (value: string, symbol: string): string => {
+  return symbol === "$" ? `$${value}` : `${value} ${symbol}`;
+};
+
 const CostToVoteMessage: FC<CostToVoteMessageProps> = ({ costToVote, costToVoteEndPrice, nativeCurrencySymbol }) => {
+  const startRaw = costToVote?.toString() ?? "0";
+  const endRaw = costToVoteEndPrice?.toString() ?? "0";
+
+  const {
+    displayValue: startDisplay,
+    displaySymbol: startSymbol,
+    secondaryValue: startSecondary,
+    secondarySymbol: startSecondarySymbol,
+    isLoading: isStartLoading,
+  } = useDisplayPrice(startRaw, nativeCurrencySymbol ?? "");
+
+  const {
+    displayValue: endDisplay,
+    displaySymbol: endSymbol,
+    secondaryValue: endSecondary,
+    secondarySymbol: endSecondarySymbol,
+    isLoading: isEndLoading,
+  } = useDisplayPrice(endRaw, nativeCurrencySymbol ?? "");
+
+  if (isStartLoading || isEndLoading) {
+    return (
+      <li className="text-[16px]">
+        <Skeleton width={200} height={16} baseColor="#706f78" highlightColor="#FFE25B" inline />
+      </li>
+    );
+  }
+
+  const startPrimary = formatPrice(startDisplay, startSymbol);
+  const endPrimary = formatPrice(endDisplay, endSymbol);
+  const startSecondaryFormatted =
+    startSecondary && startSecondarySymbol ? formatPrice(startSecondary, startSecondarySymbol) : null;
+  const endSecondaryFormatted =
+    endSecondary && endSecondarySymbol ? formatPrice(endSecondary, endSecondarySymbol) : null;
+
   return (
     <li className="text-[16px]">
-      {formatBalance(costToVote?.toString() ?? "0")} <span className="uppercase">${nativeCurrencySymbol}</span> (at
-      start) to {formatBalance(costToVoteEndPrice?.toString() ?? "0")} (at finish)
-      <span className="uppercase"> ${nativeCurrencySymbol}</span> per vote
+      <span className="uppercase">{startPrimary}/vote</span> at start
+      {startSecondaryFormatted && <span className="uppercase"> ({startSecondaryFormatted})</span>} to{" "}
+      <span className="uppercase">{endPrimary}/vote</span> at finish
+      {endSecondaryFormatted && <span className="uppercase"> ({endSecondaryFormatted})</span>}
     </li>
   );
 };

@@ -1,7 +1,9 @@
 import GradientText from "@components/UI/GradientText";
 import { InformationCircleIcon } from "@heroicons/react/24/outline";
 import useContestConfigStore from "@hooks/useContestConfig/store";
+import useDisplayPrice from "@hooks/useCurrency/useDisplayPrice";
 import { FC } from "react";
+import Skeleton from "react-loading-skeleton";
 import { useShallow } from "zustand/shallow";
 import VotingWidgetRewardsProjectionContainer from "./components/Container";
 import VotingWidgetRewardsProjectionTooltip from "./components/Tooltip";
@@ -28,6 +30,11 @@ const VotingWidgetRewardsProjection: FC<VotingWidgetRewardsProjectionProps> = ({
     submissionsCount,
   });
 
+  const { displayValue, displaySymbol, isLoading } = useDisplayPrice(
+    winUpToFormatted,
+    contestConfig.chainNativeCurrencySymbol,
+  );
+
   if (!shouldShow) return null;
 
   return (
@@ -44,9 +51,13 @@ const VotingWidgetRewardsProjection: FC<VotingWidgetRewardsProjectionProps> = ({
       </div>
       <VotingWidgetRewardsProjectionTooltip tooltipId={TOOLTIP_ID} />
       <div className="ml-auto">
-        <GradientText textSizeClassName="text-[24px] font-bold" isFontSabo={false}>
-          {winUpToFormatted} {contestConfig.chainNativeCurrencySymbol.toLowerCase()}
-        </GradientText>
+        {isLoading ? (
+          <Skeleton width={100} height={24} baseColor="#706f78" highlightColor="#FFE25B" />
+        ) : (
+          <GradientText textSizeClassName="text-[24px] font-bold uppercase" isFontSabo={false}>
+            {displaySymbol === "$" ? `$${displayValue}` : `${displayValue} ${displaySymbol}`}
+          </GradientText>
+        )}
       </div>
     </VotingWidgetRewardsProjectionContainer>
   );

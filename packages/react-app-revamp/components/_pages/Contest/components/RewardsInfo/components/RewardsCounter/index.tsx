@@ -1,3 +1,5 @@
+import DualPriceDisplay from "@components/UI/DualPriceDisplay";
+import useDisplayPrice from "@hooks/useCurrency/useDisplayPrice";
 import { motion } from "motion/react";
 import { FC } from "react";
 
@@ -8,7 +10,7 @@ interface RewardCounterProps {
 }
 
 const RewardCounter: FC<RewardCounterProps> = ({ valueFormatted, symbol, index }) => {
-  const truncatedSymbol = symbol.length > 6 ? symbol.slice(0, 6) : symbol;
+  const { displayValue, displaySymbol, isLoading } = useDisplayPrice(valueFormatted, symbol);
 
   return (
     <motion.div
@@ -26,7 +28,15 @@ const RewardCounter: FC<RewardCounterProps> = ({ valueFormatted, symbol, index }
       style={{ willChange: "transform, opacity" }}
     >
       <p className="text-neutral-11 text-[16px] md:text-[24px]">
-        {valueFormatted} <span className="uppercase text-[16px]">${truncatedSymbol}</span>
+        <DualPriceDisplay
+          displayValue={displayValue}
+          displaySymbol={displaySymbol}
+          secondaryValue={null}
+          secondarySymbol={null}
+          isLoading={isLoading}
+          skeletonWidth={80}
+          skeletonHeight={24}
+        />
       </p>
     </motion.div>
   );

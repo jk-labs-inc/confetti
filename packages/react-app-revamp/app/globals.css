@@ -203,6 +203,8 @@
     #381d4c 100%
   );
   --background-image-gradient-under-construction: linear-gradient(to bottom, #bb65ff 0%, #251f2a 67%, #000000 100%);
+  --background-image-gradient-purple-pastel: linear-gradient(90deg, #9747ff 0%, #c1abdd 100%);
+  --background-image-gradient-gray-dark: linear-gradient(90deg, #6a6a6a 0%, #9d9d9d 100%);
 
   /* Box Shadows */
   --shadow-create-header: 0 3px 4px 0 rgba(106, 106, 106, 1);
@@ -370,7 +372,10 @@
   background-color: white !important;
   color: #e5e5e5 !important;
   border-radius: 10px !important;
-  box-shadow: 0 -2px 4px #28282c, 0 2px 4px #28282c, 0 1px 2px #28282c !important;
+  box-shadow:
+    0 -2px 4px #28282c,
+    0 2px 4px #28282c,
+    0 1px 2px #28282c !important;
 }
 
 .Toastify__close-button {
@@ -553,7 +558,6 @@ li {
     text-transform: none !important;
   }
 
-
   html {
     --brand: #bb65ff;
     color-scheme: dark;
@@ -623,11 +627,11 @@ li {
   }
 
   :is(
-      ::-webkit-calendar-picker-indicator,
-      ::-webkit-clear-button,
-      ::-webkit-inner-spin-button,
-      ::-webkit-outer-spin-button
-    ) {
+    ::-webkit-calendar-picker-indicator,
+    ::-webkit-clear-button,
+    ::-webkit-inner-spin-button,
+    ::-webkit-outer-spin-button
+  ) {
     color: var(--brand);
   }
 
@@ -797,12 +801,20 @@ li {
 .joke-3d {
   position: relative;
   color: white;
-  text-shadow: -5px 4px 0 #6a6a6a, -5px -1px 0 #6a6a6a, -1px 1px 0 #6a6a6a, 1px 1px 0 #6a6a6a;
+  text-shadow:
+    -5px 4px 0 #6a6a6a,
+    -5px -1px 0 #6a6a6a,
+    -1px 1px 0 #6a6a6a,
+    1px 1px 0 #6a6a6a;
 }
 
 @media (max-width: 768px) {
   .joke-3d {
-    text-shadow: -3px 2px 0 #6a6a6a, -3px 0px 0 #6a6a6a, -1px 1px 0 #6a6a6a, 1px 1px 0 #6a6a6a;
+    text-shadow:
+      -3px 2px 0 #6a6a6a,
+      -3px 0px 0 #6a6a6a,
+      -1px 1px 0 #6a6a6a,
+      1px 1px 0 #6a6a6a;
   }
 }
 
@@ -870,6 +882,8 @@ li {
   max-height: calc(100vh - 60px);
 }
 
-#para-modal > cpsl-auth-modal {
+cpsl-auth-modal {
+  position: relative;
   z-index: 9999999999;
+  pointer-events: auto;
 }

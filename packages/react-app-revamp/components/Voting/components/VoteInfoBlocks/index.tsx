@@ -1,4 +1,3 @@
-import VotingQualifierError from "@components/_pages/Contest/components/StickyCards/components/VotingQualifier/shared/Error";
 import ChargeInfo from "@components/ChargeLayout/components/Vote/components/ChargeInfo";
 import MyVotes from "@components/ChargeLayout/components/Vote/components/MyVotes";
 import TotalVotes from "@components/Voting/components/TotalVotes";
@@ -20,7 +19,7 @@ const VoteInfoBlocks: FC<VoteInfoBlocksProps> = props => {
     case "charge-info":
       return <ChargeInfo costToVote={props.costToVote} costToVoteRaw={props.costToVoteRaw} />;
     case "total-votes":
-      return <TotalVotes costToVote={props.costToVote} spendableBalance={props.spendableBalance} />;
+      return <TotalVotes costToVote={props.costToVote} spendableBalance={props.spendableBalance} isBelowMinimum={props.isBelowMinimum} />;
     default:
       return null;
   }

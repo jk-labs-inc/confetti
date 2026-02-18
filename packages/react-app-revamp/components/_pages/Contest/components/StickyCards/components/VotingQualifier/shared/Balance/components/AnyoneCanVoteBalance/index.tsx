@@ -1,9 +1,9 @@
 import AddFundsModal from "@components/AddFunds/components/Modal";
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
-import { formatBalance } from "@helpers/formatBalance";
 import { formatNumberAbbreviated } from "@helpers/formatNumber";
 import { useContestStore } from "@hooks/useContest/store";
 import useContestConfigStore from "@hooks/useContestConfig/store";
+import useDisplayPrice from "@hooks/useCurrency/useDisplayPrice";
 import useCurrentPricePerVote from "@hooks/useCurrentPricePerVote";
 import { useCurrentUserVotes } from "@hooks/useCurrentUserVotes";
 import { useVoteBalance } from "@hooks/useVoteBalance";
@@ -20,21 +20,30 @@ const BalanceOrSkeleton = ({
   userBalance: string;
   nativeCurrencySymbol?: string;
 }) => {
-  return isUserBalanceLoading ? (
-    <span className="flex items-center gap-1 text-neutral-9">
-      <Skeleton
-        width={100}
-        height={16}
-        baseColor="#242424"
-        highlightColor="#78FFC6"
-        duration={1}
-        style={{ lineHeight: "normal", fontSize: "inherit", verticalAlign: "middle" }}
-      />
-      =
-    </span>
-  ) : (
-    <span className="text-neutral-9">
-      {formatBalance(userBalance)} {nativeCurrencySymbol} =
+  const { displayValue, displaySymbol, isLoading: isPriceLoading } = useDisplayPrice(
+    userBalance,
+    nativeCurrencySymbol ?? "",
+  );
+
+  if (isUserBalanceLoading || isPriceLoading) {
+    return (
+      <span className="flex items-center gap-1 text-neutral-9">
+        <Skeleton
+          width={100}
+          height={16}
+          baseColor="#242424"
+          highlightColor="#78FFC6"
+          duration={1}
+          style={{ lineHeight: "normal", fontSize: "inherit", verticalAlign: "middle" }}
+        />
+        =
+      </span>
+    );
+  }
+
+  return (
+    <span className="text-neutral-9 uppercase">
+      {displaySymbol === "$" ? `$${displayValue}` : `${displayValue} ${displaySymbol}`} =
     </span>
   );
 };
