@@ -47,10 +47,7 @@ export interface CreateRewardsSliceActions {
 
 export type CreateRewardsSlice = CreateRewardsSliceState & CreateRewardsSliceActions;
 
-const recipients: Recipient[] = [
-  { id: 0, place: 1, proportion: 80 },
-  { id: 1, place: 2, proportion: 20 },
-];
+const recipients: Recipient[] = [{ id: 0, place: 1, proportion: 100 }];
 
 function getInitialRewardPoolData(): RewardPoolData {
   return {
