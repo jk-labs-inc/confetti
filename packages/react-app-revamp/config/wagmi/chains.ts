@@ -15,6 +15,7 @@ import { linea } from "./custom-chains/linea";
 import { mainnet } from "./custom-chains/mainnet";
 import { manta } from "./custom-chains/manta";
 import { metis } from "./custom-chains/metis";
+import { megaeth } from "./custom-chains/megaeth";
 import { mode } from "./custom-chains/mode";
 import { monad } from "./custom-chains/monad";
 import { polygon } from "./custom-chains/polygon";
@@ -58,6 +59,7 @@ export const chains: readonly [ChainWithIcon, ...ChainWithIcon[]] = [
   hyperliquid,
   monad,
   kub,
+  megaeth,
   sepolia,
   baseTestnet,
   mainnet,
