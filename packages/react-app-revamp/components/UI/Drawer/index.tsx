@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useCallback } from "react";
 import { Drawer as VaulDrawer } from "vaul";
 
 interface DrawerProps {
@@ -9,6 +9,15 @@ interface DrawerProps {
   onClose?: () => void;
 }
 
+const isInteractionInsideParaModal = (e: React.SyntheticEvent | Event | { detail?: { originalEvent?: Event } }) => {
+  const target = (e as { detail?: { originalEvent?: Event } }).detail?.originalEvent?.target ?? (e as Event).target;
+
+  if (!target) return false;
+
+  const el = target as HTMLElement;
+  return !!el.closest?.("cpsl-auth-modal");
+};
+
 const Drawer: FC<DrawerProps> = ({ isOpen, children, className, onClose, isHandleHidden = false }) => {
   const handleOpenChange = (open: boolean) => {
     if (!open && onClose) {
@@ -16,20 +25,29 @@ const Drawer: FC<DrawerProps> = ({ isOpen, children, className, onClose, isHandl
     }
   };
 
+  const handleInteractOutside = useCallback((e: Event) => {
+    if (isInteractionInsideParaModal(e)) {
+      e.preventDefault();
+    }
+  }, []);
+
   return (
-    <VaulDrawer.Root open={isOpen} onOpenChange={handleOpenChange}>
+    <VaulDrawer.Root open={isOpen} onOpenChange={handleOpenChange} repositionInputs={false} handleOnly>
       <VaulDrawer.Portal>
         <VaulDrawer.Overlay className="fixed inset-0 bg-neutral-8/40 z-40" />
         <VaulDrawer.Content
           title="Drawer"
           className={`z-50 rounded-t-[40px] border-t border-l border-r border-neutral-17 h-fit fixed bottom-0 left-0 right-0 outline-none ${className}`}
+          onPointerDownOutside={handleInteractOutside}
+          onInteractOutside={handleInteractOutside}
+          style={{ maxHeight: "calc(100dvh - 48px)" }}
         >
           <VaulDrawer.Title hidden>Drawer</VaulDrawer.Title>
           <VaulDrawer.Handle
             hidden={isHandleHidden}
-            className="!mx-auto !w-12 !h-1.5 !flex-shrink-0 !rounded-full !bg-neutral-9 !my-4"
+            className="mx-auto! w-12! h-1.5! shrink-0! rounded-full! bg-neutral-9! my-4!"
           />
-          {children}
+          <div className="flex-1 overflow-y-auto overflow-x-hidden overscroll-contain">{children}</div>
         </VaulDrawer.Content>
       </VaulDrawer.Portal>
     </VaulDrawer.Root>

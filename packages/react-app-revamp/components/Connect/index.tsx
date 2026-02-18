@@ -23,7 +23,7 @@ export const ConnectButtonCustom: FC<ConnectButtonProps> = ({ displayOptions = {
       <button
         onClick={() => openModal()}
         type="button"
-        className="w-48 h-10 text-center bg-gradient-create rounded-[40px] text-true-black font-bold text-[16px]"
+        className="w-36 h-8 bg-secondary-1 border border-primary-3 text-base font-bold text-neutral-9 rounded-[40px]"
       >
         connect wallet
       </button>

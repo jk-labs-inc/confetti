@@ -24,18 +24,21 @@ const AddFunds: FC<AddFundsProps> = ({ chain, asset, onGoBack, showBackButton = 
   };
 
   return (
-    <div className={`flex flex-col gap-4 md:gap-6 w-full ${className}`}>
-      <div className="flex flex-col gap-6">
-        <div className="flex items-start md:items-center justify-between w-full">
-          <div className="flex items-center gap-3">
-            <p className="text-[24px] font-bold text-neutral-11">
-              add funds <span className="text-[12px]">on </span>
-            </p>
+    <div className={`flex flex-col w-full h-full ${className}`}>
+      <div className="flex flex-col gap-4 md:gap-6 flex-1 min-h-0">
+        <div className="flex flex-col gap-6">
+          <div className="flex items-start md:items-center justify-between w-full">
             <div className="flex items-center gap-3">
-              <Image src={chainLogo} alt={chain} width={32} height={32} />
-              <p className="text-[24px] font-normal">{chain}</p>
+              <p className="text-[24px] font-bold text-neutral-11">
+                add funds <span className="text-[12px]">on </span>
+              </p>
+              <div className="flex items-center gap-3">
+                <Image src={chainLogo} alt={chain} width={32} height={32} />
+                <p className="text-[24px] font-normal">{chain}</p>
+              </div>
             </div>
           </div>
+          <AddFundsProviders chain={chain} asset={asset} type={AddFundsProviderType.BRIDGE} />
         </div>
 
         <AddFundsToggle value={providerType} onChange={handleToggleChange} />
