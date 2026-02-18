@@ -26,19 +26,16 @@ const AddFunds: FC<AddFundsProps> = ({ chain, asset, onGoBack, showBackButton = 
   return (
     <div className={`flex flex-col w-full h-full ${className}`}>
       <div className="flex flex-col gap-4 md:gap-6 flex-1 min-h-0">
-        <div className="flex flex-col gap-6">
-          <div className="flex items-start md:items-center justify-between w-full">
+        <div className="flex items-start md:items-center justify-between w-full">
+          <div className="flex items-center gap-3">
+            <p className="text-[24px] font-bold text-neutral-11">
+              add funds <span className="text-[12px]">on </span>
+            </p>
             <div className="flex items-center gap-3">
-              <p className="text-[24px] font-bold text-neutral-11">
-                add funds <span className="text-[12px]">on </span>
-              </p>
-              <div className="flex items-center gap-3">
-                <Image src={chainLogo} alt={chain} width={32} height={32} />
-                <p className="text-[24px] font-normal">{chain}</p>
-              </div>
+              <Image src={chainLogo} alt={chain} width={32} height={32} />
+              <p className="text-[24px] font-normal">{chain}</p>
             </div>
           </div>
-          <AddFundsProviders chain={chain} asset={asset} type={AddFundsProviderType.BRIDGE} />
         </div>
 
         <AddFundsToggle value={providerType} onChange={handleToggleChange} />
@@ -51,9 +48,9 @@ const AddFunds: FC<AddFundsProps> = ({ chain, asset, onGoBack, showBackButton = 
           onrampDisabled={!supportsOnramp}
         />
       </div>
-      <div className="flex items-start flex-col gap-4 md:gap-2">
+      <div className="flex items-start flex-col gap-4 md:gap-2 pt-6">
         {showBackButton && (
-          <div className="relative w-full pt-3 md:pt-0">
+          <div className="relative w-full pt-6 md:pt-0">
             <div
               className="absolute left-0 right-0 top-0 border-t border-neutral-2 md:hidden"
               style={{ width: "100vw", left: "50%", transform: "translateX(-50%)" }}
