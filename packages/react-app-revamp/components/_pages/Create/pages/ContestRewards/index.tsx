@@ -57,7 +57,8 @@ const CreateContestRewards = () => {
                 the rewards pool will <b>self-fund.</b> as voters buy votes, 90% {isMobile ? "" : <br />}
                 of their funds will go into the pool.{isMobile ? "" : <br />}
               </p>
-              <p>voters on winners can claim their share of rewards.</p>
+              <p className="font-bold">voters on winners can claim their share of rewards.</p>
+              <p>we recommend adding rewards for multiple ranks if the contest will likely get more than 3 entries.</p>
             </CreateTextContainer>
             <div className="flex flex-col gap-8 md:pl-6">
               <CreateRewardsPool />
