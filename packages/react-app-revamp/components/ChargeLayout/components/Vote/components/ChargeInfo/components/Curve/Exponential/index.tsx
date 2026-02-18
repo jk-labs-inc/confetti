@@ -22,7 +22,7 @@ const ChargeInfoExponential: FC<ChargeInfoExponentialProps> = ({ costToVote }) =
 
   return (
     <AnimatedBlinkText value={costToVote} blinkColor="#78FFC6">
-      <p>{displaySymbol === "$" ? `$${displayValue}` : `${displayValue} ${displaySymbol}`}</p>
+      <p className="uppercase">{displaySymbol === "$" ? `$${displayValue}` : `${displayValue} ${displaySymbol}`}</p>
     </AnimatedBlinkText>
   );
 };

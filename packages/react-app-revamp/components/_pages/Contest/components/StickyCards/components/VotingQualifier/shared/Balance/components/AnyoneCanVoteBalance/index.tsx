@@ -42,7 +42,7 @@ const BalanceOrSkeleton = ({
   }
 
   return (
-    <span className="text-neutral-9">
+    <span className="text-neutral-9 uppercase">
       {displaySymbol === "$" ? `$${displayValue}` : `${displayValue} ${displaySymbol}`} =
     </span>
   );

@@ -38,15 +38,15 @@ const DualPriceDisplay: FC<DualPriceDisplayProps> = ({
   const primaryFormatted = displaySymbol === "$" ? `$${displayValue}` : `${displayValue} ${displaySymbol}`;
 
   if (!secondaryValue || !secondarySymbol) {
-    return <span className={primaryClassName}>{primaryFormatted}</span>;
+    return <span className={`${primaryClassName} uppercase`}>{primaryFormatted}</span>;
   }
 
   const secondaryFormatted = secondarySymbol === "$" ? `$${secondaryValue}` : `${secondaryValue} ${secondarySymbol}`;
 
   return (
-    <span className={primaryClassName}>
+    <span className={`${primaryClassName} uppercase`}>
       {primaryFormatted}
-      <span className={`ml-1.5 font-bold ${secondaryClassName}`}>| {secondaryFormatted}</span>
+      <span className={`ml-1.5 font-bold uppercase ${secondaryClassName}`}>| {secondaryFormatted}</span>
     </span>
   );
 };
