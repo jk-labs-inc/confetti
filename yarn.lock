@@ -102,10 +102,10 @@
     "@smithy/util-utf8" "^2.0.0"
     tslib "^2.6.2"
 
-"@aws-sdk/client-s3@3.991.0":
-  version "3.991.0"
-  resolved "https://registry.yarnpkg.com/@aws-sdk/client-s3/-/client-s3-3.991.0.tgz#c0c14ce4697a6c8e99edc72e97c8901d5d27ab84"
-  integrity sha512-zVrOyECGCtwaGP+VzhsigkTraM3mcxuUoBKcCLxWF6hSMVozfCilA1cq1nVrcHeAAcrXgKWbCVHdxx5SQXlUcQ==
+"@aws-sdk/client-s3@3.992.0":
+  version "3.992.0"
+  resolved "https://registry.yarnpkg.com/@aws-sdk/client-s3/-/client-s3-3.992.0.tgz#27908fd00ee0597140d2f6d052d3dac65b9aca40"
+  integrity sha512-6xfXGCvnWGgy5zZAse64Ru2G2qLKnPY7h8tchlsmGWVcJOWgz7iM3jmsWsQiJ79zH9A8HAPHU+ZD8TYYkwC+0Q==
   dependencies:
     "@aws-crypto/sha1-browser" "5.2.0"
     "@aws-crypto/sha256-browser" "5.2.0"
@@ -123,9 +123,9 @@
     "@aws-sdk/middleware-ssec" "^3.972.3"
     "@aws-sdk/middleware-user-agent" "^3.972.10"
     "@aws-sdk/region-config-resolver" "^3.972.3"
-    "@aws-sdk/signature-v4-multi-region" "3.991.0"
+    "@aws-sdk/signature-v4-multi-region" "3.992.0"
     "@aws-sdk/types" "^3.973.1"
-    "@aws-sdk/util-endpoints" "3.991.0"
+    "@aws-sdk/util-endpoints" "3.992.0"
     "@aws-sdk/util-user-agent-browser" "^3.972.3"
     "@aws-sdk/util-user-agent-node" "^3.972.8"
     "@smithy/config-resolver" "^4.4.6"
@@ -531,12 +531,12 @@
     "@smithy/types" "^4.12.0"
     tslib "^2.6.2"
 
-"@aws-sdk/s3-request-presigner@3.991.0":
-  version "3.991.0"
-  resolved "https://registry.yarnpkg.com/@aws-sdk/s3-request-presigner/-/s3-request-presigner-3.991.0.tgz#5000de35e89dd8c2a9e0a5f8d3c033c9cef68558"
-  integrity sha512-oceVy3lBPiJJMcuKjap0Zp3+X9rwwcStrFu23iFcoHdVYuu4jejPNnC0nUOIschi/odX9V60gX9DyYzd3GPWnQ==
+"@aws-sdk/s3-request-presigner@3.992.0":
+  version "3.992.0"
+  resolved "https://registry.yarnpkg.com/@aws-sdk/s3-request-presigner/-/s3-request-presigner-3.992.0.tgz#79042189e64a7fa878e7049f7c43a677352ecb2f"
+  integrity sha512-TuMT/J+MlkNLM1GfMssJG7ikCbAPpthGDUf9ZHoJqW6k2+NY5n1MLHh+iFScvKWpTJmWrkwFLAnQjPPniaK5gw==
   dependencies:
-    "@aws-sdk/signature-v4-multi-region" "3.991.0"
+    "@aws-sdk/signature-v4-multi-region" "3.992.0"
     "@aws-sdk/types" "^3.973.1"
     "@aws-sdk/util-format-url" "^3.972.3"
     "@smithy/middleware-endpoint" "^4.4.14"
@@ -545,10 +545,10 @@
     "@smithy/types" "^4.12.0"
     tslib "^2.6.2"
 
-"@aws-sdk/signature-v4-multi-region@3.991.0":
-  version "3.991.0"
-  resolved "https://registry.yarnpkg.com/@aws-sdk/signature-v4-multi-region/-/signature-v4-multi-region-3.991.0.tgz#4a6bfce9753558db40658a8e82956ec5052bf6c9"
-  integrity sha512-sW+BcPs/RgqsdlrN3YrYr2Q1hEQjT9DY7B0edhZeaEt2WdFQoh+QfBDhlHPCvkJyxbF9BAW8CjJDhvIQYUrx3A==
+"@aws-sdk/signature-v4-multi-region@3.992.0":
+  version "3.992.0"
+  resolved "https://registry.yarnpkg.com/@aws-sdk/signature-v4-multi-region/-/signature-v4-multi-region-3.992.0.tgz#a2875715201005cdcbf47d36ecdfe38d76d95f7d"
+  integrity sha512-jWoaM89xH2cYOY6O+PWMa0yqjzKlE61Ehea1hJe34kHg9QvZOkcSA5OT9CNaFXsAvafeAAHBhSE8XlDiNaJFuw==
   dependencies:
     "@aws-sdk/middleware-sdk-s3" "^3.972.10"
     "@aws-sdk/types" "^3.973.1"
@@ -596,10 +596,10 @@
     "@smithy/util-endpoints" "^3.2.8"
     tslib "^2.6.2"
 
-"@aws-sdk/util-endpoints@3.991.0":
-  version "3.991.0"
-  resolved "https://registry.yarnpkg.com/@aws-sdk/util-endpoints/-/util-endpoints-3.991.0.tgz#1cfbe3f4bf1785f2b711bf4bee2917a7bedb9308"
-  integrity sha512-m8tcZ3SbqG3NRDv0Py3iBKdb4/FlpOCP4CQ6wRtsk4vs3UypZ0nFdZwCRVnTN7j+ldj+V72xVi/JBlxFBDE7Sg==
+"@aws-sdk/util-endpoints@3.992.0":
+  version "3.992.0"
+  resolved "https://registry.yarnpkg.com/@aws-sdk/util-endpoints/-/util-endpoints-3.992.0.tgz#cfba9509156c124663203a8536bef18b7f81b37b"
+  integrity sha512-FHgdMVbTZ2Lu7hEIoGYfkd5UazNSsAgPcupEnh15vsWKFKhuw6w/6tM1k/yNaa7l1wx0Wt1UuK0m+gQ0BJpuvg==
   dependencies:
     "@aws-sdk/types" "^3.973.1"
     "@smithy/types" "^4.12.0"
@@ -7427,12 +7427,12 @@
   resolved "https://registry.yarnpkg.com/@vanilla-extract/recipes/-/recipes-0.5.7.tgz#6677a267ca278e2277ac8ab41b64e57e84c1150c"
   integrity sha512-Fvr+htdyb6LVUu+PhH61UFPhwkjgDEk8L4Zq9oIdte42sntpKrgFy90MyTRtGwjVALmrJ0pwRUVr8UoByYeW8A==
 
-"@vercel/build-utils@13.4.1":
-  version "13.4.1"
-  resolved "https://registry.yarnpkg.com/@vercel/build-utils/-/build-utils-13.4.1.tgz#addb34b873730e3771e55521c31c45175ba650ff"
-  integrity sha512-lYiPTGgtBJMAkFb78djW+n17VhmxjCln0RvDu+7N8Bra43AmtxyjNNaDeBstZqm9dJX8uWwgXLcT2e/ZhaZfUA==
+"@vercel/build-utils@13.4.2":
+  version "13.4.2"
+  resolved "https://registry.yarnpkg.com/@vercel/build-utils/-/build-utils-13.4.2.tgz#7aa453d0fb70de7862ccd33b0d9ceec243042af3"
+  integrity sha512-zPdDa311EZg4h1tFDSuJHqbvDoBKgdCsD6w3ZAHa0eqqAngLAb62zja4uBjoNBWucSQ1z94Ig8rKtU+4uHZiSg==
   dependencies:
-    "@vercel/python-analysis" "0.4.1"
+    "@vercel/python-analysis" "0.5.0"
 
 "@vercel/error-utils@2.0.3":
   version "2.0.3"
@@ -7457,16 +7457,16 @@
     picomatch "^4.0.2"
     resolve-from "^5.0.0"
 
-"@vercel/node@5.6.4":
-  version "5.6.4"
-  resolved "https://registry.yarnpkg.com/@vercel/node/-/node-5.6.4.tgz#38f88677ef5dc6a1abc269e1727d645aeb79f91a"
-  integrity sha512-vALWvjxXA4bQeuf5YjS3V8oF5GWpwUzXhptP1cIekpm3yiCIgCyzrTbAtvzD6tXSK6zchB+Vdu97l+yCfCnuDg==
+"@vercel/node@5.6.5":
+  version "5.6.5"
+  resolved "https://registry.yarnpkg.com/@vercel/node/-/node-5.6.5.tgz#561b1b6d79f15d126fc20ea01b40800a59014702"
+  integrity sha512-J2RovZMrjltu55ptLM6bZrttSOX/hrbMA9rZicAzGqdbSEg5Pn5FG44cAQ1VS+5+0gn3IwZJygVMzK8KY990LA==
   dependencies:
     "@edge-runtime/node-utils" "2.3.0"
     "@edge-runtime/primitives" "4.1.0"
     "@edge-runtime/vm" "3.2.0"
     "@types/node" "20.11.0"
-    "@vercel/build-utils" "13.4.1"
+    "@vercel/build-utils" "13.4.2"
     "@vercel/error-utils" "2.0.3"
     "@vercel/nft" "1.1.1"
     "@vercel/static-config" "3.1.2"
@@ -7485,10 +7485,10 @@
     typescript "npm:typescript@5.9.3"
     undici "5.28.4"
 
-"@vercel/python-analysis@0.4.1":
-  version "0.4.1"
-  resolved "https://registry.yarnpkg.com/@vercel/python-analysis/-/python-analysis-0.4.1.tgz#518288956d9bc049c7a2f829802717ab4bba5207"
-  integrity sha512-Ae6zayRNAO//z9ULOV+T8sjJFJLfA0OU540/BDkaVWHWhlqElIA7uyi71WuD7Ls06CDVpKYNRysv3keJaVbwow==
+"@vercel/python-analysis@0.5.0":
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/@vercel/python-analysis/-/python-analysis-0.5.0.tgz#48bb66dfe8c2f3ccbd8193fd87675bf515376fc3"
+  integrity sha512-OHe2XXoB2KleshyYzBs9X3xdKRFXY9m9v+fQQE9WRlTvzvO5nhvtFEXYD/L9w5M3MH5JK9XMC+ZcTE9ssgJQ6Q==
   dependencies:
     "@bytecodealliance/preview2-shim" "0.17.6"
     "@renovatebot/pep440" "4.2.1"
@@ -10521,12 +10521,12 @@ framer-motion@^12.33.0:
     motion-utils "^12.29.2"
     tslib "^2.4.0"
 
-framer-motion@^12.34.0:
-  version "12.34.0"
-  resolved "https://registry.yarnpkg.com/framer-motion/-/framer-motion-12.34.0.tgz#0cecdf015cc4cbee55bd53130d043137642a5ced"
-  integrity sha512-+/H49owhzkzQyxtn7nZeF4kdH++I2FWrESQ184Zbcw5cEqNHYkE5yxWxcTLSj5lNx3NWdbIRy5FHqUvetD8FWg==
+framer-motion@^12.34.2:
+  version "12.34.2"
+  resolved "https://registry.yarnpkg.com/framer-motion/-/framer-motion-12.34.2.tgz#1861a498652e9f610a911dcb3bb439101e232c30"
+  integrity sha512-CcnYTzbRybm1/OE8QLXfXI8gR1cx5T4dF3D2kn5IyqsGNeLAKl2iFHb2BzFyXBGqESntDt6rPYl4Jhrb7tdB8g==
   dependencies:
-    motion-dom "^12.34.0"
+    motion-dom "^12.34.2"
     motion-utils "^12.29.2"
     tslib "^2.4.0"
 
@@ -11953,10 +11953,10 @@ minimatch@10.1.1:
   dependencies:
     "@isaacs/brace-expansion" "^5.0.0"
 
-minimatch@10.2.0:
-  version "10.2.0"
-  resolved "https://registry.yarnpkg.com/minimatch/-/minimatch-10.2.0.tgz#e710473e66e3e1aaf376d0aa82438375cac86e9e"
-  integrity sha512-ugkC31VaVg9cF0DFVoADH12k6061zNZkZON+aX8AWsR9GhPcErkcMBceb6znR8wLERM2AkkOxy2nWRLpT9Jq5w==
+minimatch@10.2.1:
+  version "10.2.1"
+  resolved "https://registry.yarnpkg.com/minimatch/-/minimatch-10.2.1.tgz#9d82835834cdc85d5084dd055e9a4685fa56e5f0"
+  integrity sha512-MClCe8IL5nRRmawL6ib/eT4oLyeKMGCghibcDWK+J0hh0Q8kqSdia6BvbRMVk6mPa6WqUa5uR2oxt6C5jd533A==
   dependencies:
     brace-expansion "^5.0.2"
 
@@ -12044,10 +12044,10 @@ motion-dom@^12.19.0, motion-dom@^12.23.23, motion-dom@^12.33.0:
   dependencies:
     motion-utils "^12.29.2"
 
-motion-dom@^12.34.0:
-  version "12.34.0"
-  resolved "https://registry.yarnpkg.com/motion-dom/-/motion-dom-12.34.0.tgz#d1776aaff750e09db66237c66daec31232a4cba8"
-  integrity sha512-Lql3NuEcScRDxTAO6GgUsRHBZOWI/3fnMlkMcH5NftzcN37zJta+bpbMAV9px4Nj057TuvRooMK7QrzMCgtz6Q==
+motion-dom@^12.34.2:
+  version "12.34.2"
+  resolved "https://registry.yarnpkg.com/motion-dom/-/motion-dom-12.34.2.tgz#534ea9e641d9bddcf1c3e1035333bb41e853cafc"
+  integrity sha512-n7gknp7gHcW7DUcmet0JVPLVHmE3j9uWwDp5VbE3IkCNnW5qdu0mOhjNYzXMkrQjrgr+h6Db3EDM2QBhW2qNxQ==
   dependencies:
     motion-utils "^12.29.2"
 
@@ -12088,12 +12088,12 @@ motion-utils@^12.19.0, motion-utils@^12.23.6, motion-utils@^12.29.2:
   resolved "https://registry.yarnpkg.com/motion-utils/-/motion-utils-12.29.2.tgz#8fdd28babe042c2456b078ab33b32daa3bf5938b"
   integrity sha512-G3kc34H2cX2gI63RqU+cZq+zWRRPSsNIOjpdl9TN4AQwC4sgwYPl/Q/Obf/d53nOm569T0fYK+tcoSV50BWx8A==
 
-motion@12.34.0:
-  version "12.34.0"
-  resolved "https://registry.yarnpkg.com/motion/-/motion-12.34.0.tgz#30d1dc8c2b0279ab11a806356057cdc9e0366cbe"
-  integrity sha512-01Sfa/zgsD/di8zA/uFW5Eb7/SPXoGyUfy+uMRMW5Spa8j0z/UbfQewAYvPMYFCXRlyD6e5aLHh76TxeeJD+RA==
+motion@12.34.2:
+  version "12.34.2"
+  resolved "https://registry.yarnpkg.com/motion/-/motion-12.34.2.tgz#d43b5ca46f02a1af5aac894145730a7685b65810"
+  integrity sha512-QAthwCtW6N0TpZ+bBmBMzdwuftoay2yFV2DT44jRcUQhPbFPdAX+pjzmIUNM3sMYDD5OAraJagRGAKE8q5OsmA==
   dependencies:
-    framer-motion "^12.34.0"
+    framer-motion "^12.34.2"
     tslib "^2.4.0"
 
 motion@^12.19.0, motion@^12.23.24:

@@ -102,7 +102,7 @@ const RewardsDisplay: FC<RewardsDisplayProps> = ({
               transition={{ type: "spring", stiffness: 500, damping: 30, duration: 0.5 }}
               style={{ willChange: "transform, opacity" }}
             >
-              {formatBalance(currentReward.value)} <span className="text-[16px] uppercase">{currentReward.symbol}</span>
+              {formatBalance(currentReward.value)} <span className="text-[16px] uppercase">${currentReward.symbol}</span>
             </motion.p>
           </AnimatePresence>
         ) : null}

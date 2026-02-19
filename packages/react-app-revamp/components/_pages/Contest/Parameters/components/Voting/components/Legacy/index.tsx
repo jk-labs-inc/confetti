@@ -49,7 +49,7 @@ const ContestParametersVotingLegacy = () => {
             {votingMerkleRoot === EMPTY_MERKLE_ROOT ? "anyone can vote" : "voting was allowlisted"}
           </li>
           <li className="list-disc">
-            {displaySymbol === "$" ? `$${displayValue}` : `${displayValue} ${displaySymbol}`} to vote
+            <span className="uppercase">{displaySymbol === "$" ? `$${displayValue}` : `${displayValue} ${displaySymbol}`}</span> to vote
           </li>
         </>
       </ul>

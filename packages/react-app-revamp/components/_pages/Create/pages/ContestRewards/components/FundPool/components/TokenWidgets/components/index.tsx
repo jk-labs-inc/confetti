@@ -30,11 +30,12 @@ const getTokenSymbol = (
   length: "short" | "long",
 ) => {
   const textLength = length === "short" ? 5 : 20;
-  return selectedToken
+  const symbol = selectedToken
     ? selectedToken.symbol.length > textLength
       ? `${selectedToken.symbol.substring(0, textLength)}...`
       : selectedToken.symbol
     : chainNativeCurrencySymbol;
+  return "$" + symbol;
 };
 
 const TokenWidget: FC<TokenWidgetProps> = ({ tokenWidget, index, chain }) => {

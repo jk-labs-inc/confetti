@@ -28,7 +28,7 @@ const MyVotes: FC<MyVotesProps> = ({ balance, symbol, insufficientBalance, isCon
             ? <Skeleton width={80} height={16} baseColor="#706f78" highlightColor="#FFE25B" inline />
             : displaySymbol === "$"
               ? `$${displayValue}`
-              : `${displayValue} ${displaySymbol}`}
+              : <><span>{displayValue}</span> <span className="uppercase">{displaySymbol}</span></>}
       </p>
 
       {isConnected && !insufficientBalance && (

@@ -20,7 +20,7 @@ const CreateFlowHeaderDesktopLayout: FC<CreateFlowHeaderDesktopLayoutProps> = ({
   pageAction,
 }) => {
   return (
-    <header className="flex flex-row items-center justify-between pl-[120px] pr-[60px] mt-8">
+    <header className="flex flex-row items-center justify-between px-12 mt-8">
       <CustomLink href="/">
         <Logo />
       </CustomLink>
