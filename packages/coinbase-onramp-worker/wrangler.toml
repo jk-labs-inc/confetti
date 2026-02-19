@@ -1,0 +1,7 @@
+name = "coinbase-onramp-worker"
+main = "src/index.ts"
+compatibility_date = "2024-12-01"
+account_id = "9ee018e54b2e51abe3f976f6df6b33e5"
+
+[vars]
+ALLOWED_ORIGINS = "http://localhost:3000,http://localhost:3001,https://confetti.win"
