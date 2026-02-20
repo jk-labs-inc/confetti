@@ -1,5 +1,6 @@
 const WORKER_URL = process.env.NEXT_PUBLIC_COINBASE_ONRAMP_WORKER_URL || "";
 
+//TODO: we still do not know if this is correct, docs are not clear so we need to double-check this
 const COINBASE_CHAIN_MAPPING: Record<string, string> = {
   ethereum: "ethereum",
   mainnet: "ethereum",
@@ -44,11 +45,7 @@ export const getOnrampUrl = (
   return `https://pay.coinbase.com/buy/select-asset?${params.toString()}`;
 };
 
-export const fetchSessionToken = async (
-  address: string,
-  chain: string,
-  asset: string,
-): Promise<string> => {
+export const fetchSessionToken = async (address: string, chain: string, asset: string): Promise<string> => {
   if (!WORKER_URL) {
     throw new Error("Onramp worker URL is not configured");
   }
