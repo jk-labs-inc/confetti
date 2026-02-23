@@ -14,7 +14,6 @@ interface AddFundsCoinbaseProviderProps {
 const COINBASE_CONFIG = {
   name: "coinbase",
   description: "2.5% fees",
-  //TODO: ask david for correct logo, this is not the correct one
   logo: "/add-funds/coinbase.svg",
 };
 
@@ -55,6 +54,7 @@ const AddFundsCoinbaseProvider: FC<AddFundsCoinbaseProviderProps> = ({ chain, as
       logo={COINBASE_CONFIG.logo}
       onClick={handleClick}
       disabled={isDisabled}
+      logoBorderColor="#0052FF"
       disabledMessage={getDisabledMessage()}
     />
   );
