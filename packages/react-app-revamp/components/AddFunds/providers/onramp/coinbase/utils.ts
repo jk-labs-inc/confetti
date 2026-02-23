@@ -1,7 +1,5 @@
-//TODO: we need to mention in PR that we are going to use this var as as worker URL
-const WORKER_URL = process.env.NEXT_PUBLIC_COINBASE_ONRAMP_WORKER_URL || "";
+const WORKER_URL = "https://coinbase-onramp-worker.jklabsinc.workers.dev";
 
-//TODO: we still do not know if this is correct, docs are not clear so we need to double-check this
 const COINBASE_CHAIN_MAPPING: Record<string, string> = {
   ethereum: "ethereum",
   mainnet: "ethereum",
@@ -11,12 +9,7 @@ const COINBASE_CHAIN_MAPPING: Record<string, string> = {
   optimism: "optimism",
   polygon: "polygon",
   avalanche: "avalanche-c-chain",
-  bnb: "bnb-chain",
-  zora: "zora",
   celo: "celo",
-  gnosis: "gnosis",
-  scroll: "scroll",
-  linea: "linea",
 };
 
 export const isChainSupportedForOnramp = (chainName: string): boolean => {
