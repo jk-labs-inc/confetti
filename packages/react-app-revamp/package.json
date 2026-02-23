@@ -37,7 +37,7 @@
     "@tiptap/react": "3.7.2",
     "@tiptap/starter-kit": "3.7.2",
     "@types/gtag.js": "0.0.20",
-    "@types/lodash": "4.17.23",
+    "@types/lodash": "4.17.24",
     "@types/node": "24.10.13",
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
