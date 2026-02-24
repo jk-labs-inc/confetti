@@ -2,7 +2,7 @@ import { ChevronUpIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
 import { FC, ReactNode, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 
-interface AddFundsCardProps {
+export interface AddFundsCardProps {
   name: string;
   description: string;
   logo: string;
@@ -11,6 +11,7 @@ interface AddFundsCardProps {
   disabled?: boolean;
   disabledMessage?: string;
   expanded?: boolean;
+  onClick?: () => void;
   children?: ReactNode;
 }
 
@@ -23,12 +24,18 @@ const AddFundsCard: FC<AddFundsCardProps> = ({
   disabled = false,
   disabledMessage = "",
   expanded = false,
+  onClick,
   children,
 }) => {
   const [isExpanded, setIsExpanded] = useState(expanded);
 
   const handleClick = () => {
     if (disabled) return;
+
+    if (onClick) {
+      onClick();
+      return;
+    }
 
     setIsExpanded(!isExpanded);
   };

@@ -73,19 +73,27 @@ const CreateContestButton: FC<CreateContestButtonProps> = ({ step, onClick, isDi
 
   if (isMobileOrTablet)
     return (
-      <MobileBottomButton>
-        <div className={`flex flex-row items-center h-12 justify-between border-t-neutral-2 border-t-2   px-8`}>
-          <p className="text-[20px] text-neutral-11" onClick={onPreviousStep}>
-            back
-          </p>
-          <ButtonV3
-            onClick={handleClick}
-            colorClass="text-[20px] bg-gradient-create rounded-[15px] font-bold text-true-black hover:scale-105 transition-transform duration-200 ease-in-out"
-          >
-            {!isConnected ? "connect wallet" : insufficientBalance && !isUnsupportedWallet ? "add funds" : "create"}
-          </ButtonV3>
-        </div>
-      </MobileBottomButton>
+      <>
+        <MobileBottomButton>
+          <div className={`flex flex-row items-center h-12 justify-between border-t-neutral-2 border-t-2   px-8`}>
+            <p className="text-[20px] text-neutral-11" onClick={onPreviousStep}>
+              back
+            </p>
+            <ButtonV3
+              onClick={handleClick}
+              colorClass="text-[20px] bg-gradient-create rounded-[15px] font-bold text-true-black hover:scale-105 transition-transform duration-200 ease-in-out"
+            >
+              {!isConnected ? "connect wallet" : insufficientBalance && !isUnsupportedWallet ? "add funds" : "create"}
+            </ButtonV3>
+          </div>
+        </MobileBottomButton>
+        <AddFundsModal
+          chain={chain?.name.toLowerCase() ?? ""}
+          asset={chainNativeCurrency ?? ""}
+          isOpen={showAddFunds}
+          onClose={() => setShowAddFunds(false)}
+        />
+      </>
     );
 
   return (
