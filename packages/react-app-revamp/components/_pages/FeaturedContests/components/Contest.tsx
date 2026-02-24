@@ -49,7 +49,7 @@ const FeaturedContestCard: FC<FeaturedContestCardProps> = ({ contestData, reward
         <ContestState state={contestState} />
         <ContestTitle title={contestData.title} state={titleState} />
       </ContestCardContainer>
-      <div className="px-4 flex items-center gap-24 md:gap-4">
+      <div className="flex items-center justify-center gap-24 md:gap-4">
         <div className="min-w-28 max-w-full shrink-0">
           <ContestTiming contest={contestData} />
         </div>

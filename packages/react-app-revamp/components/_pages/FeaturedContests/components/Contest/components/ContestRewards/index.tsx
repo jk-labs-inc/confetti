@@ -54,18 +54,15 @@ const ContestRewards: FC<ContestRewardsProps> = ({ contestData, rewardsData, isR
       <span role="img" aria-label="money bag" className="shrink-0">
         💰
       </span>
-      <p
-        className={`text-xs font-bold whitespace-nowrap ${contestIsActive ? "text-neutral-11" : "text-neutral-9"}`}
-      >
+      <p className={`text-xs font-bold whitespace-nowrap ${contestIsActive ? "text-neutral-11" : "text-neutral-9"}`}>
         {totalUsd !== null ? (
           <>
-            ${totalUsd}
-            {contestIsActive && <span className="inline-block -translate-y-0.5 ml-1">🚀</span>}
+            ${totalUsd} {contestIsActive ? "(and going up)" : ""}
           </>
         ) : (
           <>
-            {formatBalance(tokenItems[0].value)} <span className="uppercase">${tokenItems[0].symbol}</span>
-            {contestIsActive && <span className="inline-block -translate-y-0.5 ml-1">🚀</span>}
+            {formatBalance(tokenItems[0].value)} <span className="uppercase">${tokenItems[0].symbol}</span> (
+            {contestIsActive ? "(and going up)" : ""})
           </>
         )}
       </p>
