@@ -19,6 +19,7 @@ import { useVoteBalance } from "@hooks/useVoteBalance";
 import { useWallet } from "@hooks/useWallet";
 import { readContract, simulateContract, waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import moment from "moment";
+import { useState } from "react";
 import { checkAndMarkPriceChangeError } from "utils/error";
 import { formatEther, parseUnits } from "viem";
 import { useShallow } from "zustand/shallow";
@@ -38,18 +39,12 @@ export function useCastVotes({ charge, votesClose }: UseCastVotesProps) {
   const { data: rewards } = useRewardsModule();
   const { updateProposal } = useProposal();
   const { listProposalsData } = useProposalStore(state => state);
-  const {
-    castPositiveAmountOfVotes,
-    pickedProposal,
-    isLoading,
-    isSuccess,
-    error,
-    setIsLoading,
-    setIsSuccess,
-    setError,
-    setTransactionData,
-    resetStore,
-  } = useCastVotesStore(state => state);
+  const { castPositiveAmountOfVotes, pickedProposal, setTransactionData, resetStore } = useCastVotesStore(
+    state => state,
+  );
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [error, setError] = useState("");
   const { userAddress } = useWallet();
   const { error: errorMessage, handleError } = useError();
   const { refetch: refetchTotalVotesCastOnContest } = useTotalVotesCastOnContest(
@@ -168,14 +163,15 @@ export function useCastVotes({ charge, votesClose }: UseCastVotesProps) {
         console.error("Error updating proposal votes after casting:", voteUpdateError);
       }
 
-      refetchTotalVotesCastOnContest();
-      refetchCurrentUserVotesOnProposal();
-      refetchBalance?.();
       setIsLoading(false);
       setIsSuccess(true);
       toastSuccess({
         message: "your votes have been deployed successfully",
       });
+
+      refetchTotalVotesCastOnContest();
+      refetchCurrentUserVotesOnProposal();
+      refetchBalance?.();
 
       if (emailAddress) {
         await subscribeUser(emailAddress, userAddress);

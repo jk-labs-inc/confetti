@@ -42,8 +42,13 @@ export const DrawerVoteForProposal: FC<DrawerVoteForProposalProps> = ({ isOpen, 
     votingClose,
   });
 
-  const onVote = (amount: number) => {
-    castVotes(amount);
+  const onVote = async (amount: number) => {
+    try {
+      await castVotes(amount);
+      handleDrawerClose();
+    } catch {
+      handleDrawerClose();
+    }
   };
 
   const onAddFunds = () => {

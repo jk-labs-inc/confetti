@@ -1,11 +1,10 @@
 import useCastVotes from "@hooks/useCastVotes";
-import { useCastVotesStore } from "@hooks/useCastVotes/store";
 import { Charge } from "@hooks/useDeployContest/types";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import useProposalIdStore from "@hooks/useProposalId/store";
 import { useProposalVoters } from "@hooks/useProposalVoters";
 import useProposalVotes from "@hooks/useProposalVotes";
-import { useEffect } from "react";
+import { useCallback } from "react";
 import { useShallow } from "zustand/shallow";
 
 const REFETCH_DELAY_MS = 1000;
@@ -18,8 +17,7 @@ interface UseVotingActionsParams {
 export const useVotingActions = ({ charge, votesClose }: UseVotingActionsParams) => {
   const contestConfig = useContestConfigStore(useShallow(state => state.contestConfig));
   const proposalId = useProposalIdStore(useShallow(state => state.proposalId));
-  const { isLoading, isSuccess } = useCastVotesStore(state => state);
-  const { castVotes } = useCastVotes({ charge, votesClose });
+  const { castVotes, isLoading } = useCastVotes({ charge, votesClose });
   const { refetch: refetchProposalVotes } = useProposalVotes({
     contestAddress: contestConfig.address,
     proposalId: proposalId,
@@ -33,20 +31,18 @@ export const useVotingActions = ({ charge, votesClose }: UseVotingActionsParams)
     contestConfig.chainId,
   );
 
-  useEffect(() => {
-    if (isLoading || !isSuccess) return;
-
-    const refetchWithDelay = async () => {
+  const castVotesAndRefetch = useCallback(
+    async (amount: number) => {
+      await castVotes(amount);
       await new Promise(resolve => setTimeout(resolve, REFETCH_DELAY_MS));
       refetchProposalVotes();
       refetchProposalVoters();
-    };
-
-    refetchWithDelay();
-  }, [isSuccess, isLoading]);
+    },
+    [castVotes, refetchProposalVotes, refetchProposalVoters],
+  );
 
   return {
-    castVotes,
+    castVotes: castVotesAndRefetch,
     isLoading,
   };
 };
