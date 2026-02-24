@@ -157,17 +157,19 @@ export async function fetchTotalRewardsForContests(contests: ProcessedContest[])
           };
         }
 
-        // Fetch total rewards using the existing function
         const rewardsData = await fetchTotalRewards({
           rewardsModuleAddress: rewardsModuleAddress as `0x${string}`,
           rewardsModuleAbi,
           chainId: chain.id,
         });
 
+        const hasNativeRewards = rewardsData.native.value > 0n;
+        const hasTokenRewards = Object.values(rewardsData.tokens).some(token => token.value > 0n);
+
         return {
           contestAddress,
           chain: contestChainName,
-          hasRewards: true,
+          hasRewards: hasNativeRewards || hasTokenRewards,
           rewardsData,
         };
       } catch (error) {

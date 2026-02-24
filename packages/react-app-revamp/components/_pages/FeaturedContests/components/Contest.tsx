@@ -39,6 +39,8 @@ const FeaturedContestCard: FC<FeaturedContestCardProps> = ({ contestData, reward
     return ROUTE_VIEW_CONTEST_BASE_PATH.replace("[chain]", network_name).replace("[address]", address);
   };
 
+  const hasRewardsContent = isRewardsFetching || rewardsData?.hasRewards;
+
   return (
     <CustomLink
       className="flex flex-col gap-2 animate-appear"
@@ -50,7 +52,7 @@ const FeaturedContestCard: FC<FeaturedContestCardProps> = ({ contestData, reward
         <ContestTitle title={contestData.title} state={titleState} />
       </ContestCardContainer>
       <div className="flex items-center justify-center gap-24 md:gap-4">
-        <div className="min-w-28 max-w-full shrink-0">
+        <div className={`${hasRewardsContent ? "min-w-28 max-w-full shrink-0" : ""}`}>
           <ContestTiming contest={contestData} />
         </div>
         <ContestRewards contestData={contestData} rewardsData={rewardsData} isRewardsFetching={isRewardsFetching} />
