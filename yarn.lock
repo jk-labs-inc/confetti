@@ -7132,15 +7132,6 @@
   resolved "https://registry.yarnpkg.com/@wagmi/connectors/-/connectors-7.2.1.tgz#2e8b197fc34971262175c262db1cd94fbe486b7d"
   integrity sha512-/tyDepUMDM8eNzNX3ofjqHNRFZ6XcZ3u0+cQp5x0/LHCpMA8tRh7A1/e7dTrYiIJeL7iLgHzfHUXCsU02OKMLQ==
 
-"@wagmi/core@3.3.4":
-  version "3.3.4"
-  resolved "https://registry.yarnpkg.com/@wagmi/core/-/core-3.3.4.tgz#9a4ddfb18f853cc65036acf540a44aec77be954c"
-  integrity sha512-ulG2C3z6SKPYkliWtZMUuY1IoZSIhgDziO7Vh9CWk5pyZSNe3uthWnXBYnzcVe6BUpc3UeDio3GDqBWC09rH7A==
-  dependencies:
-    eventemitter3 "5.0.1"
-    mipd "0.0.7"
-    zustand "5.0.0"
-
 "@wagmi/core@3.4.0":
   version "3.4.0"
   resolved "https://registry.yarnpkg.com/@wagmi/core/-/core-3.4.0.tgz#660073940ef999cb215e60da4d5b4bba67b7a148"
