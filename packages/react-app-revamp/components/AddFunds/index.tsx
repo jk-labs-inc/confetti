@@ -1,8 +1,10 @@
 import { getChainLogo } from "@helpers/getChainLogo";
 import Image from "next/image";
-import { FC, useState } from "react";
-import AddFundsProviders, { AddFundsProviderType } from "./providers";
+import { FC } from "react";
+import { useShallow } from "zustand/shallow";
+import AddFundsProviders from "./providers";
 import AddFundsToggle from "./components/Toggle";
+import { useAddFundsStore } from "./store";
 
 interface AddFundsProps {
   chain: string;
@@ -14,7 +16,12 @@ interface AddFundsProps {
 
 const AddFunds: FC<AddFundsProps> = ({ chain, asset, onGoBack, showBackButton = true, className }) => {
   const chainLogo = getChainLogo(chain);
-  const [providerType, setProviderType] = useState<AddFundsProviderType>(AddFundsProviderType.ONRAMP);
+  const { providerType, setProviderType } = useAddFundsStore(
+    useShallow(state => ({
+      providerType: state.providerType,
+      setProviderType: state.setProviderType,
+    })),
+  );
 
   return (
     <div className={`flex flex-col w-full h-full ${className}`}>
@@ -36,12 +43,12 @@ const AddFunds: FC<AddFundsProps> = ({ chain, asset, onGoBack, showBackButton = 
         </div>
       </div>
       {showBackButton && (
-        <div className="sticky bottom-0 -mx-6 px-6 bg-true-black border-t border-neutral-2 pt-3 pb-2 md:relative md:mx-0 md:px-0 md:pt-0 md:pb-0 md:border-t-0 shrink-0">
+        <div className="pt-3 shrink-0">
           <button className="flex items-center gap-[5px] cursor-pointer group" onClick={() => onGoBack?.()}>
-            <div className="transition-transform duration-200 group-hover:-translate-x-1">
-              <img src="/create-flow/back.svg" alt="back" width={15} height={15} className="mt-px" />
+            <div className="flex items-center transition-transform duration-200 group-hover:-translate-x-1">
+              <img src="/create-flow/back.svg" alt="back" width={15} height={15} />
             </div>
-            <p className="text-[16px]">back</p>
+            <p className="text-[16px] leading-none">back</p>
           </button>
         </div>
       )}
