@@ -1,7 +1,8 @@
 import { getChainLogo } from "@helpers/getChainLogo";
 import Image from "next/image";
-import { FC } from "react";
+import { FC, useState } from "react";
 import AddFundsProviders, { AddFundsProviderType } from "./providers";
+import AddFundsToggle from "./components/Toggle";
 
 interface AddFundsProps {
   chain: string;
@@ -13,6 +14,7 @@ interface AddFundsProps {
 
 const AddFunds: FC<AddFundsProps> = ({ chain, asset, onGoBack, showBackButton = true, className }) => {
   const chainLogo = getChainLogo(chain);
+  const [providerType, setProviderType] = useState<AddFundsProviderType>(AddFundsProviderType.ONRAMP);
 
   return (
     <div className={`flex flex-col w-full h-full ${className}`}>
@@ -29,7 +31,8 @@ const AddFunds: FC<AddFundsProps> = ({ chain, asset, onGoBack, showBackButton = 
               </div>
             </div>
           </div>
-          <AddFundsProviders chain={chain} asset={asset} type={AddFundsProviderType.BRIDGE} />
+          <AddFundsToggle value={providerType} onChange={setProviderType} />
+          <AddFundsProviders chain={chain} asset={asset} type={providerType} />
         </div>
       </div>
       {showBackButton && (
