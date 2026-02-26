@@ -1,10 +1,8 @@
 import { FC, ReactNode } from "react";
 import useAddFundsProviders from "./hooks/useAddFundsProviders";
+import { AddFundsProviderType } from "../types";
 
-export enum AddFundsProviderType {
-  BRIDGE = "bridge",
-  ONRAMP = "onramp",
-}
+export { AddFundsProviderType };
 
 interface AddFundsProvidersProps {
   type: AddFundsProviderType;

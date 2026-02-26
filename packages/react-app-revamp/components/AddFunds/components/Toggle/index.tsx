@@ -1,6 +1,6 @@
 import { animate, motion, useMotionValue } from "motion/react";
 import { FC, useEffect, useRef } from "react";
-import { AddFundsProviderType } from "../../providers";
+import { AddFundsProviderType } from "../../types";
 
 interface AddFundsToggleProps {
   value: AddFundsProviderType;

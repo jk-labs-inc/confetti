@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { AddFundsProviderType } from "../providers";
+import { AddFundsProviderType } from "../types";
 
 interface AddFundsStore {
   providerType: AddFundsProviderType;
