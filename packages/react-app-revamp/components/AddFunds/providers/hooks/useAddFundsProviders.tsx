@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import AddFundsJumperProvider from "../bridges/jumper";
 import AddFundsCoinbaseProvider from "../onramp/coinbase";
-import { AddFundsProviderType } from "../index";
+import { AddFundsProviderType } from "../../types";
 
 interface UseAddFundsProvidersParams {
   type: AddFundsProviderType;
