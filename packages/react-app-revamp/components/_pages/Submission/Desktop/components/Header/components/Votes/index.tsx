@@ -26,11 +26,11 @@ const SubmissionPageDesktopVotes = () => {
   }
 
   if (isError) {
-    return (
-      <div className="w-40 h-8 bg-neutral-16 border border-positive-13 rounded-2xl flex items-center justify-center">
-        <span className="text-positive-14 text-base font-bold">error</span>
-      </div>
-    );
+    return null;
+  }
+
+  if (votes === 0 && rank === 0) {
+    return null;
   }
 
   return (

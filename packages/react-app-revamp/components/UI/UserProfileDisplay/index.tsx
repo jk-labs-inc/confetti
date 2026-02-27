@@ -112,13 +112,17 @@ const UserProfileDisplay = ({
             )}
           </div>
 
-          <div className="flex items-center gap-4">
-            {includeSocials && socials ? <UserProfileSocials socials={socials} /> : null}
+          {includeSocials && socials ? (
+            <div className="flex items-center gap-4">
+              <UserProfileSocials socials={socials} />{" "}
+            </div>
+          ) : null}
 
-            {includeSendFunds && isConnected && isChainSupportedForSendFunds && userAddress === ethereumAddress ? (
+          {includeSendFunds && isConnected && isChainSupportedForSendFunds && userAddress === ethereumAddress ? (
+            <div className="flex items-center gap-4">
               <SendFundsButton onSendFundsClick={onSendFundsClick} />
-            ) : null}
-          </div>
+            </div>
+          ) : null}
         </div>
       )}
     </div>

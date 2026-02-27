@@ -1,37 +1,33 @@
+import UserProfileDisplay from "@components/UI/UserProfileDisplay";
 import { EntryPreview } from "@hooks/useDeployContest/slices/contestMetadataSlice";
+import { extractTitle } from "../utils/extractTitle";
 
 interface TitleParserProps {
   stringArray: string[];
   enabledPreview: EntryPreview | null;
+  authorAddress: string;
 }
 
-const IMG_TITLE_KEY = "JOKERACE_IMG_TITLE";
-const TWEET_TITLE_KEY = "JOKERACE_TWEET_TITLE";
-
-const TitleParser = ({ stringArray, enabledPreview }: TitleParserProps) => {
-  if (stringArray.length === 0) {
-    return null;
-  }
-
-  const extractTitle = (): string | null => {
-    if (enabledPreview === EntryPreview.IMAGE_AND_TITLE || enabledPreview === EntryPreview.TWEET_AND_TITLE) {
-      const params = new URLSearchParams(stringArray[0]);
-      return params.get(IMG_TITLE_KEY) || params.get(TWEET_TITLE_KEY);
-    }
-
-    return stringArray[0];
-  };
-
-  const title = extractTitle();
+const TitleParser = ({ stringArray, enabledPreview, authorAddress }: TitleParserProps) => {
+  const title = extractTitle(stringArray, enabledPreview);
 
   if (!title) {
     return null;
   }
 
   return (
-    <div className="bg-gradient-entry-title h-[88px] flex items-center rounded-t-4xl">
-      <div className="pl-8 pr-4 py-6">
-        <p className="text-[40px] font-bold text-neutral-11 normal-case">“{title}”</p>
+    <div>
+      <div className="pl-8 pr-4 pt-6 pb-2 flex items-baseline gap-3 flex-wrap">
+        <p className="text-2xl font-bold text-neutral-11 normal-case leading-tight">&ldquo;{title}&rdquo;</p>
+        <span className="text-neutral-9 text-xs font-bold flex items-center gap-1.5 shrink-0">
+          by{" "}
+          <UserProfileDisplay
+            ethereumAddress={authorAddress}
+            shortenOnFallback
+            size="extraSmall"
+            textColor="text-positive-11"
+          />
+        </span>
       </div>
     </div>
   );
