@@ -2409,10 +2409,10 @@
   dependencies:
     tslib "^2.8.0"
 
-"@getbrevo/brevo@3.0.1":
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/@getbrevo/brevo/-/brevo-3.0.1.tgz#e28470aea29ad49fd37a6e583b394b85abe7cb43"
-  integrity sha512-BS5hlgb9qPHhXqjV+VbEOciygnsEVZV8BgoX+JYpD+I+R9u3U05y/euqdmk8nATfcEUCUlQq+aWdWOWTF4cEjQ==
+"@getbrevo/brevo@3.0.4":
+  version "3.0.4"
+  resolved "https://registry.yarnpkg.com/@getbrevo/brevo/-/brevo-3.0.4.tgz#be4dd00a54f75dce379433dc20054928d82ba553"
+  integrity sha512-MtsqqsB9MjMEDYKP3QBHGRJmYbUBHCYH2RxA4DHeB8sbm0TEraoaiOfng0kBebPplR9WSvf6jXw+ri10bGP/aA==
   dependencies:
     axios "^1.6.8"
     bluebird "^3.5.0"
