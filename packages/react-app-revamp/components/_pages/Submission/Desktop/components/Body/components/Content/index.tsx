@@ -1,6 +1,10 @@
 import { useSubmissionPageStore } from "@components/_pages/Submission/store";
 import SubmissionDelete from "@components/_pages/Submission/shared/components/SubmissionDelete";
 import UserProfileDisplay from "@components/UI/UserProfileDisplay";
+import useContestConfigStore from "@hooks/useContestConfig/store";
+import { useFetchUserVotesOnProposal } from "@hooks/useFetchUserVotesOnProposal";
+import useProposalIdStore from "@hooks/useProposalId/store";
+import Image from "next/image";
 import { useShallow } from "zustand/shallow";
 import SubmissionPageDesktopEntryNavigation from "../../../Header/components/EntryNavigation";
 import SubmissionPageDesktopHeaderShare from "../../../Header/components/Share";
@@ -12,6 +16,10 @@ import { extractTitle } from "./components/Title/utils/extractTitle";
 
 const SubmissionPageDesktopBodyContent = () => {
   const proposalStaticData = useSubmissionPageStore(useShallow(state => state.proposalStaticData));
+  const contestAddress = useContestConfigStore(useShallow(state => state.contestConfig.address));
+  const proposalId = useProposalIdStore(useShallow(state => state.proposalId));
+  const { currentUserVotesOnProposal } = useFetchUserVotesOnProposal(contestAddress, proposalId);
+  const hasVoted = (currentUserVotesOnProposal.data ?? 0) > 0;
   const { isEntryPreviewTitle, enabledPreview } = useEntryPreview();
 
   if (!proposalStaticData) {
@@ -22,7 +30,7 @@ const SubmissionPageDesktopBodyContent = () => {
 
   return (
     <div className="bg-primary-13 rounded-4xl flex flex-col h-full">
-      <div className="bg-gradient-entry-title rounded-t-4xl">
+      <div className="relative bg-gradient-entry-title rounded-t-4xl">
         {hasTitle && (
           <SubmissionPageDesktopBodyContentTitle
             stringArray={proposalStaticData.fieldsMetadata.stringArray}
@@ -30,7 +38,7 @@ const SubmissionPageDesktopBodyContent = () => {
           />
         )}
 
-        <div className="flex items-center gap-3 px-8 pt-4 pb-6">
+        <div className="flex items-center gap-3 px-8 pt-4 pb-4">
           <SubmissionPageDesktopVotes />
           <SubmissionPageDesktopHeaderShare />
           <SubmissionPageDesktopEntryNavigation />
@@ -39,8 +47,18 @@ const SubmissionPageDesktopBodyContent = () => {
           </div>
         </div>
 
+        {hasVoted && (
+          <Image
+            src="/entry/i-voted.webp"
+            alt="I voted"
+            width={64}
+            height={64}
+            className="absolute top-1/2 -translate-y-1/2 right-6"
+          />
+        )}
+
         {!hasTitle && (
-          <div className="flex items-center gap-1.5 px-8 pb-6">
+          <div className="flex items-center gap-1.5 px-8 pb-4">
             <span className="text-neutral-9 text-[16px] font-bold">by</span>
             <UserProfileDisplay
               ethereumAddress={proposalStaticData.author}

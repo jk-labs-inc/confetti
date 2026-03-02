@@ -5,19 +5,20 @@ import { useReadContract } from "wagmi";
 import { useShallow } from "zustand/shallow";
 
 export const useFetchUserVotesOnProposal = (contestAddress: string, proposalId: string) => {
-  const { abi, version } = useContestConfigStore(
+  const { abi, version, chainId } = useContestConfigStore(
     useShallow(state => ({
       abi: state.contestConfig.abi,
       version: state.contestConfig.version,
+      chainId: state.contestConfig.chainId,
     })),
   );
-  const { userAddress, chain } = useWallet();
+  const { userAddress } = useWallet();
   const hasDownvotes = version ? compareVersions(version, "5.1") < 0 : false;
 
   const currentUserVotesOnProposal = useReadContract({
     address: contestAddress as `0x${string}`,
     abi,
-    chainId: chain?.id,
+    chainId,
     functionName: "proposalAddressVotes",
     args: [proposalId, userAddress],
     query: {
