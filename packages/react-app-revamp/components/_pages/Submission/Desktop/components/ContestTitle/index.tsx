@@ -18,7 +18,7 @@ const SubmissionPageDesktopContestTitle = () => {
   return (
     <Link
       href={contestUrl}
-      className="flex items-center gap-3 ml-12 h-10 bg-true-black border border-neutral-10 rounded-2xl py-2 px-4 w-fit hover:opacity-80 transition-opacity"
+      className="flex items-center gap-3 ml-8 h-10 bg-true-black border border-neutral-10 rounded-2xl py-2 px-4 w-fit hover:opacity-80 transition-opacity"
     >
       <img src="/entry/back.svg" alt="back-arrow" width={32} height={32} />
       <span className="text-neutral-11 font-bold text-2xl">{contestName}</span>

@@ -16,19 +16,19 @@ const TitleParser = ({ stringArray, enabledPreview, authorAddress }: TitleParser
   }
 
   return (
-    <div>
-      <div className="pl-8 pr-4 pt-6 pb-2 flex items-baseline gap-3 flex-wrap">
-        <p className="text-2xl font-bold text-neutral-11 normal-case leading-tight">&ldquo;{title}&rdquo;</p>
-        <span className="text-neutral-9 text-xs font-bold flex items-center gap-1.5 shrink-0">
-          by{" "}
-          <UserProfileDisplay
-            ethereumAddress={authorAddress}
-            shortenOnFallback
-            size="extraSmall"
-            textColor="text-positive-11"
-          />
-        </span>
-      </div>
+    <div className="pl-6 pr-4 pt-6 pb-2 flex items-baseline gap-1 flex-wrap">
+      <p className="text-2xl font-bold text-neutral-11 normal-case leading-tight">&ldquo;{title}&rdquo;</p>
+      <span className="text-neutral-9 text-xs font-bold flex items-center gap-1 shrink-0">
+        by{" "}
+        <UserProfileDisplay
+          ethereumAddress={authorAddress}
+          shortenOnFallback
+          size="extraSmall"
+          textColor="text-positive-11"
+          textualVersion
+          showBy={false}
+        />
+      </span>
     </div>
   );
 };

@@ -20,6 +20,7 @@ interface UserProfileDisplayProps {
   avatarVersion?: boolean;
   includeSocials?: boolean;
   includeSendFunds?: boolean;
+  showBy?: boolean;
   onSendFundsClick?: () => void;
 }
 
@@ -35,6 +36,7 @@ const UserProfileDisplay = ({
   size = "small",
   includeSendFunds,
   onSendFundsClick,
+  showBy = true,
 }: UserProfileDisplayProps) => {
   const { chain, isConnected, userAddress } = useWallet();
   const { profileName, profileAvatar, socials, isLoading } = useProfileData(
@@ -64,7 +66,7 @@ const UserProfileDisplay = ({
         profileName={profileName}
         size={size}
         textColor={textColor}
-        showBy={true}
+        showBy={showBy}
         target="_blank"
       />
     );

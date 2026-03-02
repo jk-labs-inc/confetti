@@ -38,7 +38,7 @@ const SubmissionPageDesktopBodyContent = () => {
           />
         )}
 
-        <div className="flex items-center gap-3 px-8 pt-4 pb-4">
+        <div className="flex items-center gap-3 px-6 pt-4 pb-4">
           <SubmissionPageDesktopVotes />
           <SubmissionPageDesktopHeaderShare />
           <SubmissionPageDesktopEntryNavigation />
@@ -58,18 +58,20 @@ const SubmissionPageDesktopBodyContent = () => {
         )}
 
         {!hasTitle && (
-          <div className="flex items-center gap-1.5 px-8 pb-4">
+          <div className="flex items-center gap-1.5 px-6 pb-4">
             <span className="text-neutral-9 text-[16px] font-bold">by</span>
             <UserProfileDisplay
               ethereumAddress={proposalStaticData.author}
               shortenOnFallback
               size="compact"
               textColor="text-positive-11"
+              showBy={false}
+              textualVersion
             />
           </div>
         )}
 
-        <div className="mx-8">
+        <div className="mx-6">
           <hr className="border-neutral-17" />
         </div>
       </div>
