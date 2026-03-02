@@ -1,6 +1,8 @@
 import { ChevronUpIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
-import { FC, ReactNode, useState } from "react";
+import { FC, ReactNode, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
+import { useShallow } from "zustand/shallow";
+import { useAddFundsStore } from "../../store";
 
 export interface AddFundsCardProps {
   name: string;
@@ -27,7 +29,19 @@ const AddFundsCard: FC<AddFundsCardProps> = ({
   onClick,
   children,
 }) => {
-  const [isExpanded, setIsExpanded] = useState(expanded);
+  const { isExpanded, toggleCard, setCardExpanded } = useAddFundsStore(
+    useShallow(state => ({
+      isExpanded: state.isCardExpanded(name),
+      toggleCard: state.toggleCard,
+      setCardExpanded: state.setCardExpanded,
+    })),
+  );
+
+  useEffect(() => {
+    if (expanded) {
+      setCardExpanded(name, true);
+    }
+  }, [expanded, name, setCardExpanded]);
 
   const handleClick = () => {
     if (disabled) return;
@@ -37,7 +51,7 @@ const AddFundsCard: FC<AddFundsCardProps> = ({
       return;
     }
 
-    setIsExpanded(!isExpanded);
+    toggleCard(name);
   };
 
   return (
