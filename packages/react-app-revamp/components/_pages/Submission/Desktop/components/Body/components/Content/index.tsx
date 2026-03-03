@@ -38,7 +38,7 @@ const SubmissionPageDesktopBodyContent = () => {
           />
         )}
 
-        <div className="flex items-center gap-3 px-6 pt-4 pb-4">
+        <div className="flex items-center gap-3 px-6 pt-2 pb-4">
           <SubmissionPageDesktopVotes />
           <SubmissionPageDesktopHeaderShare />
           <SubmissionPageDesktopEntryNavigation />
