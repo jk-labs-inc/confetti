@@ -25,6 +25,7 @@ export const getBlockchainForChain = (chainName: string): string | undefined => 
 export const getOnrampUrl = (
   sessionToken: string,
   asset: string,
+  redirectUrl: string,
   presetFiatAmount = 5,
   fiatCurrency = "USD",
 ): string => {
@@ -34,6 +35,7 @@ export const getOnrampUrl = (
     presetFiatAmount: String(presetFiatAmount),
     fiatCurrency,
     defaultExperience: "buy",
+    redirectUrl,
   });
 
   return `https://pay.coinbase.com/buy/select-asset?${params.toString()}`;

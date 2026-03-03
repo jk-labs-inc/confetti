@@ -11,7 +11,7 @@ const useCoinbaseOnramp = () => {
   const mutation = useMutation({
     mutationFn: async ({ address, chain, asset }: UseCoinbaseOnrampParams) => {
       const sessionToken = await fetchSessionToken(address, chain, asset);
-      return getOnrampUrl(sessionToken, asset);
+      return getOnrampUrl(sessionToken, asset, window.location.href);
     },
     onSuccess: (url: string) => {
       window.open(url, "_blank", "noopener,noreferrer");
