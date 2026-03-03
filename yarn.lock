@@ -2315,10 +2315,10 @@
   resolved "https://registry.yarnpkg.com/@getbrevo/brevo/-/brevo-4.0.1.tgz#4bc8090f132a2fb83709b35bfbd481c498d8abfa"
   integrity sha512-U1xOsr5e7pfRTdngrt9VWmPV8SQD/LayTOp55/Wnb4aW33IkBWypDJ8jOpQtxn6xL4t8aBw1thRisvQY4+/Edw==
 
-"@getpara/core-components@2.13.0":
-  version "2.13.0"
-  resolved "https://registry.yarnpkg.com/@getpara/core-components/-/core-components-2.13.0.tgz#e909f82b6956d729396ca813cdddb532e95dd526"
-  integrity sha512-zzSt8KyLkEP4PD92DQ9GkxR4uiNZNWad6NR2SkOtnjQYIyX7oaLppqbiXyywBiOUjE6uNjvpDcAc3J36URCIsQ==
+"@getpara/core-components@2.12.0":
+  version "2.12.0"
+  resolved "https://registry.yarnpkg.com/@getpara/core-components/-/core-components-2.12.0.tgz#d8737f64d3668fe9dc324edb3ab993968074f126"
+  integrity sha512-P2If1rsRmCVX9LwTRWwoG7RKDI/7DALSKVpSxSwOHULAnI915IrDa61vUy/FezMxlwBOjtPOjlVDnxDggVthGg==
   dependencies:
     "@stencil/core" "^4.7.0"
     color-blend "^4.0.0"
@@ -2327,62 +2327,61 @@
     inputmask "5.0.9"
     qrcode-with-logos "1.1.1"
 
-"@getpara/core-sdk@2.13.0":
-  version "2.13.0"
-  resolved "https://registry.yarnpkg.com/@getpara/core-sdk/-/core-sdk-2.13.0.tgz#a6f952343e827b5704ee2d847d8fb568a75dd3e6"
-  integrity sha512-rhJR/4z4HojALVD40Lsxr3W0DBKrcK2jiub4meetQ/3Vze84oJQnBCgdPDkBNxDIP1LH1H6PUEpYcmWogS4ipQ==
+"@getpara/core-sdk@2.12.0":
+  version "2.12.0"
+  resolved "https://registry.yarnpkg.com/@getpara/core-sdk/-/core-sdk-2.12.0.tgz#24d5759f01ee44b73d945c9a0fb0f4527a6c4d03"
+  integrity sha512-EK1ROhuhNBoVlDtlXnsr152q8B+bqxXAMLn24U/EFhmDAzJ0mip1cnY/kqctHtpSRnGyPkbW5cFmtlgD4ypwTg==
   dependencies:
     "@celo/utils" "^8.0.2"
     "@cosmjs/encoding" "^0.32.4"
     "@ethereumjs/util" "^9.1.0"
-    "@getpara/user-management-client" "2.13.0"
+    "@getpara/user-management-client" "2.12.0"
     "@noble/hashes" "^1.5.0"
     base64url "^3.0.1"
     libphonenumber-js "^1.11.7"
     node-forge "^1.3.1"
     uuid "^11.1.0"
-    xstate "^5.24.0"
 
-"@getpara/evm-wallet-connectors@2.13.0":
-  version "2.13.0"
-  resolved "https://registry.yarnpkg.com/@getpara/evm-wallet-connectors/-/evm-wallet-connectors-2.13.0.tgz#582e9da8fee636c1e60ff3de5d144293ccf3d8a2"
-  integrity sha512-3CYc3pvivYE+bSZathj/MHa70egk1/cIhXlRPlpZdZDr7FXqTskGv4oapT16pLTYfV+9y2/OetMG88k77W46pw==
+"@getpara/evm-wallet-connectors@2.12.0":
+  version "2.12.0"
+  resolved "https://registry.yarnpkg.com/@getpara/evm-wallet-connectors/-/evm-wallet-connectors-2.12.0.tgz#0ac3f4367ea5c57708361e8684bab5954c744dcf"
+  integrity sha512-3HCispNf4tTyDA1z5DVfxtRiyPkXQDj/AsgNzq9DAXvYvrQWqHLworQ50gQGrCMUbv8VwzAHeHcLlCJPMNiJmQ==
   dependencies:
     "@coinbase/wallet-sdk" "4.3.0"
-    "@getpara/wagmi-v2-connector" "2.13.0"
-    "@getpara/web-sdk" "2.13.0"
+    "@getpara/wagmi-v2-connector" "2.12.0"
+    "@getpara/web-sdk" "2.12.0"
     "@walletconnect/ethereum-provider" "2.23.0"
     zustand "^4.5.2"
     zustand-sync-tabs "^0.2.2"
 
-"@getpara/react-common@2.13.0":
-  version "2.13.0"
-  resolved "https://registry.yarnpkg.com/@getpara/react-common/-/react-common-2.13.0.tgz#1c805756a446025e3d555e8a7c162a55ccd27dc4"
-  integrity sha512-6BdPKMXm+l+U3KT8+w2Xi8gc4v0pOWsxRAwu5bwRhiYdWV7vm30+DaUoVtnf5SPADnaa/vJd1CeR7AWnCJSbmg==
+"@getpara/react-common@2.12.0":
+  version "2.12.0"
+  resolved "https://registry.yarnpkg.com/@getpara/react-common/-/react-common-2.12.0.tgz#027e35b62ff3336817a7923523a416714b3dff2a"
+  integrity sha512-2QA4r2glBfHJPB1iodPtKRGH9Ut1Ec49H54ufeecJ0H7w8E+MDVcv8QT4fLz9GUERvyFZUrYE//aeWm4Pk40Ug==
   dependencies:
-    "@getpara/react-components" "2.13.0"
-    "@getpara/web-sdk" "2.13.0"
+    "@getpara/react-components" "2.12.0"
+    "@getpara/web-sdk" "2.12.0"
     "@moonpay/moonpay-react" "^1.10.6"
     "@ramp-network/ramp-instant-sdk" "^4.0.5"
     libphonenumber-js "^1.11.7"
     styled-components "^6.1.8"
     ua-parser-js "^2.0.2"
 
-"@getpara/react-components@2.13.0":
-  version "2.13.0"
-  resolved "https://registry.yarnpkg.com/@getpara/react-components/-/react-components-2.13.0.tgz#71962b4bb92deb12dcc28155a27cc2adb766f211"
-  integrity sha512-vm3LbLtSG+aeYqN4OKKqd4u9ShDqCj65vX0q9J2iLd/YUI12DnOZwOejfoDsOzrvV7LMeyqEO5FGnSReP04ezg==
+"@getpara/react-components@2.12.0":
+  version "2.12.0"
+  resolved "https://registry.yarnpkg.com/@getpara/react-components/-/react-components-2.12.0.tgz#af646d867ef8dbe50c027f32b3d3d1ac9cfc18b9"
+  integrity sha512-XKLzvOadBx22W3I4bR93ZL2iOE6NULYL1fRZiIJ6s2ANjTbY+heiqk2NeQNzXaB5JGIgeLAWzPOY8gtD5DiJ+g==
   dependencies:
-    "@getpara/core-components" "2.13.0"
+    "@getpara/core-components" "2.12.0"
 
-"@getpara/react-sdk-lite@2.13.0":
-  version "2.13.0"
-  resolved "https://registry.yarnpkg.com/@getpara/react-sdk-lite/-/react-sdk-lite-2.13.0.tgz#088a8e334c363e49975a00ea227194c8fbf2501d"
-  integrity sha512-68nT4bnzga7ZzeKehoo4cO6ydNEDN0C/c2cR5D0JT/w2CBnnYwHrwo5UjR1SWG+EiR/pxdu+ASFfgmfe3d8knw==
+"@getpara/react-sdk-lite@2.12.0":
+  version "2.12.0"
+  resolved "https://registry.yarnpkg.com/@getpara/react-sdk-lite/-/react-sdk-lite-2.12.0.tgz#6503fb56983fb025d2b1a3d77b1f179a9576f45f"
+  integrity sha512-SgATM0MTWaY56M+Uoix0Lmc9ZfBWzA1CHM9K6C2Ja47gs6NXueTw8kKs3EP/wKHcWtM0CGpZvRDNfBZR8c6I5g==
   dependencies:
-    "@getpara/react-common" "2.13.0"
-    "@getpara/react-components" "2.13.0"
-    "@getpara/web-sdk" "2.13.0"
+    "@getpara/react-common" "2.12.0"
+    "@getpara/react-components" "2.12.0"
+    "@getpara/web-sdk" "2.12.0"
     date-fns "^3.6.0"
     framer-motion "^11.3.31"
     libphonenumber-js "^1.11.7"
@@ -2396,37 +2395,37 @@
   resolved "https://registry.yarnpkg.com/@getpara/shared/-/shared-1.10.0.tgz#5c1f477e3409d5117fd31b28458db9df9a42dbad"
   integrity sha512-xSBzCrQEbm+p32aoIjZcKL+TrfNRRYvuwGQrzvEMLB+vUxvkPMWz2n1uifRKzIVb/1MtIX4lDv5WiNe8xqFS9A==
 
-"@getpara/user-management-client@2.13.0":
-  version "2.13.0"
-  resolved "https://registry.yarnpkg.com/@getpara/user-management-client/-/user-management-client-2.13.0.tgz#749e03fc3bc7104bbc53d3fc15e514c2de6304e5"
-  integrity sha512-2yGNjC8mgOoM1lfzjrYoK6VjvlzBQrwk0XUHKz0nSGeWvfsgQPuEU2jeZqf0cqj9jg+FbXnhuxdJU8aQaTgx8g==
+"@getpara/user-management-client@2.12.0":
+  version "2.12.0"
+  resolved "https://registry.yarnpkg.com/@getpara/user-management-client/-/user-management-client-2.12.0.tgz#e98bb545dbde8edc96926e85e4f5b44e91bcb49c"
+  integrity sha512-Pcop0JYVqgyQrnu2tnsPt3d52n2MUZpGpoMkEi7MOeQM0TWcUjOrqMmJETzgFkDwK9zsk8PbkMhKxtILNhhYbQ==
   dependencies:
     "@getpara/shared" "1.10.0"
     axios "^1.8.4"
     libphonenumber-js "^1.11.7"
 
-"@getpara/viem-v2-integration@2.13.0":
-  version "2.13.0"
-  resolved "https://registry.yarnpkg.com/@getpara/viem-v2-integration/-/viem-v2-integration-2.13.0.tgz#1327b3f486c7a9ad84d099d7283bdcecd2b54738"
-  integrity sha512-hy9X93kO9xmsoMNeynLSekHxRekZrVR2qWRaPeN90qhK9aPKVWqg2MPZU0sHfJzplsQCfMK07Yu/6JJT3YLENQ==
+"@getpara/viem-v2-integration@2.12.0":
+  version "2.12.0"
+  resolved "https://registry.yarnpkg.com/@getpara/viem-v2-integration/-/viem-v2-integration-2.12.0.tgz#8b1c241d7a0fc19b72c07df93836a4c5e9c10c12"
+  integrity sha512-otc+4FzwwP2BL2TPXNAYJLPMBB+3f4tmUSF0R6dRewSV2HoMWgEUiLnJln7g+i+Yk/gyknTFOqSVMr3A7zGfHw==
   dependencies:
-    "@getpara/core-sdk" "2.13.0"
+    "@getpara/core-sdk" "2.12.0"
 
-"@getpara/wagmi-v2-connector@2.13.0":
-  version "2.13.0"
-  resolved "https://registry.yarnpkg.com/@getpara/wagmi-v2-connector/-/wagmi-v2-connector-2.13.0.tgz#df5d0284f7f189c9d97d751cde48fffac4803812"
-  integrity sha512-Uj54gw6wGyr8nBDc6Jj0YHzR/DNvLiEPQMp119WJx81Nf2XD+E1qFpsNlxJhFaYgxB26gu/r+lrkjcigBfPvxQ==
+"@getpara/wagmi-v2-connector@2.12.0":
+  version "2.12.0"
+  resolved "https://registry.yarnpkg.com/@getpara/wagmi-v2-connector/-/wagmi-v2-connector-2.12.0.tgz#2414a1f3d98c38a387fa70f7fb421d7854071887"
+  integrity sha512-3eVLh70jFnODx8EZAAty63QaXnHAZzwtaXIvvNi/C2Kot7eJSMBRk3/K8/egWePU5b5wwjLy/kp0JZ551WNMMQ==
   dependencies:
-    "@getpara/viem-v2-integration" "2.13.0"
-    "@getpara/web-sdk" "2.13.0"
+    "@getpara/viem-v2-integration" "2.12.0"
+    "@getpara/web-sdk" "2.12.0"
 
-"@getpara/web-sdk@2.13.0":
-  version "2.13.0"
-  resolved "https://registry.yarnpkg.com/@getpara/web-sdk/-/web-sdk-2.13.0.tgz#29058e74b0d4877df4d1980bd1eecf0e5c893ea1"
-  integrity sha512-n5pqA7Lz41npksZFwulV3DSRTdZJr75M3AyvT8eSWYZB9+lOtfgKA1x6+MEHNxcQa/diyexguvmH88KmHnXI0w==
+"@getpara/web-sdk@2.12.0":
+  version "2.12.0"
+  resolved "https://registry.yarnpkg.com/@getpara/web-sdk/-/web-sdk-2.12.0.tgz#5e613d10fe48fdb8bd837f0498902d9b364877bf"
+  integrity sha512-Y/pp6I6eK0WtVe0EPoUulFNNStU9NNcCGFMKFHB3fRMbtLp4aMrGkz+zmJMsEVZPA2m3ifH9W5rAxWZcMKWGCg==
   dependencies:
-    "@getpara/core-sdk" "2.13.0"
-    "@getpara/user-management-client" "2.13.0"
+    "@getpara/core-sdk" "2.12.0"
+    "@getpara/user-management-client" "2.12.0"
     base64url "^3.0.1"
     buffer "6.0.3"
     cbor-web "^9.0.2"
@@ -14423,11 +14422,6 @@ xmlhttprequest-ssl@~2.1.1:
   version "2.1.2"
   resolved "https://registry.yarnpkg.com/xmlhttprequest-ssl/-/xmlhttprequest-ssl-2.1.2.tgz#e9e8023b3f29ef34b97a859f584c5e6c61418e23"
   integrity sha512-TEU+nJVUUnA4CYJFLvK5X9AOeH4KvDvhIfm0vV1GaQRtchnG0hgK5p8hw/xjv8cunWYCsiPCSDzObPyhEwq3KQ==
-
-xstate@^5.24.0:
-  version "5.28.0"
-  resolved "https://registry.yarnpkg.com/xstate/-/xstate-5.28.0.tgz#d776fc2aad92f2e6521249025b96c85a254e2d40"
-  integrity sha512-Iaqq6ZrUzqeUtA3hC5LQKZfR8ZLzEFTImMHJM3jWEdVvXWdKvvVLXZEiNQWm3SCA9ZbEou/n5rcsna1wb9t28A==
 
 xtend@~4.0.1:
   version "4.0.2"
