@@ -1,9 +1,10 @@
 import { getChainLogo } from "@helpers/getChainLogo";
 import Image from "next/image";
-import { FC, useMemo, useState } from "react";
+import { FC } from "react";
+import { useShallow } from "zustand/shallow";
 import AddFundsToggle from "./components/Toggle";
-import AddFundsProviders, { AddFundsProviderType } from "./providers";
-import { isOnrampSupportedForChain } from "./providers/onramp/utils";
+import AddFundsProviders from "./providers";
+import { useAddFundsStore } from "./store";
 
 interface AddFundsProps {
   chain: string;
@@ -15,13 +16,13 @@ interface AddFundsProps {
 }
 
 const AddFunds: FC<AddFundsProps> = ({ chain, asset, onGoBack, showBackButton = true, className, onCloseModal }) => {
-  const supportsOnramp = useMemo(() => isOnrampSupportedForChain(chain), [chain]);
-  const [providerType, setProviderType] = useState<AddFundsProviderType>(AddFundsProviderType.ONRAMP);
   const chainLogo = getChainLogo(chain);
-
-  const handleToggleChange = (type: AddFundsProviderType) => {
-    setProviderType(type);
-  };
+  const { providerType, setProviderType } = useAddFundsStore(
+    useShallow(state => ({
+      providerType: state.providerType,
+      setProviderType: state.setProviderType,
+    })),
+  );
 
   return (
     <div className={`flex flex-col w-full h-full ${className}`}>
@@ -38,32 +39,22 @@ const AddFunds: FC<AddFundsProps> = ({ chain, asset, onGoBack, showBackButton = 
           </div>
         </div>
 
-        <AddFundsToggle value={providerType} onChange={handleToggleChange} />
+        <div className="flex flex-col gap-4">
+          <AddFundsToggle value={providerType} onChange={setProviderType} />
 
-        <AddFundsProviders
-          chain={chain}
-          asset={asset}
-          type={providerType}
-          onCloseModal={onCloseModal}
-          onrampDisabled={!supportsOnramp}
-        />
+          <AddFundsProviders chain={chain} asset={asset} type={providerType} onCloseModal={onCloseModal} />
+        </div>
       </div>
-      <div className="flex items-start flex-col gap-4 md:gap-2 pt-6">
-        {showBackButton && (
-          <div className="relative w-full pt-6 md:pt-0">
-            <div
-              className="absolute left-0 right-0 top-0 border-t border-neutral-2 md:hidden"
-              style={{ width: "100vw", left: "50%", transform: "translateX(-50%)" }}
-            ></div>
-            <button className="flex items-center gap-[5px] cursor-pointer group" onClick={() => onGoBack?.()}>
-              <div className="transition-transform duration-200 group-hover:-translate-x-1">
-                <img src="/create-flow/back.svg" alt="back" width={15} height={15} className="mt-px" />
-              </div>
-              <p className="text-[16px]">back</p>
-            </button>
-          </div>
-        )}
-      </div>
+      {showBackButton && (
+        <div className="pt-3 shrink-0">
+          <button className="flex items-center gap-[5px] cursor-pointer group" onClick={() => onGoBack?.()}>
+            <div className="flex items-center transition-transform duration-200 group-hover:-translate-x-1">
+              <img src="/create-flow/back.svg" alt="back" width={15} height={15} />
+            </div>
+            <p className="text-[16px] leading-none">back</p>
+          </button>
+        </div>
+      )}
     </div>
   );
 };

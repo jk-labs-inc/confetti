@@ -58,7 +58,7 @@ const ProfileSection: FC<ProfileSectionProps> = ({ address, ensAvatar, ensName, 
             {isPriceLoading ? (
               <Skeleton width={80} height={14} baseColor="#706f78" highlightColor="#FFE25B" />
             ) : (
-              <span>
+              <span className="uppercase">
                 {displaySymbol === "$" ? `$${displayValue}` : `${displayValue} ${displaySymbol}`}
               </span>
             )}

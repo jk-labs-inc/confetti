@@ -54,8 +54,8 @@ const VotingWidgetRewardsProjection: FC<VotingWidgetRewardsProjectionProps> = ({
         {isLoading ? (
           <Skeleton width={100} height={24} baseColor="#706f78" highlightColor="#FFE25B" />
         ) : (
-          <GradientText textSizeClassName="text-[24px] font-bold" isFontSabo={false}>
-            {displaySymbol === "$" ? `$${displayValue}` : `${displayValue} ${displaySymbol.toLowerCase()}`}
+          <GradientText textSizeClassName="text-[24px] font-bold uppercase" isFontSabo={false}>
+            {displaySymbol === "$" ? `$${displayValue}` : `${displayValue} ${displaySymbol}`}
           </GradientText>
         )}
       </div>

@@ -47,13 +47,14 @@ export const convertToDisplayPrice = (
   const numericValue = parseFloat(nativeValue);
   const hasValidRate = rate !== undefined && !isNaN(numericValue);
   const formattedNative = formatBalance(nativeValue);
+  const tickerSymbol = "$" + nativeCurrencySymbol.toUpperCase();
 
   if (displayCurrency === "native") {
     const secondaryUsd = hasValidRate ? formatUsd(numericValue * rate) : null;
 
     return {
       displayValue: formattedNative,
-      displaySymbol: nativeCurrencySymbol,
+      displaySymbol: tickerSymbol,
       secondaryValue: secondaryUsd,
       secondarySymbol: secondaryUsd !== null ? "$" : null,
       isLoading: false,
@@ -63,7 +64,7 @@ export const convertToDisplayPrice = (
   if (!hasValidRate) {
     return {
       displayValue: formattedNative,
-      displaySymbol: nativeCurrencySymbol,
+      displaySymbol: tickerSymbol,
       secondaryValue: null,
       secondarySymbol: null,
       isLoading: false,
@@ -77,7 +78,7 @@ export const convertToDisplayPrice = (
     displayValue: formattedUsd,
     displaySymbol: "$",
     secondaryValue: formattedNative,
-    secondarySymbol: nativeCurrencySymbol,
+    secondarySymbol: tickerSymbol,
     isLoading: false,
   };
 };

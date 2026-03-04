@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import apiInstance, { isBrevoConfigured } from "@config/brevo";
-import * as Brevo from "@getbrevo/brevo";
+import brevoClient, { isBrevoConfigured } from "@config/brevo";
+import type { Brevo } from "@getbrevo/brevo";
 
 export async function POST(req: Request) {
   if (!isBrevoConfigured) {
@@ -18,15 +18,13 @@ export async function POST(req: Request) {
       );
     }
 
-    const sendSmtpEmail = new Brevo.SendSmtpEmail();
-    sendSmtpEmail.to = to;
-    sendSmtpEmail.templateId = templateId;
+    const request: Brevo.SendTransacEmailRequest = {
+      to,
+      templateId,
+      ...(params && { params }),
+    };
 
-    if (params) {
-      sendSmtpEmail.params = params;
-    }
-
-    const data = await apiInstance.sendTransacEmail(sendSmtpEmail);
+    const data = await brevoClient.transactionalEmails.sendTransacEmail(request);
     return NextResponse.json({ success: true, data }, { status: 200 });
   } catch (error: any) {
     console.error("error sending email:", error);

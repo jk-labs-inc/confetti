@@ -63,7 +63,7 @@ const TokenSearchListToken: FC<TokenSearchListTokenProps> = ({ token, isChainDro
         </div>
         <div className="flex flex-col gap-1">
           <p
-            className={`text-[20px] text-neutral-11 font-bold normal-case transition-colors duration-300 ${
+            className={`text-[20px] text-neutral-11 font-bold uppercase transition-colors duration-300 ${
               isHovered ? "text-positive-11" : ""
             }`}
           >

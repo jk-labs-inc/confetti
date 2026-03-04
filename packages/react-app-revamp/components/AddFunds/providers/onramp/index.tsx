@@ -3,18 +3,15 @@ import { FC } from "react";
 import AddFundsCard from "../../components/Card";
 import { PARA_ONRAMP_CONFIG } from "./types";
 
-interface AddFundsOnrampProviderProps {
+interface AddFundsParaProviderProps {
   chain: string;
   onCloseModal?: () => void;
-  disabled?: boolean;
 }
 
-const AddFundsOnrampProvider: FC<AddFundsOnrampProviderProps> = ({ chain, onCloseModal, disabled = false }) => {
+const AddFundsParaProvider: FC<AddFundsParaProviderProps> = ({ chain, onCloseModal }) => {
   const { openModal } = useModal();
 
   const handleClick = () => {
-    if (disabled) return;
-    // Close parent modal first to avoid z-index issues
     onCloseModal?.();
     openModal({ step: ModalStep.ADD_FUNDS_BUY });
   };
@@ -24,12 +21,10 @@ const AddFundsOnrampProvider: FC<AddFundsOnrampProviderProps> = ({ chain, onClos
       name={PARA_ONRAMP_CONFIG.name}
       description={PARA_ONRAMP_CONFIG.description}
       logo={PARA_ONRAMP_CONFIG.logo}
-      variant="modal"
+      logoBorderColor="#7B3FE4"
       onClick={handleClick}
-      disabled={disabled}
-      disabledMessage={disabled ? `not available on ${chain}` : undefined}
     />
   );
 };
 
-export default AddFundsOnrampProvider;
+export default AddFundsParaProvider;

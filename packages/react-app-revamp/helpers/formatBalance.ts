@@ -1,7 +1,8 @@
 import BigNumber from "bignumber.js";
 import { formatNumberAbbreviated } from "./formatNumber";
 
-const MIN_VALUE_FOR_ABBREVIATION = 10_000;
+// 1 billion
+const MIN_VALUE_FOR_ABBREVIATION = 1_000_000_000;
 
 /**
  * Converts a number to a fixed-point decimal string, never using scientific notation.

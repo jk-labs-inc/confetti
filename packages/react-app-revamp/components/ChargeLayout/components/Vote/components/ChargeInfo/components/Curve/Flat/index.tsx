@@ -21,7 +21,7 @@ const ChargeInfoFlat: FC<ChargeInfoFlatProps> = ({ costToVote }) => {
   }
 
   return (
-    <p>
+    <p className="uppercase">
       {displaySymbol === "$" ? `$${displayValue}` : `${displayValue} ${displaySymbol}`}
     </p>
   );

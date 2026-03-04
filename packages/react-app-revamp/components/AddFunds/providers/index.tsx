@@ -1,48 +1,29 @@
 import { FC } from "react";
-import AddFundsJumperProvider from "./bridges/jumper";
-import AddFundsOnrampProvider from "./onramp";
+import { AddFundsProviderType } from "../types";
+import useAddFundsProviders from "./hooks/useAddFundsProviders";
 
-export enum AddFundsProviderType {
-  BRIDGE = "bridge",
-  ONRAMP = "onramp",
-}
+export { AddFundsProviderType };
 
 interface AddFundsProvidersProps {
   type: AddFundsProviderType;
   chain: string;
   asset: string;
   onCloseModal?: () => void;
-  onrampDisabled?: boolean;
 }
 
-const DESCRIPTIONS: Record<AddFundsProviderType, string> = {
-  [AddFundsProviderType.ONRAMP]: "add cash and play",
-  [AddFundsProviderType.BRIDGE]: "fund from another chain",
-};
+const OnrampDescription = () => <p className="text-base text-neutral-11">how would you like to fund your wallet?</p>;
 
-const SECONDARY_TEXT: Record<AddFundsProviderType, string> = {
-  [AddFundsProviderType.ONRAMP]: "(defaults to $5, or edit to add more)",
-  [AddFundsProviderType.BRIDGE]: "",
-};
+const BridgeDescription = ({ chain }: { chain: string }) => (
+  <p className="text-neutral-11 text-base">fund from another chain into {chain}</p>
+);
 
-const AddFundsProviders: FC<AddFundsProvidersProps> = ({
-  type,
-  chain,
-  asset,
-  onCloseModal,
-  onrampDisabled = false,
-}) => {
+const AddFundsProviders: FC<AddFundsProvidersProps> = ({ type, chain, asset, onCloseModal }) => {
+  const providers = useAddFundsProviders({ type, chain, asset, onCloseModal });
+
   return (
-    <div className="flex flex-col gap-4 w-full">
-      <p className="text-neutral-11 text-[16px] font-bold">
-        {DESCRIPTIONS[type]}
-        {SECONDARY_TEXT[type] && <span className="text-neutral-9 ml-2 font-bold">{SECONDARY_TEXT[type]}</span>}
-      </p>
-      {type === AddFundsProviderType.ONRAMP ? (
-        <AddFundsOnrampProvider chain={chain} onCloseModal={onCloseModal} disabled={onrampDisabled} />
-      ) : (
-        <AddFundsJumperProvider chain={chain} asset={asset} />
-      )}
+    <div className="flex flex-col gap-6 w-full">
+      {type === AddFundsProviderType.ONRAMP ? <OnrampDescription /> : <BridgeDescription chain={chain} />}
+      <div className="flex flex-col gap-4">{providers}</div>
     </div>
   );
 };

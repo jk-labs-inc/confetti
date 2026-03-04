@@ -75,7 +75,7 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
               style={{ width: `${width || 1}ch` }}
             />
             {displaySymbol !== "$" && (
-              <span className="text-[16px] text-neutral-9 whitespace-nowrap ml-2">{displaySymbol}</span>
+              <span className="text-[16px] text-neutral-9 whitespace-nowrap ml-2 uppercase">{displaySymbol}</span>
             )}
           </>
         )}

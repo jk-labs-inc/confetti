@@ -61,6 +61,7 @@ const AxisRight: React.FC<AxisRightProps> = ({
             textAnchor: "start",
             dy: "0.33em",
             dx: 8,
+            className: "uppercase",
           };
         }}
         tickStroke="transparent"
@@ -80,6 +81,7 @@ const AxisRight: React.FC<AxisRightProps> = ({
           <g key={`current-tick-${tick}`}>
             <rect x={chartWidth + 8} y={yPos - 14} width={estimateLabelWidth(label)} height={24} rx={8} fill="#BB65FF" />
             <text
+              className="uppercase"
               x={chartWidth + 8 + estimateLabelWidth(label) / 2}
               y={yPos}
               fill="#000000"
@@ -114,6 +116,7 @@ const AxisRight: React.FC<AxisRightProps> = ({
                 fill="#212121"
               />
               <text
+                className="uppercase"
                 x={chartWidth + 8 + estimateLabelWidth(label) / 2}
                 y={yPos}
                 fill="#ffffff"
