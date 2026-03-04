@@ -6,11 +6,12 @@ import "@openzeppelin/utils/math/SafeCast.sol";
 import "@openzeppelin/utils/Address.sol";
 import {UD60x18, ud} from "@prb/math/src/UD60x18.sol";
 import "./utils/GovernorSorting.sol";
+import "./utils/GovernorAnalytics.sol";
 
 /**
  * @dev Core of the governance system, designed to be extended though various modules.
  */
-abstract contract Governor is GovernorSorting {
+abstract contract Governor is GovernorSorting, GovernorAnalytics {
     using SafeCast for uint256;
 
     enum ContestState {
@@ -94,7 +95,7 @@ abstract contract Governor is GovernorSorting {
     address public constant JK_LABS_ADDRESS = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738; // Our hot wallet that we collect revenue to.
     uint256 public constant PRICE_CURVE_UPDATE_INTERVAL = 60; // How often the price curve updates if applicable.
     uint256 public constant COST_ROUNDING_VALUE = 1e12; // Used for rounding costs, means cost to propose or vote can't be less than 1e18/this.
-    string private constant VERSION = "6.15"; // Private as to not clutter the ABI.
+    string private constant VERSION = "6.16"; // Private as to not clutter the ABI.
 
     string public name; // The title of the contest
     string public prompt;
@@ -496,6 +497,8 @@ abstract contract Governor is GovernorSorting {
         if (proposalIsDeleted[proposalId]) revert CannotVoteOnDeletedProposal();
 
         _distributeCost(actionCost);
+        totalSpentByAddress[msg.sender] += actionCost;
+        totalSpentByAddressOnProposal[msg.sender][proposalId] += actionCost;
 
         return _castVote(proposalId, msg.sender, numVotes);
     }
