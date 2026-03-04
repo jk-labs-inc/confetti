@@ -1,7 +1,7 @@
 "use client";
 
 import { chains, transports } from "@config/wagmi";
-import { Environment, TExternalWallet } from "@getpara/react-sdk-lite";
+import ParaWeb, { Environment, TExternalWallet } from "@getpara/react-sdk-lite";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { FC, ReactNode } from "react";
 import { ParaProvider } from "@getpara/react-sdk-lite";
@@ -13,6 +13,8 @@ type ProvidersProps = {
 const PARA_API_KEY = process.env.NEXT_PUBLIC_PARA_API_KEY as string;
 const PARA_ENVIRONMENT =
   process.env.NEXT_PUBLIC_APP_ENVIRONMENT === "development" ? Environment.BETA : Environment.PRODUCTION;
+
+const para = new ParaWeb(PARA_ENVIRONMENT, PARA_API_KEY);
 
 const queryClient = new QueryClient();
 
@@ -32,7 +34,7 @@ const Providers: FC<ProvidersProps> = ({ children }) => {
   return (
     <QueryClientProvider client={queryClient}>
       <ParaProvider
-        paraClientConfig={{ env: PARA_ENVIRONMENT, apiKey: PARA_API_KEY }}
+        paraClientConfig={para}
         config={{
           appName: "Confetti",
         }}

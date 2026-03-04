@@ -9,16 +9,16 @@
     "start": "next start"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "3.1000.0",
-    "@aws-sdk/s3-request-presigner": "3.1000.0",
+    "@aws-sdk/client-s3": "3.1001.0",
+    "@aws-sdk/s3-request-presigner": "3.1001.0",
     "@babel/core": "7.29.0",
     "@babel/preset-env": "7.29.0",
     "@bigmi/react": "0.7.0",
     "@clustersxyz/sdk": "1.0.2",
     "@coinbase/wallet-sdk": "4.3.7",
     "@getbrevo/brevo": "4.0.1",
-    "@getpara/evm-wallet-connectors": "2.13.0",
-    "@getpara/react-sdk-lite": "2.13.0",
+    "@getpara/evm-wallet-connectors": "2.12.0",
+    "@getpara/react-sdk-lite": "2.12.0",
     "@headlessui/react": "2.2.9",
     "@heroicons/react": "2.2.0",
     "@lifi/widget": "3.40.11",
@@ -70,7 +70,7 @@
     "minimatch": "10.2.4",
     "moment": "2.30.1",
     "moment-timezone": "0.6.0",
-    "motion": "12.34.4",
+    "motion": "12.34.5",
     "motion-plus": "1.5.1",
     "next": "15.5.12",
     "next-pwa": "5.6.0",
@@ -106,7 +106,7 @@
     "vaul": "1.1.2",
     "viem": "2.46.3",
     "wagmi": "3.5.0",
-    "webpack": "5.105.3",
+    "webpack": "5.105.4",
     "zod": "4.3.6",
     "zustand": "5.0.11"
   }

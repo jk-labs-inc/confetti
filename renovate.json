@@ -36,7 +36,8 @@
     },
     {
       "matchPackageNames":[
-        "@tiptap/**"
+        "@tiptap/**",
+        "@getpara/**"
       ],
       "enabled": false
     },
