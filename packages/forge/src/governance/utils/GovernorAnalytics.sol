@@ -18,7 +18,7 @@ abstract contract GovernorAnalytics {
     }
 
     /**
-     * @dev Return the amount spent by an address on the contest as a whole so far.
+     * @dev Return the amount spent by an address on a given entry so far.
      */
     function getTotalSpentByAddressOnProposal(address spendingAddress, uint256 proposalId) public view returns (uint256 totalSpent) {
         return totalSpentByAddressOnProposal[spendingAddress][proposalId];
