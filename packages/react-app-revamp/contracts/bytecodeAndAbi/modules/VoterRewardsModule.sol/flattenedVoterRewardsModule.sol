@@ -4876,7 +4876,7 @@ function convert_1(uint256 x) pure returns (UD60x18 result) {
 /**
  * @dev Core of the governance system, designed to be extended though various modules.
  */
-abstract contract Governor is GovernorSorting {
+abstract contract Governor is GovernorSorting, GovernorAnalytics {
     using SafeCast for uint256;
 
     enum ContestState {
@@ -4960,7 +4960,7 @@ abstract contract Governor is GovernorSorting {
     address public constant JK_LABS_ADDRESS = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738; // Our hot wallet that we collect revenue to.
     uint256 public constant PRICE_CURVE_UPDATE_INTERVAL = 60; // How often the price curve updates if applicable.
     uint256 public constant COST_ROUNDING_VALUE = 1e12; // Used for rounding costs, means cost to propose or vote can't be less than 1e18/this.
-    string private constant VERSION = "6.15"; // Private as to not clutter the ABI.
+    string private constant VERSION = "6.16"; // Private as to not clutter the ABI.
 
     string public name; // The title of the contest
     string public prompt;
@@ -5362,6 +5362,8 @@ abstract contract Governor is GovernorSorting {
         if (proposalIsDeleted[proposalId]) revert CannotVoteOnDeletedProposal();
 
         _distributeCost(actionCost);
+        totalSpentByAddress[msg.sender] += actionCost;
+        totalSpentByAddressOnProposal[msg.sender][proposalId] += actionCost;
 
         return _castVote(proposalId, msg.sender, numVotes);
     }
@@ -5391,6 +5393,34 @@ abstract contract Governor is GovernorSorting {
             revert CannotUpdateWhenCompletedOrCanceled();
         }
         jkLabsSplitDestination = newJkLabsSplitDestination;
+    }
+}
+
+// src/governance/utils/GovernorAnalytics.sol
+
+/**
+ * @dev Extension of {Governor} for analytics features.
+ */
+abstract contract GovernorAnalytics {
+    mapping(address => uint256) public totalSpentByAddress;
+    mapping(address => mapping(uint256 => uint256)) public totalSpentByAddressOnProposal;
+
+    /**
+     * @dev Return the amount spent by an address on the contest as a whole so far.
+     */
+    function getTotalSpentByAddress(address spendingAddress) public view returns (uint256 totalSpent) {
+        return totalSpentByAddress[spendingAddress];
+    }
+
+    /**
+     * @dev Return the amount spent by an address on a given entry so far.
+     */
+    function getTotalSpentByAddressOnProposal(address spendingAddress, uint256 proposalId)
+        public
+        view
+        returns (uint256 totalSpent)
+    {
+        return totalSpentByAddressOnProposal[spendingAddress][proposalId];
     }
 }
 
@@ -5645,7 +5675,7 @@ contract VoterRewardsModule {
     string public constant MODULE_TYPE = "VOTER_REWARDS";
     address public constant JK_LABS_ADDRESS = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738; // Our hot wallet that we collect revenue to.
     uint256 public constant JK_LABS_CANCEL_DELAY = 604800; // One week
-    string private constant VERSION = "6.15"; // Private as to not clutter the ABI
+    string private constant VERSION = "6.16"; // Private as to not clutter the ABI
 
     GovernorCountingSimple public underlyingContest;
     address public creator;
