@@ -62,7 +62,7 @@ const SubmissionPageDesktopVotingAreaWidgetVoters: FC<SubmissionPageDesktopVotin
       className="w-full flex-1"
       style={maxHeight ? { maxHeight: `${maxHeight}px` } : { height: "100%" }}
     >
-      <div className="bg-gradient-voting-area-purple rounded-4xl items-center py-8 w-full h-full flex flex-col">
+      <div className="bg-gradient-voting-area-purple rounded-4xl pl-6 pr-12 pt-4 pb-8 w-full h-full flex flex-col">
         <div className="flex flex-col gap-6 min-h-0 flex-1">
           <div className="flex items-baseline gap-2 pr-6">
             <Image src="/entry/vote-ballot.svg" alt="voters" width={24} height={24} className="self-center" />
