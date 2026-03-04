@@ -28,7 +28,7 @@ const PriceDisplay: FC<PriceDisplayProps> = ({ price, label, chainUnitLabel }) =
               {formatPrice(displayValue, displaySymbol)}
             </p>
             {secondaryValue && secondarySymbol ? (
-              <p className="absolute top-full mt-1 text-sm font-bold text-neutral-9 uppercase">
+              <p className="absolute top-full mt-1 text-sm font-bold text-neutral-9 uppercase whitespace-nowrap">
                 {formatPrice(secondaryValue, secondarySymbol)}
               </p>
             ) : null}
