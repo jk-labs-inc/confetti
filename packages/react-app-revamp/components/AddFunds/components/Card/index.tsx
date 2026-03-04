@@ -1,4 +1,4 @@
-import { ChevronUpIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
+import { ChevronUpIcon, ChevronDownIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import { FC, ReactNode, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { useShallow } from "zustand/shallow";
@@ -54,6 +54,12 @@ const AddFundsCard: FC<AddFundsCardProps> = ({
 
   const renderIcon = () => {
     if (disabled) return null;
+
+    if (onClick) {
+      return (
+        <ChevronRightIcon className="w-6 h-6 text-neutral-9 transition-colors duration-300 ease-in-out group-hover:text-neutral-11" />
+      );
+    }
 
     return isExpanded ? (
       <ChevronUpIcon className="w-6 h-6 text-neutral-9 transition-colors duration-300 ease-in-out" />
