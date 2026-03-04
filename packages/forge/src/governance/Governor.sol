@@ -6,11 +6,12 @@ import "@openzeppelin/utils/math/SafeCast.sol";
 import "@openzeppelin/utils/Address.sol";
 import {UD60x18, ud} from "@prb/math/src/UD60x18.sol";
 import "./utils/GovernorSorting.sol";
+import "./utils/GovernorAnalytics.sol";
 
 /**
  * @dev Core of the governance system, designed to be extended though various modules.
  */
-abstract contract Governor is GovernorSorting {
+abstract contract Governor is GovernorSorting, GovernorAnalytics {
     using SafeCast for uint256;
 
     enum ContestState {
@@ -496,6 +497,8 @@ abstract contract Governor is GovernorSorting {
         if (proposalIsDeleted[proposalId]) revert CannotVoteOnDeletedProposal();
 
         _distributeCost(actionCost);
+        totalSpentByAddress[msg.sender] += actionCost;
+        totalSpentByAddressOnProposal[msg.sender][proposalId] += actionCost;
 
         return _castVote(proposalId, msg.sender, numVotes);
     }
