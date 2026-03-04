@@ -917,6 +917,34 @@ function sqrt_0(uint256 x) pure returns (uint256 result) {
     }
 }
 
+// src/governance/utils/GovernorAnalytics.sol
+
+/**
+ * @dev Extension of {Governor} for analytics features.
+ */
+abstract contract GovernorAnalytics {
+    mapping(address => uint256) public totalSpentByAddress;
+    mapping(address => mapping(uint256 => uint256)) public totalSpentByAddressOnProposal;
+
+    /**
+     * @dev Return the amount spent by an address on the contest as a whole so far.
+     */
+    function getTotalSpentByAddress(address spendingAddress) public view returns (uint256 totalSpent) {
+        return totalSpentByAddress[spendingAddress];
+    }
+
+    /**
+     * @dev Return the amount spent by an address on a given entry so far.
+     */
+    function getTotalSpentByAddressOnProposal(address spendingAddress, uint256 proposalId)
+        public
+        view
+        returns (uint256 totalSpent)
+    {
+        return totalSpentByAddressOnProposal[spendingAddress][proposalId];
+    }
+}
+
 // src/governance/utils/GovernorSorting.sol
 
 /**
@@ -5393,34 +5421,6 @@ abstract contract Governor is GovernorSorting, GovernorAnalytics {
             revert CannotUpdateWhenCompletedOrCanceled();
         }
         jkLabsSplitDestination = newJkLabsSplitDestination;
-    }
-}
-
-// src/governance/utils/GovernorAnalytics.sol
-
-/**
- * @dev Extension of {Governor} for analytics features.
- */
-abstract contract GovernorAnalytics {
-    mapping(address => uint256) public totalSpentByAddress;
-    mapping(address => mapping(uint256 => uint256)) public totalSpentByAddressOnProposal;
-
-    /**
-     * @dev Return the amount spent by an address on the contest as a whole so far.
-     */
-    function getTotalSpentByAddress(address spendingAddress) public view returns (uint256 totalSpent) {
-        return totalSpentByAddress[spendingAddress];
-    }
-
-    /**
-     * @dev Return the amount spent by an address on a given entry so far.
-     */
-    function getTotalSpentByAddressOnProposal(address spendingAddress, uint256 proposalId)
-        public
-        view
-        returns (uint256 totalSpent)
-    {
-        return totalSpentByAddressOnProposal[spendingAddress][proposalId];
     }
 }
 
