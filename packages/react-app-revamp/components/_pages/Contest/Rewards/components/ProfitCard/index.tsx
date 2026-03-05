@@ -1,0 +1,107 @@
+import useContestProfit from "@hooks/useContestProfit";
+import useContestConfigStore from "@hooks/useContestConfig/store";
+import { useWallet } from "@hooks/useWallet";
+import Image from "next/image";
+import { RewardModuleInfo } from "lib/rewards/types";
+import { FC, memo, useRef } from "react";
+import { useShallow } from "zustand/shallow";
+import ShareDropdown from "./components/ShareDropdown";
+
+interface ContestProfitCardProps {
+  contestAddress: `0x${string}`;
+  chainId: number;
+  rewards: RewardModuleInfo;
+}
+
+const ContestProfitCard: FC<ContestProfitCardProps> = ({ contestAddress, chainId, rewards }) => {
+  const cardRef = useRef<HTMLDivElement>(null);
+  const shareRef = useRef<HTMLDivElement>(null);
+  const { isConnected } = useWallet();
+  const chainName = useContestConfigStore(useShallow(state => state.contestConfig.chainName));
+  const { isAnalyticsSupported, profitPercentage, isInProfit, isLoading, isError, refetch } = useContestProfit({
+    contestAddress,
+    chainId,
+    rewards,
+  });
+
+  if (!isConnected || !isAnalyticsSupported || (!isLoading && !isInProfit)) return null;
+
+  if (isLoading) {
+    return (
+      <div className="profit-card-wrapper animate-pulse">
+        <div className="profit-card-inner px-8 md:px-[88px] py-6 md:py-8">
+          <p className="text-[14px] text-neutral-9">calculating profit...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="profit-card-wrapper">
+        <div className="profit-card-inner flex items-center justify-between px-8 md:px-[88px] py-6 md:py-8">
+          <p className="text-[14px] text-negative-11">failed to load profit data</p>
+          <button
+            onClick={refetch}
+            className="text-[12px] text-neutral-11 underline hover:text-neutral-14 transition-colors"
+            aria-label="Retry loading profit data"
+            tabIndex={0}
+          >
+            retry
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="profit-card-wrapper" ref={cardRef}>
+      <div className="profit-card-inner flex justify-between px-8 md:px-[88px] py-6 md:py-8 h-[144px] md:h-[296px] overflow-hidden">
+        <div className="flex flex-col justify-between">
+          <div className="flex flex-col gap-0.5 md:gap-1">
+            <div className="flex items-center gap-2 md:gap-4">
+              <Image
+                src="/confetti/confetti-logo.png"
+                alt="confetti"
+                width={224}
+                height={42}
+                className="w-[96px] h-[18px] md:w-[224px] md:h-[42px]"
+              />
+              <ShareDropdown
+                cardRef={cardRef}
+                shareRef={shareRef}
+                profitPercentage={profitPercentage}
+                contestAddress={contestAddress}
+                chainName={chainName}
+              />
+            </div>
+            <p className="text-[12px] md:text-[16px] font-bold" style={{ color: "#585858" }}>
+              https://confetti.win
+            </p>
+          </div>
+
+          <div className="flex flex-col gap-1 md:gap-2">
+            <p className="profit-card-label">profit</p>
+            <p className="profit-card-percentage">
+              <span className="profit-card-percentage-sign">+</span>
+              {profitPercentage.toFixed(0)}
+              <span
+                className="profit-card-percentage-symbol"
+                style={{
+                  color: "#66deff",
+                  textShadow: "-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, -3px 3px 0 #bb65ff",
+                }}
+              >
+                %
+              </span>
+            </p>
+          </div>
+        </div>
+
+        <img src="/landing/bubbles-money-group.png" alt="bubbles-money-group" />
+      </div>
+    </div>
+  );
+};
+
+export default memo(ContestProfitCard);

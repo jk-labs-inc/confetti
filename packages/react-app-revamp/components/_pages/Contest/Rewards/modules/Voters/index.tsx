@@ -1,3 +1,4 @@
+import ContestProfitCard from "@components/_pages/Contest/Rewards/components/ProfitCard";
 import { RewardModuleInfo } from "lib/rewards/types";
 import { FC } from "react";
 import RewardsSplitLayout from "../shared/Layout";
@@ -13,16 +14,19 @@ interface VotersRewardsPageProps {
 
 const VotersRewardsPage: FC<VotersRewardsPageProps> = ({ contestAddress, chainId, rewards, version }) => {
   return (
-    <RewardsSplitLayout
-      playerView={
-        <VoterRewardsPagePlayerView
-          rewards={rewards}
-          contestAddress={contestAddress as `0x${string}`}
-          chainId={chainId}
-        />
-      }
-      creatorView={<VoterRewardsPageCreatorView rewards={rewards} chainId={chainId} version={version} />}
-    />
+    <div className="flex flex-col gap-16">
+      <ContestProfitCard contestAddress={contestAddress} chainId={chainId} rewards={rewards} />
+      <RewardsSplitLayout
+        playerView={
+          <VoterRewardsPagePlayerView
+            rewards={rewards}
+            contestAddress={contestAddress as `0x${string}`}
+            chainId={chainId}
+          />
+        }
+        creatorView={<VoterRewardsPageCreatorView rewards={rewards} chainId={chainId} version={version} />}
+      />
+    </div>
   );
 };
 

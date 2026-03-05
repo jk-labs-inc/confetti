@@ -109,3 +109,16 @@ export const generateUrlContest = (contestAddress: string, chain: string) => {
   const url = `${BASE_JOKERACE_URL}${chain}/${contestAddress}`;
   return url;
 };
+
+export const generateTwitterShareUrlForProfitCard = (
+  profitPercentage: number,
+  contestAddress: string,
+  chain: string,
+  imageUrl: string,
+) => {
+  const params = {
+    text: `+${profitPercentage.toFixed(0)}% profit on @confetti_win!\n`,
+    url: imageUrl,
+  };
+  return buildUrl(BASE_TWITTER_URL, params);
+};

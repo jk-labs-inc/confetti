@@ -61,6 +61,7 @@
     "eslint": "10.0.2",
     "eslint-config-next": "15.5.12",
     "fuse.js": "7.1.0",
+    "html-to-image": "1.11.13",
     "interweave": "13.1.1",
     "interweave-autolink": "5.1.2",
     "interweave-ssr": "2.0.0",
