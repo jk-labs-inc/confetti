@@ -64,6 +64,7 @@ import AddCreatorSplitContract from "@contracts/bytecodeAndAbi/Contest.6.12.addC
 import UpdateFoundryContract from "@contracts/bytecodeAndAbi/Contest.6.13.updateFoundry.sol/Contest.json";
 import RemoveUnusedMetadatasContract from "@contracts/bytecodeAndAbi/Contest.6.14.removeUnusedMetadatas.sol/Contest.json";
 import DeprecateSortingEnabledContract from "@contracts/bytecodeAndAbi/Contest.6.15.deprecateSortingEnabled.sol/Contest.json";
+import AddAnalyticsContract from "@contracts/bytecodeAndAbi/Contest.6.16.addAnalytics.sol/Contest.json";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { MAX_TIME_TO_WAIT_FOR_RPC, executeWithTimeout } from "./timeout";
 import { createTransport } from "@config/wagmi/chains";
@@ -76,6 +77,7 @@ type ContractData = {
 };
 
 const VERSION_TO_CONTRACT: Record<string, ContractData> = {
+  "6.16": AddAnalyticsContract,
   "6.15": DeprecateSortingEnabledContract,
   "6.14": RemoveUnusedMetadatasContract,
   "6.13": UpdateFoundryContract,
