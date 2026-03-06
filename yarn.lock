@@ -6869,12 +6869,12 @@
   resolved "https://registry.yarnpkg.com/@vanilla-extract/recipes/-/recipes-0.5.7.tgz#6677a267ca278e2277ac8ab41b64e57e84c1150c"
   integrity sha512-Fvr+htdyb6LVUu+PhH61UFPhwkjgDEk8L4Zq9oIdte42sntpKrgFy90MyTRtGwjVALmrJ0pwRUVr8UoByYeW8A==
 
-"@vercel/build-utils@13.6.2":
-  version "13.6.2"
-  resolved "https://registry.yarnpkg.com/@vercel/build-utils/-/build-utils-13.6.2.tgz#93258b37864858ccae33a238481ac09c5e3ffcea"
-  integrity sha512-KiwRUd2x1ZHm73p+/hfdVWZHWXT8r+oN/5ZN1lJyb41AGK4Zhrug6X60jNyVhnw6GjpwBuPTBcys29cCsPjkWQ==
+"@vercel/build-utils@13.6.3":
+  version "13.6.3"
+  resolved "https://registry.yarnpkg.com/@vercel/build-utils/-/build-utils-13.6.3.tgz#fe68106aab5cab85b24e5f1f33bf4c459fb2afb2"
+  integrity sha512-KOxkJ38uzZoxvto1fL6H2Vxm69vbbKgpY7vq07M1mVdRM9q2jXFN5Lo6bebtuH/kuv0cLZNXCE1r8aFmaTwpTg==
   dependencies:
-    "@vercel/python-analysis" "0.8.1"
+    "@vercel/python-analysis" "0.8.2"
 
 "@vercel/error-utils@2.0.3":
   version "2.0.3"
@@ -6899,16 +6899,16 @@
     picomatch "^4.0.2"
     resolve-from "^5.0.0"
 
-"@vercel/node@5.6.10":
-  version "5.6.10"
-  resolved "https://registry.yarnpkg.com/@vercel/node/-/node-5.6.10.tgz#979dd42509c4c5381f36530daabf1f517e87b6eb"
-  integrity sha512-HEydd6y0KPjCyI9sM3n2/XCjS/fZV/7sO7jFjia9I5XbEJ6LCwkI6rR+GQB751NL0He0vFusy+mm394hJC/Rqg==
+"@vercel/node@5.6.11":
+  version "5.6.11"
+  resolved "https://registry.yarnpkg.com/@vercel/node/-/node-5.6.11.tgz#7212b7d965a13a993d37319821fd978d4dd34f75"
+  integrity sha512-nzoS+ufkxpT4JxEzrjSA9vCEr4XzjCsHvGzi37+O+wajMldxsfcrvk9xHHuz1ZRzclwuPhcvLOMrs+ViJu63oA==
   dependencies:
     "@edge-runtime/node-utils" "2.3.0"
     "@edge-runtime/primitives" "4.1.0"
     "@edge-runtime/vm" "3.2.0"
     "@types/node" "20.11.0"
-    "@vercel/build-utils" "13.6.2"
+    "@vercel/build-utils" "13.6.3"
     "@vercel/error-utils" "2.0.3"
     "@vercel/nft" "1.1.1"
     "@vercel/static-config" "3.1.2"
@@ -6927,10 +6927,10 @@
     typescript "npm:typescript@5.9.3"
     undici "5.28.4"
 
-"@vercel/python-analysis@0.8.1":
-  version "0.8.1"
-  resolved "https://registry.yarnpkg.com/@vercel/python-analysis/-/python-analysis-0.8.1.tgz#1f5ead7f1d0b27d1463a27363efafb084f4085ce"
-  integrity sha512-gW1pZDqJaTcjZYPvNhXXLOPgLu6vJW9PKweJoX2f8EKAoW+JIiYncl8AddcSlngNhQRG7SqUl2u3qosZM4kUBA==
+"@vercel/python-analysis@0.8.2":
+  version "0.8.2"
+  resolved "https://registry.yarnpkg.com/@vercel/python-analysis/-/python-analysis-0.8.2.tgz#ab80d459168a79718b2bbb65e12691319d628662"
+  integrity sha512-tLYH5LydD3deJio2/T7FxMRuW0Vvqhlo0Fy24fgZBQipqpOE7aMODoKTulHx5Z1b/tFLCPOV8NkbpwOY0EVa5g==
   dependencies:
     "@bytecodealliance/preview2-shim" "0.17.6"
     "@renovatebot/pep440" "4.2.1"
