@@ -14,7 +14,7 @@ interface VotersRewardsPageProps {
 
 const VotersRewardsPage: FC<VotersRewardsPageProps> = ({ contestAddress, chainId, rewards, version }) => {
   return (
-    <div className="flex flex-col gap-16">
+    <div className="flex flex-col gap-6 md:gap-16">
       <ContestProfitCard contestAddress={contestAddress} chainId={chainId} rewards={rewards} />
       <RewardsSplitLayout
         playerView={

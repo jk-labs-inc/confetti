@@ -1,7 +1,7 @@
 import { generateTwitterShareUrlForProfitCard } from "@helpers/share";
 import { saveImageToBucket } from "lib/buckets";
-import { toPng } from "html-to-image";
-import { RefObject, useCallback, useState } from "react";
+import html2canvas from "html2canvas";
+import { RefObject, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 
 interface UseProfitCardShareParams {
@@ -34,33 +34,38 @@ const useProfitCardShare = ({
 }: UseProfitCardShareParams) => {
   const [isSharing, setIsSharing] = useState(false);
 
-  const generateImage = useCallback(async (): Promise<string | null> => {
+  const generateImage = async (): Promise<string | null> => {
     if (!cardRef.current) return null;
 
     if (shareRef.current) {
       shareRef.current.style.display = "none";
     }
 
+    const symbolEl = cardRef.current.querySelector(".profit-card-percentage-symbol") as HTMLElement | null;
+    const savedVerticalAlign = symbolEl?.style.verticalAlign ?? "";
+
+    if (symbolEl) symbolEl.style.verticalAlign = "bottom";
+
     await new Promise(resolve => setTimeout(resolve, 100));
 
     try {
-      return await toPng(cardRef.current, {
-        cacheBust: true,
-        pixelRatio: 3,
+      const canvas = await html2canvas(cardRef.current, {
+        scale: 3,
         backgroundColor: "black",
-        filter: node => {
-          if (node instanceof HTMLElement && node.getAttribute("data-headlessui-state") !== null) return false;
-          return true;
-        },
+        useCORS: true,
+        logging: false,
+        ignoreElements: node => node instanceof HTMLElement && node.getAttribute("data-headlessui-state") !== null,
       });
+      return canvas.toDataURL("image/png");
     } finally {
       if (shareRef.current) {
         shareRef.current.style.display = "";
       }
+      if (symbolEl) symbolEl.style.verticalAlign = savedVerticalAlign;
     }
-  }, [cardRef, shareRef]);
+  };
 
-  const handleShareOnTwitter = useCallback(async () => {
+  const handleShareOnTwitter = async () => {
     setIsSharing(true);
     try {
       const dataUrl = await generateImage();
@@ -80,9 +85,9 @@ const useProfitCardShare = ({
     } finally {
       setIsSharing(false);
     }
-  }, [generateImage, profitPercentage, contestAddress, chainName]);
+  };
 
-  const handleSaveImage = useCallback(async () => {
+  const handleSaveImage = async () => {
     try {
       const dataUrl = await generateImage();
       if (!dataUrl) return;
@@ -96,7 +101,7 @@ const useProfitCardShare = ({
     } catch (error) {
       console.error("Failed to save image:", error);
     }
-  }, [generateImage]);
+  };
 
   return { handleShareOnTwitter, handleSaveImage, isSharing };
 };

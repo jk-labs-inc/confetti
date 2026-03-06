@@ -206,7 +206,7 @@
   --background-image-gradient-under-construction: linear-gradient(to bottom, #bb65ff 0%, #251f2a 67%, #000000 100%);
   --background-image-gradient-purple-pastel: linear-gradient(90deg, #9747ff 0%, #c1abdd 100%);
   --background-image-gradient-gray-dark: linear-gradient(90deg, #6a6a6a 0%, #9d9d9d 100%);
-  --background-image-gradient-profit-card: linear-gradient(135deg, #66deff 0%, #bb65ff 50%, #78ffc6 100%);
+  --background-image-gradient-profit-card: linear-gradient(252.15deg, #66deff 0.56%, #bb65ff 49.92%, #78ffc6 99.28%);
 
   /* Box Shadows */
   --shadow-create-header: 0 3px 4px 0 rgba(106, 106, 106, 1);
@@ -854,10 +854,10 @@ li {
     line-height: normal;
     color: #66deff;
     text-shadow:
-      -1px -1px 0 #000,
-      1px -1px 0 #000,
-      -1px 1px 0 #000,
-      1px 1px 0 #000,
+      -0.5px -0.5px 0 #000,
+      0.5px -0.5px 0 #000,
+      -0.5px 0.5px 0 #000,
+      0.5px 0.5px 0 #000,
       -2px 2px 0 #bb65ff;
   }
 
@@ -867,13 +867,13 @@ li {
 
   .profit-card-percentage-symbol {
     font-family: var(--font-sabo-regular);
-    font-size: 16px;
+    font-size: 0.6em;
     text-shadow:
-      -1px -1px 0 #000,
-      1px -1px 0 #000,
-      -1px 1px 0 #000,
-      1px 1px 0 #000,
-      -1px 1px 0 #bb65ff;
+      -0.5px -0.5px 0 #000,
+      0.5px -0.5px 0 #000,
+      -0.5px 0.5px 0 #000,
+      0.5px 0.5px 0 #000,
+      -2px 2px 0 #bb65ff;
   }
 
   @media (min-width: 768px) {
@@ -898,7 +898,6 @@ li {
     }
 
     .profit-card-percentage-symbol {
-      font-size: 40px;
       text-shadow:
         -1px -1px 0 #000,
         1px -1px 0 #000,

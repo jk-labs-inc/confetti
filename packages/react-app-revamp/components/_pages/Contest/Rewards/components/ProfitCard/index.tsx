@@ -6,6 +6,7 @@ import { RewardModuleInfo } from "lib/rewards/types";
 import { FC, memo, useRef } from "react";
 import { useShallow } from "zustand/shallow";
 import ShareDropdown from "./components/ShareDropdown";
+import Loader from "@components/UI/Loader";
 
 interface ContestProfitCardProps {
   contestAddress: `0x${string}`;
@@ -28,9 +29,9 @@ const ContestProfitCard: FC<ContestProfitCardProps> = ({ contestAddress, chainId
 
   if (isLoading) {
     return (
-      <div className="profit-card-wrapper animate-pulse">
-        <div className="profit-card-inner px-8 md:px-[88px] py-6 md:py-8">
-          <p className="text-[14px] text-neutral-9">calculating profit...</p>
+      <div className="profit-card-wrapper">
+        <div className="profit-card-inner flex items-center justify-center h-[144px] md:h-[296px]">
+          <Loader className="mt-0!" isAdditionalTextEnabled={false} />
         </div>
       </div>
     );
@@ -43,7 +44,7 @@ const ContestProfitCard: FC<ContestProfitCardProps> = ({ contestAddress, chainId
           <p className="text-[14px] text-negative-11">failed to load profit data</p>
           <button
             onClick={refetch}
-            className="text-[12px] text-neutral-11 underline hover:text-neutral-14 transition-colors"
+            className="text-xs text-neutral-11 underline hover:text-neutral-14 transition-colors"
             aria-label="Retry loading profit data"
             tabIndex={0}
           >
@@ -56,7 +57,7 @@ const ContestProfitCard: FC<ContestProfitCardProps> = ({ contestAddress, chainId
 
   return (
     <div className="profit-card-wrapper" ref={cardRef}>
-      <div className="profit-card-inner flex justify-between px-8 md:px-[88px] py-6 md:py-8 h-[144px] md:h-[296px] overflow-hidden">
+      <div className="profit-card-inner flex justify-between p-6 md:px-[88px] md:py-8 md:h-[296px] overflow-hidden">
         <div className="flex flex-col justify-between">
           <div className="flex flex-col gap-0.5 md:gap-1">
             <div className="flex items-center gap-2 md:gap-4">
@@ -75,7 +76,7 @@ const ContestProfitCard: FC<ContestProfitCardProps> = ({ contestAddress, chainId
                 chainName={chainName}
               />
             </div>
-            <p className="text-[12px] md:text-[16px] font-bold" style={{ color: "#585858" }}>
+            <p className="text-xs md:text-base font-bold" style={{ color: "#585858" }}>
               https://confetti.win
             </p>
           </div>
@@ -85,23 +86,19 @@ const ContestProfitCard: FC<ContestProfitCardProps> = ({ contestAddress, chainId
             <p className="profit-card-percentage">
               <span className="profit-card-percentage-sign">+</span>
               {profitPercentage.toFixed(0)}
-              <span
-                className="profit-card-percentage-symbol"
-                style={{
-                  color: "#66deff",
-                  textShadow: "-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, -3px 3px 0 #bb65ff",
-                }}
-              >
-                %
-              </span>
+              <span className="profit-card-percentage-symbol">%</span>
             </p>
           </div>
         </div>
 
-        <img src="/landing/bubbles-money-group.png" alt="bubbles-money-group" />
+        <img
+          src="/landing/bubbles-money-group.png"
+          alt="bubbles-money-group"
+          className="w-[108px] h-[111px] md:w-[232px] md:h-[237px]"
+        />
       </div>
     </div>
   );
 };
 
-export default memo(ContestProfitCard);
+export default ContestProfitCard;
