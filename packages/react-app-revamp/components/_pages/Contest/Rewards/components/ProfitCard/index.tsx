@@ -27,9 +27,9 @@ const ContestProfitCard: FC<ContestProfitCardProps> = ({ contestAddress, chainId
     rewards,
   });
 
-  const hasVotingStarted = contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed;
+  const hasContestEnded = contestStatus === ContestStatus.VotingClosed;
 
-  if (!isConnected || !isAnalyticsSupported || !hasVotingStarted || (!isLoading && !isInProfit)) return null;
+  if (!isConnected || !isAnalyticsSupported || !hasContestEnded || (!isLoading && !isInProfit)) return null;
 
   if (isLoading) {
     return (
