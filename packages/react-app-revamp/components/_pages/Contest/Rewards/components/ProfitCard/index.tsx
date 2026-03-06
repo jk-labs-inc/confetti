@@ -1,5 +1,6 @@
 import useContestProfit from "@hooks/useContestProfit";
 import useContestConfigStore from "@hooks/useContestConfig/store";
+import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import { useWallet } from "@hooks/useWallet";
 import Image from "next/image";
 import { RewardModuleInfo } from "lib/rewards/types";
@@ -18,6 +19,7 @@ const ContestProfitCard: FC<ContestProfitCardProps> = ({ contestAddress, chainId
   const cardRef = useRef<HTMLDivElement>(null);
   const shareRef = useRef<HTMLDivElement>(null);
   const { isConnected } = useWallet();
+  const contestStatus = useContestStatusStore(useShallow(state => state.contestStatus));
   const chainName = useContestConfigStore(useShallow(state => state.contestConfig.chainName));
   const { isAnalyticsSupported, profitPercentage, isInProfit, isLoading, isError, refetch } = useContestProfit({
     contestAddress,
@@ -25,7 +27,9 @@ const ContestProfitCard: FC<ContestProfitCardProps> = ({ contestAddress, chainId
     rewards,
   });
 
-  if (!isConnected || !isAnalyticsSupported || (!isLoading && !isInProfit)) return null;
+  const hasVotingStarted = contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed;
+
+  if (!isConnected || !isAnalyticsSupported || !hasVotingStarted || (!isLoading && !isInProfit)) return null;
 
   if (isLoading) {
     return (
@@ -76,9 +80,7 @@ const ContestProfitCard: FC<ContestProfitCardProps> = ({ contestAddress, chainId
                 chainName={chainName}
               />
             </div>
-            <p className="text-xs md:text-base font-bold" style={{ color: "#585858" }}>
-              https://confetti.win
-            </p>
+            <p className="text-xs md:text-base font-bold text-[#585858]">https://confetti.win</p>
           </div>
 
           <div className="flex flex-col gap-1 md:gap-2">
