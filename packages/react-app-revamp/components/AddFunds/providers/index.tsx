@@ -1,6 +1,6 @@
-import { FC, ReactNode } from "react";
-import useAddFundsProviders from "./hooks/useAddFundsProviders";
+import { FC } from "react";
 import { AddFundsProviderType } from "../types";
+import useAddFundsProviders from "./hooks/useAddFundsProviders";
 
 export { AddFundsProviderType };
 
@@ -8,29 +8,22 @@ interface AddFundsProvidersProps {
   type: AddFundsProviderType;
   chain: string;
   asset: string;
+  onCloseModal?: () => void;
 }
 
-const OnrampDescription = () => (
-  <p className="text-base">
-    <span className="text-neutral-11 font-bold">add cash and play</span>{" "}
-    <span className="text-neutral-9 font-bold">(defaults to $5, or edit to add more)</span>
-  </p>
+const OnrampDescription = () => <p className="text-base text-neutral-11">how would you like to fund your wallet?</p>;
+
+const BridgeDescription = ({ chain }: { chain: string }) => (
+  <p className="text-neutral-11 text-base">fund from another chain into {chain}</p>
 );
 
-const BridgeDescription = () => <p className="text-neutral-11 text-base font-bold">fund from another chain</p>;
-
-const PROVIDER_DESCRIPTIONS: Record<AddFundsProviderType, ReactNode> = {
-  [AddFundsProviderType.ONRAMP]: <OnrampDescription />,
-  [AddFundsProviderType.BRIDGE]: <BridgeDescription />,
-};
-
-const AddFundsProviders: FC<AddFundsProvidersProps> = ({ type, chain, asset }) => {
-  const providers = useAddFundsProviders({ type, chain, asset });
+const AddFundsProviders: FC<AddFundsProvidersProps> = ({ type, chain, asset, onCloseModal }) => {
+  const providers = useAddFundsProviders({ type, chain, asset, onCloseModal });
 
   return (
-    <div className="flex flex-col gap-4 w-full">
-      {PROVIDER_DESCRIPTIONS[type]}
-      {providers}
+    <div className="flex flex-col gap-6 w-full">
+      {type === AddFundsProviderType.ONRAMP ? <OnrampDescription /> : <BridgeDescription chain={chain} />}
+      <div className="flex flex-col gap-4">{providers}</div>
     </div>
   );
 };
