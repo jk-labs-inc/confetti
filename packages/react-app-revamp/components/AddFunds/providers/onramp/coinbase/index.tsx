@@ -12,8 +12,8 @@ interface AddFundsCoinbaseProviderProps {
 }
 
 const COINBASE_CONFIG = {
-  name: "coinbase",
-  description: "better for americans | $5 min",
+  name: "for americans",
+  description: "powered by coinbase | $5 min",
   logo: "/add-funds/coinbase.svg",
 };
 
