@@ -91,8 +91,6 @@ export function useContest() {
         chainId: chainId,
       };
 
-      setContestConfigData(addressFromUrl, chainFromUrl, abi as Abi, version);
-
       return { contractConfig, version, deployedBytecode };
     } catch (e) {
       setError(ErrorType.CONTRACT);
@@ -217,10 +215,14 @@ export function useContest() {
         return;
       }
 
+      // only set contest config after all validation passes, so useRewardsModule doesn't start prematurely
+      setContestConfigData(addressFromUrl, chainFromUrl, contractConfig.abi as Abi, version);
+
       // Fetch contest info for v4 and above
       await fetchV3ContestInfo(contractConfig, version);
     } catch (error) {
       console.error("An error occurred while fetching data:", error);
+      setIsLoading(false);
     }
   }
 

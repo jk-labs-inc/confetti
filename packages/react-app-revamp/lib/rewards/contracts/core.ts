@@ -5,7 +5,7 @@ import { ContractConfig } from "@hooks/useContest";
 import { readContract } from "@wagmi/core";
 import { compareVersions } from "compare-versions";
 import { Abi } from "viem";
-import { ModuleType, RewardsModuleInfo, VOTER_REWARDS_VERSION } from "../types";
+import { ModuleType, RewardsModuleInfo, RM_ENTRY_REWARDS_VERSION } from "../types";
 
 const EMPTY_REWARDS_MODULE_INFO: RewardsModuleInfo = {
   abi: null,
@@ -25,15 +25,18 @@ export async function getRewardsModuleInfo(rewardsModuleAddress: string, chainId
       chainId,
     );
 
-    if (!abi || !deployedBytecode) return EMPTY_REWARDS_MODULE_INFO;
+    if (!abi) return EMPTY_REWARDS_MODULE_INFO;
 
-    const isBytecodeValid = await verifyContractBytecode(rewardsModuleAddress, chainId, deployedBytecode);
-    if (!isBytecodeValid) return EMPTY_REWARDS_MODULE_INFO;
+    const isLegacyVersion = compareVersions(version, RM_ENTRY_REWARDS_VERSION) < 0;
 
-    const isLegacyVersion = compareVersions(version, VOTER_REWARDS_VERSION) < 0;
-    const moduleType = isLegacyVersion
-      ? ModuleType.AUTHOR_REWARDS
-      : await getModuleType(rewardsModuleAddress, abi as Abi, chainId);
+    if (!isLegacyVersion) {
+      if (!deployedBytecode) return EMPTY_REWARDS_MODULE_INFO;
+
+      const isBytecodeValid = await verifyContractBytecode(rewardsModuleAddress, chainId, deployedBytecode);
+      if (!isBytecodeValid) return EMPTY_REWARDS_MODULE_INFO;
+    }
+
+    const moduleType = await getModuleType(rewardsModuleAddress, abi as Abi, chainId);
 
     return {
       abi: abi as Abi,

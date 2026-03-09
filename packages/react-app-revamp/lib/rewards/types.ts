@@ -52,4 +52,4 @@ export interface RewardModuleInfo {
   isSelfFunded: boolean;
 }
 
-export const VOTER_REWARDS_VERSION = "5.5";
+export const RM_ENTRY_REWARDS_VERSION = "5.14";

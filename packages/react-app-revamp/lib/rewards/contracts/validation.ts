@@ -2,7 +2,7 @@ import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import { readContracts } from "@wagmi/core";
 import { compareVersions } from "compare-versions";
 import { Abi } from "viem";
-import { VOTER_REWARDS_VERSION } from "../types";
+import { RM_ENTRY_REWARDS_VERSION } from "../types";
 
 /**
  * Validates rankings
@@ -17,8 +17,8 @@ export const validateRankings = async (
 ): Promise<{ validRankings: number[]; tiedRankings: number[] }> => {
   if (!rankings.length) return { validRankings: [], tiedRankings: [] };
 
-  // check if this is an older version (before VOTER_REWARDS_VERSION)
-  if (compareVersions(version, VOTER_REWARDS_VERSION) < 0) {
+  // check if this is an older version (before RM_ENTRY_REWARDS_VERSION)
+  if (compareVersions(version, RM_ENTRY_REWARDS_VERSION) < 0) {
     try {
       // for older versions, use getAddressToPayOut
       const addressResults = await readContracts(getWagmiConfig(), {

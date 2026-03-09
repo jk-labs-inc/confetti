@@ -33,7 +33,7 @@ export function useRewardsModule() {
 
     const { abi, moduleType } = await getRewardsModuleInfo(rewardsModuleAddress, contestConfig.chainId);
     if (!abi) {
-      throw new Error("Failed to get rewards module ABI");
+      return null;
     }
 
     const isVersionBelowSelfFunded =
