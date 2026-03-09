@@ -51,7 +51,7 @@ const useProfitCardShare = ({
     try {
       const canvas = await html2canvas(cardRef.current, {
         scale: 3,
-        backgroundColor: "black",
+        backgroundColor: null,
         useCORS: true,
         logging: false,
         ignoreElements: node => node instanceof HTMLElement && node.getAttribute("data-headlessui-state") !== null,
