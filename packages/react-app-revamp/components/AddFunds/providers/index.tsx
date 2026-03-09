@@ -11,7 +11,9 @@ interface AddFundsProvidersProps {
   onCloseModal?: () => void;
 }
 
-const OnrampDescription = () => <p className="text-base text-neutral-11">how would you like to fund your wallet?</p>;
+const OnrampDescription = () => (
+  <p className="text-base text-neutral-11">what's your region? this determines the best tool to add funds.</p>
+);
 
 const BridgeDescription = ({ chain }: { chain: string }) => (
   <p className="text-neutral-11 text-base">fund from another chain into {chain}</p>

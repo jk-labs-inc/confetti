@@ -20,7 +20,7 @@ export interface ParaOnrampConfig {
 }
 
 export const PARA_ONRAMP_CONFIG: ParaOnrampConfig = {
-  name: "for non-americans",
+  name: "i'm not american",
   description: "powered by moonpay | $20 min",
   logo: "/add-funds/moonpay.svg",
 };
