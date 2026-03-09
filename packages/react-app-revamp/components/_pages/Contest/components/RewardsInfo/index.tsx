@@ -38,9 +38,7 @@ const ContestRewardsInfo: FC<ContestRewardsInfoProps> = ({ version }) => {
     return <RewardsLoader />;
   }
 
-  if (isError || !isSuccess || isCanceled || isCancelError) return null;
-
-  if (!rewards) return null;
+  if (isError || !isSuccess || isCanceled || isCancelError || !rewards || rewards.isBytecodeInvalid) return null;
 
   return (
     <div className="flex items-center gap-2 md:gap-4">

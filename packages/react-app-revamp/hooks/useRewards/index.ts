@@ -31,9 +31,14 @@ export function useRewardsModule() {
       return null;
     }
 
-    const { abi, moduleType } = await getRewardsModuleInfo(rewardsModuleAddress, contestConfig.chainId);
+    const { abi, moduleType, isBytecodeInvalid } = await getRewardsModuleInfo(rewardsModuleAddress, contestConfig.chainId);
+
+    if (isBytecodeInvalid) {
+      return { isBytecodeInvalid: true, contractAddress: rewardsModuleAddress } as RewardModuleInfo;
+    }
+
     if (!abi) {
-      throw new Error("Failed to get rewards module ABI");
+      return null;
     }
 
     const isVersionBelowSelfFunded =

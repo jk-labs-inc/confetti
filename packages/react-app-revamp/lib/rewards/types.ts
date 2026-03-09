@@ -16,6 +16,7 @@ export interface RewardToken {
 export interface RewardsModuleInfo {
   abi: Abi | null;
   moduleType: ModuleType | null;
+  isBytecodeInvalid?: boolean;
 }
 
 export enum ModuleType {
@@ -50,6 +51,7 @@ export interface RewardModuleInfo {
   totalShares: number;
   blockExplorers?: string;
   isSelfFunded: boolean;
+  isBytecodeInvalid?: boolean;
 }
 
 export const VOTER_REWARDS_VERSION = "5.5";
