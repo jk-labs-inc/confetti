@@ -1,4 +1,5 @@
 import AddFundsModal from "@components/AddFunds/components/Modal";
+import SendFunds from "@components/SendFunds";
 import { Menu, MenuItems } from "@headlessui/react";
 import { useAddFundsChain } from "@hooks/useAddFundsChain";
 import { FC, useState } from "react";
@@ -17,6 +18,7 @@ interface AccountDropdownProps {
 
 const AccountDropdown: FC<AccountDropdownProps> = ({ address, displayName, onDisconnect }) => {
   const [isAddFundsOpen, setIsAddFundsOpen] = useState(false);
+  const [isSendFundsOpen, setIsSendFundsOpen] = useState(false);
   const { chainName, asset } = useAddFundsChain();
   const { data: ensName } = useEnsName({ address: address as `0x${string}`, chainId: mainnet.id });
   const { data: ensAvatar } = useEnsAvatar({ name: ensName as string, chainId: mainnet.id });
@@ -40,6 +42,7 @@ const AccountDropdown: FC<AccountDropdownProps> = ({ address, displayName, onDis
               displayName={displayName}
               balance={balance}
               onAddFundsClick={() => setIsAddFundsOpen(true)}
+              onSendFundsClick={() => setIsSendFundsOpen(true)}
             />
             <NavigationLinks address={address} />
             <DisconnectButton onDisconnect={onDisconnect} />
@@ -48,6 +51,7 @@ const AccountDropdown: FC<AccountDropdownProps> = ({ address, displayName, onDis
       </Menu>
 
       <AddFundsModal chain={chainName} asset={asset} isOpen={isAddFundsOpen} onClose={() => setIsAddFundsOpen(false)} />
+      <SendFunds isOpen={isSendFundsOpen} onClose={() => setIsSendFundsOpen(false)} />
     </>
   );
 };

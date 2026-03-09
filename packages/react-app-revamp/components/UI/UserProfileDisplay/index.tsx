@@ -1,14 +1,11 @@
 /* eslint-disable @next/next/no-img-element */
 import { ROUTE_VIEW_USER } from "@config/routes";
-import { erc20ChainDropdownOptions } from "@helpers/tokens";
 import { CheckCircleIcon } from "@heroicons/react/24/outline";
 import useProfileData from "@hooks/useProfileData";
-import { useWallet } from "@hooks/useWallet";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { Avatar } from "../Avatar";
 import { UserProfileName } from "../UserProfileName";
 import { UserProfileSocials } from "../UserProfileSocials";
-import SendFundsButton from "./components/SendFundsButton";
 import { SIZES } from "./constants/sizes";
 
 interface UserProfileDisplayProps {
@@ -19,9 +16,7 @@ interface UserProfileDisplayProps {
   textualVersion?: boolean;
   avatarVersion?: boolean;
   includeSocials?: boolean;
-  includeSendFunds?: boolean;
   showBy?: boolean;
-  onSendFundsClick?: () => void;
 }
 
 export { SIZES };
@@ -34,11 +29,8 @@ const UserProfileDisplay = ({
   textColor,
   shortenOnFallback,
   size = "small",
-  includeSendFunds,
-  onSendFundsClick,
   showBy = true,
 }: UserProfileDisplayProps) => {
-  const { chain, isConnected, userAddress } = useWallet();
   const { profileName, profileAvatar, socials, isLoading } = useProfileData(
     ethereumAddress,
     shortenOnFallback,
@@ -46,10 +38,6 @@ const UserProfileDisplay = ({
   );
   const { avatarSizeClass, textSizeClass } = SIZES[size];
   const [isAddressCopied, setIsAddressCopied] = useState(false);
-
-  const isChainSupportedForSendFunds = useMemo(() => {
-    return erc20ChainDropdownOptions.some(option => option.value.toLowerCase() === chain?.name.toLowerCase());
-  }, [chain]);
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(ethereumAddress);
@@ -120,11 +108,6 @@ const UserProfileDisplay = ({
             </div>
           ) : null}
 
-          {includeSendFunds && isConnected && isChainSupportedForSendFunds && userAddress === ethereumAddress ? (
-            <div className="flex items-center gap-4">
-              <SendFundsButton onSendFundsClick={onSendFundsClick} />
-            </div>
-          ) : null}
         </div>
       )}
     </div>

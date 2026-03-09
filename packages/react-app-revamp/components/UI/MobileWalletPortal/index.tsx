@@ -9,6 +9,7 @@ import { ChevronRightIcon, PowerIcon } from "@heroicons/react/24/outline";
 import React, { useState } from "react";
 import CustomLink from "../Link";
 import AddFundsModal from "@components/AddFunds/components/Modal";
+import SendFunds from "@components/SendFunds";
 import Drawer from "../Drawer";
 import ProfileSection from "@components/Connect/components/AccountDropdown/components/ProfileSection";
 import { useAddFundsChain } from "@hooks/useAddFundsChain";
@@ -43,6 +44,7 @@ const navLinks = [
 
 export const MobileProfileDrawer: React.FC<MobileProfileDrawerProps> = ({ isOpen, onClose, address, onDisconnect }) => {
   const [isAddFundsOpen, setIsAddFundsOpen] = useState(false);
+  const [isSendFundsOpen, setIsSendFundsOpen] = useState(false);
   const { chainName, asset } = useAddFundsChain();
   const { data: ensName } = useEnsName({ address: address as `0x${string}`, chainId: mainnet.id });
   const { data: ensAvatar } = useEnsAvatar({ name: ensName as string, chainId: mainnet.id });
@@ -63,6 +65,10 @@ export const MobileProfileDrawer: React.FC<MobileProfileDrawerProps> = ({ isOpen
             onAddFundsClick={() => {
               onClose();
               setIsAddFundsOpen(true);
+            }}
+            onSendFundsClick={() => {
+              onClose();
+              setIsSendFundsOpen(true);
             }}
           />
           <div className="flex flex-col p-2">
@@ -94,6 +100,7 @@ export const MobileProfileDrawer: React.FC<MobileProfileDrawerProps> = ({ isOpen
         isOpen={isAddFundsOpen}
         onClose={() => setIsAddFundsOpen(false)}
       />
+      <SendFunds isOpen={isSendFundsOpen} onClose={() => setIsSendFundsOpen(false)} />
     </>
   );
 };

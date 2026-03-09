@@ -1,5 +1,5 @@
 import { Avatar } from "@components/UI/Avatar";
-import { CheckCircleIcon, DocumentDuplicateIcon } from "@heroicons/react/24/outline";
+import { CheckCircleIcon, DocumentDuplicateIcon, PaperAirplaneIcon, PlusCircleIcon } from "@heroicons/react/24/outline";
 import useDisplayPrice from "@hooks/useCurrency/useDisplayPrice";
 import { FC, useState } from "react";
 import Skeleton from "react-loading-skeleton";
@@ -18,9 +18,10 @@ interface ProfileSectionProps {
       }
     | undefined;
   onAddFundsClick?: () => void;
+  onSendFundsClick?: () => void;
 }
 
-const ProfileSection: FC<ProfileSectionProps> = ({ address, ensAvatar, ensName, displayName, balance, onAddFundsClick }) => {
+const ProfileSection: FC<ProfileSectionProps> = ({ address, ensAvatar, ensName, displayName, balance, onAddFundsClick, onSendFundsClick }) => {
   const [isAddressCopied, setIsAddressCopied] = useState(false);
   const nativeRaw = formatUnits(balance?.value ?? 0n, balance?.decimals ?? 18);
   const { displayValue, displaySymbol, isLoading: isPriceLoading } = useDisplayPrice(nativeRaw, balance?.symbol ?? "ETH");
@@ -63,20 +64,31 @@ const ProfileSection: FC<ProfileSectionProps> = ({ address, ensAvatar, ensName, 
                 {displaySymbol === "$" ? `$${displayValue}` : `${displayValue} ${displaySymbol}`}
               </span>
             )}
-            {onAddFundsClick && (
-              <>
-                <span className="text-neutral-9">·</span>
-                <button
-                  onClick={onAddFundsClick}
-                  className="text-[12px] font-bold text-positive-11 hover:text-positive-10 transition-colors whitespace-nowrap"
-                >
-                  add funds
-                </button>
-              </>
-            )}
           </div>
         </div>
       </div>
+      {(onAddFundsClick || onSendFundsClick) && (
+        <div className="grid grid-cols-2 gap-2 mt-3">
+          {onAddFundsClick && (
+            <button
+              onClick={onAddFundsClick}
+              className="flex flex-col gap-2 items-start p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors group"
+            >
+              <PlusCircleIcon className="w-5 h-5 text-positive-11" />
+              <span className="text-[13px] font-bold text-positive-11">Add Funds</span>
+            </button>
+          )}
+          {onSendFundsClick && (
+            <button
+              onClick={onSendFundsClick}
+              className="flex flex-col gap-2 items-start p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors group"
+            >
+              <PaperAirplaneIcon className="w-5 h-5 text-neutral-11" />
+              <span className="text-[13px] font-bold text-neutral-11">Send Funds</span>
+            </button>
+          )}
+        </div>
+      )}
     </div>
   );
 };
