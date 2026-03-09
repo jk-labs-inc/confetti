@@ -129,14 +129,6 @@ export const erc20ChainDropdownOptions: Option[] = [
     label: "celo",
   },
   {
-    value: "mantle",
-    label: "mantle",
-  },
-  {
-    value: "optimism",
-    label: "optimism",
-  },
-  {
     value: "polygon",
     label: "polygon",
   },
