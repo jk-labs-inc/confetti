@@ -17,9 +17,10 @@ interface ProfileSectionProps {
         value: bigint;
       }
     | undefined;
+  onAddFundsClick?: () => void;
 }
 
-const ProfileSection: FC<ProfileSectionProps> = ({ address, ensAvatar, ensName, displayName, balance }) => {
+const ProfileSection: FC<ProfileSectionProps> = ({ address, ensAvatar, ensName, displayName, balance, onAddFundsClick }) => {
   const [isAddressCopied, setIsAddressCopied] = useState(false);
   const nativeRaw = formatUnits(balance?.value ?? 0n, balance?.decimals ?? 18);
   const { displayValue, displaySymbol, isLoading: isPriceLoading } = useDisplayPrice(nativeRaw, balance?.symbol ?? "ETH");
@@ -53,14 +54,25 @@ const ProfileSection: FC<ProfileSectionProps> = ({ address, ensAvatar, ensName, 
               )}
             </button>
           </div>
-          <div className="flex items-center gap-2 text-[14px] font-bold text-neutral-11">
-            <span className="text-neutral-9">Balance:</span>
+          <div className="flex items-baseline gap-2 flex-wrap text-[14px] font-bold text-neutral-11">
+            <span className="text-neutral-9 shrink-0">Balance:</span>
             {isPriceLoading ? (
               <Skeleton width={80} height={14} baseColor="#706f78" highlightColor="#FFE25B" />
             ) : (
-              <span className="uppercase">
+              <span className="uppercase whitespace-nowrap">
                 {displaySymbol === "$" ? `$${displayValue}` : `${displayValue} ${displaySymbol}`}
               </span>
+            )}
+            {onAddFundsClick && (
+              <>
+                <span className="text-neutral-9">·</span>
+                <button
+                  onClick={onAddFundsClick}
+                  className="text-[12px] font-bold text-positive-11 hover:text-positive-10 transition-colors whitespace-nowrap"
+                >
+                  add funds
+                </button>
+              </>
             )}
           </div>
         </div>
