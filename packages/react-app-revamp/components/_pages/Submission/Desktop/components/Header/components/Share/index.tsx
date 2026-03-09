@@ -18,11 +18,12 @@ const SubmissionPageDesktopHeaderShare = () => {
   };
   return (
     <motion.button
-      className="flex items-center justify-center gap-2 w-[88px] bg-gradient-purple h-8 rounded-[40px]"
-      whileTap={{ scale: 0.97 }}
+      className="flex items-center justify-center w-12 h-8 bg-gradient-metallic rounded-[40px]"
+      whileTap={{ scale: 0.95 }}
+      style={{ willChange: "transform" }}
       onClick={handleShare}
+      aria-label="Share entry"
     >
-      <p className="text-[16px] text-true-black font-bold">share</p>
       <Image src="/entry/share.svg" alt="share" width={16} height={16} />
     </motion.button>
   );

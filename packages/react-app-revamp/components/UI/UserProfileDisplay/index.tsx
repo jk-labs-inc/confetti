@@ -20,6 +20,7 @@ interface UserProfileDisplayProps {
   avatarVersion?: boolean;
   includeSocials?: boolean;
   includeSendFunds?: boolean;
+  showBy?: boolean;
   onSendFundsClick?: () => void;
 }
 
@@ -35,6 +36,7 @@ const UserProfileDisplay = ({
   size = "small",
   includeSendFunds,
   onSendFundsClick,
+  showBy = true,
 }: UserProfileDisplayProps) => {
   const { chain, isConnected, userAddress } = useWallet();
   const { profileName, profileAvatar, socials, isLoading } = useProfileData(
@@ -64,7 +66,7 @@ const UserProfileDisplay = ({
         profileName={profileName}
         size={size}
         textColor={textColor}
-        showBy={true}
+        showBy={showBy}
         target="_blank"
       />
     );
@@ -112,13 +114,17 @@ const UserProfileDisplay = ({
             )}
           </div>
 
-          <div className="flex items-center gap-4">
-            {includeSocials && socials ? <UserProfileSocials socials={socials} /> : null}
+          {includeSocials && socials ? (
+            <div className="flex items-center gap-4">
+              <UserProfileSocials socials={socials} />{" "}
+            </div>
+          ) : null}
 
-            {includeSendFunds && isConnected && isChainSupportedForSendFunds && userAddress === ethereumAddress ? (
+          {includeSendFunds && isConnected && isChainSupportedForSendFunds && userAddress === ethereumAddress ? (
+            <div className="flex items-center gap-4">
               <SendFundsButton onSendFundsClick={onSendFundsClick} />
-            ) : null}
-          </div>
+            </div>
+          ) : null}
         </div>
       )}
     </div>

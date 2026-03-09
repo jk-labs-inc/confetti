@@ -7,7 +7,7 @@ const SubmissionPageMobileLayout = () => {
   const isInPwaMode = typeof window !== "undefined" && window.matchMedia("(display-mode: standalone)").matches;
 
   return (
-    <div className="bg-true-black px-8">
+    <div className="bg-true-black px-8 mt-8">
       <div className={`flex justify-between ${isInPwaMode ? "mt-0" : "mt-8"}`}>
         <SubmissionPageMobileHeader />
       </div>

@@ -20,7 +20,7 @@ const SubmissionPageDesktopBodyContentDescription: FC<SubmissionPageDesktopBodyC
     <div className="relative">
       <div
         ref={scrollRef}
-        className="pl-8 py-4 pr-4 max-h-[450px] overflow-y-auto"
+        className="pl-6 py-4 pr-4 max-h-[450px] overflow-y-auto"
         style={
           shouldApplyFade
             ? {
