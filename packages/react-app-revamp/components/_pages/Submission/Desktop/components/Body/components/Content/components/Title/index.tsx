@@ -5,9 +5,13 @@ import ErrorState from "./components/ErrorState";
 
 interface SubmissionPageDesktopBodyContentTitleProps {
   stringArray: string[];
+  authorAddress: string;
 }
 
-const SubmissionPageDesktopBodyContentTitle = ({ stringArray }: SubmissionPageDesktopBodyContentTitleProps) => {
+const SubmissionPageDesktopBodyContentTitle = ({
+  stringArray,
+  authorAddress,
+}: SubmissionPageDesktopBodyContentTitleProps) => {
   const { isLoading, isError, isEntryPreviewTitle, enabledPreview } = useEntryPreview();
 
   if (isLoading) {
@@ -22,7 +26,7 @@ const SubmissionPageDesktopBodyContentTitle = ({ stringArray }: SubmissionPageDe
     return null;
   }
 
-  return <TitleParser stringArray={stringArray} enabledPreview={enabledPreview} />;
+  return <TitleParser stringArray={stringArray} enabledPreview={enabledPreview} authorAddress={authorAddress} />;
 };
 
 export default SubmissionPageDesktopBodyContentTitle;

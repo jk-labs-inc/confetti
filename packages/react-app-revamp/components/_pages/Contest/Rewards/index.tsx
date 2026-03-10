@@ -46,6 +46,17 @@ const ContestRewards = () => {
     return <RewardsError onRetry={isRewardsCanceledError ? refetchRewardsCanceled : refetch} />;
   }
 
+  if (rewards.isBytecodeInvalid) {
+    return (
+      <div className="flex flex-col gap-4">
+        <p className="text-[24px] text-negative-11 font-bold">ruh roh!</p>
+        <p className="text-[16px] text-neutral-11">
+          the rewards module contract could not be verified — its bytecode doesn&apos;t match any known version.
+        </p>
+      </div>
+    );
+  }
+
   if (isCanceled) {
     return (
       <RewardsCanceled

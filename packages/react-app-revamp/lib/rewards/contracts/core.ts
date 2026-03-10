@@ -28,7 +28,8 @@ export async function getRewardsModuleInfo(rewardsModuleAddress: string, chainId
     if (!abi || !deployedBytecode) return EMPTY_REWARDS_MODULE_INFO;
 
     const isBytecodeValid = await verifyContractBytecode(rewardsModuleAddress, chainId, deployedBytecode);
-    if (!isBytecodeValid) return EMPTY_REWARDS_MODULE_INFO;
+
+    if (!isBytecodeValid) return { abi: null, moduleType: null, isBytecodeInvalid: true };
 
     const isLegacyVersion = compareVersions(version, VOTER_REWARDS_VERSION) < 0;
     const moduleType = isLegacyVersion

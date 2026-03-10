@@ -65,7 +65,7 @@ export const useLayoutViewContest = () => {
   return {
     contestConfig,
     rewardsModule,
-    isLoading: isRewardsModuleLoading || isRewardsModuleRefetching || isLoading,
+    isLoading: isLoading || (!error && (isRewardsModuleLoading || isRewardsModuleRefetching)),
     isSuccess: isSuccess && isRewardsModuleSuccess,
     error,
     contestAuthorEthereumAddress,
