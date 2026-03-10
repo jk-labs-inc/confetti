@@ -17,7 +17,6 @@ interface ContestProfitCardProps {
 
 const ContestProfitCard: FC<ContestProfitCardProps> = ({ contestAddress, chainId, rewards }) => {
   const cardRef = useRef<HTMLDivElement>(null);
-  const shareRef = useRef<HTMLDivElement>(null);
   const { isConnected } = useWallet();
   const contestStatus = useContestStatusStore(useShallow(state => state.contestStatus));
   const chainName = useContestConfigStore(useShallow(state => state.contestConfig.chainName));
@@ -74,7 +73,6 @@ const ContestProfitCard: FC<ContestProfitCardProps> = ({ contestAddress, chainId
               />
               <ShareDropdown
                 cardRef={cardRef}
-                shareRef={shareRef}
                 profitPercentage={profitPercentage}
                 contestAddress={contestAddress}
                 chainName={chainName}
