@@ -1,5 +1,7 @@
+import AddFundsModal from "@components/AddFunds/components/Modal";
 import SendFunds from "@components/SendFunds";
 import { Menu, MenuItems } from "@headlessui/react";
+import { useAddFundsChain } from "@hooks/useAddFundsChain";
 import { FC, useState } from "react";
 import { mainnet } from "viem/chains";
 import { useEnsAvatar, useEnsName, useBalance } from "wagmi";
@@ -15,7 +17,9 @@ interface AccountDropdownProps {
 }
 
 const AccountDropdown: FC<AccountDropdownProps> = ({ address, displayName, onDisconnect }) => {
-  const [isSendFundsModalOpen, setIsSendFundsModalOpen] = useState(false);
+  const [isAddFundsOpen, setIsAddFundsOpen] = useState(false);
+  const [isSendFundsOpen, setIsSendFundsOpen] = useState(false);
+  const { chainName, asset } = useAddFundsChain();
   const { data: ensName } = useEnsName({ address: address as `0x${string}`, chainId: mainnet.id });
   const { data: ensAvatar } = useEnsAvatar({ name: ensName as string, chainId: mainnet.id });
   const { data: balance } = useBalance({ address: address as `0x${string}` });
@@ -28,7 +32,7 @@ const AccountDropdown: FC<AccountDropdownProps> = ({ address, displayName, onDis
         <MenuItems
           transition
           anchor="bottom end"
-          className="w-80 origin-top-right rounded-2xl bg-secondary-1 text-[16px] text-neutral-11 transition duration-100 ease-out [--anchor-gap:--spacing(2)] focus:outline-none data-closed:scale-95 data-closed:opacity-0"
+          className="w-[360px] origin-top-right rounded-2xl bg-secondary-1 text-[16px] text-neutral-11 transition duration-100 ease-out [--anchor-gap:--spacing(2)] focus:outline-none data-closed:scale-95 data-closed:opacity-0"
         >
           <div className="flex flex-col">
             <ProfileSection
@@ -37,6 +41,8 @@ const AccountDropdown: FC<AccountDropdownProps> = ({ address, displayName, onDis
               ensName={ensName}
               displayName={displayName}
               balance={balance}
+              onAddFundsClick={() => setIsAddFundsOpen(true)}
+              onSendFundsClick={() => setIsSendFundsOpen(true)}
             />
             <NavigationLinks address={address} />
             <DisconnectButton onDisconnect={onDisconnect} />
@@ -44,13 +50,8 @@ const AccountDropdown: FC<AccountDropdownProps> = ({ address, displayName, onDis
         </MenuItems>
       </Menu>
 
-      {isSendFundsModalOpen && (
-        <SendFunds
-          isOpen={isSendFundsModalOpen}
-          onClose={() => setIsSendFundsModalOpen(false)}
-          recipientAddress={address}
-        />
-      )}
+      <AddFundsModal chain={chainName} asset={asset} isOpen={isAddFundsOpen} onClose={() => setIsAddFundsOpen(false)} />
+      <SendFunds isOpen={isSendFundsOpen} onClose={() => setIsSendFundsOpen(false)} />
     </>
   );
 };
