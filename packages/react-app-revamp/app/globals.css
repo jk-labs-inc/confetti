@@ -206,7 +206,7 @@
   --background-image-gradient-under-construction: linear-gradient(to bottom, #bb65ff 0%, #251f2a 67%, #000000 100%);
   --background-image-gradient-purple-pastel: linear-gradient(90deg, #9747ff 0%, #c1abdd 100%);
   --background-image-gradient-gray-dark: linear-gradient(90deg, #6a6a6a 0%, #9d9d9d 100%);
-  --background-image-gradient-metallic: linear-gradient(180deg, #6a6a6a 0%, #e5e5e5 100%);
+  --background-image-gradient-profit-card: linear-gradient(252.15deg, #66deff 0.56%, #bb65ff 49.92%, #78ffc6 99.28%);
 
   /* Box Shadows */
   --shadow-create-header: 0 3px 4px 0 rgba(106, 106, 106, 1);
@@ -821,6 +821,92 @@ li {
 }
 
 @layer components {
+  .profit-card-wrapper {
+    position: relative;
+    border-radius: 32px;
+    padding: 2px;
+    background-image: var(--background-image-gradient-profit-card);
+  }
+
+  .profit-card-inner {
+    border-radius: 30px;
+    background-color: black;
+  }
+
+  .profit-card-label {
+    font-family: var(--font-sabo-regular);
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 100%;
+    color: #66deff;
+    text-shadow:
+      -0.5px -0.5px 0 #000,
+      0.5px -0.5px 0 #000,
+      -0.5px 0.5px 0 #000,
+      0.5px 0.5px 0 #000,
+      -1px 1px 0 #bb65ff;
+  }
+
+  .profit-card-percentage {
+    font-family: var(--font-sabo-filled);
+    font-size: 24px;
+    font-weight: 400;
+    line-height: normal;
+    color: #66deff;
+    text-shadow:
+      -0.5px -0.5px 0 #000,
+      0.5px -0.5px 0 #000,
+      -0.5px 0.5px 0 #000,
+      0.5px 0.5px 0 #000,
+      -2px 2px 0 #bb65ff;
+  }
+
+  .profit-card-percentage-sign {
+    font-family: var(--font-sabo-regular);
+  }
+
+  .profit-card-percentage-symbol {
+    font-family: var(--font-sabo-regular);
+    font-size: 0.6em;
+    text-shadow:
+      -0.5px -0.5px 0 #000,
+      0.5px -0.5px 0 #000,
+      -0.5px 0.5px 0 #000,
+      0.5px 0.5px 0 #000,
+      -2px 2px 0 #bb65ff;
+  }
+
+  @media (min-width: 768px) {
+    .profit-card-label {
+      font-size: 24px;
+      text-shadow:
+        -0.5px -0.5px 0 #000,
+        0.5px -0.5px 0 #000,
+        -0.5px 0.5px 0 #000,
+        0.5px 0.5px 0 #000,
+        -2px 2px 0 #bb65ff;
+    }
+
+    .profit-card-percentage {
+      font-size: 64px;
+      text-shadow:
+        -1px -1px 0 #000,
+        1px -1px 0 #000,
+        -1px 1px 0 #000,
+        1px 1px 0 #000,
+        -4px 4px 0 #bb65ff;
+    }
+
+    .profit-card-percentage-symbol {
+      text-shadow:
+        -1px -1px 0 #000,
+        1px -1px 0 #000,
+        -1px 1px 0 #000,
+        1px 1px 0 #000,
+        -3px 3px 0 #bb65ff;
+    }
+  }
+
   .container {
     padding-left: 1.25rem;
     padding-right: 1.25rem;
