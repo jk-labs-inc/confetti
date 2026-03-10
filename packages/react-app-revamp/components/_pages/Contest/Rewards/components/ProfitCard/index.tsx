@@ -32,7 +32,7 @@ const ContestProfitCard: FC<ContestProfitCardProps> = ({ contestAddress, chainId
 
   if (isLoading) {
     return (
-      <div className="profit-card-wrapper">
+      <div className="profit-card-wrapper max-w-96 md:max-w-none">
         <div className="profit-card-inner flex items-center justify-center h-[144px] md:h-[296px]">
           <Loader className="mt-0!" isAdditionalTextEnabled={false} />
         </div>
@@ -42,7 +42,7 @@ const ContestProfitCard: FC<ContestProfitCardProps> = ({ contestAddress, chainId
 
   if (isError) {
     return (
-      <div className="profit-card-wrapper">
+      <div className="profit-card-wrapper max-w-96 md:max-w-none">
         <div className="profit-card-inner flex items-center justify-between px-8 md:px-[88px] py-6 md:py-8">
           <p className="text-[14px] text-negative-11">failed to load profit data</p>
           <button
@@ -59,7 +59,7 @@ const ContestProfitCard: FC<ContestProfitCardProps> = ({ contestAddress, chainId
   }
 
   return (
-    <div className="profit-card-wrapper" ref={cardRef}>
+    <div className="profit-card-wrapper max-w-96 md:max-w-none" ref={cardRef}>
       <div className="profit-card-inner flex justify-between p-6 md:px-[88px] md:py-8 md:h-[296px] overflow-hidden">
         <div className="flex flex-col justify-between">
           <div className="flex flex-col gap-0.5 md:gap-1">
