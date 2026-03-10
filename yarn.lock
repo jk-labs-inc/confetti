@@ -14061,10 +14061,10 @@ vaul@1.1.2:
   dependencies:
     "@radix-ui/react-dialog" "^1.1.1"
 
-viem@2.47.0:
-  version "2.47.0"
-  resolved "https://registry.yarnpkg.com/viem/-/viem-2.47.0.tgz#de169885384419d64fd86bf9f5b687e088ce5839"
-  integrity sha512-jU5e1E1s5E5M1y+YrELDnNar/34U8NXfVcRfxtVETigs2gS1vvW2ngnBoQUGBwLnNr0kNv+NUu4m10OqHByoFw==
+viem@2.47.1:
+  version "2.47.1"
+  resolved "https://registry.yarnpkg.com/viem/-/viem-2.47.1.tgz#3883790d558f4c057aa5d9d109b6ea3c8a8d3e31"
+  integrity sha512-frlK109+X5z2vlZeIGKa6Rxev6CcIpumV/VVhaIPc/QFotiB6t/CgUwkMlYfr4F2YNBZZ2l6jguWz2sY1XrQHw==
   dependencies:
     "@noble/curves" "1.9.1"
     "@noble/hashes" "1.8.0"
