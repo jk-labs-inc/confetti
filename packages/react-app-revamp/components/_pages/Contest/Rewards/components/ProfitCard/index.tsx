@@ -60,7 +60,7 @@ const ContestProfitCard: FC<ContestProfitCardProps> = ({ contestAddress, chainId
 
   return (
     <div className="profit-card-wrapper max-w-96 md:max-w-none" ref={cardRef}>
-      <div className="profit-card-inner flex justify-between p-8 md:px-[88px] md:py-8 md:h-[296px] overflow-hidden">
+      <div className="profit-card-inner flex justify-between px-8 py-6 md:px-[88px] md:py-8 md:h-[296px] overflow-hidden">
         <div className="flex flex-col justify-between">
           <div className="flex flex-col gap-0.5 md:gap-1">
             <div className="flex items-center gap-2 md:gap-4">
