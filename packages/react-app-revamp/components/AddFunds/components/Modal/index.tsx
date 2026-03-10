@@ -23,7 +23,7 @@ const AddFundsModal: FC<AddFundsModalProps> = ({ chain, asset, isOpen, onClose }
             onClick={onClose}
           />
         </div>
-        <AddFunds className="md:w-[400px]" chain={chain} asset={asset} showBackButton={false} />
+        <AddFunds className="md:w-[400px]" chain={chain} asset={asset} showBackButton={false} onCloseModal={onClose} />
       </div>
     </DialogModalV4>
   );
