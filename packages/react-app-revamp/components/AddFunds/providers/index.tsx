@@ -12,7 +12,7 @@ interface AddFundsProvidersProps {
 }
 
 const OnrampDescription = () => (
-  <p className="text-base text-neutral-11">what's your region? this determines the best tool to add funds.</p>
+  <p className="text-base text-neutral-11">what's your region? this determines the tool to add funds.</p>
 );
 
 const BridgeDescription = ({ chain }: { chain: string }) => (
