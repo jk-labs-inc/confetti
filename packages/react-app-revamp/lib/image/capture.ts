@@ -21,13 +21,11 @@ export const captureElementAsDataUrl = async (
     tweaks?: (clone: HTMLElement) => void;
   },
 ): Promise<string> => {
-  const { width, height } = element.getBoundingClientRect();
   const clone = element.cloneNode(true) as HTMLElement;
   clone.style.position = "fixed";
   clone.style.left = "-9999px";
   clone.style.top = "0";
-  clone.style.width = `${width}px`;
-  clone.style.height = `${height}px`;
+  clone.style.width = "fit-content";
 
   if (options?.removeSelector) {
     clone.querySelectorAll<HTMLElement>(options.removeSelector).forEach(el => el.remove());
@@ -40,7 +38,7 @@ export const captureElementAsDataUrl = async (
   try {
     const canvas = await html2canvas(clone, {
       scale: 3,
-      backgroundColor: null,
+      backgroundColor: "#000000",
       useCORS: true,
       logging: false,
       ignoreElements: node =>
