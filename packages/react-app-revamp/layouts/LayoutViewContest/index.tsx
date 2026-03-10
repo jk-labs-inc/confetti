@@ -50,7 +50,7 @@ const LayoutViewContest = () => {
   }
 
   return (
-    <div className={`w-full px-4 pt-6 md:px-12 md:pt-0 lg:w-[800px] lg:px-0 mx-auto`}>
+    <div className={`w-full px-6 pt-6 md:px-12 md:pt-0 lg:w-[760px] lg:px-0 mx-auto`}>
       <div
         className={`md:pt-5 md:pb-20 flex flex-col ${
           pathname === ROUTE_CONTEST_PROPOSAL ? "md:col-span-12" : "md:col-span-9"
