@@ -10,12 +10,7 @@ interface UseProfitCardShareParams {
   chainName: string;
 }
 
-const useProfitCardShare = ({
-  cardRef,
-  profitPercentage,
-  contestAddress,
-  chainName,
-}: UseProfitCardShareParams) => {
+const useProfitCardShare = ({ cardRef, profitPercentage, contestAddress, chainName }: UseProfitCardShareParams) => {
   const [isSharing, setIsSharing] = useState(false);
   const cachedFileRef = useRef<File | null>(null);
 

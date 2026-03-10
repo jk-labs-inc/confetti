@@ -16,38 +16,26 @@ export const dataUrlToFile = (dataUrl: string, filename: string): File => {
 export const captureElementAsDataUrl = async (
   element: HTMLElement,
   options?: {
-    ignoreSelector?: string;
     removeSelector?: string;
     tweaks?: (clone: HTMLElement) => void;
   },
 ): Promise<string> => {
-  const clone = element.cloneNode(true) as HTMLElement;
-  clone.style.position = "fixed";
-  clone.style.left = "-9999px";
-  clone.style.top = "0";
-  clone.style.width = "fit-content";
-
-  if (options?.removeSelector) {
-    clone.querySelectorAll<HTMLElement>(options.removeSelector).forEach(el => el.remove());
-  }
-
-  options?.tweaks?.(clone);
-
-  document.body.appendChild(clone);
-
-  try {
-    const canvas = await html2canvas(clone, {
-      scale: 3,
-      backgroundColor: "#000000",
-      useCORS: true,
-      logging: false,
-      ignoreElements: node =>
-        node instanceof HTMLElement && node.getAttribute("data-headlessui-state") !== null,
-    });
-    return canvas.toDataURL("image/png");
-  } finally {
-    document.body.removeChild(clone);
-  }
+  const canvas = await html2canvas(element, {
+    scale: 3,
+    backgroundColor: null,
+    useCORS: true,
+    logging: false,
+    windowWidth: 1024,
+    onclone: (_doc, clonedEl) => {
+      if (options?.removeSelector) {
+        clonedEl.querySelectorAll<HTMLElement>(options.removeSelector).forEach(el => el.remove());
+      }
+      options?.tweaks?.(clonedEl);
+    },
+    ignoreElements: node =>
+      node instanceof HTMLElement && node.getAttribute("data-headlessui-state") !== null,
+  });
+  return canvas.toDataURL("image/png");
 };
 
 export const downloadDataUrl = (dataUrl: string, filename: string) => {
