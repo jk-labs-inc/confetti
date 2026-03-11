@@ -8,7 +8,6 @@ import { useProposalStore } from "@hooks/useProposal/store";
 import { useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import ContestPrompt from "../components/Prompt";
-import ProposalStatistics from "../components/ProposalStatistics";
 import ContestStickyCards from "../components/StickyCards";
 import EntryPreviewTitleToggle from "../components/EntryPreviewTitleToggle";
 import { useContestSubmitButton } from "./useContestSubmitButton";
@@ -56,13 +55,12 @@ const ContestTab = () => {
           {renderSubmitButton()}
         </div>
       )}
-      <ContestStickyCards />
+      {isMobile && <ContestStickyCards />}
 
       <div className={`mt-4 ${isInPwaMode ? "mb-12" : "mb-0"}`}>
         <div className="flex flex-col gap-2">
           {contestStatus !== ContestStatus.ContestOpen && !isContestLoading && (
             <div className="flex items-center gap-12 pb-4 ">
-              <ProposalStatistics contestStatus={contestStatus} />
               <EntryPreviewTitleToggle />
             </div>
           )}

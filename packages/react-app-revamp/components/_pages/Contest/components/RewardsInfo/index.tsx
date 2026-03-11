@@ -7,10 +7,6 @@ import { FC } from "react";
 import { Abi } from "viem";
 import RewardsDisplay from "./components/RewardsDisplay";
 import RewardsLoader from "./components/RewardsLoader";
-import RewardsMarquee from "./components/RewardsMarquee";
-import RewardsSelfFundedMarquee from "./components/RewardsSelfFundedMarquee";
-import { useContestStore } from "@hooks/useContest/store";
-import { useShallow } from "zustand/shallow";
 
 interface ContestRewardsInfoProps {
   version: string;
@@ -41,8 +37,8 @@ const ContestRewardsInfo: FC<ContestRewardsInfoProps> = ({ version }) => {
   if (isError || !isSuccess || isCanceled || isCancelError || !rewards || rewards.isBytecodeInvalid) return null;
 
   return (
-    <div className="flex items-center gap-2 md:gap-4">
-      <RewardsMarquee moduleType={rewards.moduleType} />
+    <div className="flex items-center gap-1">
+      <span className="text-[24px]">💰</span>
       <RewardsDisplay
         rewardsModuleAddress={rewards.contractAddress as `0x${string}`}
         rewardsAbi={rewards.abi as Abi}
@@ -52,7 +48,6 @@ const ContestRewardsInfo: FC<ContestRewardsInfoProps> = ({ version }) => {
         isRewardsModuleLoading={isLoading}
         isRewardsModuleError={isError}
       />
-      {rewards.isSelfFunded && <RewardsSelfFundedMarquee />}
     </div>
   );
 };

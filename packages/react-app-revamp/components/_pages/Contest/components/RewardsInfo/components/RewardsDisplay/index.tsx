@@ -87,8 +87,7 @@ const RewardsDisplay: FC<RewardsDisplayProps> = ({
 
   return (
     <>
-      <div className="hidden md:block h-4 w-[2px] bg-primary-2"></div>
-      <div className="flex items-baseline gap-1">
+      <div className="flex items-center gap-1">
         {displayCurrency === "usd" && totalUsd !== null ? (
           <p className="text-neutral-11 text-[16px] md:text-[24px]">${totalUsd}</p>
         ) : currentReward ? (
