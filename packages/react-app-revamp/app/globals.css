@@ -206,6 +206,7 @@
   --background-image-gradient-under-construction: linear-gradient(to bottom, #bb65ff 0%, #251f2a 67%, #000000 100%);
   --background-image-gradient-purple-pastel: linear-gradient(90deg, #9747ff 0%, #c1abdd 100%);
   --background-image-gradient-gray-dark: linear-gradient(90deg, #6a6a6a 0%, #9d9d9d 100%);
+  --background-image-gradient-metallic: linear-gradient(180deg, #6a6a6a 0%, #e5e5e5 100%);
   --background-image-gradient-profit-card: linear-gradient(252.15deg, #66deff 0.56%, #bb65ff 49.92%, #78ffc6 99.28%);
 
   /* Box Shadows */
