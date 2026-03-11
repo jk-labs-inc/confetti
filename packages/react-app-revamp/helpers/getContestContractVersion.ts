@@ -65,7 +65,7 @@ import UpdateFoundryContract from "@contracts/bytecodeAndAbi/Contest.6.13.update
 import RemoveUnusedMetadatasContract from "@contracts/bytecodeAndAbi/Contest.6.14.removeUnusedMetadatas.sol/Contest.json";
 import DeprecateSortingEnabledContract from "@contracts/bytecodeAndAbi/Contest.6.15.deprecateSortingEnabled.sol/Contest.json";
 import AddAnalyticsContract from "@contracts/bytecodeAndAbi/Contest.6.16.addAnalytics.sol/Contest.json";
-import CompleteCostToEnterDepContract from "@contracts/bytecodeAndAbi/Contest.6.16.addAnalytics.sol/Contest.json";
+import CompleteCostToEnterDepContract from "@contracts/bytecodeAndAbi/Contest.6.17.completeCostToEnterDep.sol/Contest.json";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { MAX_TIME_TO_WAIT_FOR_RPC, executeWithTimeout } from "./timeout";
 import { createTransport } from "@config/wagmi/chains";
