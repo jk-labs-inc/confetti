@@ -24,6 +24,7 @@ import UpdateFoundryVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRe
 import RemoveUnusedMetadatasVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.6.14.removeUnusedMetadatas.sol/VoterRewardsModule.json";
 import DeprecateSortingEnabledVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.6.15.deprecateSortingEnabled.sol/VoterRewardsModule.json";
 import AddAnalyticsVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.6.16.addAnalytics.sol/VoterRewardsModule.json";
+import CompleteCostToEnterDepVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.6.17.completeCostToEnterDep.sol/VoterRewardsModule.json";
 import DeployedVoterRewardsContract from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.sol/VoterRewardsModule.json";
 import { createPublicClient, getContract, http } from "viem";
 import { getChainFromId } from "./getChainFromId";
@@ -35,6 +36,7 @@ type ContractData = {
 };
 
 const VERSION_TO_CONTRACT: Record<string, ContractData> = {
+  "6.17": CompleteCostToEnterDepVoterRewards,
   "6.16": AddAnalyticsVoterRewards,
   "6.15": DeprecateSortingEnabledVoterRewards,
   "6.14": RemoveUnusedMetadatasVoterRewards,
