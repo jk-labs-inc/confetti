@@ -408,15 +408,11 @@ abstract contract Governor is GovernorSorting, GovernorAnalytics {
     /**
      * @dev Create a new proposal.
      */
-    function propose(ProposalCore calldata proposal) public payable returns (uint256) {
-        uint256 actionCost = _determineCorrectAmountSent(Actions.Submit, 0);
-
+    function propose(ProposalCore calldata proposal) public returns (uint256) {
         if (_getOfficialRewardsModule() == address(0)) revert OfficialModuleMustBeSetToEnter();
         verifyProposer();
         validateProposalData(proposal);
         uint256 proposalId = _castProposal(proposal);
-
-        _distributeCost(actionCost);
 
         return proposalId;
     }
