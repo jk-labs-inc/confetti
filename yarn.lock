@@ -102,10 +102,10 @@
     "@smithy/util-utf8" "^2.0.0"
     tslib "^2.6.2"
 
-"@aws-sdk/client-s3@3.1005.0":
-  version "3.1005.0"
-  resolved "https://registry.yarnpkg.com/@aws-sdk/client-s3/-/client-s3-3.1005.0.tgz#3864339cecf7e9be549a1589052bbbc4981d3193"
-  integrity sha512-EVl5IElgh7l9M242JYZGBt2AtdylpSKEFiEHBfB2OKuh2es19IQkDNfLFGfzThXWbapfBjXuB0zs9nplNviOSQ==
+"@aws-sdk/client-s3@3.1006.0":
+  version "3.1006.0"
+  resolved "https://registry.yarnpkg.com/@aws-sdk/client-s3/-/client-s3-3.1006.0.tgz#1b6fe12c9da1a7e00f767fef275f09f4dacd4a1d"
+  integrity sha512-tm8R/LgWDC3zWPMCdD990owvBrmuIM2A39+OWKW/HyAomWi6ancPz/H1K/hmxf0bqdXAaRUHBQMAmzwb1aR33Q==
   dependencies:
     "@aws-crypto/sha1-browser" "5.2.0"
     "@aws-crypto/sha256-browser" "5.2.0"
@@ -160,7 +160,7 @@
     "@smithy/util-retry" "^4.2.11"
     "@smithy/util-stream" "^4.5.17"
     "@smithy/util-utf8" "^4.2.2"
-    "@smithy/util-waiter" "^4.2.11"
+    "@smithy/util-waiter" "^4.2.12"
     tslib "^2.6.2"
 
 "@aws-sdk/core@^3.973.19":
@@ -488,10 +488,10 @@
     "@smithy/types" "^4.13.0"
     tslib "^2.6.2"
 
-"@aws-sdk/s3-request-presigner@3.1005.0":
-  version "3.1005.0"
-  resolved "https://registry.yarnpkg.com/@aws-sdk/s3-request-presigner/-/s3-request-presigner-3.1005.0.tgz#e167c8bc727f289c483908ef39e1aab52ec30d39"
-  integrity sha512-5lM7MxgIyF64RFNc70dqcjA1WlPXP/vwLOsJ/7+zFjiubu3q5xaTAw7kdAUXk+BRkYiweO4OVz2v4MHNugY7OA==
+"@aws-sdk/s3-request-presigner@3.1006.0":
+  version "3.1006.0"
+  resolved "https://registry.yarnpkg.com/@aws-sdk/s3-request-presigner/-/s3-request-presigner-3.1006.0.tgz#aeeb9f3e10e7a2789f94a5b87ebdf1c07c4bf59e"
+  integrity sha512-azZTNllb6zq3hyGvTViBflfN5IeThmSQbYB+JJJqVGB9ZAqV9d6xOUG1BFCtxoKukDT9JnUZqQwQB0Y24gJAPw==
   dependencies:
     "@aws-sdk/signature-v4-multi-region" "^3.996.7"
     "@aws-sdk/types" "^3.973.5"
@@ -5472,7 +5472,7 @@
     "@smithy/util-buffer-from" "^4.2.2"
     tslib "^2.6.2"
 
-"@smithy/util-waiter@^4.2.11":
+"@smithy/util-waiter@^4.2.12":
   version "4.2.12"
   resolved "https://registry.yarnpkg.com/@smithy/util-waiter/-/util-waiter-4.2.12.tgz#8cbe8f0fe586c7901fb66d21544339f1da1c6bef"
   integrity sha512-ek5hyDrzS6mBFsNCEX8LpM+EWSLq6b9FdmPRlkpXXhiJE6aIZehKT9clC6+nFpZAA+i/Yg0xlaPeWGNbf5rzQA==
