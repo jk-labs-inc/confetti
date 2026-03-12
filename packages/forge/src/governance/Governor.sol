@@ -95,7 +95,7 @@ abstract contract Governor is GovernorSorting, GovernorAnalytics {
     address public constant JK_LABS_ADDRESS = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738; // Our hot wallet that we collect revenue to.
     uint256 public constant PRICE_CURVE_UPDATE_INTERVAL = 60; // How often the price curve updates if applicable.
     uint256 public constant COST_ROUNDING_VALUE = 1e12; // Used for rounding costs, means cost to propose or vote can't be less than 1e18/this.
-    string private constant VERSION = "6.16"; // Private as to not clutter the ABI.
+    string private constant VERSION = "6.17"; // Private as to not clutter the ABI.
 
     string public name; // The title of the contest
     string public prompt;
@@ -408,15 +408,11 @@ abstract contract Governor is GovernorSorting, GovernorAnalytics {
     /**
      * @dev Create a new proposal.
      */
-    function propose(ProposalCore calldata proposal) public payable returns (uint256) {
-        uint256 actionCost = _determineCorrectAmountSent(Actions.Submit, 0);
-
+    function propose(ProposalCore calldata proposal) public returns (uint256) {
         if (_getOfficialRewardsModule() == address(0)) revert OfficialModuleMustBeSetToEnter();
         verifyProposer();
         validateProposalData(proposal);
         uint256 proposalId = _castProposal(proposal);
-
-        _distributeCost(actionCost);
 
         return proposalId;
     }
