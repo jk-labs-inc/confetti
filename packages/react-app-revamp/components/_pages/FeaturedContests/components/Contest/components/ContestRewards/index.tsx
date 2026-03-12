@@ -50,13 +50,11 @@ const ContestRewards: FC<ContestRewardsProps> = ({ contestData, rewardsData, isR
   if (!hasRewards) return null;
 
   return (
-    <div className="flex items-center gap-1">
+    <div className="flex items-baseline gap-1">
       <span role="img" aria-label="money bag" className="shrink-0">
         💰
       </span>
-      <p
-        className={`text-xs font-bold whitespace-nowrap ${contestIsActive ? "text-neutral-11" : "text-neutral-9"}`}
-      >
+      <p className={`text-xs font-bold whitespace-nowrap ${contestIsActive ? "text-neutral-11" : "text-neutral-9"}`}>
         {totalUsd !== null ? (
           <>
             ${totalUsd}

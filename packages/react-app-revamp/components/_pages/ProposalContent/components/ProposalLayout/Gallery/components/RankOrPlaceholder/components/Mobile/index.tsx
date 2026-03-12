@@ -11,9 +11,16 @@ const ProposalLayoutGalleryRankOrPlaceholderMobile: FC<ProposalLayoutGalleryRank
   proposal,
   contestStatus,
 }) => {
+  const MEDAL_IMAGES: Record<number, string> = {
+    1: "/contest/gold-medal.png",
+    2: "/contest/silver-medal.png",
+    3: "/contest/bronze-medal.png",
+  };
+
   if (proposal.rank) {
-    if (proposal.rank === 1) {
-      return <img src="/contest/ranks/first.svg" alt="Rank 1" className="w-6 h-[29px] object-contain" />;
+    const medalSrc = MEDAL_IMAGES[proposal.rank];
+    if (medalSrc) {
+      return <img src={medalSrc} alt={`Rank ${proposal.rank}`} className="w-6 h-6 object-contain" />;
     } else {
       return (
         <div className="w-6 h-6 md:w-10 md:h-10 flex items-center justify-center">

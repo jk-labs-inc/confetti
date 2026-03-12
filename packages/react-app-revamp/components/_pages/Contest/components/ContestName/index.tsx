@@ -4,7 +4,8 @@ import { FC } from "react";
 import { useMediaQuery } from "react-responsive";
 import CancelContest from "../CancelContest";
 import EditContestName from "./components/EditContestName";
-import ShareDropdown from "@components/Share";
+import { motion } from "motion/react";
+import Image from "next/image";
 
 interface ContestNameProps {
   contestAddress: string;
@@ -28,7 +29,9 @@ const ContestName: FC<ContestNameProps> = ({
   if (isMobile) {
     return (
       <div className="flex items-center justify-between w-full">
-        <p className={`text-[20px] md:text-[32px] text-neutral-11 font-bold ${isContestCanceled ? "line-through" : ""}`}>
+        <p
+          className={`text-[20px] md:text-[32px] text-neutral-11 font-bold ${isContestCanceled ? "line-through" : ""}`}
+        >
           {contestName}
         </p>
         <div className="flex items-center gap-2">
@@ -45,18 +48,27 @@ const ContestName: FC<ContestNameProps> = ({
         <EditContestName contestName={contestName} canEditTitle={canEditTitle} />
         <CancelContest />
       </div>
-      <div className="flex items-baseline justify-between w-full">
-        <div className="flex items-baseline gap-4">
-          <p className={`text-[20px] md:text-[32px] text-neutral-11 font-sabo-filled ${isContestCanceled ? "line-through" : ""}`}>
-            {contestName}
+      <div className="flex items-baseline gap-4">
+        <p
+          className={`text-[20px] md:text-[32px] text-neutral-11 font-sabo-filled ${isContestCanceled ? "line-through" : ""}`}
+        >
+          {contestName}
+        </p>
+        {contestAuthorEthereumAddress && (
+          <p className="text-[16px] text-positive-11 whitespace-nowrap">
+            by {shortenEthereumAddress(contestAuthorEthereumAddress)}
           </p>
-          {contestAuthorEthereumAddress && (
-            <p className="text-[16px] text-positive-11 whitespace-nowrap">
-              by {shortenEthereumAddress(contestAuthorEthereumAddress)}
-            </p>
-          )}
-        </div>
-        <ShareDropdown contestAddress={contestAddress} chain={chainName} contestName={contestName} />
+        )}
+        <motion.button
+          className="flex items-center justify-center w-12 h-8 bg-gradient-metallic rounded-[40px]"
+          whileTap={{ scale: 0.95 }}
+          style={{ willChange: "transform" }}
+          //TODO: add handle share functionality
+          // onClick={handleShare}
+          aria-label="Share entry"
+        >
+          <Image src="/entry/share.svg" alt="share" width={16} height={16} />
+        </motion.button>
       </div>
     </div>
   );

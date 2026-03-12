@@ -22,17 +22,11 @@ const ContestPriceCurve = () => {
 
   if (isVotingOpen) {
     return (
-      <div className="flex items-center gap-1">
-        <span className="text-[24px]">📈</span>
+      <div className="flex items-baseline gap-1">
+        <span className="text-2xl">📈</span>
         <LivePriceDisplay />
-        <button
-          onClick={() => setIsExpanded(!isExpanded)}
-          className="flex items-center justify-center w-6 h-6 ml-2"
-        >
-          <motion.div
-            animate={{ rotate: isExpanded ? 180 : 0 }}
-            transition={{ duration: 0.2, ease: "easeInOut" }}
-          >
+        <button onClick={() => setIsExpanded(!isExpanded)} className="flex items-center justify-center w-6 h-6 ml-2">
+          <motion.div animate={{ rotate: isExpanded ? 180 : 0 }} transition={{ duration: 0.2, ease: "easeInOut" }}>
             <ChevronDownIcon className="w-5 h-5 text-neutral-11" />
           </motion.div>
         </button>
@@ -41,17 +35,11 @@ const ContestPriceCurve = () => {
   }
 
   return (
-    <div className="flex items-center gap-1">
-      <span>📈</span>
+    <div className="flex items-baseline gap-1">
+      <span className="text-2xl">📈</span>
       <PriceRangeDisplay />
-      <button
-        onClick={() => setIsExpanded(!isExpanded)}
-        className="flex items-center justify-center w-6 h-6 ml-2"
-      >
-        <motion.div
-          animate={{ rotate: isExpanded ? 180 : 0 }}
-          transition={{ duration: 0.2, ease: "easeInOut" }}
-        >
+      <button onClick={() => setIsExpanded(!isExpanded)} className="flex items-center justify-center w-6 h-6 ml-2">
+        <motion.div animate={{ rotate: isExpanded ? 180 : 0 }} transition={{ duration: 0.2, ease: "easeInOut" }}>
           <ChevronDownIcon className="w-5 h-5 text-neutral-11" />
         </motion.div>
       </button>
@@ -77,10 +65,7 @@ const LivePriceDisplay = () => {
     votingClose: votesClose,
   });
 
-  const { displayValue, displaySymbol } = useDisplayPrice(
-    currentPricePerVote,
-    contestConfig.chainNativeCurrencySymbol,
-  );
+  const { displayValue, displaySymbol } = useDisplayPrice(currentPricePerVote, contestConfig.chainNativeCurrencySymbol);
 
   const { priceCurveUpdateInterval } = usePriceCurveUpdateInterval({
     address: contestConfig.address,
@@ -103,11 +88,11 @@ const LivePriceDisplay = () => {
 
   return (
     <div className="flex items-center gap-2">
-      <p className="text-[16px] text-neutral-11">{priceText}/vote</p>
+      <p className="text-[16px] text-neutral-9 font-bold">{priceText}/vote</p>
       {showTimer && (
         <div className="flex items-center gap-0.5">
-          <ArrowLongUpIcon className="w-4 h-4 text-neutral-11" />
-          <p className="text-[16px] text-neutral-11">
+          <ArrowLongUpIcon className="w-4 h-4 text-neutral-9" />
+          <p className="text-base text-neutral-9 font-bold">
             {currentPricePercentageData && !currentPricePercentageData.isBelowThreshold
               ? `${currentPricePercentageData.percentageIncrease}% `
               : ""}
@@ -141,9 +126,9 @@ const PriceRangeDisplay = () => {
   const isUsd = displaySymbol === "$";
 
   return (
-    <p className="text-[16px] text-neutral-11">
+    <p className="text-base text-neutral-9 font-bold">
       {isUsd ? `$${startDisplay} → $${endDisplay}` : `${startDisplay} → ${endDisplay} ${displaySymbol}`}
-      <span className="text-neutral-9">/vote</span>
+      /vote
     </p>
   );
 };

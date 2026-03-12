@@ -87,9 +87,9 @@ const ContestTiming = () => {
   }, [isCanceled, votesOpen, votesClose, votingTimeLeft]);
 
   return (
-    <div className="flex items-center gap-1">
-      <span className="text-[24px]">⏱️</span>
-      <p className={`text-[16px] ${display.dimmed ? "text-neutral-10" : "text-neutral-11"}`}>{display.text}</p>
+    <div className="flex items-baseline gap-1">
+      <span className="text-2xl">⏱️</span>
+      <p className={`text-base text-neutral-9 font-bold`}>{display.text}</p>
     </div>
   );
 };

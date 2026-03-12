@@ -37,7 +37,7 @@ const ContestRewardsInfo: FC<ContestRewardsInfoProps> = ({ version }) => {
   if (isError || !isSuccess || isCanceled || isCancelError || !rewards || rewards.isBytecodeInvalid) return null;
 
   return (
-    <div className="flex items-center gap-1">
+    <div className="flex items-baseline gap-1">
       <span className="text-[24px]">💰</span>
       <RewardsDisplay
         rewardsModuleAddress={rewards.contractAddress as `0x${string}`}

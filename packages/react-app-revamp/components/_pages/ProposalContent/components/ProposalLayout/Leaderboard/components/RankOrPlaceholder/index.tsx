@@ -7,17 +7,24 @@ interface ProposalLayoutLeaderboardRankOrPlaceholderProps {
   contestStatus: ContestStatus;
 }
 
+const MEDAL_IMAGES: Record<number, string> = {
+  1: "/contest/gold-medal.png",
+  2: "/contest/silver-medal.png",
+  3: "/contest/bronze-medal.png",
+};
+
 const ProposalLayoutLeaderboardRankOrPlaceholder: FC<ProposalLayoutLeaderboardRankOrPlaceholderProps> = ({
   proposal,
   contestStatus,
 }) => {
   if (proposal.rank) {
-    if (proposal.rank === 1) {
+    const medalSrc = MEDAL_IMAGES[proposal.rank];
+    if (medalSrc) {
       return (
         <img
-          src="/contest/ranks/first.svg"
-          alt="Rank 1"
-          className="w-6 h-[29px] md:w-10 md:h-10 mt-[5px] object-contain"
+          src={medalSrc}
+          alt={`Rank ${proposal.rank}`}
+          className="w-6 h-6 md:w-10 md:h-10 object-contain"
         />
       );
     } else {
