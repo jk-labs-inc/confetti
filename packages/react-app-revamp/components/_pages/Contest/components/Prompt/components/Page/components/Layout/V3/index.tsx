@@ -41,41 +41,42 @@ const ContestPromptPageV3Layout: FC<ContestPromptPageV3LayoutProps> = ({ prompt,
     <div className="flex items-start gap-3 w-full">
       <EditContestPrompt canEditPrompt={canEditTitleAndDescription} prompt={prompt} />
 
-      {isExpanded ? (
-        <div className="flex flex-col w-full rounded-l-[10px] border-l border-t border-b border-neutral-4 bg-primary-1 px-5 pt-3 pb-5">
-          <button
-            onClick={handleToggleExpanded}
-            className="flex items-center justify-center gap-[6px] w-40 h-6 rounded-[32px] bg-neutral-3 text-base text-neutral-11 mb-5"
-          >
-            full description
-            <ChevronDownIcon
-              width={16}
-              height={16}
-              className="mt-1 rotate-180 transition-transform duration-300"
-            />
-          </button>
-
-          <div
-            className={`prose prose-invert prose-p:text-neutral-9 flex flex-col ${isContestCanceled ? "line-through" : ""}`}
-          >
-            {renderSection(contestSummary, false)}
-            {renderSection(contestEvaluate, true)}
-            {renderSection(contestContactDetails, true)}
-          </div>
-        </div>
-      ) : (
+      <div className="flex flex-col w-[60%]">
         <button
           onClick={handleToggleExpanded}
-          className="flex items-center justify-center gap-[6px] w-40 h-6 rounded-[32px] bg-primary-1 text-base text-neutral-11 transition-colors duration-300 hover:bg-neutral-4"
+          className={`flex items-center gap-[6px] text-base transition-all duration-300 ease-in-out ${
+            isExpanded
+              ? "w-fit rounded-t-[16px] border-t border-l border-r border-neutral-4 bg-primary-1 px-4 py-1.5 text-neutral-11 font-bold relative z-10 -mb-px"
+              : "justify-center w-40 h-6 rounded-[32px] bg-primary-1 text-neutral-9 hover:bg-neutral-4"
+          }`}
         >
           full description
           <ChevronDownIcon
             width={16}
             height={16}
-            className="mt-1 transition-transform duration-300"
+            className={`mt-1 transition-transform duration-300 ${isExpanded ? "rotate-180" : ""}`}
           />
         </button>
-      )}
+
+        <div
+          className="grid transition-[grid-template-rows] duration-300 ease-in-out"
+          style={{ gridTemplateRows: isExpanded ? "1fr" : "0fr" }}
+        >
+          <div className="overflow-hidden">
+            <div
+              className={`rounded-[16px] rounded-tl-none border border-neutral-4 bg-primary-1 px-5 pt-5 pb-5 transition-opacity duration-300 ${isExpanded ? "opacity-100" : "opacity-0"}`}
+            >
+              <div
+                className={`prose prose-invert max-w-none prose-p:text-neutral-11 flex flex-col ${isContestCanceled ? "line-through" : ""}`}
+              >
+                {renderSection(contestSummary, false)}
+                {renderSection(contestEvaluate, true)}
+                {renderSection(contestContactDetails, true)}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

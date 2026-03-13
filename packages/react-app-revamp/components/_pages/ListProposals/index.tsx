@@ -12,7 +12,6 @@ import { useState } from "react";
 import useInfiniteScroll from "react-infinite-scroll-hook";
 import { useWallet } from "@hooks/useWallet";
 import { useShallow } from "zustand/shallow";
-import { useDescriptionExpansionStore } from "../Contest/components/Prompt/components/Page/components/Layout/V3/store";
 import { verifyEntryPreviewPrompt } from "../DialogModalSendProposal/utils";
 import ListProposalsContainer from "./container";
 import ListProposalsLoader from "./loader";
@@ -36,7 +35,6 @@ export const ListProposals = () => {
     listProposalsData,
   } = useProposalStore(state => state);
   const { contestAuthorEthereumAddress } = useContestStore(state => state);
-  const { expansionKey } = useDescriptionExpansionStore(state => state);
   const [deletingProposalIds, setDeletingProposalIds] = useState<string[]>([]);
   const [selectedProposalIds, setSelectedProposalIds] = useState<string[]>([]);
   const showDeleteButton = selectedProposalIds.length > 0 && !isDeleteInProcess;
@@ -106,7 +104,7 @@ export const ListProposals = () => {
 
   return (
     <>
-      <ListProposalsContainer enabledPreview={enabledPreview} recalculateKey={expansionKey}>
+      <ListProposalsContainer enabledPreview={enabledPreview}>
         {listProposalsData.map((proposal, index) => {
           if (deletingProposalIds.includes(proposal.id) && isDeleteInProcess) {
             return (
