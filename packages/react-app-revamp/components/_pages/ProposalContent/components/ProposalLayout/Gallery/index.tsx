@@ -3,7 +3,7 @@ import CustomLink from "@components/UI/Link";
 import { CheckIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { ContestStatus } from "@hooks/useContestStatus/store";
 import { EntryPreview } from "@hooks/useDeployContest/slices/contestMetadataSlice";
-import { formatNumberAbbreviated } from "@helpers/formatNumber";
+import { formatNumberWithCommas } from "@helpers/formatNumber";
 import { FC, useEffect, useState } from "react";
 import ProposalContentVotePrimary from "../../Buttons/Vote/Primary";
 import ImageWithFallback from "../../ImageWithFallback";
@@ -92,16 +92,16 @@ const ProposalLayoutGallery: FC<ProposalLayoutGalleryProps> = ({
 
         <div className="absolute top-1 left-2 right-2 flex items-center justify-between">
           <div>{proposal.rank ? <ProposalLayoutGalleryRankOrPlaceholder rank={proposal.rank} /> : null}</div>
-          <div className="flex flex-col items-end gap-0.5">
+          <div className="flex flex-col items-end gap-0.5" style={{ textShadow: "0 1px 4px rgba(0,0,0,0.9), 0 0 12px rgba(0,0,0,0.6)" }}>
             {imgTitle ? (
-              <p className="text-[12px] font-bold text-neutral-11 drop-shadow-[0_4px_4px_rgba(0,0,0,0.25)]">
+              <p className="text-[12px] font-bold text-neutral-11">
                 {imgTitle}
               </p>
             ) : null}
             {(contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed) &&
             proposal.votes > 0 ? (
-              <p className="text-[12px] text-neutral-11 drop-shadow-[0_4px_4px_rgba(0,0,0,0.25)]">
-                {formatNumberAbbreviated(proposal.votes)} votes
+              <p className="text-[12px] text-neutral-11">
+                {formatNumberWithCommas(proposal.votes)} votes
               </p>
             ) : null}
           </div>
@@ -127,7 +127,7 @@ const ProposalLayoutGallery: FC<ProposalLayoutGalleryProps> = ({
           </div>
         ) : null}
 
-        {contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed ? (
+        {contestStatus === ContestStatus.VotingOpen ? (
           <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2">
             <ProposalContentVotePrimary proposal={proposal} handleVotingModalOpen={onVotingDrawerOpen} />
           </div>

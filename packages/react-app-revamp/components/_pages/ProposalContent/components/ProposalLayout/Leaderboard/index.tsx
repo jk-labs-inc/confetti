@@ -3,7 +3,7 @@ import { Proposal } from "@components/_pages/ProposalContent";
 import { transform } from "@components/_pages/ProposalContent/utils/markdown";
 import CustomLink from "@components/UI/Link";
 import { toastInfo } from "@components/UI/Toast";
-import { formatNumberAbbreviated, getNumberWithSymbol } from "@helpers/formatNumber";
+import { getNumberWithSymbol } from "@helpers/formatNumber";
 import { ChatBubbleLeftEllipsisIcon, ChevronDownIcon, ChevronRightIcon, LinkIcon } from "@heroicons/react/24/outline";
 import { ContestStatus } from "@hooks/useContestStatus/store";
 import { Interweave } from "interweave";

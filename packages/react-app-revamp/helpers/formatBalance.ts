@@ -1,8 +1,24 @@
 import BigNumber from "bignumber.js";
-import { formatNumberAbbreviated } from "./formatNumber";
 
 // 1 billion
 const MIN_VALUE_FOR_ABBREVIATION = 1_000_000_000;
+
+function formatNumberAbbreviated(num: number): string {
+  const abbreviations = [
+    { value: 1e9, symbol: "b" },
+    { value: 1e6, symbol: "m" },
+    { value: 1e3, symbol: "k" },
+  ];
+
+  for (const { value, symbol } of abbreviations) {
+    if (num >= value) {
+      const formatted = parseFloat((num / value).toFixed(2)).toString();
+      return `${formatted}${symbol}`;
+    }
+  }
+
+  return num.toString();
+}
 
 /**
  * Converts a number to a fixed-point decimal string, never using scientific notation.

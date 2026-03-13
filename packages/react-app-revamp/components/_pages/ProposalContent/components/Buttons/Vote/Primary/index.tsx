@@ -1,5 +1,4 @@
 import { Proposal } from "@components/_pages/ProposalContent";
-import { formatNumberAbbreviated } from "@helpers/formatNumber";
 import { FC } from "react";
 
 interface ProposalContentVotePrimaryProps {

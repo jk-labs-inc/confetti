@@ -1,5 +1,6 @@
 import { CONTEST_TITLE_MAX_LENGTH } from "@components/_pages/Create/constants/length";
 import DialogModalV4 from "@components/UI/DialogModalV4";
+import ImageUpload from "@components/UI/ImageUpload";
 import { FC, useEffect, useState } from "react";
 import EditContestNameTextInput from "../TextInput";
 
@@ -8,6 +9,8 @@ interface EditContestNameModalProps {
   isOpen: boolean;
   setIsCloseModal: (isOpen: boolean) => void;
   handleEditContestName?: (value: string) => void;
+  showImageUpload?: boolean;
+  onImageSave?: (imageUrl: string) => void;
 }
 
 const EditContestNameModal: FC<EditContestNameModalProps> = ({
@@ -15,8 +18,11 @@ const EditContestNameModal: FC<EditContestNameModalProps> = ({
   isOpen,
   setIsCloseModal,
   handleEditContestName,
+  showImageUpload,
+  onImageSave,
 }) => {
   const [inputValue, setInputValue] = useState(contestName);
+  const [imageValue, setImageValue] = useState("");
   const [error, setError] = useState<string>("");
 
   useEffect(() => {
@@ -55,8 +61,14 @@ const EditContestNameModal: FC<EditContestNameModalProps> = ({
     }
 
     handleEditContestName?.(value);
+
+    if (imageValue && onImageSave) {
+      onImageSave(imageValue);
+    }
+
     setIsCloseModal(false);
     setInputValue("");
+    setImageValue("");
   };
 
   const onModalClose = () => {
@@ -86,6 +98,13 @@ const EditContestNameModal: FC<EditContestNameModalProps> = ({
             />
           </div>
         </div>
+
+        {showImageUpload && (
+          <div className="flex flex-col gap-4">
+            <p className="text-[24px] text-neutral-11 font-bold">add preview image</p>
+            <ImageUpload onImageLoad={setImageValue} />
+          </div>
+        )}
 
         <div className="flex flex-col gap-4">
           {error && <p className="text-[16px] text-negative-11 font-bold">{error}</p>}

@@ -1,4 +1,5 @@
 import { Proposal } from "@components/_pages/ProposalContent";
+import RankBadge from "@components/UI/RankBadge";
 import { FC } from "react";
 
 interface ProposalLayoutTweetRankOrPlaceholderProps {
@@ -17,7 +18,7 @@ const ProposalLayoutTweetRankOrPlaceholder: FC<ProposalLayoutTweetRankOrPlacehol
     if (medalSrc) {
       return <img src={medalSrc} alt={`Rank ${proposal.rank}`} className="w-10 h-10 object-contain" />;
     } else {
-      return <p className="text-[16px] text-neutral-11 font-bold">{proposal.rank}</p>;
+      return <RankBadge rank={proposal.rank} size="md" />;
     }
   }
 };

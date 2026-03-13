@@ -37,18 +37,15 @@ const ContestRewardsInfo: FC<ContestRewardsInfoProps> = ({ version }) => {
   if (isError || !isSuccess || isCanceled || isCancelError || !rewards || rewards.isBytecodeInvalid) return null;
 
   return (
-    <div className="flex items-baseline gap-1">
-      <span className="text-[24px]">💰</span>
-      <RewardsDisplay
-        rewardsModuleAddress={rewards.contractAddress as `0x${string}`}
-        rewardsAbi={rewards.abi as Abi}
-        chainId={chainId}
-        chainName={chainName}
-        rewards={rewards}
-        isRewardsModuleLoading={isLoading}
-        isRewardsModuleError={isError}
-      />
-    </div>
+    <RewardsDisplay
+      rewardsModuleAddress={rewards.contractAddress as `0x${string}`}
+      rewardsAbi={rewards.abi as Abi}
+      chainId={chainId}
+      chainName={chainName}
+      rewards={rewards}
+      isRewardsModuleLoading={isLoading}
+      isRewardsModuleError={isError}
+    />
   );
 };
 

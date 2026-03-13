@@ -13,6 +13,8 @@ interface ContestNameProps {
   contestName: string;
   canEditTitle: boolean;
   contestAuthorEthereumAddress?: string;
+  contestPrompt?: string;
+  contestImageUrl?: string;
 }
 
 const ContestName: FC<ContestNameProps> = ({
@@ -21,6 +23,8 @@ const ContestName: FC<ContestNameProps> = ({
   chainName,
   canEditTitle,
   contestAuthorEthereumAddress,
+  contestPrompt,
+  contestImageUrl,
 }) => {
   const { contestState } = useContestStateStore(state => state);
   const isContestCanceled = contestState === ContestStateEnum.Canceled;
@@ -35,7 +39,7 @@ const ContestName: FC<ContestNameProps> = ({
           {contestName}
         </p>
         <div className="flex items-center gap-2">
-          <EditContestName contestName={contestName} canEditTitle={canEditTitle} />
+          <EditContestName contestName={contestName} canEditTitle={canEditTitle} contestPrompt={contestPrompt} contestImageUrl={contestImageUrl} />
           <CancelContest />
         </div>
       </div>
@@ -45,7 +49,7 @@ const ContestName: FC<ContestNameProps> = ({
   return (
     <div className="flex items-baseline relative w-full">
       <div className="absolute left-0 -translate-x-full -ml-4 flex items-center gap-2 top-1/2 -translate-y-1/2">
-        <EditContestName contestName={contestName} canEditTitle={canEditTitle} />
+        <EditContestName contestName={contestName} canEditTitle={canEditTitle} contestPrompt={contestPrompt} contestImageUrl={contestImageUrl} />
         <CancelContest />
       </div>
       <div className="flex items-baseline gap-4">

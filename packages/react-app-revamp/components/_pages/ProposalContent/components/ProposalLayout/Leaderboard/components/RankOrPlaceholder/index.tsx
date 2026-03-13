@@ -1,4 +1,5 @@
 import { Proposal } from "@components/_pages/ProposalContent";
+import RankBadge from "@components/UI/RankBadge";
 import { ContestStatus } from "@hooks/useContestStatus/store";
 import { FC } from "react";
 
@@ -29,9 +30,14 @@ const ProposalLayoutLeaderboardRankOrPlaceholder: FC<ProposalLayoutLeaderboardRa
       );
     } else {
       return (
-        <div className="w-6 h-6 md:w-10 md:h-10 flex items-center justify-center">
-          <p className="text-[12px] md:text-[16px] text-neutral-11 font-bold">{proposal.rank}</p>
-        </div>
+        <>
+          <div className="block md:hidden">
+            <RankBadge rank={proposal.rank} size="sm" />
+          </div>
+          <div className="hidden md:block">
+            <RankBadge rank={proposal.rank} size="md" />
+          </div>
+        </>
       );
     }
   } else {

@@ -3,6 +3,8 @@ import { useContestStore } from "@hooks/useContest/store";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
 import useEditContestTitle from "@hooks/useEditContestTitle";
+import useEditContestPrompt from "@hooks/useEditContestPrompt";
+import { parsePrompt } from "../../../Prompt/utils";
 import { switchChain } from "@wagmi/core";
 import { FC, useState } from "react";
 import { useWallet } from "@hooks/useWallet";
@@ -13,9 +15,11 @@ import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 interface EditContestNameProps {
   contestName: string;
   canEditTitle: boolean;
+  contestPrompt?: string;
+  contestImageUrl?: string;
 }
 
-const EditContestName: FC<EditContestNameProps> = ({ contestName, canEditTitle }) => {
+const EditContestName: FC<EditContestNameProps> = ({ contestName, canEditTitle, contestPrompt, contestImageUrl }) => {
   const {
     userAddress,
     chain: { name: accountChain },
@@ -33,6 +37,11 @@ const EditContestName: FC<EditContestNameProps> = ({ contestName, canEditTitle }
     contestAbi: contestConfig.abi,
     contestAddress: contestConfig.address,
   });
+  const { editPrompt } = useEditContestPrompt({
+    contestAbi: contestConfig.abi,
+    contestAddress: contestConfig.address,
+  });
+  const showImageUpload = !contestImageUrl;
 
   if (!shouldRender) return null;
 
@@ -49,6 +58,25 @@ const EditContestName: FC<EditContestNameProps> = ({ contestName, canEditTitle }
     await editTitle(value);
   };
 
+  const handleImageSave = async (newImageUrl: string) => {
+    if (!contestConfig.chainId || !contestPrompt) return;
+
+    if (!isOnCorrectChain) {
+      await switchChain(getWagmiConfig(), { chainId: contestConfig.chainId });
+    }
+
+    const { contestSummary, contestEvaluate, contestContactDetails } = parsePrompt(contestPrompt);
+
+    const formattedPrompt = new URLSearchParams({
+      imageUrl: newImageUrl,
+      summarize: contestSummary,
+      evaluateVoters: contestEvaluate,
+      contactDetails: contestContactDetails,
+    }).toString();
+
+    await editPrompt(formattedPrompt);
+  };
+
   return (
     <>
       <button onClick={handleOpenModal}>
@@ -60,6 +88,8 @@ const EditContestName: FC<EditContestNameProps> = ({ contestName, canEditTitle }
         isOpen={isEditContestNameModalOpen}
         setIsCloseModal={setIsEditContestNameModalOpen}
         handleEditContestName={handleEditContestName}
+        showImageUpload={showImageUpload}
+        onImageSave={handleImageSave}
       />
     </>
   );

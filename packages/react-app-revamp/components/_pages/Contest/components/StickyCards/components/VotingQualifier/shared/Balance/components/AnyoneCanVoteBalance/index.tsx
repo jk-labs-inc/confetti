@@ -1,6 +1,6 @@
 import AddFundsModal from "@components/AddFunds/components/Modal";
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
-import { formatNumberAbbreviated } from "@helpers/formatNumber";
+import { formatNumberWithCommas } from "@helpers/formatNumber";
 import { useContestStore } from "@hooks/useContest/store";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import useDisplayPrice from "@hooks/useCurrency/useDisplayPrice";
@@ -114,7 +114,7 @@ const VotingQualifierAnyoneCanVoteBalance: FC<VotingQualifierAnyoneCanVoteBalanc
         nativeCurrencySymbol={contestConfig.chainNativeCurrencySymbol}
       />
       <span className="text-neutral-11 ml-1">
-        {formatNumberAbbreviated(currentUserAvailableVotesAmount)} vote
+        {formatNumberWithCommas(currentUserAvailableVotesAmount)} vote
         {currentUserAvailableVotesAmount === 1 ? "" : "s"}
       </span>
     </p>
