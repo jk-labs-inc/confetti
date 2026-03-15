@@ -1401,33 +1401,12 @@
     "@babel/helper-string-parser" "^7.27.1"
     "@babel/helper-validator-identifier" "^7.28.5"
 
-"@bigmi/client@^0.7.0":
-  version "0.7.0"
-  resolved "https://registry.yarnpkg.com/@bigmi/client/-/client-0.7.0.tgz#adaac94c3c80ca5565cc5d8ed0af4aa3d514e466"
-  integrity sha512-g/rcAccXE632eh3kXNgitQp2etrZDq41/Y4ZEfu3+9KbV4AcU3V4ZSiwlWlGMsAsxzfS7VXTHvcKOl9tt/gMjA==
-  dependencies:
-    "@bigmi/core" "^0.7.0"
-    eventemitter3 "^5.0.4"
-    zustand "^5.0.11"
-
 "@bigmi/client@^0.7.1":
   version "0.7.1"
   resolved "https://registry.yarnpkg.com/@bigmi/client/-/client-0.7.1.tgz#bd5617ec664f6b60b0c837e13208699bc61e7bd6"
   integrity sha512-48lwkyrfAfBwcuQEOX9ydmSSskkuKP4NAimmTacH8gjnRi7N8D6HGuXsk5Xyqh8thBZZhr76JZZBDorYwEtqfA==
   dependencies:
     "@bigmi/core" "^0.7.1"
-    eventemitter3 "^5.0.4"
-    zustand "^5.0.11"
-
-"@bigmi/core@^0.7.0":
-  version "0.7.0"
-  resolved "https://registry.yarnpkg.com/@bigmi/core/-/core-0.7.0.tgz#11113e18d19ba5b4e4f6982715cf777367531854"
-  integrity sha512-77br/G4rr4LFgLwYPQs/TZUlB/XVljgSrsseb0J6xCSs3DxomfnKQuKqTksN7IcwuDDEL22xBpyt9JZpoO+lQg==
-  dependencies:
-    "@noble/hashes" "^1.8.0"
-    bech32 "^2.0.0"
-    bitcoinjs-lib "^7.0.1"
-    bs58 "^6.0.0"
     eventemitter3 "^5.0.4"
     zustand "^5.0.11"
 
@@ -1443,13 +1422,13 @@
     eventemitter3 "^5.0.4"
     zustand "^5.0.11"
 
-"@bigmi/react@0.7.0":
-  version "0.7.0"
-  resolved "https://registry.yarnpkg.com/@bigmi/react/-/react-0.7.0.tgz#bcc44e6ac9693ad5c2ee1650f156c910b614df38"
-  integrity sha512-MetSxVx4VsdjKSyPZsNiMDwxvmdBgnOoA6t3+A/1yvqSnLBDWQsuEaxPl6FfhQlSmQ4AUj2rXjYySCqZGm02yQ==
+"@bigmi/react@0.7.1":
+  version "0.7.1"
+  resolved "https://registry.yarnpkg.com/@bigmi/react/-/react-0.7.1.tgz#3adcd6fcee6f09ee8682a6b9de289f53675556fa"
+  integrity sha512-TuF7GgBNNv4qTeSEZttEqztxzdf5UdENPHygJm8f8pTG09o6g/52DWZ2DP6win+Wra431dNm98kRFTzEUMC27Q==
   dependencies:
-    "@bigmi/client" "^0.7.0"
-    "@bigmi/core" "^0.7.0"
+    "@bigmi/client" "^0.7.1"
+    "@bigmi/core" "^0.7.1"
 
 "@bitcoinerlab/secp256k1@^1.2.0":
   version "1.2.0"
