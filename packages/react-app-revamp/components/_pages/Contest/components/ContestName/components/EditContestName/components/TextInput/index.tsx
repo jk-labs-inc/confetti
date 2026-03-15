@@ -23,9 +23,8 @@ const EditContestNameTextInput: FC<EditContestNameTextInputProps> = ({
         onChange={handleTextAreaChange}
         className="text-[24px] md:text-[31px] font-sabo-filled outline-none
         bg-transparent
-        text-transparent
+        text-neutral-11
         placeholder:text-neutral-10
-        not-placeholder-shown:bg-gradient-purple not-placeholder-shown:bg-clip-text
         w-full
         resize-none
         overflow-hidden
@@ -44,9 +43,8 @@ const EditContestNameTextInput: FC<EditContestNameTextInputProps> = ({
       onChange={handleInputChange}
       className="text-[24px] md:text-[31px] font-sabo-filled outline-none
       bg-transparent
-      text-transparent
+      text-neutral-11
       placeholder:text-neutral-10
-      not-placeholder-shown:bg-gradient-purple not-placeholder-shown:bg-clip-text
       w-full
       resize-none
       overflow-hidden

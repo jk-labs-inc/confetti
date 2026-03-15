@@ -33,7 +33,7 @@ const ContestTiming: FC<ContestTimingProps> = ({ contest }) => {
   const textColorClass = getTextColorClass(timing.format);
 
   return (
-    <div className="flex items-center gap-1">
+    <div className="flex items-baseline gap-1">
       ⏱️
       <p className={`text-xs ${textColorClass}`}>{timing.display}</p>
     </div>

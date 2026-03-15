@@ -6,7 +6,7 @@ import {
   toggleContentVisibility,
 } from "@components/_pages/ProposalContent/utils/contestVisibility";
 import { transform } from "@components/_pages/ProposalContent/utils/markdown";
-import { formatNumberAbbreviated } from "@helpers/formatNumber";
+import { formatNumberWithCommas } from "@helpers/formatNumber";
 import { loadFromLocalStorage } from "@helpers/localStorage";
 import { ChatBubbleLeftEllipsisIcon } from "@heroicons/react/24/outline";
 import { ContestStatus } from "@hooks/useContestStatus/store";
@@ -100,7 +100,7 @@ const ProposalLayoutClassic = ({
                 >
                   <img src="/contest/upvote.svg" width={21.56} height={20.44} alt="upvote" className="shrink-0" />
                   <p className="text-[16px] text-positive-11 font-bold grow text-center">
-                    {formatNumberAbbreviated(proposal.votes)} vote{proposal.votes !== 1 ? "s" : ""}
+                    {formatNumberWithCommas(proposal.votes)} vote{proposal.votes !== 1 ? "s" : ""}
                   </p>
                 </button>
               ) : (

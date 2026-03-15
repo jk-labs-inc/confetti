@@ -3,10 +3,10 @@ import CustomLink from "@components/UI/Link";
 import { CheckIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { ContestStatus } from "@hooks/useContestStatus/store";
 import { EntryPreview } from "@hooks/useDeployContest/slices/contestMetadataSlice";
+import { formatNumberWithCommas } from "@helpers/formatNumber";
 import { FC, useEffect, useState } from "react";
 import ProposalContentVotePrimary from "../../Buttons/Vote/Primary";
 import ImageWithFallback from "../../ImageWithFallback";
-import ProposalContentProfile from "../../Profile";
 import ProposalLayoutGalleryRankOrPlaceholder from "./components/RankOrPlaceholder";
 
 interface ProposalLayoutGalleryProps {
@@ -90,30 +90,20 @@ const ProposalLayoutGallery: FC<ProposalLayoutGalleryProps> = ({
       <div className="rounded-2xl overflow-hidden relative">
         <ImageWithFallback fullSrc={imgUrl} alt="entry image" />
 
-        {proposal.rank ? (
-          <div className="absolute top-1 left-2">
-            <ProposalLayoutGalleryRankOrPlaceholder rank={proposal.rank} />
-          </div>
-        ) : null}
-
-        <div className="absolute top-1 right-2">
-          <div className="flex flex-col gap-1">
+        <div className="absolute top-1 left-2 right-2 flex items-center justify-between">
+          <div>{proposal.rank ? <ProposalLayoutGalleryRankOrPlaceholder rank={proposal.rank} /> : null}</div>
+          <div className="flex flex-col items-end gap-0.5" style={{ textShadow: "0 1px 4px rgba(0,0,0,0.9), 0 0 12px rgba(0,0,0,0.6)" }}>
             {imgTitle ? (
-              <p className="text-[12px] font-bold text-neutral-11 drop-shadow-[0_4px_4px_rgba(0,0,0,0.25)]">
+              <p className="text-[12px] font-bold text-neutral-11">
                 {imgTitle}
               </p>
             ) : null}
-            <div className="self-end">
-              <ProposalContentProfile
-                name={proposalAuthorData.name}
-                avatar=""
-                isLoading={proposalAuthorData.isLoading}
-                isError={proposalAuthorData.isError}
-                textColor="text-neutral-15"
-                size="extraSmall"
-                dropShadow
-              />
-            </div>
+            {(contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed) &&
+            proposal.votes > 0 ? (
+              <p className="text-[12px] text-neutral-11">
+                {formatNumberWithCommas(proposal.votes)} votes
+              </p>
+            ) : null}
           </div>
         </div>
 
@@ -137,7 +127,7 @@ const ProposalLayoutGallery: FC<ProposalLayoutGalleryProps> = ({
           </div>
         ) : null}
 
-        {contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed ? (
+        {contestStatus === ContestStatus.VotingOpen ? (
           <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2">
             <ProposalContentVotePrimary proposal={proposal} handleVotingModalOpen={onVotingDrawerOpen} />
           </div>

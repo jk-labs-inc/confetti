@@ -86,31 +86,30 @@ const RewardsDisplay: FC<RewardsDisplayProps> = ({
     return null;
 
   return (
-    <>
-      <div className="hidden md:block h-4 w-[2px] bg-primary-2"></div>
-      <div className="flex items-baseline gap-1">
-        {displayCurrency === "usd" && totalUsd !== null ? (
-          <p className="text-neutral-11 text-[16px] md:text-[24px]">${totalUsd}</p>
-        ) : currentReward ? (
-          <AnimatePresence mode="wait">
-            <motion.p
-              key={`reward-${currentIndex}`}
-              className="text-neutral-11 text-[16px] md:text-[24px]"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ type: "spring", stiffness: 500, damping: 30, duration: 0.5 }}
-              style={{ willChange: "transform, opacity" }}
-            >
-              {formatBalance(currentReward.value)} <span className="text-[16px] uppercase">${currentReward.symbol}</span>
-            </motion.p>
-          </AnimatePresence>
-        ) : null}
-        <p className="text-[16px] text-neutral-11">
-          to <b>{rewards?.moduleType === ModuleType.VOTER_REWARDS ? "voters" : "entrants"}</b>
-        </p>
-      </div>
-    </>
+    <div className="flex items-baseline gap-1">
+      <span className="text-[24px]">💰</span>
+      {displayCurrency === "usd" && totalUsd !== null ? (
+        <p className="text-neutral-11 text-[16px] md:text-[24px]">${totalUsd}</p>
+      ) : currentReward ? (
+        <AnimatePresence mode="wait">
+          <motion.p
+            key={`reward-${currentIndex}`}
+            className="text-neutral-11 text-[16px] md:text-[24px]"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ type: "spring", stiffness: 500, damping: 30, duration: 0.5 }}
+            style={{ willChange: "transform, opacity" }}
+          >
+            {formatBalance(currentReward.value)}{" "}
+            <span className="text-[16px] uppercase">${currentReward.symbol}</span>
+          </motion.p>
+        </AnimatePresence>
+      ) : null}
+      <p className="text-[16px] text-neutral-11">
+        to <b>{rewards?.moduleType === ModuleType.VOTER_REWARDS ? "voters" : "entrants"}</b>
+      </p>
+    </div>
   );
 };
 
