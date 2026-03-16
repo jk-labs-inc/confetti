@@ -31,7 +31,7 @@ const ContestShareButton: FC<ContestShareButtonProps> = ({ contestName, contestA
   return (
     <Menu as="div" className="relative">
       <MenuButton
-        className={`flex items-center justify-center ${buttonSize} bg-gradient-metallic rounded-[40px]`}
+        className={`flex items-center justify-center ${buttonSize} bg-gradient-metallic rounded-[40px] focus:outline-none`}
         aria-label="Share contest"
       >
         <img src="/entry/share.svg" alt="share" className={iconSize} />
