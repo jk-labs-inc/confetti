@@ -19,7 +19,13 @@ interface MobileHeaderProps {
   contestVersion: string;
 }
 
-const MobileHeader: FC<MobileHeaderProps> = ({ contestName, contestAddress, chainName, contestAuthorEthereumAddress, contestVersion }) => {
+const MobileHeader: FC<MobileHeaderProps> = ({
+  contestName,
+  contestAddress,
+  chainName,
+  contestAuthorEthereumAddress,
+  contestVersion,
+}) => {
   const { contestState } = useContestStateStore(state => state);
   const isContestCanceled = contestState === ContestStateEnum.Canceled;
   const filteredLinks = useMemo(() => FOOTER_LINKS.filter(link => BURGER_MENU_LINKS.includes(link.label)), []);

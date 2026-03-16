@@ -91,7 +91,7 @@ const LivePriceDisplay = () => {
       {showTimer && (
         <div className="flex items-center gap-0.5">
           <ArrowLongUpIcon className="w-4 h-4 text-neutral-9" />
-          <p className="text-base text-neutral-9 font-bold">in {secondsUntilNextUpdate} seconds</p>
+          <p className="text-base text-neutral-9">in {secondsUntilNextUpdate} seconds</p>
         </div>
       )}
     </div>

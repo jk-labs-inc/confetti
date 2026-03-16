@@ -43,23 +43,25 @@ const DesktopHeader: FC<DesktopHeaderProps> = ({
           </div>
         )}
 
-        <ContestName
-          contestName={contestName}
-          contestAddress={contestAddress}
-          chainName={chainName}
-          canEditTitle={canEditTitle}
-          contestAuthorEthereumAddress={contestAuthorEthereumAddress}
-          contestPrompt={contestPrompt}
-          contestImageUrl={contestImageUrl}
-        />
+        <div className="flex flex-col gap-4">
+          <ContestName
+            contestName={contestName}
+            contestAddress={contestAddress}
+            chainName={chainName}
+            canEditTitle={canEditTitle}
+            contestAuthorEthereumAddress={contestAuthorEthereumAddress}
+            contestPrompt={contestPrompt}
+            contestImageUrl={contestImageUrl}
+          />
 
-        <div className="flex justify-between">
-          <ContestRewardsInfo version={contestVersion} />
-          <ContestTiming />
-          <ContestPriceCurve />
+          <div className="flex justify-between">
+            <ContestRewardsInfo version={contestVersion} />
+            <ContestTiming />
+            <ContestPriceCurve />
+          </div>
+
+          {isExpanded && <PriceCurveWrapper />}
         </div>
-
-        {isExpanded && <PriceCurveWrapper />}
       </div>
     </div>
   );
