@@ -21,28 +21,6 @@ export function formatNumberWithCommas(num: number): string {
 }
 
 /**
- * Converts a number to a more human-readable string format with abbreviations
- * @param num - The number to format
- * @return A string representing the formatted number
- */
-export function formatNumberAbbreviated(num: number): string {
-  const abbreviations = [
-    { value: 1e9, symbol: "b" },
-    { value: 1e6, symbol: "m" },
-    { value: 1e3, symbol: "k" },
-  ];
-
-  for (const { value, symbol } of abbreviations) {
-    if (num >= value) {
-      const formatted = parseFloat((num / value).toFixed(2)).toString();
-      return `${formatted}${symbol}`;
-    }
-  }
-
-  return num.toString();
-}
-
-/**
  * breaks down a number into a value and symbol for abbreviation
  * @param num - the number to format
  * @return an object with the formatted value and symbol

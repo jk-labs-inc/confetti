@@ -18,7 +18,7 @@ const InteractiveEntryCard: FC<InteractiveEntryCardProps> = ({
         <div className="absolute inset-x-0 top-0 h-10 bg-linear-to-b from-true-black/50 to-transparent pointer-events-none" />
 
         <div className="absolute top-1 left-1">
-          <img src="/contest/ranks/first.svg" alt="Rank 1" className="w-6 h-6 object-contain" />
+          <img src="/contest/gold-medal.png" alt="Rank 1" className="w-6 h-6 object-contain" />
         </div>
 
         <div className="absolute top-1 right-1">

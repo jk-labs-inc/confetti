@@ -1,4 +1,5 @@
 import { Proposal } from "@components/_pages/ProposalContent";
+import RankBadge from "@components/UI/RankBadge";
 import { ContestStatus } from "@hooks/useContestStatus/store";
 import { FC } from "react";
 
@@ -7,24 +8,36 @@ interface ProposalLayoutLeaderboardRankOrPlaceholderProps {
   contestStatus: ContestStatus;
 }
 
+const MEDAL_IMAGES: Record<number, string> = {
+  1: "/contest/gold-medal.png",
+  2: "/contest/silver-medal.png",
+  3: "/contest/bronze-medal.png",
+};
+
 const ProposalLayoutLeaderboardRankOrPlaceholder: FC<ProposalLayoutLeaderboardRankOrPlaceholderProps> = ({
   proposal,
   contestStatus,
 }) => {
   if (proposal.rank) {
-    if (proposal.rank === 1) {
+    const medalSrc = MEDAL_IMAGES[proposal.rank];
+    if (medalSrc) {
       return (
         <img
-          src="/contest/ranks/first.svg"
-          alt="Rank 1"
-          className="w-6 h-[29px] md:w-10 md:h-10 mt-[5px] object-contain"
+          src={medalSrc}
+          alt={`Rank ${proposal.rank}`}
+          className="w-6 h-6 md:w-10 md:h-10 object-contain"
         />
       );
     } else {
       return (
-        <div className="w-6 h-6 md:w-10 md:h-10 flex items-center justify-center">
-          <p className="text-[12px] md:text-[16px] text-neutral-11 font-bold">{proposal.rank}</p>
-        </div>
+        <>
+          <div className="block md:hidden">
+            <RankBadge rank={proposal.rank} size="sm" />
+          </div>
+          <div className="hidden md:block">
+            <RankBadge rank={proposal.rank} size="md" />
+          </div>
+        </>
       );
     }
   } else {

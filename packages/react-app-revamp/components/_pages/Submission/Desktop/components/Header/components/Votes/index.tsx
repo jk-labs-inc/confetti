@@ -1,4 +1,4 @@
-import { formatNumberAbbreviated } from "@helpers/formatNumber";
+import { formatNumberWithCommas } from "@helpers/formatNumber";
 import { ordinalize } from "@helpers/ordinalize";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import useProposalIdStore from "@hooks/useProposalId/store";
@@ -44,12 +44,12 @@ const SubmissionPageDesktopVotes = () => {
             </span>
             <span className="text-base"> | </span>
             <span className="text-xs">
-              {formatNumberAbbreviated(votes)} {votes === 1 ? "vote" : "votes"}
+              {formatNumberWithCommas(votes)} {votes === 1 ? "vote" : "votes"}
             </span>
           </>
         ) : (
           <span className="text-xs">
-            {formatNumberAbbreviated(votes)} {votes === 1 ? "vote" : "votes"}
+            {formatNumberWithCommas(votes)} {votes === 1 ? "vote" : "votes"}
           </span>
         )}
       </AnimatedVoteText>

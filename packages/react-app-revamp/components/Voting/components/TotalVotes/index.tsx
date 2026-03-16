@@ -1,5 +1,5 @@
 import { useVotingStore } from "@components/Voting/store";
-import { formatNumberAbbreviated } from "@helpers/formatNumber";
+import { formatNumberWithCommas } from "@helpers/formatNumber";
 import { useVotesFromInput } from "@hooks/useVotesFromInput";
 import { FC } from "react";
 import { useShallow } from "zustand/shallow";
@@ -22,7 +22,7 @@ const TotalVotes: FC<TotalVotesProps> = ({ costToVote, spendableBalance, isBelow
   return (
     <div className="flex items-center justify-between text-neutral-9 text-[16px]">
       <p>total votes</p>
-      <p className={`${votesColor} transition-colors duration-300`}>{formatNumberAbbreviated(totalVotes)}</p>
+      <p className={`${votesColor} transition-colors duration-300`}>{formatNumberWithCommas(totalVotes)}</p>
     </div>
   );
 };
