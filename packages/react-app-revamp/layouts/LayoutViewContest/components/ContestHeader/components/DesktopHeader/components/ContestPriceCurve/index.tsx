@@ -14,39 +14,52 @@ import { motion } from "motion/react";
 import { formatEther } from "viem";
 import { useShallow } from "zustand/shallow";
 
-const ContestPriceCurve = () => {
+interface ContestPriceCurveProps {
+  showChevron?: boolean;
+  compact?: boolean;
+}
+
+const ContestPriceCurve = ({ showChevron = true, compact = false }: ContestPriceCurveProps) => {
   const contestStatus = useContestStatusStore(useShallow(state => state.contestStatus));
   const isVotingOpen = contestStatus === ContestStatus.VotingOpen;
   const { isExpanded, setIsExpanded } = usePriceCurveChartStore();
 
   if (isVotingOpen) {
     return (
-      <div className="flex items-center gap-1 whitespace-nowrap">
+      <div className="flex items-baseline gap-1 whitespace-nowrap">
         <span className="text-2xl">📈</span>
-        <LivePriceDisplay />
-        <button onClick={() => setIsExpanded(!isExpanded)} className="flex items-center justify-center w-6 h-6 ml-2">
-          <motion.div animate={{ rotate: isExpanded ? 180 : 0 }} transition={{ duration: 0.2, ease: "easeInOut" }}>
-            <ChevronDownIcon className="w-5 h-5 text-neutral-9" />
-          </motion.div>
-        </button>
+        <div className="flex items-center gap-2">
+          <LivePriceDisplay compact={compact} />
+          {showChevron && (
+            <button onClick={() => setIsExpanded(!isExpanded)}>
+              <motion.div animate={{ rotate: isExpanded ? 180 : 0 }} transition={{ duration: 0.2, ease: "easeInOut" }}>
+                <ChevronDownIcon className="w-5 h-5 text-neutral-9" />
+              </motion.div>
+            </button>
+          )}
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="flex items-center gap-1 whitespace-nowrap">
+    <div className="flex items-baseline gap-1 whitespace-nowrap">
       <span className="text-2xl">📈</span>
-      <PriceRangeDisplay />
-      <button onClick={() => setIsExpanded(!isExpanded)} className="flex items-center justify-center w-6 h-6 ml-2">
-        <motion.div animate={{ rotate: isExpanded ? 180 : 0 }} transition={{ duration: 0.2, ease: "easeInOut" }}>
-          <ChevronDownIcon className="w-5 h-5 text-neutral-9 mt-1" />
-        </motion.div>
-      </button>
+      <div className="flex items-center gap-2">
+        <PriceRangeDisplay compact={compact} />
+        {showChevron && (
+          <button onClick={() => setIsExpanded(!isExpanded)}>
+            <motion.div animate={{ rotate: isExpanded ? 180 : 0 }} transition={{ duration: 0.2, ease: "easeInOut" }}>
+              <ChevronDownIcon className="w-5 h-5 text-neutral-9" />
+            </motion.div>
+          </button>
+        )}
+      </div>
     </div>
   );
 };
 
-const LivePriceDisplay = () => {
+const LivePriceDisplay = ({ compact = false }: { compact?: boolean }) => {
   const { contestConfig } = useContestConfigStore(useShallow(state => state));
   const { votesClose, charge, getTotalVotingMinutes } = useContestStore(
     useShallow(state => ({
@@ -88,7 +101,7 @@ const LivePriceDisplay = () => {
   return (
     <div className="flex items-center gap-0.5">
       <p className="text-[16px] text-neutral-9 font-bold">{priceText}/vote</p>
-      {showTimer && (
+      {!compact && showTimer && (
         <div className="flex items-center gap-0.5">
           <ArrowLongUpIcon className="w-4 h-4 text-neutral-9" />
           <p className="text-base text-neutral-9">in {secondsUntilNextUpdate} seconds</p>
@@ -98,7 +111,7 @@ const LivePriceDisplay = () => {
   );
 };
 
-const PriceRangeDisplay = () => {
+const PriceRangeDisplay = ({ compact = false }: { compact?: boolean }) => {
   const { contestConfig } = useContestConfigStore(useShallow(state => state));
   const { costToVote } = useContestStore(useShallow(state => ({ costToVote: state.charge.costToVote })));
 
@@ -121,8 +134,9 @@ const PriceRangeDisplay = () => {
 
   return (
     <p className="text-base text-neutral-9 font-bold">
-      {isUsd ? `$${startDisplay} → $${endDisplay}` : `${startDisplay} → ${endDisplay} ${displaySymbol}`}
-      /vote
+      {compact
+        ? `${isUsd ? `$${startDisplay}` : `${startDisplay} ${displaySymbol}`}/vote`
+        : `${isUsd ? `$${startDisplay} → $${endDisplay}` : `${startDisplay} → ${endDisplay} ${displaySymbol}`}/vote`}
     </p>
   );
 };

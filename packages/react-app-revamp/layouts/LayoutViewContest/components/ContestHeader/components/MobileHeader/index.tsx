@@ -3,6 +3,7 @@ import CurrencyToggle from "@components/Header/CurrencyToggle";
 import UserProfileDisplay from "@components/UI/UserProfileDisplay";
 import ContestShareButton from "@components/_pages/Contest/components/ContestShareButton";
 import ContestRewardsInfo from "@components/_pages/Contest/components/RewardsInfo";
+import ContestPriceCurve from "../DesktopHeader/components/ContestPriceCurve";
 import ContestTiming from "../DesktopHeader/components/ContestTiming";
 import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
 import { FOOTER_LINKS } from "@config/links";
@@ -81,7 +82,8 @@ const MobileHeader: FC<MobileHeaderProps> = ({
 
         <div className="flex items-center gap-4 justify-between">
           <ContestRewardsInfo version={contestVersion} />
-          <ContestTiming />
+          <ContestTiming compact />
+          <ContestPriceCurve showChevron={false} compact />
         </div>
       </div>
     </div>

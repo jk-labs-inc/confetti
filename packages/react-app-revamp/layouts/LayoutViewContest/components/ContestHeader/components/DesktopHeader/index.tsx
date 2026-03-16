@@ -75,7 +75,7 @@ const DesktopHeader: FC<DesktopHeaderProps> = ({
             contestImageUrl={contestImageUrl}
           />
 
-          <div className={`flex ${hasRewards ? "justify-between" : "gap-8"}`}>
+          <div className={`flex items-baseline ${hasRewards ? "justify-between" : "gap-8"}`}>
             <ContestRewardsInfo version={contestVersion} />
             <ContestTiming />
             <ContestPriceCurve />

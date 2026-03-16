@@ -4,20 +4,24 @@ import { useCountdownTimer } from "@hooks/useTimer";
 import moment from "moment";
 import { useMemo } from "react";
 
-const formatCountdown = (totalSeconds: number): string => {
+const formatCountdown = (totalSeconds: number, compact = false): string => {
   const hours = Math.floor(totalSeconds / 3600);
   const minutes = Math.floor((totalSeconds % 3600) / 60);
   const seconds = totalSeconds % 60;
 
+  const h = compact ? "h" : "hr";
+  const m = compact ? "m" : "min";
+  const s = compact ? "s" : "sec";
+
   if (hours > 0) {
-    return `${hours} hr ${minutes} min ${seconds} sec`;
+    return `${hours}${h} ${minutes}${m} ${seconds}${s}`;
   }
 
   if (minutes > 0) {
-    return `${minutes} min ${seconds} sec`;
+    return `${minutes}${m} ${seconds}${s}`;
   }
 
-  return `${seconds} sec`;
+  return `${seconds}${s}`;
 };
 
 const formatTimeWindow = (
@@ -52,7 +56,11 @@ const formatTimeWindow = (
   return { display: `${startHour}${startPeriod}-${endHour}${endPeriod}`, spansMultipleDays: false };
 };
 
-const ContestTiming = () => {
+interface ContestTimingProps {
+  compact?: boolean;
+}
+
+const ContestTiming = ({ compact = false }: ContestTimingProps) => {
   const { votesOpen, votesClose } = useContestStore(state => state);
   const { contestState } = useContestStateStore(state => state);
   const isCanceled = contestState === ContestStateEnum.Canceled;
@@ -69,7 +77,7 @@ const ContestTiming = () => {
 
     // Voting open — show countdown
     if (now.isSameOrAfter(voteStart) && now.isBefore(end)) {
-      return { text: formatCountdown(votingTimeLeft), dimmed: false };
+      return { text: formatCountdown(votingTimeLeft, compact), dimmed: false };
     }
 
     // Voting not yet open — show date/time like landing page
