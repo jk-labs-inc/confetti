@@ -28,14 +28,13 @@ const CreateContestConfirmDescription: FC<CreateContestConfirmDescriptionProps> 
   const shouldShowReadMore = fullText.length > characterLimit;
   const displayText = !isExpanded && shouldShowReadMore ? fullText.slice(0, characterLimit) + "..." : fullText;
 
-  const renderSection = (content: string, showDivider: boolean) => {
+  const renderSection = (content: string, isFirst: boolean) => {
     if (!content) return null;
 
     return (
-      <>
-        {showDivider && <div className="bg-linear-to-r from-neutral-7 w-full h-px my-6" />}
-        <Interweave content={content} matchers={[new UrlMatcher("url")]} />
-      </>
+      <div className={isFirst ? "" : "mt-6"}>
+        <Interweave content={`~ ${content}`} matchers={[new UrlMatcher("url")]} />
+      </div>
     );
   };
 
@@ -54,9 +53,9 @@ const CreateContestConfirmDescription: FC<CreateContestConfirmDescriptionProps> 
               <div className="prose prose-invert flex flex-col text-neutral-11 transition-color duration-300">
                 {isExpanded ? (
                   <>
-                    {renderSection(prompt.summarize, false)}
-                    {renderSection(prompt.evaluateVoters, true)}
-                    {renderSection(prompt.contactDetails || "", true)}
+                    {renderSection(prompt.summarize, true)}
+                    {renderSection(prompt.evaluateVoters, false)}
+                    {renderSection(prompt.contactDetails || "", false)}
                   </>
                 ) : (
                   <Interweave content={displayText} matchers={[new UrlMatcher("url")]} />

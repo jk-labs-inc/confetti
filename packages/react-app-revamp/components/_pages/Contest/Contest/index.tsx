@@ -34,7 +34,7 @@ const ContestTab = () => {
 
   return (
     <div className="animate-fade-in">
-      <div className="mt-4 md:mt-6">
+      <div className="mt-6">
         <div className="flex flex-col gap-6">
           {isContestCanceled ? (
             <div className="flex">
@@ -51,20 +51,14 @@ const ContestTab = () => {
         </div>
       </div>
       {contestStatus === ContestStatus.SubmissionOpen && (
-        <div className="fixed z-50 bottom-20 left-0 right-0 flex w-full justify-center md:justify-normal md:static md:mt-8">
+        <div className="fixed z-50 bottom-20 left-0 right-0 flex w-full justify-center md:justify-normal md:static md:mt-8 md:mb-8">
           {renderSubmitButton()}
         </div>
       )}
       {isMobile && <ContestStickyCards />}
 
-      <div className={`mt-4 ${isInPwaMode ? "mb-12" : "mb-0"}`}>
+      <div className={`mt-6 ${isInPwaMode ? "mb-12" : "mb-0"}`}>
         <div className="flex flex-col gap-2">
-          {contestStatus !== ContestStatus.ContestOpen && !isContestLoading && (
-            <div className="flex items-center gap-12 pb-4 ">
-              <EntryPreviewTitleToggle />
-            </div>
-          )}
-
           {!isContestLoading && !isListProposalsLoading && isContestSuccess && isListProposalsSuccess && (
             <div className="animate-fade-in">
               <ListProposals />

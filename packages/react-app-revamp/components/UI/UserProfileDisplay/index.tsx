@@ -12,11 +12,14 @@ interface UserProfileDisplayProps {
   ethereumAddress: string;
   shortenOnFallback: boolean;
   textColor?: string;
+  byTextColor?: string;
   size?: "extraSmall" | "compact" | "small" | "medium" | "large";
   textualVersion?: boolean;
   avatarVersion?: boolean;
   includeSocials?: boolean;
   showBy?: boolean;
+  hideAvatar?: boolean;
+  hideCopy?: boolean;
 }
 
 export { SIZES };
@@ -27,9 +30,12 @@ const UserProfileDisplay = ({
   ethereumAddress,
   includeSocials,
   textColor,
+  byTextColor,
   shortenOnFallback,
   size = "small",
   showBy = true,
+  hideAvatar = false,
+  hideCopy = false,
 }: UserProfileDisplayProps) => {
   const { profileName, profileAvatar, socials, isLoading } = useProfileData(
     ethereumAddress,
@@ -54,6 +60,7 @@ const UserProfileDisplay = ({
         profileName={profileName}
         size={size}
         textColor={textColor}
+        byTextColor={byTextColor}
         showBy={showBy}
         target="_blank"
       />
@@ -77,7 +84,7 @@ const UserProfileDisplay = ({
         textColor || "text-neutral-11"
       } font-bold`}
     >
-      <Avatar src={profileAvatar} size={size} />
+      {!hideAvatar && <Avatar src={profileAvatar} size={size} />}
 
       {isLoading ? (
         <p className={`${textSizeClass} animate-flicker-infinite`}>Loading profile data</p>
@@ -89,17 +96,19 @@ const UserProfileDisplay = ({
               profileName={profileName}
               size={size}
               textColor={textColor}
+              byTextColor={byTextColor}
+              showBy={showBy}
               asLink={!includeSocials}
               target="_blank"
             />
 
-            {isAddressCopied ? (
+            {!hideCopy && (isAddressCopied ? (
               <CheckCircleIcon className="w-4 h-4 text-positive-11" />
             ) : (
               <button className="flex lg:hidden items-center gap-1" onClick={copyToClipboard}>
                 <img src="/icons/copy.svg" alt="link" className="w-4 h-4" />
               </button>
-            )}
+            ))}
           </div>
 
           {includeSocials && socials ? (

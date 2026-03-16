@@ -15,7 +15,7 @@ const ProposalLayoutGalleryRankOrPlaceholder: FC<ProposalLayoutGalleryRankOrPlac
   if (rank === 0) return null;
 
   const medalSrc = MEDAL_IMAGES[rank];
-  if (medalSrc) return <img src={medalSrc} alt={`Rank ${rank}`} className="w-10 h-10 object-contain" />;
+  if (medalSrc) return <img src={medalSrc} alt={`Rank ${rank}`} className="w-12 h-12 object-contain" />;
 
   return <RankBadge rank={rank} size="md" />;
 };

@@ -4,7 +4,6 @@ import ContestImage from "@components/_pages/Contest/components/ContestImage";
 import EditContestImage from "@components/_pages/Contest/components/ContestImage/components/EditContestImage";
 import ContestName from "@components/_pages/Contest/components/ContestName";
 import ContestRewardsInfo from "@components/_pages/Contest/components/RewardsInfo";
-import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import { FC } from "react";
 import ContestPriceCurve from "./components/ContestPriceCurve";
 import ContestTiming from "./components/ContestTiming";
@@ -31,8 +30,6 @@ const DesktopHeader: FC<DesktopHeaderProps> = ({
   contestVersion,
 }) => {
   const { isExpanded } = usePriceCurveChartStore();
-  const contestStatus = useContestStatusStore(state => state.contestStatus);
-  const isVotingClosed = contestStatus === ContestStatus.VotingClosed;
 
   return (
     <div className="animate-fade-in">
@@ -56,7 +53,7 @@ const DesktopHeader: FC<DesktopHeaderProps> = ({
           contestImageUrl={contestImageUrl}
         />
 
-        <div className={`flex ${isVotingClosed ? "gap-8" : "justify-between"}`}>
+        <div className="flex justify-between">
           <ContestRewardsInfo version={contestVersion} />
           <ContestTiming />
           <ContestPriceCurve />

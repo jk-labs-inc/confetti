@@ -39,17 +39,15 @@ const ContestPromptModalV3Layout: FC<ContestPromptModalV3LayoutProps> = ({
           <Collapsible isOpen={isPromptOpen}>
             <div className="border-l border-true-white ">
               <div className="prose prose-invert pl-5 text-neutral-9">
-                <Interweave content={contestSummary} matchers={[new UrlMatcher("url")]} />
+                <Interweave content={`~ ${contestSummary}`} matchers={[new UrlMatcher("url")]} />
                 {contestEvaluate ? (
-                  <div>
-                    <div className="bg-linear-to-r from-neutral-7 w-full h-px my-6"></div>
-                    <Interweave content={contestEvaluate} matchers={[new UrlMatcher("url")]} />
+                  <div className="mt-6">
+                    <Interweave content={`~ ${contestEvaluate}`} matchers={[new UrlMatcher("url")]} />
                   </div>
                 ) : null}
                 {contestContactDetails ? (
-                  <div>
-                    <div className="bg-linear-to-r from-neutral-7 w-full h-px my-6"></div>
-                    <Interweave content={contestContactDetails} matchers={[new UrlMatcher("url")]} />
+                  <div className="mt-6">
+                    <Interweave content={`~ ${contestContactDetails}`} matchers={[new UrlMatcher("url")]} />
                   </div>
                 ) : null}
               </div>

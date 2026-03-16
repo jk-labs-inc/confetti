@@ -8,6 +8,7 @@ export interface UserProfileNameProps {
   profileName: string;
   size?: SizeType;
   textColor?: string;
+  byTextColor?: string;
   asLink?: boolean;
   showBy?: boolean;
   target?: "_blank" | "_self";
@@ -19,6 +20,7 @@ export const UserProfileName: FC<UserProfileNameProps> = ({
   profileName,
   size = "small",
   textColor,
+  byTextColor,
   asLink = true,
   showBy = false,
   target = "_blank",
@@ -26,21 +28,30 @@ export const UserProfileName: FC<UserProfileNameProps> = ({
 }) => {
   const { textSizeClass } = SIZES[size];
   const textColorClass = textColor || "text-neutral-11";
-  const displayText = showBy ? `by ${profileName}` : profileName;
+  const byColorClass = byTextColor || textColorClass;
 
-  if (!asLink) {
-    return <span className={`${textSizeClass} font-bold ${textColorClass} ${className}`}>{displayText}</span>;
-  }
-
-  return (
+  const nameContent = asLink ? (
     <CustomLink
       className={`${textSizeClass} font-bold ${textColorClass} no-underline ${className}`}
       target={target}
       href={`${ROUTE_VIEW_USER.replace("[address]", ethereumAddress)}`}
     >
-      {displayText}
+      {profileName}
     </CustomLink>
+  ) : (
+    <span className={`${textSizeClass} font-bold ${textColorClass} ${className}`}>{profileName}</span>
   );
+
+  if (showBy) {
+    return (
+      <span className="flex items-center gap-1">
+        <span className={`${textSizeClass} font-bold ${byColorClass}`}>by</span>
+        {nameContent}
+      </span>
+    );
+  }
+
+  return nameContent;
 };
 
 export default UserProfileName;

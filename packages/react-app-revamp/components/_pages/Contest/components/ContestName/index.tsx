@@ -1,11 +1,12 @@
 import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
 import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
+import { ROUTE_VIEW_USER } from "@config/routes";
 import { FC } from "react";
 import { useMediaQuery } from "react-responsive";
 import CancelContest from "../CancelContest";
+import ContestShareButton from "../ContestShareButton";
 import EditContestName from "./components/EditContestName";
-import { motion } from "motion/react";
-import Image from "next/image";
+import CustomLink from "@components/UI/Link";
 
 interface ContestNameProps {
   contestAddress: string;
@@ -54,25 +55,23 @@ const ContestName: FC<ContestNameProps> = ({
       </div>
       <div className="flex items-baseline gap-4">
         <p
-          className={`text-[20px] md:text-[32px] text-neutral-11 font-sabo-filled ${isContestCanceled ? "line-through" : ""}`}
+          className={`text-neutral-11 font-sabo-filled ${contestName.length > 20 ? "text-[20px] md:text-[28px]" : "text-[20px] md:text-[32px]"} ${isContestCanceled ? "line-through" : ""}`}
         >
           {contestName}
         </p>
         {contestAuthorEthereumAddress && (
-          <p className="text-[16px] text-positive-11 whitespace-nowrap">
-            by {shortenEthereumAddress(contestAuthorEthereumAddress)}
+          <p className="text-[16px] whitespace-nowrap">
+            <span className="text-neutral-11">by </span>
+            <CustomLink
+              className="text-positive-11 no-underline"
+              href={ROUTE_VIEW_USER.replace("[address]", contestAuthorEthereumAddress)}
+              target="_blank"
+            >
+              {shortenEthereumAddress(contestAuthorEthereumAddress)}
+            </CustomLink>
           </p>
         )}
-        <motion.button
-          className="flex items-center justify-center w-12 h-8 bg-gradient-metallic rounded-[40px]"
-          whileTap={{ scale: 0.95 }}
-          style={{ willChange: "transform" }}
-          //TODO: add handle share functionality
-          // onClick={handleShare}
-          aria-label="Share entry"
-        >
-          <Image src="/entry/share.svg" alt="share" width={16} height={16} />
-        </motion.button>
+        <ContestShareButton contestName={contestName} contestAddress={contestAddress} chainName={chainName} />
       </div>
     </div>
   );

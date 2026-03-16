@@ -20,17 +20,15 @@ const CreateFlowPromptPreview: FC<CreateFlowPromptPreviewProps> = ({ summarize, 
 
   return (
     <div className="prose prose-invert flex flex-col">
-      <Interweave content={summarize.content} matchers={[new UrlMatcher("url")]} />
+      <Interweave content={`~ ${summarize.content}`} matchers={[new UrlMatcher("url")]} />
       {!evaluateVoters.isEmpty && (
-        <>
-          <div className="bg-linear-to-r from-neutral-7 w-full h-px my-6"></div>
-          <Interweave content={evaluateVoters.content} matchers={[new UrlMatcher("url")]} />
-        </>
+        <div className="mt-6">
+          <Interweave content={`~ ${evaluateVoters.content}`} matchers={[new UrlMatcher("url")]} />
+        </div>
       )}
       {!contactDetails.isEmpty && (
-        <div>
-          <div className="bg-linear-to-r from-neutral-7 w-full h-px my-6"></div>
-          <Interweave content={contactDetails.content} matchers={[new UrlMatcher("url")]} />
+        <div className="mt-6">
+          <Interweave content={`~ ${contactDetails.content}`} matchers={[new UrlMatcher("url")]} />
         </div>
       )}
     </div>

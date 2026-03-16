@@ -17,19 +17,16 @@ import { useShallow } from "zustand/shallow";
 const ContestPriceCurve = () => {
   const contestStatus = useContestStatusStore(useShallow(state => state.contestStatus));
   const isVotingOpen = contestStatus === ContestStatus.VotingOpen;
-  const isVotingClosed = contestStatus === ContestStatus.VotingClosed;
   const { isExpanded, setIsExpanded } = usePriceCurveChartStore();
-
-  if (isVotingClosed) return null;
 
   if (isVotingOpen) {
     return (
-      <div className="flex items-baseline gap-1">
+      <div className="flex items-center gap-1 whitespace-nowrap">
         <span className="text-2xl">📈</span>
         <LivePriceDisplay />
         <button onClick={() => setIsExpanded(!isExpanded)} className="flex items-center justify-center w-6 h-6 ml-2">
           <motion.div animate={{ rotate: isExpanded ? 180 : 0 }} transition={{ duration: 0.2, ease: "easeInOut" }}>
-            <ChevronDownIcon className="w-5 h-5 text-neutral-9 mt-1" />
+            <ChevronDownIcon className="w-5 h-5 text-neutral-9" />
           </motion.div>
         </button>
       </div>
@@ -37,7 +34,7 @@ const ContestPriceCurve = () => {
   }
 
   return (
-    <div className="flex items-center gap-1">
+    <div className="flex items-center gap-1 whitespace-nowrap">
       <span className="text-2xl">📈</span>
       <PriceRangeDisplay />
       <button onClick={() => setIsExpanded(!isExpanded)} className="flex items-center justify-center w-6 h-6 ml-2">
