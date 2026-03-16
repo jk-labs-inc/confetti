@@ -46,7 +46,7 @@ const ContestShareButton: FC<ContestShareButtonProps> = ({ contestName, contestA
         leaveFrom="transform opacity-100 scale-100"
         leaveTo="transform opacity-0 scale-95"
       >
-        <MenuItems className="absolute right-0 z-10 mt-2 w-52 origin-top-right rounded-md bg-true-black shadow-sort-proposal-dropdown focus:outline-none">
+        <MenuItems className="absolute right-0 z-50 mt-2 w-52 origin-top-right rounded-md bg-true-black shadow-sort-proposal-dropdown focus:outline-none">
           <MenuItem>
             {({ focus, close }) => (
               <a
