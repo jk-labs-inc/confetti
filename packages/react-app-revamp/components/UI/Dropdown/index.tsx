@@ -1,7 +1,7 @@
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import useScrollFade from "@hooks/useScrollFade";
-import { FC, useEffect, useRef, useState } from "react";
+import { FC, useCallback, useEffect, useRef, useState } from "react";
 
 export interface Option {
   label: string;
@@ -34,6 +34,22 @@ const Dropdown: FC<DropdownProps> = ({
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const { maskImageStyle } = useScrollFade(scrollContainerRef, options.length, [options, isMenuOpen]);
 
+  const scrollRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      scrollContainerRef.current = node;
+      if (node) {
+        const selectedIndex = options.findIndex(opt => opt.label === selectedOption);
+        if (selectedIndex > 0) {
+          const item = node.children[selectedIndex] as HTMLElement | undefined;
+          if (item) {
+            node.scrollTop = item.offsetTop - node.offsetTop;
+          }
+        }
+      }
+    },
+    [selectedOption, options],
+  );
+
   useEffect(() => {
     setSelectedOption(defaultValue);
     const option = options.find(opt => opt.label === defaultValue);
@@ -56,7 +72,7 @@ const Dropdown: FC<DropdownProps> = ({
         return (
           <>
             <MenuButton
-              className={`${menuButtonWidth} flex items-center gap-2 justify-between rounded-lg bg-secondary-1 p-4 h-10 text-[16px] text-neutral-11 font-bold border border-neutral-17 focus:not-data-focus:outline-none data-focus:outline data-focus:outline-white data-hover:border-neutral-9 transition-all duration-200 ease-in-out`}
+              className={`${menuButtonWidth} flex items-center gap-2 justify-between rounded-lg bg-secondary-1 p-4 h-10 text-xl text-neutral-11 font-bold border border-neutral-17 focus:not-data-focus:outline-none data-focus:outline data-focus:outline-white data-hover:border-neutral-9 transition-all duration-200 ease-in-out`}
             >
               <div className="flex items-center gap-2">
                 {selectedImage && (
@@ -74,10 +90,10 @@ const Dropdown: FC<DropdownProps> = ({
             <MenuItems
               transition
               anchor="bottom end"
-              className={`${menuItemsWidth} origin-top-right rounded-lg border border-neutral-17 bg-secondary-1 text-[16px] text-neutral-11 transition duration-100 ease-out [--anchor-gap:--spacing(2)] focus:outline-none data-closed:scale-95 data-closed:opacity-0`}
+              className={`${menuItemsWidth} origin-top-right rounded-lg border border-neutral-17 bg-secondary-1 text-base text-neutral-11 transition duration-100 ease-out [--anchor-gap:--spacing(2)] focus:outline-none data-closed:scale-95 data-closed:opacity-0`}
             >
               <div
-                ref={scrollContainerRef}
+                ref={scrollRef}
                 style={{
                   maskImage: maskImageStyle,
                   WebkitMaskImage: maskImageStyle,

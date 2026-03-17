@@ -1,8 +1,7 @@
-import { Period } from "@hooks/useDeployContest/slices/contestTimingSlice";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
+import { formatHourLabel } from "@hooks/useDeployContest/slices/helpers/optionGenerators";
 import moment from "moment";
 import { useShallow } from "zustand/shallow";
-import PeriodSelector from "../PeriodSelector";
 import CreateContestTimingDaySelector from "../Selectors/DaySelector";
 import CreateContestTimingHourSelector from "../Selectors/HourSelector";
 import CreateContestTimingMonthSelector from "../Selectors/MonthSelector";
@@ -30,7 +29,7 @@ const CreateContestTimingVotingOpens = () => {
   const dayOptions = getVotingOpenDayOptions();
   const hourOptions = getVotingOpenHourOptions();
   const monthLabel = moment().month(votingOpen.month).format("MMMM");
-  const hourLabel = `${votingOpen.hour}:00`;
+  const hourLabel = formatHourLabel(votingOpen.hour);
   const daysUntilVotingOpens = moment(getVotingOpenDate()).diff(moment(), "days");
   const shouldShowWeekRecommendation = daysUntilVotingOpens < 5;
 
@@ -44,10 +43,6 @@ const CreateContestTimingVotingOpens = () => {
 
   const handleHourChange = (hourValue: string) => {
     updateVotingOpen({ hour: parseInt(hourValue) });
-  };
-
-  const handlePeriodChange = (period: Period) => {
-    updateVotingOpen({ period });
   };
 
   return (
@@ -65,7 +60,6 @@ const CreateContestTimingVotingOpens = () => {
           onChange={handleDayChange}
         />
         <CreateContestTimingHourSelector hours={hourOptions} defaultValue={hourLabel} onChange={handleHourChange} />
-        <PeriodSelector value={votingOpen.period} onChange={handlePeriodChange} layoutId="voting-open-period" />
         {shouldShowWeekRecommendation && (
           <p className="text-[16px] text-neutral-9 italic animate-fade-in">
             there might not be time to market the <br />

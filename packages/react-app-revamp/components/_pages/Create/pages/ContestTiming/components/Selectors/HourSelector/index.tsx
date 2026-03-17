@@ -25,8 +25,8 @@ const CreateContestTimingHourSelector: FC<CreateContestTimingHourSelectorProps> 
     <div className="flex items-center gap-4">
       <Dropdown
         options={hours}
-        menuButtonWidth="w-[120px]"
-        menuItemsWidth="w-[120px]"
+        menuButtonWidth="w-[160px]"
+        menuItemsWidth="w-[160px]"
         onChange={onChange}
         defaultValue={defaultValue}
       />

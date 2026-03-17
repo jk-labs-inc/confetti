@@ -1,6 +1,5 @@
 import moment from "moment";
 import { TimingOption } from "../contestTimingSlice";
-import { TimingDetails, createDateFromTiming } from "./dateHelpers";
 
 export const generateVotingOpenMonthOptions = (): TimingOption[] => {
   const now = moment();
@@ -43,57 +42,19 @@ export const generateVotingOpenDayOptions = (votingOpenMonth: number): TimingOpt
   return days;
 };
 
-export const generateHourOptions = (): TimingOption[] => {
-  const hours: TimingOption[] = [];
-  for (let i = 1; i <= 12; i++) {
-    hours.push({
-      label: `${i}:00`,
-      value: i.toString(),
-    });
-  }
-  return hours;
+export const formatHourLabel = (hour24: number): string => {
+  if (hour24 === 0) return "12:00 am";
+  if (hour24 < 12) return `${hour24}:00 am`;
+  if (hour24 === 12) return "12:00 pm";
+  return `${hour24 - 12}:00 pm`;
 };
 
-export const generateVotingCloseMonthOptions = (votingOpen: TimingDetails): TimingOption[] => {
-  const votingOpenDate = moment(createDateFromTiming(votingOpen));
-  const oneDayAfter = votingOpenDate.clone().add(1, "day");
-  const months: TimingOption[] = [];
-  const monthsSet = new Set<number>();
+export const HOUR_OPTIONS: TimingOption[] = Array.from({ length: 24 }, (_, i) => ({
+  label: formatHourLabel(i),
+  value: i.toString(),
+}));
 
-  let current = votingOpenDate.clone();
-  while (current.isSameOrBefore(oneDayAfter)) {
-    const monthNum = current.month();
-    if (!monthsSet.has(monthNum)) {
-      monthsSet.add(monthNum);
-      months.push({
-        label: current.format("MMMM"),
-        value: monthNum.toString(),
-      });
-    }
-    current.add(1, "day");
-  }
-
-  return months;
-};
-
-export const generateVotingCloseDayOptions = (votingOpen: TimingDetails, votingCloseMonth: number): TimingOption[] => {
-  const votingOpenDate = moment(createDateFromTiming(votingOpen));
-  const oneDayAfter = votingOpenDate.clone().add(1, "day");
-  const days: TimingOption[] = [];
-
-  let current = votingOpenDate.clone();
-  while (current.isSameOrBefore(oneDayAfter)) {
-    if (current.month() === votingCloseMonth) {
-      const dayNum = current.date();
-      if (!days.find(d => d.value === dayNum.toString())) {
-        days.push({
-          label: current.format("D"),
-          value: dayNum.toString(),
-        });
-      }
-    }
-    current.add(1, "hour");
-  }
-
-  return days;
-};
+export const DURATION_OPTIONS: TimingOption[] = Array.from({ length: 6 }, (_, i) => ({
+  label: i === 0 ? "1 hour" : `${i + 1} hours`,
+  value: (i + 1).toString(),
+}));
