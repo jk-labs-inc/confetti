@@ -3,9 +3,8 @@ import { TimingDetails, createDateFromTiming, convertDateToTimingDetails } from 
 import {
   generateVotingOpenMonthOptions,
   generateVotingOpenDayOptions,
-  generateHourOptions,
-  generateVotingCloseMonthOptions,
-  generateVotingCloseDayOptions,
+  HOUR_OPTIONS,
+  DURATION_OPTIONS,
 } from "./helpers/optionGenerators";
 
 export enum Period {
@@ -21,23 +20,20 @@ export interface TimingOption {
 export interface ContestTimingSliceState {
   submissionOpen: Date;
   votingOpen: TimingDetails;
-  votingClose: TimingDetails;
+  votingDuration: number;
 }
 
 export interface ContestTimingSliceActions {
   setSubmissionOpen: (submissionOpen: Date) => void;
   updateVotingOpen: (updates: Partial<TimingDetails>) => void;
-  updateVotingClose: (updates: Partial<TimingDetails>) => void;
   setVotingOpen: (date: Date) => void;
-  setVotingClose: (date: Date) => void;
+  setVotingDuration: (hours: number) => void;
   getVotingOpenDate: () => Date;
   getVotingCloseDate: () => Date;
   getVotingOpenMonthOptions: () => TimingOption[];
   getVotingOpenDayOptions: () => TimingOption[];
   getVotingOpenHourOptions: () => TimingOption[];
-  getVotingCloseMonthOptions: () => TimingOption[];
-  getVotingCloseDayOptions: () => TimingOption[];
-  getVotingCloseHourOptions: () => TimingOption[];
+  getDurationOptions: () => TimingOption[];
   validateTiming: () => { isValid: boolean; error: string | null };
 }
 
@@ -58,14 +54,10 @@ export const createContestTimingSlice = (set: any, get: any): ContestTimingSlice
 
   const initialVotingOpen: TimingDetails = convertDateToTimingDetails(initialVotingOpenDate.toDate());
 
-  // Voting closes defaults to 2 hours after voting opens
-  const initialVotingCloseDate = initialVotingOpenDate.clone().add(2, "hours");
-  const initialVotingClose: TimingDetails = convertDateToTimingDetails(initialVotingCloseDate.toDate());
-
   return {
     submissionOpen: initialSubmissionOpen,
     votingOpen: initialVotingOpen,
-    votingClose: initialVotingClose,
+    votingDuration: 2,
 
     setSubmissionOpen: (submissionOpen: Date) => set({ submissionOpen }),
 
@@ -73,61 +65,17 @@ export const createContestTimingSlice = (set: any, get: any): ContestTimingSlice
       const state = get();
       const newVotingOpen = { ...state.votingOpen, ...updates };
 
-      // If month changed, validate the day is still available and sync VotingClose
+      // If month changed, validate the day is still available
       if (updates.month !== undefined && updates.month !== state.votingOpen.month) {
         const availableDays = generateVotingOpenDayOptions(updates.month);
         const currentDayIsValid = availableDays.some(d => parseInt(d.value) === newVotingOpen.day);
 
-        // If current day is not available, set to first available day
         if (!currentDayIsValid && availableDays.length > 0) {
           newVotingOpen.day = parseInt(availableDays[0].value);
         }
-
-        // Calculate new close date by adding 2 hours to the new voting open date
-        const newVotingOpenDate = moment(createDateFromTiming(newVotingOpen));
-        const newVotingCloseDate = newVotingOpenDate.clone().add(2, "hours");
-        const updatedVotingClose = convertDateToTimingDetails(newVotingCloseDate.toDate());
-
-        set({ votingOpen: newVotingOpen, votingClose: updatedVotingClose });
-        return;
       }
 
-      // For other changes (day, hour, period), just update VotingOpen
-      // Let validation errors show if VotingClose becomes invalid
       set({ votingOpen: newVotingOpen });
-    },
-
-    updateVotingClose: (updates: Partial<TimingDetails>) => {
-      const state = get();
-      const newVotingClose = { ...state.votingClose, ...updates };
-
-      // If month changed, validate the day is still available
-      if (updates.month !== undefined && updates.month !== state.votingClose.month) {
-        const availableDays = generateVotingCloseDayOptions(state.votingOpen, updates.month);
-        const currentDayIsValid = availableDays.some(d => parseInt(d.value) === newVotingClose.day);
-
-        // If current day is not available, set to first available day
-        if (!currentDayIsValid && availableDays.length > 0) {
-          newVotingClose.day = parseInt(availableDays[0].value);
-        }
-      }
-
-      // Special case: If user selects 12:00 AM (midnight), check if it should resolve to next day
-      const isMidnight = newVotingClose.hour === 12 && newVotingClose.period === Period.AM;
-      if (isMidnight) {
-        const votingOpenDate = createDateFromTiming(state.votingOpen);
-        const votingCloseDate = createDateFromTiming(newVotingClose);
-
-        // If midnight would be before or equal to open date, move it to next day
-        if (votingCloseDate <= votingOpenDate) {
-          const adjustedCloseDate = moment(votingCloseDate).add(1, "day");
-          const adjustedVotingClose = convertDateToTimingDetails(adjustedCloseDate.toDate());
-          set({ votingClose: adjustedVotingClose });
-          return;
-        }
-      }
-
-      set({ votingClose: newVotingClose });
     },
 
     setVotingOpen: (date: Date) => {
@@ -135,9 +83,8 @@ export const createContestTimingSlice = (set: any, get: any): ContestTimingSlice
       set({ votingOpen: timingDetails });
     },
 
-    setVotingClose: (date: Date) => {
-      const timingDetails = convertDateToTimingDetails(date);
-      set({ votingClose: timingDetails });
+    setVotingDuration: (hours: number) => {
+      set({ votingDuration: hours });
     },
 
     getVotingOpenDate: () => {
@@ -147,7 +94,8 @@ export const createContestTimingSlice = (set: any, get: any): ContestTimingSlice
 
     getVotingCloseDate: () => {
       const state = get();
-      return createDateFromTiming(state.votingClose);
+      const votingOpenDate = createDateFromTiming(state.votingOpen);
+      return new Date(votingOpenDate.getTime() + state.votingDuration * 3600000);
     },
 
     getVotingOpenMonthOptions: () => generateVotingOpenMonthOptions(),
@@ -157,55 +105,19 @@ export const createContestTimingSlice = (set: any, get: any): ContestTimingSlice
       return generateVotingOpenDayOptions(state.votingOpen.month);
     },
 
-    getVotingOpenHourOptions: () => generateHourOptions(),
+    getVotingOpenHourOptions: () => HOUR_OPTIONS,
 
-    getVotingCloseMonthOptions: () => {
-      const state = get();
-      return generateVotingCloseMonthOptions(state.votingOpen);
-    },
-
-    getVotingCloseDayOptions: () => {
-      const state = get();
-      return generateVotingCloseDayOptions(state.votingOpen, state.votingClose.month);
-    },
-
-    getVotingCloseHourOptions: () => generateHourOptions(),
+    getDurationOptions: () => DURATION_OPTIONS,
 
     validateTiming: () => {
       const state = get();
       const votingOpenDate = createDateFromTiming(state.votingOpen);
-      const votingCloseDate = createDateFromTiming(state.votingClose);
       const now = new Date();
 
       if (votingOpenDate <= now) {
         return {
           isValid: false,
           error: "Voting open time must be in the future",
-        };
-      }
-
-      if (votingCloseDate <= votingOpenDate) {
-        return {
-          isValid: false,
-          error: "Voting close must be after voting open",
-        };
-      }
-
-      const durationMs = votingCloseDate.getTime() - votingOpenDate.getTime();
-      const minDurationMs = 30 * 60 * 1000; // 30 minutes
-      if (durationMs < minDurationMs) {
-        return {
-          isValid: false,
-          error: "Voting period must be at least 30 minutes",
-        };
-      }
-
-      // Check maximum voting duration (24 hours based on current limit)
-      const maxDurationMs = 24 * 60 * 60 * 1000; // 24 hours
-      if (durationMs > maxDurationMs) {
-        return {
-          isValid: false,
-          error: "Voting period must be under 24 hours",
         };
       }
 
