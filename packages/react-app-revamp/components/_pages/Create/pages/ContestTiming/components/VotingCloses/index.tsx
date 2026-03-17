@@ -1,71 +1,50 @@
-import { Period } from "@hooks/useDeployContest/slices/contestTimingSlice";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
-import moment from "moment";
+import { useMediaQuery } from "react-responsive";
 import { useShallow } from "zustand/shallow";
-import PeriodSelector from "../PeriodSelector";
-import CreateContestTimingDaySelector from "../Selectors/DaySelector";
-import CreateContestTimingHourSelector from "../Selectors/HourSelector";
-import CreateContestTimingMonthSelector from "../Selectors/MonthSelector";
+import Dropdown from "@components/UI/Dropdown";
+import MobileSelector from "../Selectors/MobileSelector";
 
-const CreateContestTimingVotingCloses = () => {
-  const {
-    votingClose,
-    updateVotingClose,
-    getVotingCloseMonthOptions,
-    getVotingCloseDayOptions,
-    getVotingCloseHourOptions,
-  } = useDeployContestStore(
+const CreateContestTimingDuration = () => {
+  const { votingDuration, setVotingDuration, getDurationOptions } = useDeployContestStore(
     useShallow(state => ({
-      votingClose: state.votingClose,
-      updateVotingClose: state.updateVotingClose,
-      getVotingCloseMonthOptions: state.getVotingCloseMonthOptions,
-      getVotingCloseDayOptions: state.getVotingCloseDayOptions,
-      getVotingCloseHourOptions: state.getVotingCloseHourOptions,
+      votingDuration: state.votingDuration,
+      setVotingDuration: state.setVotingDuration,
+      getDurationOptions: state.getDurationOptions,
     })),
   );
 
-  const monthOptions = getVotingCloseMonthOptions();
-  const dayOptions = getVotingCloseDayOptions();
-  const hourOptions = getVotingCloseHourOptions();
+  const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
+  const durationOptions = getDurationOptions();
+  const durationLabel = votingDuration === 1 ? "1 hour" : `${votingDuration} hours`;
 
-  const monthLabel = moment().month(votingClose.month).format("MMMM");
-  const hourLabel = `${votingClose.hour}:00`;
-
-  const handleMonthChange = (monthValue: string) => {
-    updateVotingClose({ month: parseInt(monthValue) });
-  };
-
-  const handleDayChange = (dayValue: string) => {
-    updateVotingClose({ day: parseInt(dayValue) });
-  };
-
-  const handleHourChange = (hourValue: string) => {
-    updateVotingClose({ hour: parseInt(hourValue) });
-  };
-
-  const handlePeriodChange = (period: Period) => {
-    updateVotingClose({ period });
+  const handleDurationChange = (value: string) => {
+    setVotingDuration(parseInt(value));
   };
 
   return (
     <div className="flex flex-col gap-4 pl-6">
-      <p className="text-base font-bold text-neutral-9 uppercase">voting closes</p>
+      <p className="text-base font-bold text-neutral-9 uppercase">duration</p>
       <div className="flex flex-wrap items-center gap-4">
-        <CreateContestTimingMonthSelector
-          months={monthOptions}
-          defaultValue={monthLabel}
-          onChange={handleMonthChange}
-        />
-        <CreateContestTimingDaySelector
-          days={dayOptions}
-          defaultValue={votingClose.day.toString()}
-          onChange={handleDayChange}
-        />
-        <CreateContestTimingHourSelector hours={hourOptions} defaultValue={hourLabel} onChange={handleHourChange} />
-        <PeriodSelector value={votingClose.period} onChange={handlePeriodChange} layoutId="voting-close-period" />
+        {isMobile ? (
+          <MobileSelector
+            label="Select Duration"
+            value={durationLabel}
+            options={durationOptions}
+            onChange={handleDurationChange}
+            width="w-[160px]"
+          />
+        ) : (
+          <Dropdown
+            options={durationOptions}
+            menuButtonWidth="w-[160px]"
+            menuItemsWidth="w-[160px]"
+            onChange={handleDurationChange}
+            defaultValue={durationLabel}
+          />
+        )}
       </div>
     </div>
   );
 };
 
-export default CreateContestTimingVotingCloses;
+export default CreateContestTimingDuration;

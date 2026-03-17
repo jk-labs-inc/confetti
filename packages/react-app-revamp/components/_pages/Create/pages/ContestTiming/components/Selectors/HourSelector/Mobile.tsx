@@ -15,7 +15,7 @@ const MobileHourSelector: FC<MobileHourSelectorProps> = ({ hours, onChange, defa
       value={defaultValue}
       options={hours}
       onChange={onChange || (() => {})}
-      width="w-[120px]"
+      width="w-[160px]"
     />
   );
 };
