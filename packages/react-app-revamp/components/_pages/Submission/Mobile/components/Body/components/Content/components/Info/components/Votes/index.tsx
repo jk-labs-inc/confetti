@@ -1,4 +1,4 @@
-import { formatNumberAbbreviated } from "@helpers/formatNumber";
+import { formatNumberWithCommas } from "@helpers/formatNumber";
 import ordinalize from "@helpers/ordinalize";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import useProposalIdStore from "@hooks/useProposalId/store";
@@ -46,7 +46,7 @@ const SubmissionPageMobileBodyContentInfoVotes = () => {
         </>
       )}
       <p className="text-[16px] font-bold text-neutral-9">
-        {formatNumberAbbreviated(votes)} {votes === 1 ? "vote" : "votes"}
+        {formatNumberWithCommas(votes)} {votes === 1 ? "vote" : "votes"}
       </p>
     </div>
   );

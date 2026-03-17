@@ -16,24 +16,15 @@ const ContestStickyCards = () => {
   const isContestCanceled = contestState === ContestStateEnum.Canceled;
   const votingTimeLeft = useCountdownTimer(votesClose);
 
-  if (isContestCanceled || contestStatus === ContestStatus.VotingClosed) {
-    return (
-      <div className="mt-8">
-        <hr className="border-primary-2 border" />
-      </div>
-    );
-  }
-
   return (
     <div className="flex flex-col">
-      <div className="flex flex-col bg-true-black sticky -top-px z-10 mt-8">
+      <div className="hidden md:flex flex-col bg-true-black sticky -top-px z-10 mt-8">
         <div className="flex gap-4 py-4">
           <ContestCountdown votingTimeLeft={votingTimeLeft} />
           <VotingContestQualifier votingTimeLeft={votingTimeLeft} />
         </div>
       </div>
       {isExpanded && <PriceCurveWrapper />}
-      <hr className="border-primary-2 border" />
     </div>
   );
 };

@@ -6,11 +6,12 @@ import ReactDOM from "react-dom";
 type BurgerMenuProps = {
   children: React.ReactNode;
   className?: string;
+  iconClassName?: string;
   onOpen?: () => void;
   onClose?: () => void;
 };
 
-const BurgerMenu = ({ children, className, onOpen, onClose }: BurgerMenuProps) => {
+const BurgerMenu = ({ children, className, iconClassName = "h-8 w-8", onOpen, onClose }: BurgerMenuProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const initialFocusRef = useRef(null);
 
@@ -68,7 +69,7 @@ const BurgerMenu = ({ children, className, onOpen, onClose }: BurgerMenuProps) =
 
   return (
     <>
-      <Bars3Icon className="h-[26px] w-[26px]" onClick={onMenuOpen} aria-label="Open menu" />
+      <Bars3Icon className={iconClassName} onClick={onMenuOpen} aria-label="Open menu" />
       {typeof window !== "undefined" && ReactDOM.createPortal(menuContent, document.body)}
     </>
   );

@@ -2,7 +2,7 @@ import { Proposal } from "@components/_pages/ProposalContent";
 import ProposalContentDeleteButton from "@components/_pages/ProposalContent/components/Buttons/Delete";
 import ProposalContentProfile from "@components/_pages/ProposalContent/components/Profile";
 import CustomLink from "@components/UI/Link";
-import { formatNumberAbbreviated } from "@helpers/formatNumber";
+import { formatNumberWithCommas } from "@helpers/formatNumber";
 import { ChatBubbleLeftEllipsisIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import { ContestStatus } from "@hooks/useContestStatus/store";
 import { useRouter } from "next/navigation";
@@ -89,7 +89,7 @@ const ProposalLayoutLeaderboardMobile: FC<ProposalLayoutLeaderboardMobileProps> 
               className="min-w-12 shrink-0 h-6 p-2 flex items-center justify-between gap-2 bg-gradient-vote rounded-[16px] cursor-pointer text-true-black"
             >
               <img src="/contest/upvote-mobile.svg" width={11} height={15} alt="upvote" className="shrink-0" />
-              <p className="text-[16px] font-bold grow text-center">{formatNumberAbbreviated(proposal.votes)}</p>
+              <p className="text-[16px] font-bold grow text-center">{formatNumberWithCommas(proposal.votes)}</p>
             </button>
           ) : null}
         </div>
