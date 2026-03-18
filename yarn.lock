@@ -6824,12 +6824,12 @@
   resolved "https://registry.yarnpkg.com/@vanilla-extract/recipes/-/recipes-0.5.7.tgz#6677a267ca278e2277ac8ab41b64e57e84c1150c"
   integrity sha512-Fvr+htdyb6LVUu+PhH61UFPhwkjgDEk8L4Zq9oIdte42sntpKrgFy90MyTRtGwjVALmrJ0pwRUVr8UoByYeW8A==
 
-"@vercel/build-utils@13.8.0":
-  version "13.8.0"
-  resolved "https://registry.yarnpkg.com/@vercel/build-utils/-/build-utils-13.8.0.tgz#ed62e64f05ce143284d2b12b25299fe344d9a662"
-  integrity sha512-moQS4Qd0pvluPd6WRTHxLN3Hh0oSObVNdFv3V0spiEmCk/wm6571up3n1th2PQFqf1a3gheNfxzL7h4I9CWs2A==
+"@vercel/build-utils@13.8.1":
+  version "13.8.1"
+  resolved "https://registry.yarnpkg.com/@vercel/build-utils/-/build-utils-13.8.1.tgz#0cd382c85253f128f3cf149e6e0a9b5be31c51f3"
+  integrity sha512-FTz29f8NvUA9SiAT9yIkd3O5cAcRD+aA9s9nnYkxRbQ50zjI6DCNDjluL0ggsbeQk/VgfSysWKQnb6STNGl82A==
   dependencies:
-    "@vercel/python-analysis" "0.9.1"
+    "@vercel/python-analysis" "0.10.0"
 
 "@vercel/error-utils@2.0.3":
   version "2.0.3"
@@ -6854,16 +6854,16 @@
     picomatch "^4.0.2"
     resolve-from "^5.0.0"
 
-"@vercel/node@5.6.15":
-  version "5.6.15"
-  resolved "https://registry.yarnpkg.com/@vercel/node/-/node-5.6.15.tgz#9b9064a3154b19a36b81d89f4cbd18a80ad77afb"
-  integrity sha512-xc5fxmdk8jtuUY8y9/8W5UhTn8R1Ii1Fb3q+V8Zv+2moU9enrrBADA9ercHgE0/DtoiNDpb9Wmvnrb4bUcFOzA==
+"@vercel/node@5.6.16":
+  version "5.6.16"
+  resolved "https://registry.yarnpkg.com/@vercel/node/-/node-5.6.16.tgz#eace48bc8932b5b184f480a91bc7786dc9afd520"
+  integrity sha512-CwSgFL7To7cupRoXypdwAOdgnZ9m9a6Wa6Goz49VcCoGhABvfBL5SGPQb75K8hEkGeYswTXI9rrRLxLxylBokg==
   dependencies:
     "@edge-runtime/node-utils" "2.3.0"
     "@edge-runtime/primitives" "4.1.0"
     "@edge-runtime/vm" "3.2.0"
     "@types/node" "20.11.0"
-    "@vercel/build-utils" "13.8.0"
+    "@vercel/build-utils" "13.8.1"
     "@vercel/error-utils" "2.0.3"
     "@vercel/nft" "1.1.1"
     "@vercel/static-config" "3.2.0"
@@ -6882,17 +6882,16 @@
     typescript "npm:typescript@5.9.3"
     undici "5.28.4"
 
-"@vercel/python-analysis@0.9.1":
-  version "0.9.1"
-  resolved "https://registry.yarnpkg.com/@vercel/python-analysis/-/python-analysis-0.9.1.tgz#1e9081934294f7d6730a585d28307a3e3f3d0420"
-  integrity sha512-ZwEi/F2DPxFPYmfjHFy7qM3+JTWRxD1EMpbIotNNhUyd/pnIG0wNt7S73RJSx62n1Y7pmFOFowoImnhULQgKvA==
+"@vercel/python-analysis@0.10.0":
+  version "0.10.0"
+  resolved "https://registry.yarnpkg.com/@vercel/python-analysis/-/python-analysis-0.10.0.tgz#f9aac5432f2aed07869fd4d51d3564bff0d9d283"
+  integrity sha512-eT6A2uOcXcksisTYn5MLP1ydyXV3qr8wL7rtt8UDaSHR4F4c8jDG7j02Oqj9RM8KbI5t99AX6wPuanvqidW7MA==
   dependencies:
     "@bytecodealliance/preview2-shim" "0.17.6"
     "@renovatebot/pep440" "4.2.1"
     fs-extra "11.1.1"
     js-yaml "4.1.1"
     minimatch "10.1.1"
-    pip-requirements-js "1.0.3"
     smol-toml "1.5.2"
     zod "3.22.4"
 
@@ -11581,11 +11580,6 @@ ofetch@^1.5.1:
     node-fetch-native "^1.6.7"
     ufo "^1.6.1"
 
-ohm-js@^17.1.0:
-  version "17.5.0"
-  resolved "https://registry.yarnpkg.com/ohm-js/-/ohm-js-17.5.0.tgz#7c9c97620e9b7d1e704632497537f3223edbf56c"
-  integrity sha512-l4Sa7026+6jsvYbt0PXKmL+f+ML32fD++IznLgxDhx2t9Cx6NC7zwRqblCujPHGGmkQerHoeBzRutdxaw/S72g==
-
 on-exit-leak-free@^2.1.0:
   version "2.1.2"
   resolved "https://registry.yarnpkg.com/on-exit-leak-free/-/on-exit-leak-free-2.1.2.tgz#fed195c9ebddb7d9e4c3842f93f281ac8dadd3b8"
@@ -11900,13 +11894,6 @@ pino@10.0.0:
     slow-redact "^0.3.0"
     sonic-boom "^4.0.1"
     thread-stream "^3.0.0"
-
-pip-requirements-js@1.0.3:
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/pip-requirements-js/-/pip-requirements-js-1.0.3.tgz#a435a189697f53c804af88ef99b2871696e33a29"
-  integrity sha512-1O9Bx0mPOZht3tW4LuxOA46qkD8A1AGymWXz3UwIMqGQgiTiOaFptsCf+9IE67qcbBrg8KHG6l8ePF7CoFRW/A==
-  dependencies:
-    ohm-js "^17.1.0"
 
 pkg-dir@^4.1.0:
   version "4.2.0"
