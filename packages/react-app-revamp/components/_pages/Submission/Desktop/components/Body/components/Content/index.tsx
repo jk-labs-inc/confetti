@@ -41,7 +41,6 @@ const SubmissionPageDesktopBodyContent = () => {
         <div className="flex items-center gap-3 px-6 pt-2 pb-4">
           <SubmissionPageDesktopVotes />
           <SubmissionPageDesktopHeaderShare />
-          <SubmissionPageDesktopEntryNavigation />
           <div className="ml-auto">
             <SubmissionDelete />
           </div>
@@ -76,7 +75,12 @@ const SubmissionPageDesktopBodyContent = () => {
         </div>
       </div>
 
-      <SubmissionPageDesktopBodyContentDescription description={proposalStaticData.description} />
+      <div className="relative flex-1">
+        <SubmissionPageDesktopBodyContentDescription description={proposalStaticData.description} />
+        <div className="absolute bottom-4 right-6">
+          <SubmissionPageDesktopEntryNavigation />
+        </div>
+      </div>
     </div>
   );
 };

@@ -1,5 +1,6 @@
 import { generateUrlSubmissions } from "@helpers/share";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
+import { ShareIcon } from "@heroicons/react/24/solid";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import useProposalIdStore from "@hooks/useProposalId/store";
 import useNavigateProposals from "@components/_pages/Submission/hooks/useNavigateProposals";
@@ -29,7 +30,7 @@ const SubmissionPageMobileHeader = () => {
           className="flex items-center bg-true-black rounded-full border-neutral-11 border overflow-hidden w-8 h-8 cursor-pointer"
           onClick={handleShare}
         >
-          <img src="/forward.svg" alt="share" className="object-cover m-auto" width={15} height={13} />
+          <ShareIcon className="w-4 h-4 text-neutral-11 m-auto" />
         </button>
       </div>
     </>
