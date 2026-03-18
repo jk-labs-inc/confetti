@@ -15,6 +15,7 @@ import { ContestStatus } from "@hooks/useContestStatus/store";
 import { Interweave } from "interweave";
 import { UrlMatcher } from "interweave-autolink";
 import { usePathname } from "next/navigation";
+import { ShareIcon } from "@heroicons/react/24/solid";
 import { FC, ReactNode } from "react";
 import { ProposalState } from "@components/_pages/Submission/types";
 
@@ -157,7 +158,7 @@ const ContestProposal: FC<ContestProposalProps> = ({
               })
             }
           >
-            <img src="/forward.svg" alt="share" className="object-cover m-auto" width={15} height={13} />
+            <ShareIcon className="w-4 h-4 text-neutral-11 m-auto" />
           </div>
         </div>
       ) : null}

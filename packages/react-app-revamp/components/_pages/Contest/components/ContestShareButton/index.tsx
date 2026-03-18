@@ -1,6 +1,7 @@
 import { Menu, MenuButton, MenuItem, MenuItems, Transition } from "@headlessui/react";
 import { generateTwitterShareUrlForContest, generateUrlToCopy } from "@helpers/share";
 import { CheckIcon, DocumentDuplicateIcon } from "@heroicons/react/24/outline";
+import { ShareIcon } from "@heroicons/react/24/solid";
 import { FC, Fragment, useEffect, useState } from "react";
 
 interface ContestShareButtonProps {
@@ -34,7 +35,7 @@ const ContestShareButton: FC<ContestShareButtonProps> = ({ contestName, contestA
         className={`flex items-center justify-center ${buttonSize} bg-gradient-metallic rounded-[40px] focus:outline-none`}
         aria-label="Share contest"
       >
-        <img src="/entry/share.svg" alt="share" className={iconSize} />
+        <ShareIcon className={`${iconSize} text-true-black`} />
       </MenuButton>
 
       <Transition
