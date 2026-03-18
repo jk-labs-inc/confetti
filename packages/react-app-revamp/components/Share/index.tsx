@@ -7,6 +7,7 @@ import {
   generateUrlToCopy,
 } from "@helpers/share";
 import { CheckIcon, DocumentDuplicateIcon } from "@heroicons/react/24/outline";
+import { ShareIcon } from "@heroicons/react/24/solid";
 import { FC, Fragment, useEffect, useState } from "react";
 
 function classNames(...classes: string[]) {
@@ -41,13 +42,13 @@ const ShareDropdown: FC<ShareDropdownProps> = ({ contestName, contestAddress, ch
     <Menu as="div" className="hidden relative md:inline-block text-left">
       <MediaQuery maxWidth={768}>
         <MenuButton className="w-8 h-8 flex items-center rounded-[10px] border border-neutral-11">
-          <img src="/forward.svg" alt="share" className="m-auto" width={15} height={13} />
+          <ShareIcon className="w-4 h-4 text-neutral-11 m-auto" />
         </MenuButton>
       </MediaQuery>
       <MediaQuery minWidth={769}>
         <MenuButton className="p-2 h-8 flex items-center gap-2 text-neutral-11 text-[16px] font-bold rounded-[10px] border border-neutral-11">
           <p className="text-neutral-11 text-[16px] font-bold">share</p>
-          <img src="/forward.svg" alt="share" className="ml-1" width={16} height={16} />
+          <ShareIcon className="w-4 h-4 text-neutral-11 ml-1" />
         </MenuButton>
       </MediaQuery>
 
