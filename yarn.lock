@@ -13918,10 +13918,10 @@ vaul@1.1.2:
   dependencies:
     "@radix-ui/react-dialog" "^1.1.1"
 
-viem@2.47.4:
-  version "2.47.4"
-  resolved "https://registry.yarnpkg.com/viem/-/viem-2.47.4.tgz#e892858ec9764dd909ee75858e419f2086cda166"
-  integrity sha512-h0Wp/SYmJO/HB4B/em1OZ3W1LaKrmr7jzaN7talSlZpo0LCn0V6rZ5g923j6sf4VUSrqp/gUuWuHFc7UcoIp8A==
+viem@2.47.5:
+  version "2.47.5"
+  resolved "https://registry.yarnpkg.com/viem/-/viem-2.47.5.tgz#63d27aef7984ed1aaab61b8aad379d30d5068c7f"
+  integrity sha512-nVrJEQ8GL4JoVIrMBF3wwpTUZun0cpojfnOZ+96GtDWhqxZkVdy6vOEgu+jwfXqfTA/+wrR+YsN9TBQmhDUk0g==
   dependencies:
     "@noble/curves" "1.9.1"
     "@noble/hashes" "1.8.0"
