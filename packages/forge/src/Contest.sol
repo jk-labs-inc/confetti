@@ -7,6 +7,7 @@ import "./governance/extensions/GovernorEngagement.sol";
 
 contract Contest is GovernorCountingSimple, GovernorModuleRegistry, GovernorEngagement {
     uint256 public constant SECONDS_IN_DAY = 86400;
+    uint256 public constant SECONDS_IN_HOUR = 3600;
 
     error PeriodsOutsideBounds();
     error RankLimitCannotBeZero();
@@ -17,7 +18,7 @@ contract Contest is GovernorCountingSimple, GovernorModuleRegistry, GovernorEnga
     {
         if (
             (_constructorArgs.intConstructorArgs.votingDelay > (30 * SECONDS_IN_DAY))
-                || (_constructorArgs.intConstructorArgs.votingPeriod > SECONDS_IN_DAY)
+                || (_constructorArgs.intConstructorArgs.votingPeriod > (6 * SECONDS_IN_HOUR))
         ) {
             revert PeriodsOutsideBounds();
         }
