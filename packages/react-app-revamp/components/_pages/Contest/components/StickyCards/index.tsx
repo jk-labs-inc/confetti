@@ -24,7 +24,11 @@ const ContestStickyCards = () => {
           <VotingContestQualifier votingTimeLeft={votingTimeLeft} />
         </div>
       </div>
-      {isExpanded && <PriceCurveWrapper />}
+      {isExpanded && (
+        <div className="hidden md:block">
+          <PriceCurveWrapper />
+        </div>
+      )}
     </div>
   );
 };

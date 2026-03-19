@@ -42,7 +42,7 @@ const Drawer: FC<DrawerProps> = ({ isOpen, children, className, onClose, isHandl
           onInteractOutside={handleInteractOutside}
           style={{ maxHeight: "calc(100dvh - 48px)" }}
         >
-          <VaulDrawer.Title hidden>Drawer</VaulDrawer.Title>
+          <VaulDrawer.Title className="sr-only">Drawer</VaulDrawer.Title>
           <VaulDrawer.Handle
             hidden={isHandleHidden}
             className="mx-auto! w-12! h-1.5! shrink-0! rounded-full! bg-neutral-9! my-4!"
