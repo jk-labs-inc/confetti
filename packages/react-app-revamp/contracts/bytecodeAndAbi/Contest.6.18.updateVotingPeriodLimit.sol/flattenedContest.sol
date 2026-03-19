@@ -6137,7 +6137,7 @@ contract Contest is GovernorCountingSimple, GovernorModuleRegistry, GovernorEnga
     {
         if (
             (_constructorArgs.intConstructorArgs.votingDelay > (30 * SECONDS_IN_DAY))
-                || (_constructorArgs.intConstructorArgs.votingPeriod > (6 * SECONDS_IN_DAY))
+                || (_constructorArgs.intConstructorArgs.votingPeriod > (6 * SECONDS_IN_HOUR))
         ) {
             revert PeriodsOutsideBounds();
         }
