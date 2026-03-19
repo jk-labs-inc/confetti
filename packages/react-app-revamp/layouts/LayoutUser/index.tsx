@@ -78,6 +78,7 @@ const LayoutUser = (props: LayoutUserProps) => {
               shortenOnFallback
               size={isMobile ? "medium" : "large"}
               includeSocials
+              showBy={false}
             />
           )}
 

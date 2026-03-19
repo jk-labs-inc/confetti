@@ -16,7 +16,7 @@ const VoterRow: FC<VoteRowProps> = ({ votesPerAddress, address, addressesLength,
         addressesLength > 1 ? "border-b border-primary-3" : ""
       }`}
     >
-      <UserProfileDisplay ethereumAddress={address} shortenOnFallback={true} textColor={className} size="extraSmall" />
+      <UserProfileDisplay ethereumAddress={address} shortenOnFallback={true} textColor={className} size="extraSmall" showBy={false} />
       <AnimatedVoteCount votes={votesPerAddress[address]} className={className}>
         {formatNumberWithCommas(votesPerAddress[address])} {votesPerAddress[address] === 1 ? "vote" : "votes"}
       </AnimatedVoteCount>
