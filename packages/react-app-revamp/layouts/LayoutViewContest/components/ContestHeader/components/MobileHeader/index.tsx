@@ -1,3 +1,5 @@
+import MiniPriceCurveWrapper from "@components/MiniPriceCurve/wrapper";
+import usePriceCurveChartStore from "@components/_pages/Contest/components/PriceCurveChart/store";
 import BurgerMenu from "@components/UI/BurgerMenu";
 import CurrencyToggle from "@components/Header/CurrencyToggle";
 import UserProfileDisplay from "@components/UI/UserProfileDisplay";
@@ -28,6 +30,7 @@ const MobileHeader: FC<MobileHeaderProps> = ({
   contestVersion,
 }) => {
   const { contestState } = useContestStateStore(state => state);
+  const { isExpanded } = usePriceCurveChartStore();
   const isContestCanceled = contestState === ContestStateEnum.Canceled;
   const filteredLinks = useMemo(() => FOOTER_LINKS.filter(link => BURGER_MENU_LINKS.includes(link.label)), []);
 
@@ -83,8 +86,10 @@ const MobileHeader: FC<MobileHeaderProps> = ({
         <div className="flex items-center gap-4 justify-between">
           <ContestRewardsInfo version={contestVersion} />
           <ContestTiming compact />
-          <ContestPriceCurve showChevron={false} compact />
+          <ContestPriceCurve compact />
         </div>
+
+        {isExpanded && <MiniPriceCurveWrapper />}
       </div>
     </div>
   );

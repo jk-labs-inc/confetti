@@ -1,6 +1,6 @@
 import { localPoint } from "@visx/event";
 import { Group } from "@visx/group";
-import React, { FC, useState } from "react";
+import React, { FC, useMemo, useState } from "react";
 import AnimatedDot from "./components/AnimatedDot";
 import AxisBottom from "./components/AxisBottom";
 import AxisRight from "./components/AxisRight";
@@ -12,6 +12,30 @@ import { MARGIN } from "./constants";
 import { createScalesAndAccessors } from "./helpers";
 import { useChartData } from "./hooks/useChartData";
 import { PriceCurveChartProps } from "./types";
+
+const PARTICLE_SVGS = [
+  "/particles/confetti-pink.svg",
+  "/particles/confetti-purple.svg",
+  "/particles/confetti-cyan.svg",
+  "/particles/confetti-green.svg",
+  "/particles/confetti-violet.svg",
+];
+
+const generateConfettiParticles = (chartWidth: number, chartHeight: number) => {
+  const particles = [];
+  const count = 20;
+  for (let i = 0; i < count; i++) {
+    const hash = ((i * 7919 + 42) * 104729) % 1000;
+    particles.push({
+      x: (((hash * 3) % 1000) / 1000) * chartWidth,
+      y: (((hash * 7) % 1000) / 1000) * chartHeight,
+      size: 6 + ((hash % 3) * 2),
+      svg: PARTICLE_SVGS[i % PARTICLE_SVGS.length],
+      opacity: 0.12 + ((hash % 4) * 0.04),
+    });
+  }
+  return particles;
+};
 
 export type PriceCurveChartComponentProps = PriceCurveChartProps & {
   width: number;
@@ -30,6 +54,10 @@ const PriceCurveChart: FC<PriceCurveChartComponentProps> = ({
   const chartWidth = width - MARGIN.left - MARGIN.right;
   const chartHeight = height - MARGIN.top - MARGIN.bottom;
   const { xScale, yScale, getX, getY } = createScalesAndAccessors(data, chartWidth, chartHeight);
+  const confettiParticles = useMemo(
+    () => generateConfettiParticles(chartWidth, chartHeight),
+    [chartWidth, chartHeight],
+  );
   const dotX = chartData.active.point ? getX(chartData.active.point) : 0;
   const dotY = yScale(chartData.active.price);
   const refLineX = chartData.active.point ? getX(chartData.active.point) : 0;
@@ -72,6 +100,18 @@ const PriceCurveChart: FC<PriceCurveChartComponentProps> = ({
         />
 
         <ChartBorders innerWidth={chartWidth} innerHeight={chartHeight} />
+
+        {confettiParticles.map((p, i) => (
+          <image
+            key={`confetti-${i}`}
+            href={p.svg}
+            x={p.x - p.size / 2}
+            y={p.y - p.size / 2}
+            width={p.size}
+            height={p.size}
+            opacity={p.opacity}
+          />
+        ))}
 
         <ChartLine
           data={data}

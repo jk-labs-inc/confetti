@@ -50,7 +50,8 @@ export const useVotingStore = create<VotingStore>((set, get) => ({
 
     const maxBalanceNum = parseFloat(maxBalance);
     const calculatedBalance = (value / 100) * maxBalanceNum;
-    const balanceString = calculatedBalance === 0 ? "" : toFixedString(calculatedBalance);
+    const roundedBalance = parseFloat(calculatedBalance.toPrecision(6));
+    const balanceString = roundedBalance === 0 ? "" : toFixedString(roundedBalance);
 
     set({
       inputValue: balanceString,

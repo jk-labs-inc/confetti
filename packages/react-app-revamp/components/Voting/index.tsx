@@ -100,11 +100,14 @@ const VotingWidget: FC<VotingWidgetProps> = ({
 
   return (
     <div className="flex flex-col gap-6">
+      <VoteInfoBlocks type="charge-info" costToVote={costToVote} costToVoteRaw={costToVoteRaw} />
+
       <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-2">
           <VoteAmountInput
             maxBalance={balance?.formatted || "0"}
             symbol={contestConfig.chainNativeCurrencySymbol}
+            costToVote={costToVote}
             isConnected={isConnected}
             isBelowMinimum={isBelowMinimum}
             style={style}
@@ -127,29 +130,23 @@ const VotingWidget: FC<VotingWidgetProps> = ({
             onKeyDown={handleKeyDownSlider}
           />
         )}
-        <div className="flex flex-col gap-2">
-          <VoteInfoBlocks type="charge-info" costToVote={costToVote} costToVoteRaw={costToVoteRaw} />
-          <VoteInfoBlocks
-            type="total-votes"
-            costToVote={costToVote}
-            spendableBalance={balance?.formatted || "0"}
-            isBelowMinimum={isBelowMinimum}
-          />
-        </div>
+      </div>
+
+      <div className="flex flex-col gap-4">
         <VotingWidgetRewardsProjection
           currentPricePerVote={costToVoteRaw}
           inputValue={inputValue}
           submissionsCount={submissionsCount}
         />
+        <VotingWidgetEmailSignup />
+        <VoteButton
+          isDisabled={voteDisabled}
+          isInvalidBalance={insufficientBalance && isConnected}
+          isConnected={isConnected}
+          onVote={handleVote}
+          onAddFunds={onAddFunds}
+        />
       </div>
-      <VotingWidgetEmailSignup />
-      <VoteButton
-        isDisabled={voteDisabled}
-        isInvalidBalance={insufficientBalance && isConnected}
-        isConnected={isConnected}
-        onVote={handleVote}
-        onAddFunds={onAddFunds}
-      />
     </div>
   );
 };
