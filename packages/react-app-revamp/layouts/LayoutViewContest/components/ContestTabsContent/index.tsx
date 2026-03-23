@@ -1,9 +1,15 @@
+import PriceCurveWrapper from "@components/PriceCurve/wrapper";
+import usePriceCurveChartStore from "@components/PriceCurve/store";
+import ContestRewardsInfo from "@components/_pages/Contest/components/RewardsInfo";
+import ContestTiming from "../ContestHeader/components/DesktopHeader/components/ContestTiming";
 import ContestTab from "@components/_pages/Contest/Contest";
 import ContestDeployRewards from "@components/_pages/Contest/DeployRewards";
 import ContestExtensions from "@components/_pages/Contest/Extensions";
 import ContestParameters from "@components/_pages/Contest/Parameters";
 import ContestRewards from "@components/_pages/Contest/Rewards";
 import { Tab } from "@components/_pages/Contest/components/Tabs";
+import { ChevronDownIcon } from "@heroicons/react/24/outline";
+import { motion } from "motion/react";
 import { compareVersions } from "compare-versions";
 import { SELF_FUND_VERSION } from "constants/versions";
 import { RewardModuleInfo } from "lib/rewards/types";
@@ -16,11 +22,34 @@ interface ContestTabsContentProps {
 }
 
 const ContestTabsContent: FC<ContestTabsContentProps> = ({ tab, version, rewardsModule }) => {
+  const { isExpanded, setIsExpanded } = usePriceCurveChartStore();
+
   const renderContent = (): ReactNode => {
     switch (tab) {
       case Tab.Contest:
         if (rewardsModule || compareVersions(version, SELF_FUND_VERSION) < 0) {
-          return <ContestTab />;
+          return (
+            <>
+              <div className="flex items-center gap-8 mt-6">
+                <ContestRewardsInfo version={version} />
+                <ContestTiming />
+                <button onClick={() => setIsExpanded(!isExpanded)} className="ml-auto">
+                  <motion.div
+                    animate={{ rotate: isExpanded ? 180 : 0 }}
+                    transition={{ duration: 0.2, ease: "easeInOut" }}
+                  >
+                    <ChevronDownIcon className="w-5 h-5 text-neutral-9" />
+                  </motion.div>
+                </button>
+              </div>
+              {isExpanded && (
+                <div className="mt-4 md:w-[448px]">
+                  <PriceCurveWrapper showPriceWarning noPadding />
+                </div>
+              )}
+              <ContestTab />
+            </>
+          );
         } else {
           return <ContestDeployRewards />;
         }

@@ -33,7 +33,7 @@ const SubmissionPageDesktopVotingAreaWidgetHandler: FC<SubmissionPageDesktopVoti
 
   return (
     <div className="relative">
-      <div className={`px-6 py-4 rounded-4xl ${showAddFundsModal ? "bg-primary-13" : "bg-gradient-voting-area"}`}>
+      <div className={`px-6 py-4 rounded-4xl ${showAddFundsModal ? "bg-primary-13" : "bg-gradient-voting-area-teal"}`}>
         {showAddFundsModal ? (
           <AddFunds
             chain={contestConfig.chainName}

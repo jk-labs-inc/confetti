@@ -1,3 +1,4 @@
+import PriceCurveWrapper from "@components/PriceCurve/wrapper";
 import useContestVoteTimer, { VotingStatus } from "@components/_pages/Submission/hooks/useContestVoteTimer";
 import { useSubmissionPageStore } from "@components/_pages/Submission/store";
 import useProposalIdStore from "@hooks/useProposalId/store";
@@ -18,6 +19,7 @@ const SubmissionPageDesktopVotingArea = () => {
 
   return (
     <div ref={containerRef} className="flex flex-col p-4 gap-4 bg-primary-1 rounded-4xl xl:w-[480px] h-full">
+      <PriceCurveWrapper showPriceWarning />
       {votingStatus === VotingStatus.VotingNotOpen ? (
         <SubmissionPageDesktopVotingAreaWidgetVotingNotOpen timeRemaining={timeRemaining} />
       ) : null}

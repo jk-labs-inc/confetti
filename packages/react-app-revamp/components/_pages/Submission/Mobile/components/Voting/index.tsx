@@ -1,4 +1,5 @@
 import AddFunds from "@components/AddFunds";
+import PriceCurveWrapper from "@components/PriceCurve/wrapper";
 import Drawer from "@components/UI/Drawer";
 import VotingWidget from "@components/Voting";
 import { useVotingActions } from "@components/_pages/Submission/hooks/useVotingActions";
@@ -40,24 +41,27 @@ const SubmissionPageMobileVoting: FC<SubmissionPageMobileVotingProps> = ({ isOpe
   return (
     <Drawer isOpen={isOpen} onClose={handleClose} className="bg-true-black w-full h-auto">
       <div className="flex flex-col gap-4 p-6">
-        {showAddFunds ? (
-          <AddFunds
-            chain={contestConfig.chainName}
-            asset={contestConfig.chainNativeCurrencySymbol}
-            onGoBack={() => setShowAddFunds(false)}
-          />
-        ) : (
-          <VotingWidget
-            costToVote={currentPricePerVote}
-            costToVoteRaw={currentPricePerVoteRaw}
-            submissionsCount={submissionsCount}
-            isLoading={isLoading}
-            isVotingClosed={!isVotingOpen}
-            isContestCanceled={contestState === ContestStateEnum.Canceled}
-            onVote={(amount: number) => castVotes(amount)}
-            onAddFunds={() => setShowAddFunds(true)}
-          />
-        )}
+        <PriceCurveWrapper showPriceWarning />
+        <div className={`px-6 py-4 rounded-4xl ${showAddFunds ? "bg-primary-13" : "bg-gradient-voting-area-teal"}`}>
+          {showAddFunds ? (
+            <AddFunds
+              chain={contestConfig.chainName}
+              asset={contestConfig.chainNativeCurrencySymbol}
+              onGoBack={() => setShowAddFunds(false)}
+            />
+          ) : (
+            <VotingWidget
+              costToVote={currentPricePerVote}
+              costToVoteRaw={currentPricePerVoteRaw}
+              submissionsCount={submissionsCount}
+              isLoading={isLoading}
+              isVotingClosed={!isVotingOpen}
+              isContestCanceled={contestState === ContestStateEnum.Canceled}
+              onVote={(amount: number) => castVotes(amount)}
+              onAddFunds={() => setShowAddFunds(true)}
+            />
+          )}
+        </div>
       </div>
     </Drawer>
   );

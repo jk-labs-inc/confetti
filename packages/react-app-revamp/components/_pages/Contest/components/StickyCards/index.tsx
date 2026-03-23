@@ -1,18 +1,12 @@
 import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
-import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import { useContestStore } from "@hooks/useContest/store";
 import { useCountdownTimer } from "@hooks/useTimer";
-import { useShallow } from "zustand/shallow";
 import ContestCountdown from "./components/Countdown";
 import VotingContestQualifier from "./components/VotingQualifier";
-import PriceCurveWrapper from "../PriceCurveChart/wrapper";
-import usePriceCurveChartStore from "../PriceCurveChart/store";
 
 const ContestStickyCards = () => {
-  const contestStatus = useContestStatusStore(useShallow(state => state.contestStatus));
   const { contestState } = useContestStateStore(state => state);
   const { votesClose } = useContestStore(state => state);
-  const { isExpanded } = usePriceCurveChartStore();
   const isContestCanceled = contestState === ContestStateEnum.Canceled;
   const votingTimeLeft = useCountdownTimer(votesClose);
 
@@ -24,11 +18,6 @@ const ContestStickyCards = () => {
           <VotingContestQualifier votingTimeLeft={votingTimeLeft} />
         </div>
       </div>
-      {isExpanded && (
-        <div className="hidden md:block">
-          <PriceCurveWrapper />
-        </div>
-      )}
     </div>
   );
 };

@@ -1,11 +1,10 @@
-import usePriceCurveChartStore from "@components/_pages/Contest/components/PriceCurveChart/store";
+import usePriceCurveChartStore from "@components/PriceCurve/store";
 import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/24/outline";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import usePriceCurveUpdateInterval from "@hooks/usePriceCurveUpdateInterval";
 import { motion } from "motion/react";
 import { FC } from "react";
-import { useMediaQuery } from "react-responsive";
 import { useShallow } from "zustand/shallow";
 import VotingQualifierError from "../../../../shared/Error";
 import VotingQualifierSkeleton from "../../../../shared/Skeleton";
@@ -19,7 +18,6 @@ interface VotingQualifierAnyoneCanVoteExponentialProps {
 const VotingQualifierAnyoneCanVoteExponential: FC<VotingQualifierAnyoneCanVoteExponentialProps> = ({
   votingTimeLeft,
 }) => {
-  const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const contestStatus = useContestStatusStore(useShallow(state => state.contestStatus));
   const { contestConfig } = useContestConfigStore(useShallow(state => state));
   const { priceCurveUpdateInterval, isLoading, isError, refetch } = usePriceCurveUpdateInterval({
@@ -28,7 +26,7 @@ const VotingQualifierAnyoneCanVoteExponential: FC<VotingQualifierAnyoneCanVoteEx
     chainId: contestConfig.chainId,
   });
   const { isExpanded, setIsExpanded } = usePriceCurveChartStore();
-  const isPriceCurveChartToggleDisabled = isMobile;
+  const isPriceCurveChartToggleDisabled = false;
 
   const handleToggle = () => {
     setIsExpanded(!isExpanded);
@@ -48,7 +46,7 @@ const VotingQualifierAnyoneCanVoteExponential: FC<VotingQualifierAnyoneCanVoteEx
         <div className="flex items-center gap-1 md:gap-2">
           <img src="/contest/price-interval.svg" alt="timer" />
           <p className="text-[12px] md:text-[16px] font-bold text-neutral-9">
-            {isMobile && contestStatus === ContestStatus.VotingOpen ? "price" : "price per vote"}
+            price per vote
           </p>
           <VotingQualifierAnyoneCanVoteExponentialTimer
             votingTimeLeft={votingTimeLeft}

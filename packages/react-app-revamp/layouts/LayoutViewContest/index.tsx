@@ -72,6 +72,7 @@ const LayoutViewContest = () => {
           <div className="mt-8 gap-3 flex flex-col">
             <ContestTabs tab={tab} excludeTabs={excludeTabs} onChange={tab => setTab(tab)} />
           </div>
+
           <ContestTabsContent tab={tab} rewardsModule={rewardsModule} version={contestConfig.version} />
         </div>
       </div>

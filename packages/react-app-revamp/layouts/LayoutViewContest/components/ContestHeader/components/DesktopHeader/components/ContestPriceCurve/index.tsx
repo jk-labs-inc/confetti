@@ -1,4 +1,4 @@
-import usePriceCurveChartStore from "@components/_pages/Contest/components/PriceCurveChart/store";
+import usePriceCurveChartStore from "@components/PriceCurve/store";
 import { ArrowLongUpIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
 import { useContestStore } from "@hooks/useContest/store";
 import useContestConfigStore from "@hooks/useContestConfig/store";

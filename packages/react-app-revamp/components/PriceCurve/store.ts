@@ -6,7 +6,7 @@ interface PriceCurveChartStore {
 }
 
 const usePriceCurveChartStore = create<PriceCurveChartStore>((set) => ({
-  isExpanded: false,
+  isExpanded: true,
   setIsExpanded: (isExpanded: boolean) => set({ isExpanded }),
 }));
 

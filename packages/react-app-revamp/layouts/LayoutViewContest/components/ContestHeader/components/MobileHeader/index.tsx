@@ -1,12 +1,7 @@
-import MiniPriceCurveWrapper from "@components/MiniPriceCurve/wrapper";
-import usePriceCurveChartStore from "@components/_pages/Contest/components/PriceCurveChart/store";
 import BurgerMenu from "@components/UI/BurgerMenu";
 import CurrencyToggle from "@components/Header/CurrencyToggle";
 import UserProfileDisplay from "@components/UI/UserProfileDisplay";
 import ContestShareButton from "@components/_pages/Contest/components/ContestShareButton";
-import ContestRewardsInfo from "@components/_pages/Contest/components/RewardsInfo";
-import ContestPriceCurve from "../DesktopHeader/components/ContestPriceCurve";
-import ContestTiming from "../DesktopHeader/components/ContestTiming";
 import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
 import { FOOTER_LINKS } from "@config/links";
 import { FC, useMemo } from "react";
@@ -27,10 +22,8 @@ const MobileHeader: FC<MobileHeaderProps> = ({
   contestAddress,
   chainName,
   contestAuthorEthereumAddress,
-  contestVersion,
 }) => {
   const { contestState } = useContestStateStore(state => state);
-  const { isExpanded } = usePriceCurveChartStore();
   const isContestCanceled = contestState === ContestStateEnum.Canceled;
   const filteredLinks = useMemo(() => FOOTER_LINKS.filter(link => BURGER_MENU_LINKS.includes(link.label)), []);
 
@@ -82,14 +75,6 @@ const MobileHeader: FC<MobileHeaderProps> = ({
             {contestName}
           </p>
         </div>
-
-        <div className="flex items-center gap-4 justify-between">
-          <ContestRewardsInfo version={contestVersion} />
-          <ContestTiming compact />
-          <ContestPriceCurve compact />
-        </div>
-
-        {isExpanded && <MiniPriceCurveWrapper />}
       </div>
     </div>
   );

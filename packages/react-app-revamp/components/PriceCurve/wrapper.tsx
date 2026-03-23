@@ -12,20 +12,22 @@ import { useCountdownTimer } from "@hooks/useTimer";
 import { useParentSize } from "@visx/responsive";
 import { useCallback } from "react";
 import { useReadContract } from "wagmi";
-import MiniPriceCurve from "./index";
+import PriceCurve from "./index";
 import { useShallow } from "zustand/shallow";
 
-const DEFAULT_CHART_HEIGHT = 110;
+const DEFAULT_CHART_HEIGHT = 300;
 
-interface MiniPriceCurveWrapperProps {
+interface PriceCurveWrapperProps {
   height?: number;
   showPriceWarning?: boolean;
+  noPadding?: boolean;
 }
 
-const MiniPriceCurveWrapper = ({
+const PriceCurveWrapper = ({
   height = DEFAULT_CHART_HEIGHT,
   showPriceWarning = false,
-}: MiniPriceCurveWrapperProps) => {
+  noPadding = false,
+}: PriceCurveWrapperProps) => {
   const { parentRef, width } = useParentSize({ debounceTime: 150 });
   const contestConfig = useContestConfigStore(useShallow(state => state.contestConfig));
 
@@ -119,6 +121,13 @@ const MiniPriceCurveWrapper = ({
 
   const secondsUntilNextUpdate = priceCurveUpdateInterval > 0 ? votingTimeLeft % priceCurveUpdateInterval : 0;
 
+  const now = Date.now();
+  const contestPhase: "before" | "during" | "after" =
+    now < startTime.getTime() ? "before" : votingTimeLeft > 0 ? "during" : "after";
+
+  const endPrice = chartData.length > 0 ? chartData[chartData.length - 1].pv : 0;
+  const startPriceValue = chartData.length > 0 ? chartData[0].pv : 0;
+
   const formatPrice = useCallback(
     (nativePrice: number) => {
       const { displayValue, displaySymbol } = convertToDisplayPrice(
@@ -145,7 +154,7 @@ const MiniPriceCurveWrapper = ({
 
   return (
     <div ref={parentRef} className="w-full animate-fade-in">
-      <MiniPriceCurve
+      <PriceCurve
         data={chartData}
         currentPrice={currentPrice}
         currentIndex={currentIndex}
@@ -157,9 +166,14 @@ const MiniPriceCurveWrapper = ({
         secondsUntilNextUpdate={secondsUntilNextUpdate}
         votingTimeLeft={votingTimeLeft}
         showPriceWarning={showPriceWarning}
+        contestPhase={contestPhase}
+        startPriceValue={startPriceValue}
+        endPriceValue={endPrice}
+        updateIntervalSeconds={priceCurveUpdateInterval}
+        noPadding={noPadding}
       />
     </div>
   );
 };
 
-export default MiniPriceCurveWrapper;
+export default PriceCurveWrapper;
