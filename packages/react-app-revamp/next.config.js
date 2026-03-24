@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 
+const path = require("path");
 const withPWA = require("next-pwa");
 const webpack = require("webpack");
 
@@ -7,6 +8,7 @@ const nextConfig = {
   reactStrictMode: false,
   webpack: config => {
     config.resolve.fallback = { fs: false, net: false, tls: false };
+    config.resolve.modules = [path.resolve(__dirname, "node_modules"), ...(config.resolve.modules || ["node_modules"])];
     config.externals.push("pino-pretty", "lokijs", "encoding");
     
     // this config is if we want to ignore wagmi connectors to suppress build warnings, we can safely ignore this since we are using Para SDK for wallet stuff
