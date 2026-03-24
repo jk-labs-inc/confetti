@@ -48,6 +48,7 @@ const Providers: FC<ProvidersProps> = ({ children }) => {
           },
           logo: "/confetti/loader/frame-1.svg",
           oAuthMethods: ["GOOGLE", "TWITTER", "DISCORD", "TELEGRAM"],
+          disableAddFundsPrompt: true,
         }}
         externalWalletConfig={{
           wallets: EXTERNAL_WALLETS,

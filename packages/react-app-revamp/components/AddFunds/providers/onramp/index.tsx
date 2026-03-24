@@ -1,4 +1,4 @@
-import { ModalStep, useModal } from "@getpara/react-sdk-lite";
+import { useModal } from "@getpara/react-sdk-lite";
 import { FC } from "react";
 import AddFundsCard from "../../components/Card";
 import { PARA_ONRAMP_CONFIG } from "./types";
@@ -13,7 +13,7 @@ const AddFundsParaProvider: FC<AddFundsParaProviderProps> = ({ chain, onCloseMod
 
   const handleClick = () => {
     onCloseModal?.();
-    openModal({ step: ModalStep.ADD_FUNDS_BUY });
+    openModal({ step: "ACCOUNT_ADD_FUNDS_BUY" });
   };
 
   return (
