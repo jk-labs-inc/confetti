@@ -19,7 +19,7 @@ const SubmissionPageDesktopVotingAreaWidgetVotingNotOpen: FC<
   SubmissionPageDesktopVotingAreaWidgetVotingNotOpenProps
 > = ({ timeRemaining }) => {
   return (
-    <div className="bg-gradient-voting-area-not-open px-6 pt-14 pb-4 rounded-4xl min-h-full flex flex-col gap-20">
+    <div className="bg-gradient-voting-area-not-open px-6 pt-14 pb-4 rounded-4xl flex-1 flex flex-col gap-20">
       <div className="flex flex-col gap-14">
         <p className="text-center font-sabo-filled text-neutral-11 text-[32px] font-bold">voting opens in</p>
         {timeRemaining && <Timer timeRemaining={timeRemaining} />}

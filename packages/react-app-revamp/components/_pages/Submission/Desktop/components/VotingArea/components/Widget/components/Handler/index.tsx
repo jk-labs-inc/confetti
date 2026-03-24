@@ -6,7 +6,7 @@ import VotingWidget, { VotingWidgetStyle } from "@components/Voting";
 import { ContestStateEnum } from "@hooks/useContestState/store";
 import { Charge } from "@hooks/useDeployContest/types";
 import { useWallet } from "@hooks/useWallet";
-import { FC, useState } from "react";
+import { FC, useState, useCallback } from "react";
 import { useShallow } from "zustand/shallow";
 
 interface SubmissionPageDesktopVotingAreaWidgetHandlerProps {
@@ -27,9 +27,14 @@ const SubmissionPageDesktopVotingAreaWidgetHandler: FC<SubmissionPageDesktopVoti
   );
   const { castVotes, isLoading } = useVotingActions({ charge, votesClose });
 
-  const onVote = (amount: number) => {
-    castVotes(amount);
-  };
+  const onVote = useCallback(
+    (amount: number) => {
+      castVotes(amount);
+    },
+    [castVotes],
+  );
+
+  const onAddFunds = useCallback(() => setShowAddFundsModal(true), []);
 
   return (
     <div className="relative">
@@ -49,7 +54,7 @@ const SubmissionPageDesktopVotingAreaWidgetHandler: FC<SubmissionPageDesktopVoti
             isVotingClosed={!isVotingOpen}
             isContestCanceled={contestDetails.state === ContestStateEnum.Canceled}
             submissionsCount={submissionsCount}
-            onAddFunds={() => setShowAddFundsModal(true)}
+            onAddFunds={onAddFunds}
             onVote={onVote}
           />
         )}

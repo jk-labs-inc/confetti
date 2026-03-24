@@ -33,7 +33,7 @@ const ContestTabsContent: FC<ContestTabsContentProps> = ({ tab, version, rewards
               <div className="flex items-center gap-8 mt-6">
                 <ContestRewardsInfo version={version} />
                 <ContestTiming />
-                <button onClick={() => setIsExpanded(!isExpanded)} className="ml-auto">
+                <button onClick={() => setIsExpanded(!isExpanded)} className="self-center translate-y-1">
                   <motion.div
                     animate={{ rotate: isExpanded ? 180 : 0 }}
                     transition={{ duration: 0.2, ease: "easeInOut" }}

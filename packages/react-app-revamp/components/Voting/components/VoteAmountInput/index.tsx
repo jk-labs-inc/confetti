@@ -68,7 +68,6 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
   const charCount = valueString.length - dotCount * 0.5;
 
   const hasBalance = parseFloat(maxBalance) > 0;
-  const isColored = style === VotingWidgetStyle.colored;
   const styleConfig = STYLE_CONFIG[style];
   const hasError = isConnected && (isInvalid || isBelowMinimum);
   const textColor = hasError ? "text-negative-11" : "text-neutral-11";
@@ -77,11 +76,10 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
   const votesText = `${formatNumberWithCommas(totalVotes)} ${totalVotes === 1 ? "vote" : "votes"}`;
 
   const showPresets = hasBalance && isConnected;
-  const btnBorder = isColored ? "border-[#84679B]" : "border-secondary-14";
 
   return (
     <div
-      className={`flex w-full items-center px-6 py-4 text-[16px] ${styleConfig.background} font-bold ${textColor} border ${borderColor} rounded-[40px] transition-colors duration-300`}
+      className={`flex w-full items-center px-6 py-2 text-[16px] ${styleConfig.background} font-bold ${textColor} border ${borderColor} rounded-[40px] transition-colors duration-300`}
     >
       <div className="flex min-w-0 flex-1 items-baseline overflow-hidden">
         {isLoading ? (
@@ -89,7 +87,7 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
         ) : (
           <>
             {displaySymbol === "$" && (
-              <span className="text-[28px] md:text-[32px] text-neutral-9 whitespace-nowrap mr-1">{displaySymbol}</span>
+              <span className="text-[28px] md:text-[40px] text-neutral-9 whitespace-nowrap mr-1">{displaySymbol}</span>
             )}
             <input
               ref={inputRef}
@@ -100,7 +98,7 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
               onBlur={() => setIsFocused(false)}
               placeholder={placeholder}
               onKeyDown={onKeyDown}
-              className="text-[28px] md:text-[32px] bg-transparent outline-none placeholder-neutral-9 min-w-0"
+              className="text-[28px] md:text-[40px] bg-transparent outline-none placeholder-neutral-9 min-w-0"
               style={{ width: `${charCount || 1}ch`, maxWidth: "70%" }}
             />
             {displaySymbol !== "$" && (
@@ -119,12 +117,12 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
                 <motion.button
                   key={percent}
                   onClick={() => handlePreset(percent)}
-                  className={`h-[22px] px-2 rounded-[40px] border ${btnBorder} font-bold flex items-center justify-center hover:bg-positive-11/10 transition-colors duration-150 ${isMax ? "text-positive-11" : "text-neutral-9"}`}
+                  className={`w-8 h-4 px-2 rounded-[40px] border border-[#84679B] font-bold flex items-center justify-center hover:bg-positive-11/10 transition-colors duration-150 ${isMax ? "text-positive-11" : "text-neutral-9"}`}
                   style={{ willChange: "transform" }}
                   whileTap={{ scale: 0.95 }}
                 >
                   {isMax ? (
-                    "max"
+                    <span className="text-[12px]">max</span>
                   ) : (
                     <>
                       <span className="text-[12px]">{percent}</span>

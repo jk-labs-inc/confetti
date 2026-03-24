@@ -1,7 +1,7 @@
 import ButtonV3, { ButtonSize, ButtonType } from "@components/UI/ButtonV3";
 import { useModal } from "@getpara/react-sdk-lite";
-import { motion, AnimatePresence } from "motion/react";
-import { FC, useState, useMemo } from "react";
+import { motion } from "motion/react";
+import { FC, useState, useMemo, memo } from "react";
 
 const PARTICLE_SVGS = [
   "/particles/confetti-pink.svg",
@@ -70,27 +70,24 @@ const VoteButton: FC<VoteButtonProps> = ({ isDisabled, isInvalidBalance, isConne
 
   return (
     <div className="relative" onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
-      <AnimatePresence>
-        {showConfetti && isHovered &&
-          particles.map((p, i) => (
-            <motion.img
-              key={`confetti-${i}`}
-              src={p.svg}
-              alt=""
-              className="absolute pointer-events-none"
-              style={{
-                left: `${p.x}%`,
-                bottom: "100%",
-                width: p.size,
-                height: p.size,
-              }}
-              initial={{ opacity: 0, y: 0 }}
-              animate={{ opacity: [0, 0.7, 0], y: -20 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 1, delay: p.delay, ease: "easeOut", repeat: Infinity, repeatDelay: 0.3 }}
-            />
-          ))}
-      </AnimatePresence>
+      {showConfetti && isHovered &&
+        particles.map((p, i) => (
+          <motion.img
+            key={`confetti-${i}`}
+            src={p.svg}
+            alt=""
+            className="absolute pointer-events-none"
+            style={{
+              left: `${p.x}%`,
+              bottom: "100%",
+              width: p.size,
+              height: p.size,
+            }}
+            initial={{ opacity: 0, y: 0 }}
+            animate={{ opacity: [0, 0.7, 0], y: -20 }}
+            transition={{ duration: 1, delay: p.delay, ease: "easeOut", repeat: Infinity, repeatDelay: 0.3 }}
+          />
+        ))}
       <ButtonV3
         type={ButtonType.TX_ACTION}
         isDisabled={isInvalidBalance || !isConnected ? false : isDisabled}
@@ -104,4 +101,4 @@ const VoteButton: FC<VoteButtonProps> = ({ isDisabled, isInvalidBalance, isConne
   );
 };
 
-export default VoteButton;
+export default memo(VoteButton);

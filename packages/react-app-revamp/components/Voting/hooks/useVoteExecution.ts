@@ -4,6 +4,7 @@ import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import { useWallet } from "@hooks/useWallet";
 import { switchChain } from "@wagmi/core";
+import { useCallback } from "react";
 import { useShallow } from "zustand/shallow";
 
 interface UseVoteExecutionProps {
@@ -39,7 +40,7 @@ export const useVoteExecution = ({
     return Math.floor(balanceInput / Number(costToVote));
   };
 
-  const handleVote = async () => {
+  const handleVote = useCallback(async () => {
     if (!isCorrectNetwork) {
       await onSwitchNetwork(contestConfig.chainId);
     }
@@ -54,7 +55,7 @@ export const useVoteExecution = ({
     const amountOfVotes = getVotesFromBalance();
 
     onVote?.(amountOfVotes);
-  };
+  }, [isCorrectNetwork, contestConfig.chainId, isVotingClosed, costToVote, inputValue, onVote]);
 
   return {
     handleVote,

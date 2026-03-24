@@ -291,7 +291,7 @@ const PriceCurve: FC<PriceCurveProps> = ({
 
               <text
                 x={hoveredDotX + 14}
-                y={hoveredDotY + 18}
+                y={hoveredDotY + 4}
                 textAnchor="start"
                 fill="#58F4FF"
                 fontSize={12}
@@ -302,7 +302,7 @@ const PriceCurve: FC<PriceCurveProps> = ({
               </text>
               <text
                 x={hoveredDotX + 14}
-                y={hoveredDotY + 32}
+                y={hoveredDotY + 18}
                 textAnchor="start"
                 fill="#58F4FF"
                 fontSize={12}
