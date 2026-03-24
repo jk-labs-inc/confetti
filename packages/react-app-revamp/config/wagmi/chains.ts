@@ -1,32 +1,16 @@
 import { Chain, Transport, fallback, http } from "viem";
 import { cookieStorage, createConfig, createStorage } from "wagmi";
+import { ChainWithIcon } from "./custom-chains/types";
 import { abstract } from "./custom-chains/abstract";
 import { arbitrumOne } from "./custom-chains/arbitrumOne";
 import { avalanche } from "./custom-chains/avalanche";
 import { base } from "./custom-chains/base";
 import { baseTestnet } from "./custom-chains/baseTestnet";
-import { celo } from "./custom-chains/celo";
-import { cyber } from "./custom-chains/cyber";
-import { forma } from "./custom-chains/forma";
-import { hyperliquid } from "./custom-chains/hyperliquid";
-import { ink } from "./custom-chains/ink";
-import { kub } from "./custom-chains/kub";
-import { linea } from "./custom-chains/linea";
 import { mainnet } from "./custom-chains/mainnet";
-import { manta } from "./custom-chains/manta";
-import { metis } from "./custom-chains/metis";
-import { megaeth } from "./custom-chains/megaeth";
-import { mode } from "./custom-chains/mode";
 import { monad } from "./custom-chains/monad";
 import { polygon } from "./custom-chains/polygon";
 import { sepolia } from "./custom-chains/sepolia";
-import { soneium } from "./custom-chains/soneium";
-import { sonic } from "./custom-chains/sonic";
-import { story } from "./custom-chains/story";
-import { swell } from "./custom-chains/swell";
-import { ChainWithIcon } from "./custom-chains/types";
 import { world } from "./custom-chains/world";
-import { zksyncEra } from "./custom-chains/zksyncEra";
 
 export type { ChainWithIcon };
 
@@ -41,25 +25,9 @@ export const chains: readonly [ChainWithIcon, ...ChainWithIcon[]] = [
   arbitrumOne,
   base,
   avalanche,
-  linea,
-  celo,
-  mode,
-  cyber,
-  metis,
-  forma,
-  soneium,
-  story,
-  ink,
-  swell,
-  manta,
-  zksyncEra,
-  sonic,
   world,
   abstract,
-  hyperliquid,
   monad,
-  kub,
-  megaeth,
   sepolia,
   baseTestnet,
   mainnet,
