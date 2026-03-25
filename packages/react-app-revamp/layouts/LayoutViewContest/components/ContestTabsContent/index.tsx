@@ -1,5 +1,4 @@
 import PriceCurveWrapper from "@components/PriceCurve/wrapper";
-import usePriceCurveChartStore from "@components/PriceCurve/store";
 import ContestRewardsInfo from "@components/_pages/Contest/components/RewardsInfo";
 import ContestTiming from "../ContestHeader/components/DesktopHeader/components/ContestTiming";
 import ContestTab from "@components/_pages/Contest/Contest";
@@ -15,8 +14,7 @@ import { SELF_FUND_VERSION } from "constants/versions";
 import { useContestStore } from "@hooks/useContest/store";
 import { RewardModuleInfo } from "lib/rewards/types";
 import moment from "moment";
-import { FC, ReactNode, useEffect, useRef } from "react";
-import { useShallow } from "zustand/shallow";
+import { FC, ReactNode, useState } from "react";
 
 interface ContestTabsContentProps {
   tab: Tab;
@@ -25,18 +23,9 @@ interface ContestTabsContentProps {
 }
 
 const ContestTabsContent: FC<ContestTabsContentProps> = ({ tab, version, rewardsModule }) => {
-  const { isExpanded, setIsExpanded } = usePriceCurveChartStore(useShallow(state => state));
   const { votesClose } = useContestStore(state => state);
-  const hasSetDefault = useRef(false);
-
-  useEffect(() => {
-    if (hasSetDefault.current || !votesClose) return;
-    hasSetDefault.current = true;
-    const isContestOver = moment().isSameOrAfter(moment(votesClose));
-    if (isContestOver) {
-      setIsExpanded(false);
-    }
-  }, [votesClose, setIsExpanded]);
+  const isContestOver = votesClose ? moment().isSameOrAfter(moment(votesClose)) : false;
+  const [isExpanded, setIsExpanded] = useState(!isContestOver);
 
   const renderContent = (): ReactNode => {
     switch (tab) {
