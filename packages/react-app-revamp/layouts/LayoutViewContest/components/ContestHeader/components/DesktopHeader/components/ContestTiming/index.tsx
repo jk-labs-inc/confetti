@@ -14,14 +14,14 @@ const formatCountdown = (totalSeconds: number, compact = false): string => {
   const s = compact ? "s" : "sec";
 
   if (hours > 0) {
-    return `${hours}${h} ${minutes}${m} ${seconds}${s}`;
+    return `${hours} ${h} ${minutes} ${m} ${seconds} ${s}`;
   }
 
   if (minutes > 0) {
-    return `${minutes}${m} ${seconds}${s}`;
+    return `${minutes} ${m} ${seconds} ${s}`;
   }
 
-  return `${seconds}${s}`;
+  return `${seconds} ${s}`;
 };
 
 const formatTimeWindow = (
@@ -97,7 +97,7 @@ const ContestTiming = ({ compact = false }: ContestTimingProps) => {
   return (
     <div className="flex items-baseline gap-1 whitespace-nowrap">
       <span className="text-2xl">⏱️</span>
-      <p className={`text-base text-neutral-9 font-bold`}>{display.text}</p>
+      <p className={`text-base font-bold ${display.dimmed ? "text-neutral-9" : "text-neutral-11"}`}>{display.text}</p>
     </div>
   );
 };

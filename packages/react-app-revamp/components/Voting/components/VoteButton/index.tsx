@@ -1,3 +1,4 @@
+import usePriceCurveChartStore from "@components/PriceCurve/store";
 import ButtonV3, { ButtonSize, ButtonType } from "@components/UI/ButtonV3";
 import { useModal } from "@getpara/react-sdk-lite";
 import { motion } from "motion/react";
@@ -34,6 +35,7 @@ const ButtonText = {
 const VoteButton: FC<VoteButtonProps> = ({ isDisabled, isInvalidBalance, isConnected, onVote, onAddFunds }) => {
   const { openModal } = useModal();
   const [isHovered, setIsHovered] = useState(false);
+  const showPriceUpdateWarning = usePriceCurveChartStore(state => state.showPriceUpdateWarning);
 
   const particles = useMemo(
     () =>
@@ -69,6 +71,12 @@ const VoteButton: FC<VoteButtonProps> = ({ isDisabled, isInvalidBalance, isConne
   const showConfetti = isConnected && !isInvalidBalance && !isDisabled;
 
   return (
+    <div className="flex flex-col gap-2">
+      {showPriceUpdateWarning && (
+        <p className="text-[12px] text-secondary-11 animate-pulse text-center">
+          wait for price update or tx may fail
+        </p>
+      )}
     <div className="relative" onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
       {showConfetti && isHovered &&
         particles.map((p, i) => (
@@ -97,6 +105,7 @@ const VoteButton: FC<VoteButtonProps> = ({ isDisabled, isInvalidBalance, isConne
       >
         <span className="w-full text-center">{getButtonText()}</span>
       </ButtonV3>
+    </div>
     </div>
   );
 };

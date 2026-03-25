@@ -10,9 +10,10 @@ import usePriceCurvePoints from "@hooks/usePriceCurvePoints";
 import usePriceCurveUpdateInterval from "@hooks/usePriceCurveUpdateInterval";
 import { useCountdownTimer } from "@hooks/useTimer";
 import { useParentSize } from "@visx/responsive";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { useReadContract } from "wagmi";
 import PriceCurve from "./index";
+import usePriceCurveChartStore from "./store";
 import { useShallow } from "zustand/shallow";
 
 const DEFAULT_CHART_HEIGHT = 300;
@@ -21,12 +22,14 @@ interface PriceCurveWrapperProps {
   height?: number;
   showPriceWarning?: boolean;
   noPadding?: boolean;
+  showAxisLabels?: boolean;
 }
 
 const PriceCurveWrapper = ({
   height = DEFAULT_CHART_HEIGHT,
   showPriceWarning = false,
   noPadding = false,
+  showAxisLabels = false,
 }: PriceCurveWrapperProps) => {
   const { parentRef, width } = useParentSize({ debounceTime: 150 });
   const contestConfig = useContestConfigStore(useShallow(state => state.contestConfig));
@@ -141,6 +144,13 @@ const PriceCurveWrapper = ({
     [contestConfig.chainNativeCurrencySymbol, displayCurrency, nativeRates],
   );
 
+  const setShowPriceUpdateWarning = usePriceCurveChartStore(useShallow(state => state.setShowPriceUpdateWarning));
+
+  useEffect(() => {
+    const shouldWarn = showPriceWarning && secondsUntilNextUpdate < 15 && votingTimeLeft > 60;
+    setShowPriceUpdateWarning(shouldWarn);
+  }, [showPriceWarning, secondsUntilNextUpdate, votingTimeLeft, setShowPriceUpdateWarning]);
+
   const isLoading = isTimingsLoading || isCostLoading || isMultipleLoading || isIntervalLoading || isPointsLoading;
   const isError = isTimingsError || isCostError || isMultipleError || isIntervalError || isPointsError;
 
@@ -171,6 +181,7 @@ const PriceCurveWrapper = ({
         endPriceValue={endPrice}
         updateIntervalSeconds={priceCurveUpdateInterval}
         noPadding={noPadding}
+        showAxisLabels={showAxisLabels}
       />
     </div>
   );

@@ -7,11 +7,10 @@ import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/st
 import { useProposalStore } from "@hooks/useProposal/store";
 import { useState } from "react";
 import { useMediaQuery } from "react-responsive";
+import { useShallow } from "zustand/shallow";
 import ContestPrompt from "../components/Prompt";
 import ContestStickyCards from "../components/StickyCards";
-import EntryPreviewTitleToggle from "../components/EntryPreviewTitleToggle";
 import { useContestSubmitButton } from "./useContestSubmitButton";
-import { useShallow } from "zustand/shallow";
 
 const ContestTab = () => {
   const [isSubmitProposalModalOpen, setIsSubmitProposalModalOpen] = useState(false);
@@ -34,7 +33,7 @@ const ContestTab = () => {
 
   return (
     <div className="animate-fade-in">
-      <div className="mt-6">
+      <div className="mt-4">
         <div className="flex flex-col gap-6">
           {isContestCanceled ? (
             <div className="flex">

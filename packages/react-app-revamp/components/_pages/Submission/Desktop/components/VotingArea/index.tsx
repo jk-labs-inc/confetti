@@ -19,7 +19,7 @@ const SubmissionPageDesktopVotingArea = () => {
 
   return (
     <div ref={containerRef} className="flex flex-col p-4 gap-4 bg-primary-1 rounded-4xl xl:w-[480px] h-full">
-      <PriceCurveWrapper showPriceWarning />
+      <PriceCurveWrapper showPriceWarning showAxisLabels />
       {votingStatus === VotingStatus.VotingNotOpen ? (
         <SubmissionPageDesktopVotingAreaWidgetVotingNotOpen timeRemaining={timeRemaining} />
       ) : null}

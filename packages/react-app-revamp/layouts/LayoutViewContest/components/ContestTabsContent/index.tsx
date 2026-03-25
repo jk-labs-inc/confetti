@@ -30,21 +30,23 @@ const ContestTabsContent: FC<ContestTabsContentProps> = ({ tab, version, rewards
         if (rewardsModule || compareVersions(version, SELF_FUND_VERSION) < 0) {
           return (
             <>
-              <div className="flex items-center gap-8 mt-6">
+              <div className="flex items-center justify-between mt-6">
                 <ContestRewardsInfo version={version} />
-                <ContestTiming />
-                <button onClick={() => setIsExpanded(!isExpanded)} className="self-center translate-y-1">
-                  <motion.div
-                    animate={{ rotate: isExpanded ? 180 : 0 }}
-                    transition={{ duration: 0.2, ease: "easeInOut" }}
-                  >
-                    <ChevronDownIcon className="w-5 h-5 text-neutral-9" />
-                  </motion.div>
-                </button>
+                <div className="flex items-center gap-2">
+                  <ContestTiming />
+                  <button onClick={() => setIsExpanded(!isExpanded)} className="self-center translate-y-1">
+                    <motion.div
+                      animate={{ rotate: isExpanded ? 180 : 0 }}
+                      transition={{ duration: 0.2, ease: "easeInOut" }}
+                    >
+                      <ChevronDownIcon className="w-5 h-5 text-neutral-9" />
+                    </motion.div>
+                  </button>
+                </div>
               </div>
               {isExpanded && (
-                <div className="mt-4 md:w-[448px]">
-                  <PriceCurveWrapper showPriceWarning noPadding />
+                <div className="mt-4">
+                  <PriceCurveWrapper showPriceWarning noPadding showAxisLabels />
                 </div>
               )}
               <ContestTab />
