@@ -12,8 +12,11 @@ import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import { motion } from "motion/react";
 import { compareVersions } from "compare-versions";
 import { SELF_FUND_VERSION } from "constants/versions";
+import { useContestStore } from "@hooks/useContest/store";
 import { RewardModuleInfo } from "lib/rewards/types";
-import { FC, ReactNode } from "react";
+import moment from "moment";
+import { FC, ReactNode, useEffect, useRef } from "react";
+import { useShallow } from "zustand/shallow";
 
 interface ContestTabsContentProps {
   tab: Tab;
@@ -22,7 +25,18 @@ interface ContestTabsContentProps {
 }
 
 const ContestTabsContent: FC<ContestTabsContentProps> = ({ tab, version, rewardsModule }) => {
-  const { isExpanded, setIsExpanded } = usePriceCurveChartStore();
+  const { isExpanded, setIsExpanded } = usePriceCurveChartStore(useShallow(state => state));
+  const { votesClose } = useContestStore(state => state);
+  const hasSetDefault = useRef(false);
+
+  useEffect(() => {
+    if (hasSetDefault.current || !votesClose) return;
+    hasSetDefault.current = true;
+    const isContestOver = moment().isSameOrAfter(moment(votesClose));
+    if (isContestOver) {
+      setIsExpanded(false);
+    }
+  }, [votesClose, setIsExpanded]);
 
   const renderContent = (): ReactNode => {
     switch (tab) {

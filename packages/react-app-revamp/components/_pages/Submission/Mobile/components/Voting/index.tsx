@@ -44,7 +44,7 @@ const SubmissionPageMobileVoting: FC<SubmissionPageMobileVotingProps> = ({ isOpe
   return (
     <Drawer isOpen={isOpen} onClose={handleClose} className="bg-true-black w-full h-auto">
       <div className="flex flex-col gap-4 p-6">
-        <PriceCurveWrapper showPriceWarning />
+        <PriceCurveWrapper showPriceWarning showAxisLabels noPadding />
         {showAddFunds ? (
           <AddFunds
             chain={contestConfig.chainName}
