@@ -25,7 +25,8 @@ const convertNativeToDisplay = (nativeValue: string, rate: number | undefined): 
   if (rate === undefined) return nativeValue;
   const num = parseFloat(nativeValue);
   if (isNaN(num) || num === 0) return nativeValue;
-  return toFixedString(num * rate);
+  const usdValue = num * rate;
+  return usdValue < 1 ? toFixedString(parseFloat(usdValue.toPrecision(4))) : usdValue.toFixed(2);
 };
 
 const convertDisplayToNative = (displayValue: string, rate: number | undefined): string => {

@@ -1,6 +1,16 @@
+import usePriceCurveChartStore from "@components/PriceCurve/store";
 import ButtonV3, { ButtonSize, ButtonType } from "@components/UI/ButtonV3";
 import { useModal } from "@getpara/react-sdk-lite";
-import { FC } from "react";
+import { motion } from "motion/react";
+import { FC, useState, useMemo, memo } from "react";
+
+const PARTICLE_SVGS = [
+  "/particles/confetti-pink.svg",
+  "/particles/confetti-purple.svg",
+  "/particles/confetti-cyan.svg",
+  "/particles/confetti-green.svg",
+  "/particles/confetti-violet.svg",
+];
 
 interface VoteButtonProps {
   isDisabled: boolean;
@@ -24,6 +34,19 @@ const ButtonText = {
 
 const VoteButton: FC<VoteButtonProps> = ({ isDisabled, isInvalidBalance, isConnected, onVote, onAddFunds }) => {
   const { openModal } = useModal();
+  const [isHovered, setIsHovered] = useState(false);
+  const showPriceUpdateWarning = usePriceCurveChartStore(state => state.showPriceUpdateWarning);
+
+  const particles = useMemo(
+    () =>
+      [10, 50, 90].map((x, i) => ({
+        x,
+        svg: PARTICLE_SVGS[i % PARTICLE_SVGS.length],
+        delay: i * 0.3,
+        size: 7,
+      })),
+    [],
+  );
 
   const getButtonText = () => {
     if (isInvalidBalance) {
@@ -45,17 +68,46 @@ const VoteButton: FC<VoteButtonProps> = ({ isDisabled, isInvalidBalance, isConne
     }
   };
 
+  const showConfetti = isConnected && !isInvalidBalance && !isDisabled;
+
   return (
-    <ButtonV3
-      type={ButtonType.TX_ACTION}
-      isDisabled={isInvalidBalance || !isConnected ? false : isDisabled}
-      colorClass="px-[20px] text-[24px] font-bold bg-gradient-purple rounded-[40px] w-full"
-      size={ButtonSize.FULL}
-      onClick={handleClick}
-    >
-      <span className="w-full text-center">{getButtonText()}</span>
-    </ButtonV3>
+    <div className="flex flex-col gap-2">
+      {showPriceUpdateWarning && (
+        <p className="text-[12px] text-secondary-11 animate-pulse text-center">
+          wait for price update or tx may fail
+        </p>
+      )}
+    <div className="relative" onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
+      {showConfetti && isHovered &&
+        particles.map((p, i) => (
+          <motion.img
+            key={`confetti-${i}`}
+            src={p.svg}
+            alt=""
+            className="absolute pointer-events-none"
+            style={{
+              left: `${p.x}%`,
+              bottom: "100%",
+              width: p.size,
+              height: p.size,
+            }}
+            initial={{ opacity: 0, y: 0 }}
+            animate={{ opacity: [0, 0.7, 0], y: -20 }}
+            transition={{ duration: 1, delay: p.delay, ease: "easeOut", repeat: Infinity, repeatDelay: 0.3 }}
+          />
+        ))}
+      <ButtonV3
+        type={ButtonType.TX_ACTION}
+        isDisabled={isInvalidBalance || !isConnected ? false : isDisabled}
+        colorClass="px-[20px] text-[24px] font-bold bg-gradient-purple rounded-[40px] w-full"
+        size={ButtonSize.FULL}
+        onClick={handleClick}
+      >
+        <span className="w-full text-center">{getButtonText()}</span>
+      </ButtonV3>
+    </div>
+    </div>
   );
 };
 
-export default VoteButton;
+export default memo(VoteButton);

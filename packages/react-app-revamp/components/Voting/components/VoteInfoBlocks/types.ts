@@ -1,4 +1,4 @@
-export type VoteInfoBlockType = "my-votes" | "charge-info" | "total-votes";
+export type VoteInfoBlockType = "my-votes" | "total-votes";
 
 interface BaseVoteInfoBlocksProps {
   type: VoteInfoBlockType;
@@ -13,12 +13,6 @@ export interface MyVotesProps extends BaseVoteInfoBlocksProps {
   onAddFunds?: () => void;
 }
 
-export interface ChargeInfoProps extends BaseVoteInfoBlocksProps {
-  costToVote: string;
-  costToVoteRaw: bigint;
-  type: "charge-info";
-}
-
 export interface TotalVotesProps extends BaseVoteInfoBlocksProps {
   type: "total-votes";
   costToVote: string;
@@ -26,4 +20,4 @@ export interface TotalVotesProps extends BaseVoteInfoBlocksProps {
   isBelowMinimum?: boolean;
 }
 
-export type VoteInfoBlocksProps = MyVotesProps | ChargeInfoProps | TotalVotesProps;
+export type VoteInfoBlocksProps = MyVotesProps | TotalVotesProps;

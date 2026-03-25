@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { PricePoint } from "lib/priceCurve/types";
-import { ChartDataPoint } from "components/_pages/Contest/components/PriceCurveChart/types";
+import { ChartDataPoint } from "@components/PriceCurve/types";
 
 export interface PriceCurveChartData {
   chartData: ChartDataPoint[];

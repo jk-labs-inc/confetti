@@ -10,7 +10,6 @@ import VotingWidgetRewardsProjection from "./components/RewardsProjection";
 import VoteAmountInput from "./components/VoteAmountInput";
 import VoteButton from "./components/VoteButton";
 import VoteInfoBlocks from "./components/VoteInfoBlocks";
-import VoteSlider from "./components/VoteSlider";
 import { useVoteExecution } from "./hooks/useVoteExecution";
 import { useVotingStore } from "./store";
 
@@ -46,11 +45,9 @@ const VotingWidget: FC<VotingWidgetProps> = ({
   const { isConnected } = useWallet();
   const contestConfig = useContestConfigStore(useShallow(state => state.contestConfig));
   const inputRef = useRef<HTMLInputElement>(null);
-  const { inputValue, sliderValue, setSliderValue, isInvalid } = useVotingStore(
+  const { inputValue, isInvalid } = useVotingStore(
     useShallow(state => ({
       inputValue: state.inputValue,
-      sliderValue: state.sliderValue,
-      setSliderValue: state.setSliderValue,
       isInvalid: state.isInvalid,
     })),
   );
@@ -84,12 +81,6 @@ const VotingWidget: FC<VotingWidgetProps> = ({
   const isBelowMinimum = isConnected && !isZeroValue && totalVotes === 0;
   const voteDisabled = isBalanceLoading || isLoading || isInvalid || isZeroValue || isBelowMinimum;
 
-  const handleKeyDownSlider = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    if (e.key === "Enter") {
-      handleVote();
-    }
-  };
-
   const handleKeyDownInputWithVote = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       handleVote();
@@ -100,11 +91,11 @@ const VotingWidget: FC<VotingWidgetProps> = ({
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex flex-col gap-4">
-        <div className="flex flex-col gap-2">
-          <VoteAmountInput
+      <div className="flex flex-col gap-2">
+        <VoteAmountInput
             maxBalance={balance?.formatted || "0"}
             symbol={contestConfig.chainNativeCurrencySymbol}
+            costToVote={costToVote}
             isConnected={isConnected}
             isBelowMinimum={isBelowMinimum}
             style={style}
@@ -119,37 +110,23 @@ const VotingWidget: FC<VotingWidgetProps> = ({
             isConnected={isConnected}
             onAddFunds={onAddFunds}
           />
-        </div>
-        {hasBalance && (
-          <VoteSlider
-            value={sliderValue}
-            onChange={value => setSliderValue(value, balance?.formatted || "0", isConnected)}
-            onKeyDown={handleKeyDownSlider}
-          />
-        )}
-        <div className="flex flex-col gap-2">
-          <VoteInfoBlocks type="charge-info" costToVote={costToVote} costToVoteRaw={costToVoteRaw} />
-          <VoteInfoBlocks
-            type="total-votes"
-            costToVote={costToVote}
-            spendableBalance={balance?.formatted || "0"}
-            isBelowMinimum={isBelowMinimum}
-          />
-        </div>
+      </div>
+
+      <div className="flex flex-col gap-4">
         <VotingWidgetRewardsProjection
           currentPricePerVote={costToVoteRaw}
           inputValue={inputValue}
           submissionsCount={submissionsCount}
         />
+        <VotingWidgetEmailSignup />
+        <VoteButton
+          isDisabled={voteDisabled}
+          isInvalidBalance={insufficientBalance && isConnected}
+          isConnected={isConnected}
+          onVote={handleVote}
+          onAddFunds={onAddFunds}
+        />
       </div>
-      <VotingWidgetEmailSignup />
-      <VoteButton
-        isDisabled={voteDisabled}
-        isInvalidBalance={insufficientBalance && isConnected}
-        isConnected={isConnected}
-        onVote={handleVote}
-        onAddFunds={onAddFunds}
-      />
     </div>
   );
 };
