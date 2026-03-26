@@ -9,13 +9,13 @@ interface DrawerProps {
   onClose?: () => void;
 }
 
-const isInteractionInsideParaModal = (e: React.SyntheticEvent | Event | { detail?: { originalEvent?: Event } }) => {
+const shouldPreventDismiss = (e: React.SyntheticEvent | Event | { detail?: { originalEvent?: Event } }) => {
   const target = (e as { detail?: { originalEvent?: Event } }).detail?.originalEvent?.target ?? (e as Event).target;
 
   if (!target) return false;
 
   const el = target as HTMLElement;
-  return !!el.closest?.("cpsl-auth-modal");
+  return !!el.closest?.("cpsl-auth-modal") || !!el.closest?.(".Toastify");
 };
 
 const Drawer: FC<DrawerProps> = ({ isOpen, children, className, onClose, isHandleHidden = false }) => {
@@ -26,7 +26,7 @@ const Drawer: FC<DrawerProps> = ({ isOpen, children, className, onClose, isHandl
   };
 
   const handleInteractOutside = useCallback((e: Event) => {
-    if (isInteractionInsideParaModal(e)) {
+    if (shouldPreventDismiss(e)) {
       e.preventDefault();
     }
   }, []);

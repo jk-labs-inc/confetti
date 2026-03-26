@@ -372,6 +372,10 @@
 
 /* Edit toastify styles */
 
+.Toastify__toast-container {
+  pointer-events: auto !important;
+}
+
 .Toastify__toast-theme--colored.Toastify__toast--default {
   background-color: white !important;
   color: #e5e5e5 !important;
