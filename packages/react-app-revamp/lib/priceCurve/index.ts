@@ -143,7 +143,7 @@ export const generatePricePoints = (params: GeneratePricePointsParams): PricePoi
 
   // Always include the end point
   const endPriceFloat = startPrice * Math.pow(2, multiple * 100);
-  const roundedEndPrice = Math.floor(endPriceFloat / COST_ROUNDING_VALUE) * COST_ROUNDING_VALUE;
+  const roundedEndPrice = Math.round(endPriceFloat / COST_ROUNDING_VALUE) * COST_ROUNDING_VALUE;
   const endPriceBigInt = BigInt(roundedEndPrice);
 
   pricePoints.push({

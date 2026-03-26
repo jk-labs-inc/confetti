@@ -53,7 +53,7 @@ const ContestName: FC<ContestNameProps> = ({
         <EditContestName contestName={contestName} canEditTitle={canEditTitle} contestPrompt={contestPrompt} contestImageUrl={contestImageUrl} />
         <CancelContest />
       </div>
-      <div className="flex items-baseline gap-4">
+      <div className="flex items-baseline gap-4 w-full">
         <p
           className={`text-neutral-11 font-sabo-filled ${contestName.length > 20 ? "text-[20px] md:text-[28px]" : "text-[20px] md:text-[32px]"} ${isContestCanceled ? "line-through" : ""}`}
         >
@@ -71,7 +71,9 @@ const ContestName: FC<ContestNameProps> = ({
             </CustomLink>
           </p>
         )}
-        <ContestShareButton contestName={contestName} contestAddress={contestAddress} chainName={chainName} />
+        <div className="ml-auto">
+          <ContestShareButton contestName={contestName} contestAddress={contestAddress} chainName={chainName} />
+        </div>
       </div>
     </div>
   );

@@ -1,10 +1,11 @@
 import AddFunds from "@components/AddFunds";
+import PriceCurveWrapper from "@components/PriceCurve/wrapper";
 import Drawer from "@components/UI/Drawer";
 import VotingWidget from "@components/Voting";
 import { useVotingActions } from "@components/_pages/Submission/hooks/useVotingActions";
 import { useSubmissionPageStore } from "@components/_pages/Submission/store";
 import { ContestStateEnum } from "@hooks/useContestState/store";
-import { FC, useState } from "react";
+import { FC, useState, useCallback } from "react";
 import { useShallow } from "zustand/shallow";
 import { useVotingSetupMobile } from "./hooks/useVotingSetupMobile";
 
@@ -28,6 +29,9 @@ const SubmissionPageMobileVoting: FC<SubmissionPageMobileVotingProps> = ({ isOpe
   } = useVotingSetupMobile();
   const { castVotes, isLoading } = useVotingActions({ charge, votesClose });
 
+  const onVote = useCallback((amount: number) => castVotes(amount), [castVotes]);
+  const onAddFunds = useCallback(() => setShowAddFunds(true), []);
+
   const handleClose = () => {
     setShowAddFunds(false);
     onClose?.();
@@ -40,6 +44,7 @@ const SubmissionPageMobileVoting: FC<SubmissionPageMobileVotingProps> = ({ isOpe
   return (
     <Drawer isOpen={isOpen} onClose={handleClose} className="bg-true-black w-full h-auto">
       <div className="flex flex-col gap-4 p-6">
+        <PriceCurveWrapper showPriceWarning showAxisLabels noPadding />
         {showAddFunds ? (
           <AddFunds
             chain={contestConfig.chainName}
@@ -54,8 +59,8 @@ const SubmissionPageMobileVoting: FC<SubmissionPageMobileVotingProps> = ({ isOpe
             isLoading={isLoading}
             isVotingClosed={!isVotingOpen}
             isContestCanceled={contestState === ContestStateEnum.Canceled}
-            onVote={(amount: number) => castVotes(amount)}
-            onAddFunds={() => setShowAddFunds(true)}
+            onVote={onVote}
+            onAddFunds={onAddFunds}
           />
         )}
       </div>

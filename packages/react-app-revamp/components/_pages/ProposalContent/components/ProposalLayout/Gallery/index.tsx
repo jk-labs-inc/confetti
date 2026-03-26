@@ -92,17 +92,14 @@ const ProposalLayoutGallery: FC<ProposalLayoutGalleryProps> = ({
 
         <div className="absolute top-1 left-2 right-2 flex items-center justify-between">
           <div>{proposal.rank ? <ProposalLayoutGalleryRankOrPlaceholder rank={proposal.rank} /> : null}</div>
-          <div className="flex flex-col items-end gap-0.5" style={{ textShadow: "0 1px 4px rgba(0,0,0,0.9), 0 0 12px rgba(0,0,0,0.6)" }}>
-            {imgTitle ? (
-              <p className="text-[12px] font-bold text-neutral-11">
-                {imgTitle}
-              </p>
-            ) : null}
+          <div
+            className="flex flex-col items-end gap-0.5"
+            style={{ textShadow: "0 1px 4px rgba(0,0,0,0.9), 0 0 12px rgba(0,0,0,0.6)" }}
+          >
+            {imgTitle ? <p className="text-[12px] font-bold text-neutral-11">{imgTitle}</p> : null}
             {(contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed) &&
             proposal.votes > 0 ? (
-              <p className="text-[12px] text-neutral-11">
-                {formatNumberWithCommas(proposal.votes)} votes
-              </p>
+              <p className="text-[12px] text-neutral-11">{formatNumberWithCommas(proposal.votes)} votes</p>
             ) : null}
           </div>
         </div>

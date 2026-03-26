@@ -1,11 +1,7 @@
-import usePriceCurveChartStore from "@components/_pages/Contest/components/PriceCurveChart/store";
-import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/24/outline";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import usePriceCurveUpdateInterval from "@hooks/usePriceCurveUpdateInterval";
-import { motion } from "motion/react";
 import { FC } from "react";
-import { useMediaQuery } from "react-responsive";
 import { useShallow } from "zustand/shallow";
 import VotingQualifierError from "../../../../shared/Error";
 import VotingQualifierSkeleton from "../../../../shared/Skeleton";
@@ -19,7 +15,6 @@ interface VotingQualifierAnyoneCanVoteExponentialProps {
 const VotingQualifierAnyoneCanVoteExponential: FC<VotingQualifierAnyoneCanVoteExponentialProps> = ({
   votingTimeLeft,
 }) => {
-  const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const contestStatus = useContestStatusStore(useShallow(state => state.contestStatus));
   const { contestConfig } = useContestConfigStore(useShallow(state => state));
   const { priceCurveUpdateInterval, isLoading, isError, refetch } = usePriceCurveUpdateInterval({
@@ -27,13 +22,6 @@ const VotingQualifierAnyoneCanVoteExponential: FC<VotingQualifierAnyoneCanVoteEx
     abi: contestConfig.abi,
     chainId: contestConfig.chainId,
   });
-  const { isExpanded, setIsExpanded } = usePriceCurveChartStore();
-  const isPriceCurveChartToggleDisabled = isMobile;
-
-  const handleToggle = () => {
-    setIsExpanded(!isExpanded);
-  };
-
   if (isLoading) {
     return <VotingQualifierSkeleton />;
   }
@@ -48,7 +36,7 @@ const VotingQualifierAnyoneCanVoteExponential: FC<VotingQualifierAnyoneCanVoteEx
         <div className="flex items-center gap-1 md:gap-2">
           <img src="/contest/price-interval.svg" alt="timer" />
           <p className="text-[12px] md:text-[16px] font-bold text-neutral-9">
-            {isMobile && contestStatus === ContestStatus.VotingOpen ? "price" : "price per vote"}
+            price per vote
           </p>
           <VotingQualifierAnyoneCanVoteExponentialTimer
             votingTimeLeft={votingTimeLeft}
@@ -57,26 +45,6 @@ const VotingQualifierAnyoneCanVoteExponential: FC<VotingQualifierAnyoneCanVoteEx
         </div>
         <VotingQualifierAnyoneCanVoteExponentialVotePrice />
       </div>
-      {!isPriceCurveChartToggleDisabled && (
-        <button
-          onClick={handleToggle}
-          className="flex items-center justify-center w-6 h-6"
-          tabIndex={0}
-          aria-label={isExpanded ? "Collapse" : "Expand"}
-        >
-          <motion.div
-            animate={{ rotate: isExpanded ? 180 : 0 }}
-            transition={{ duration: 0.2, ease: "easeInOut" }}
-            style={{ willChange: "transform" }}
-          >
-            {isExpanded ? (
-              <ChevronUpIcon className="w-6 h-6 text-positive-11" />
-            ) : (
-              <ChevronDownIcon className="w-6 h-6 text-positive-11" />
-            )}
-          </motion.div>
-        </button>
-      )}
     </div>
   );
 };

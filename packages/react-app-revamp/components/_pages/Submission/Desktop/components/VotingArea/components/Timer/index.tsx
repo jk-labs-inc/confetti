@@ -22,7 +22,7 @@ const SubmissionPageDesktopVotingAreaTimer = () => {
   }
 
   return (
-    <div className="inline-flex items-center w-[400px] ml-10 gap-12 h-10 rounded-2xl py-2 px-4 border border-381d4c bg-gradient-timer">
+    <div className="inline-flex items-center justify-between xl:w-[448px] xl:ml-4 gap-12 h-10 rounded-2xl py-2 px-4 border border-381d4c bg-gradient-timer">
       <TimerLabel label="voting ends" />
       <TimerDisplay timeRemaining={timeRemaining} />
     </div>
