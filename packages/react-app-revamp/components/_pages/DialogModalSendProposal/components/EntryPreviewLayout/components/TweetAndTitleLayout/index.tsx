@@ -53,7 +53,7 @@ const DialogModalSendProposalEntryPreviewTweetAndTitleLayout: FC<
     const sanitizedTweet = newTweetUrl?.trim() || "";
     const sanitizedTitle = newTitle?.trim() || "";
 
-    const combinedValue = `JOKERACE_TWEET=${sanitizedTweet}&JOKERACE_TWEET_TITLE=${sanitizedTitle}`;
+    const combinedValue = `JOKERACE_TWEET=${encodeURIComponent(sanitizedTweet)}&JOKERACE_TWEET_TITLE=${encodeURIComponent(sanitizedTitle)}`;
     onChange?.(combinedValue);
   };
 
