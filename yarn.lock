@@ -2366,10 +2366,10 @@
   dependencies:
     tslib "^2.8.0"
 
-"@getbrevo/brevo@5.0.1":
-  version "5.0.1"
-  resolved "https://registry.yarnpkg.com/@getbrevo/brevo/-/brevo-5.0.1.tgz#ea05f6e21b0b92469f523b71daffa6367d5ccef7"
-  integrity sha512-GRi70hv8obJsTnNkDlw0NfFezmx/jnuOL26ljKo/6J1AAw4D+7Jg9TX4+pau0uL5Fo9fEJy13ZsJtmARGt4E1A==
+"@getbrevo/brevo@5.0.3":
+  version "5.0.3"
+  resolved "https://registry.yarnpkg.com/@getbrevo/brevo/-/brevo-5.0.3.tgz#6e6ca346409a89e9d3f15124488d29f699689002"
+  integrity sha512-AIAFXiUkk5fpl8cVttGWZfxt84PFPS7DnB0+fRqd70kFsbwPvNfdYhrnD0tXL5jLmGrSeLv2pfACkzFD7gYeeA==
 
 "@getpara/core-components@2.18.0":
   version "2.18.0"
