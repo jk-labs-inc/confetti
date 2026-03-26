@@ -122,7 +122,7 @@ const CommentsFormInput: FC<CommentsFormInputProps> = ({ onSend, contestChainId,
       ref={containerRef}
       className={`flex ${
         containerHeight > 48 ? "items-end" : "items-center"
-      } p-2 gap-3 w-full md:w-[544px] rounded-4xl bg-secondary-1 border border-neutral-17`}
+      } p-2 gap-3 w-full md:max-w-[544px] rounded-4xl bg-secondary-1 border border-neutral-17`}
     >
       <div>
         <UserProfileDisplay avatarVersion ethereumAddress={userAddress ?? ""} shortenOnFallback size="compact" />
