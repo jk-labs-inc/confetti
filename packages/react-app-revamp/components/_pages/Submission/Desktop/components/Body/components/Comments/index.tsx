@@ -39,7 +39,7 @@ const SubmissionPageDesktopBodyComments = () => {
   return (
     <div className="pl-4 pr-4 pb-4">
       <div
-        className={`w-full flex flex-col gap-2 pl-6 py-4 bg-gradient-comments-area-purple rounded-4xl ${
+        className={`w-full flex flex-col gap-2 px-6 py-4 bg-gradient-comments-area-purple rounded-4xl ${
           numberOfComments !== undefined && numberOfComments > 0 ? "h-52" : "h-auto"
         }`}
       >
