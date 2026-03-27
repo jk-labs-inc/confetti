@@ -26,7 +26,7 @@ const DialogModalSendProposalEntryPreviewImageAndTitleLayout: FC<DialogModalSend
     const sanitizedImageUrl = newImageUrl?.trim() || "";
     const sanitizedTitle = newInputValue?.trim() || "";
 
-    const combinedValue = `JOKERACE_IMG=${sanitizedImageUrl}&JOKERACE_IMG_TITLE=${sanitizedTitle}`;
+    const combinedValue = `JOKERACE_IMG=${encodeURIComponent(sanitizedImageUrl)}&JOKERACE_IMG_TITLE=${encodeURIComponent(sanitizedTitle)}`;
     onChange?.(combinedValue);
   };
 
