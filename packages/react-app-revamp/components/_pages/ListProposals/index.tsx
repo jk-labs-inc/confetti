@@ -7,10 +7,11 @@ import useDeleteProposal from "@hooks/useDeleteProposal";
 import { useMetadataStore } from "@hooks/useMetadataFields/store";
 import useProposal from "@hooks/useProposal";
 import { useProposalStore } from "@hooks/useProposal/store";
+import { useWallet } from "@hooks/useWallet";
 import { switchChain } from "@wagmi/core";
+import { LayoutGroup, motion } from "motion/react";
 import { useState } from "react";
 import useInfiniteScroll from "react-infinite-scroll-hook";
-import { useWallet } from "@hooks/useWallet";
 import { useShallow } from "zustand/shallow";
 import { verifyEntryPreviewPrompt } from "../DialogModalSendProposal/utils";
 import ListProposalsContainer from "./container";
@@ -104,44 +105,49 @@ export const ListProposals = () => {
 
   return (
     <>
-      <ListProposalsContainer enabledPreview={enabledPreview}>
-        {listProposalsData.map((proposal, index) => {
-          if (deletingProposalIds.includes(proposal.id) && isDeleteInProcess) {
+      <LayoutGroup>
+        <ListProposalsContainer enabledPreview={enabledPreview}>
+          {listProposalsData.map((proposal, index) => {
+            if (deletingProposalIds.includes(proposal.id) && isDeleteInProcess) {
+              return (
+                <motion.div key={`deleting-${proposal.id}`} layout transition={{ duration: 0.4, ease: "easeInOut" }}>
+                  <ListProposalsSkeleton enabledPreview={enabledPreview} highlightColor="#FF78A9" count={1} />
+                </motion.div>
+              );
+            }
             return (
-              <ListProposalsSkeleton
-                key={`deleting-${proposal.id}`}
-                enabledPreview={enabledPreview}
-                highlightColor="#FF78A9"
-                count={1}
-              />
+              <motion.div
+                key={proposal.id}
+                layout
+                layoutId={proposal.id}
+                transition={{ duration: 0.4, ease: "easeInOut" }}
+              >
+                <ProposalContent
+                  proposal={{
+                    id: proposal.id,
+                    authorEthereumAddress: proposal.author,
+                    content: proposal.description,
+                    exists: proposal.exists,
+                    isContentImage: proposal.isContentImage,
+                    tweet: proposal.tweet,
+                    votes: proposal.netVotes,
+                    rank: proposal.rank,
+                    isTied: proposal.isTied,
+                    commentsCount: proposal.commentsCount,
+                    // TODO: check if this is correct (it is, but we need to fix the type, we can do this afterwards)
+                    // @ts-ignore
+                    metadataFields: proposal.metadataFields ?? [],
+                  }}
+                  enabledPreview={enabledPreview}
+                  selectedProposalIds={selectedProposalIds}
+                  toggleProposalSelection={toggleProposalSelection}
+                  contestAuthorEthereumAddress={contestAuthorEthereumAddress}
+                />
+              </motion.div>
             );
-          }
-          return (
-            <ProposalContent
-              key={proposal.id}
-              proposal={{
-                id: proposal.id,
-                authorEthereumAddress: proposal.author,
-                content: proposal.description,
-                exists: proposal.exists,
-                isContentImage: proposal.isContentImage,
-                tweet: proposal.tweet,
-                votes: proposal.netVotes,
-                rank: proposal.rank,
-                isTied: proposal.isTied,
-                commentsCount: proposal.commentsCount,
-                // TODO: check if this is correct (it is, but we need to fix the type, we can do this afterwards)
-                // @ts-ignore
-                metadataFields: proposal.metadataFields ?? [],
-              }}
-              enabledPreview={enabledPreview}
-              selectedProposalIds={selectedProposalIds}
-              toggleProposalSelection={toggleProposalSelection}
-              contestAuthorEthereumAddress={contestAuthorEthereumAddress}
-            />
-          );
-        })}
-      </ListProposalsContainer>
+          })}
+        </ListProposalsContainer>
+      </LayoutGroup>
 
       {hasNextPage && <ListProposalsLoader ref={infiniteRef} />}
 
