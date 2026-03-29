@@ -1,8 +1,6 @@
 import { useReadContract, useReadContracts } from "wagmi";
 import { Abi } from "viem";
 import { useMemo } from "react";
-import { compareVersions } from "compare-versions";
-import { formatEther } from "viem";
 
 interface UseAllProposalIdsParams {
   address: `0x${string}`;
@@ -20,7 +18,7 @@ interface UseAllProposalIdsResult {
 }
 
 /**
- * Client-side hook to fetch all proposal IDs sorted by votes
+ * Client-side hook to fetch all proposal IDs
  */
 export const useAllProposalIds = ({
   address,
@@ -30,7 +28,6 @@ export const useAllProposalIds = ({
   enabled = true,
 }: UseAllProposalIdsParams): UseAllProposalIdsResult => {
   const isLegacy = useMemo(() => !version || version.startsWith("3."), [version]);
-  const hasDownvotes = useMemo(() => (version ? compareVersions(version, "5.1") < 0 : false), [version]);
 
   // For legacy contracts, use getAllProposalIds
   const {
@@ -89,39 +86,13 @@ export const useAllProposalIds = ({
 
         const allProposalsResult = data[0].result as any;
         const proposalIds = allProposalsResult[0] as bigint[];
-        const voteCounts = allProposalsResult[1];
         const deletedIdsArray = data[1]?.result as bigint[] | undefined;
 
-        // Create set of deleted proposal IDs
         const deletedProposalSet = new Set(deletedIdsArray ? deletedIdsArray.map((id: bigint) => id.toString()) : []);
 
-        // Extract votes helper function
-        const extractVotes = (index: number): number => {
-          try {
-            if (hasDownvotes && Array.isArray(voteCounts[index])) {
-              const voteForBigInt = BigInt(voteCounts[index][0]);
-              const voteAgainstBigInt = BigInt(voteCounts[index][1]);
-              return Number(formatEther(voteForBigInt - voteAgainstBigInt));
-            }
-            return Number(formatEther(voteCounts[index] as bigint));
-          } catch (error) {
-            console.error("Error extracting votes for proposal at index:", index, error);
-            return 0;
-          }
-        };
-
-        // Filter out deleted proposals and map to objects with votes
-        const mappedProposals = proposalIds
-          .map((id, index) => ({
-            id: id.toString(),
-            votes: extractVotes(index),
-          }))
-          .filter(p => !deletedProposalSet.has(p.id));
-
-        // Sort by votes (highest first)
-        const sortedProposals = mappedProposals.sort((a, b) => b.votes - a.votes);
-
-        return sortedProposals.map(p => p.id);
+        return proposalIds
+          .map((id: bigint) => id.toString())
+          .filter((id: string) => !deletedProposalSet.has(id));
       },
     },
   });

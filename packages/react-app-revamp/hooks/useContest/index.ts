@@ -153,7 +153,6 @@ export function useContest() {
       setIsLoading(false);
 
       await fetchProposalsIdsList(contractConfig, version, {
-        submissionOpen: submissionsOpenDate,
         votesOpen: votesOpenDate,
       });
     } catch (error) {
