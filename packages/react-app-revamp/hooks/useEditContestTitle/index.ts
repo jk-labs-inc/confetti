@@ -38,6 +38,7 @@ const useEditContestTitle = ({ contestAbi, contestAddress }: UseEditContestTitle
 
       if (hash) {
         setContestName(newName);
+        document.title = newName;
         toastSuccess({
           message: "contest title updated successfully",
         });

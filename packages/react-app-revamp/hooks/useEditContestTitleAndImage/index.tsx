@@ -47,6 +47,7 @@ const useEditContestTitleAndImage = ({ contestAbi, contestAddress }: UseEditCont
       await writeContract(getWagmiConfig(), request);
 
       setContestName(newTitle);
+      document.title = newTitle;
     };
 
     const updatePrompt = async () => {
