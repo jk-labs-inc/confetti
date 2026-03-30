@@ -1486,6 +1486,15 @@
     eventemitter3 "^5.0.4"
     zustand "^5.0.11"
 
+"@bigmi/client@^0.8.0":
+  version "0.8.0"
+  resolved "https://registry.yarnpkg.com/@bigmi/client/-/client-0.8.0.tgz#9b4e7033565ef0ac7683a29f52ea7050858ead17"
+  integrity sha512-mdiqeFpTXfbYYFZyPO9SYKzNdpELbicMfMk9SKmhAwfMMRrz61ctihnWHApS19+iEvhFhFbzXb+FEcQn7s6VAw==
+  dependencies:
+    "@bigmi/core" "^0.8.0"
+    eventemitter3 "^5.0.4"
+    zustand "^5.0.12"
+
 "@bigmi/core@^0.7.1":
   version "0.7.1"
   resolved "https://registry.yarnpkg.com/@bigmi/core/-/core-0.7.1.tgz#5a539835da4b0fb2887132479802fde67ad2a364"
@@ -1498,13 +1507,25 @@
     eventemitter3 "^5.0.4"
     zustand "^5.0.11"
 
-"@bigmi/react@0.7.1":
-  version "0.7.1"
-  resolved "https://registry.yarnpkg.com/@bigmi/react/-/react-0.7.1.tgz#3adcd6fcee6f09ee8682a6b9de289f53675556fa"
-  integrity sha512-TuF7GgBNNv4qTeSEZttEqztxzdf5UdENPHygJm8f8pTG09o6g/52DWZ2DP6win+Wra431dNm98kRFTzEUMC27Q==
+"@bigmi/core@^0.8.0":
+  version "0.8.0"
+  resolved "https://registry.yarnpkg.com/@bigmi/core/-/core-0.8.0.tgz#f4b7c8c77953245b6a0b0e43b8f4321834cba82c"
+  integrity sha512-eTFRfLIonUwcgYeHdgfiRKkO9Nb49ZUT7EyS+5Q76HsKGsZyXaemrJvpL8gKLSuVIQAegS7CVPaEC6gZxn1RyA==
   dependencies:
-    "@bigmi/client" "^0.7.1"
-    "@bigmi/core" "^0.7.1"
+    "@noble/hashes" "^1.8.0"
+    bech32 "^2.0.0"
+    bitcoinjs-lib "^7.0.1"
+    bs58 "^6.0.0"
+    eventemitter3 "^5.0.4"
+    zustand "^5.0.12"
+
+"@bigmi/react@0.8.0":
+  version "0.8.0"
+  resolved "https://registry.yarnpkg.com/@bigmi/react/-/react-0.8.0.tgz#b5292a49f783a412165c362533cba588cd74590c"
+  integrity sha512-fzhA6TD1s2EnM6KlprXe+qA5IXF0hLooxE5Zo2xTLqHZIk+Qu4y4FtoJE2Oml1sJg7FnW1yjWXgbOVDcCBzwFg==
+  dependencies:
+    "@bigmi/client" "^0.8.0"
+    "@bigmi/core" "^0.8.0"
 
 "@bitcoinerlab/secp256k1@^1.2.0":
   version "1.2.0"
@@ -14482,7 +14503,7 @@ zustand@5.0.0:
   resolved "https://registry.yarnpkg.com/zustand/-/zustand-5.0.0.tgz#71f8aaecf185592a3ba2743d7516607361899da9"
   integrity sha512-LE+VcmbartOPM+auOjCCLQOsQ05zUTp8RkgwRzefUk+2jISdMMFnxvyTjA4YNWr5ZGXYbVsEMZosttuxUBkojQ==
 
-zustand@5.0.12:
+zustand@5.0.12, zustand@^5.0.12:
   version "5.0.12"
   resolved "https://registry.yarnpkg.com/zustand/-/zustand-5.0.12.tgz#ed36f647aa89965c4019b671dfc23ef6c6e3af8c"
   integrity sha512-i77ae3aZq4dhMlRhJVCYgMLKuSiZAaUPAct2AksxQ+gOtimhGMdXljRT21P5BNpeT4kXlLIckvkPM029OljD7g==
