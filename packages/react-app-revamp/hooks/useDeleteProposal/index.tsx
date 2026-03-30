@@ -6,7 +6,6 @@ import useContestConfigStore from "@hooks/useContestConfig/store";
 import { ContestStatus } from "@hooks/useContestStatus/store";
 import { useError } from "@hooks/useError";
 import useProposal from "@hooks/useProposal";
-import { useProposalStore } from "@hooks/useProposal/store";
 import { useWallet } from "@hooks/useWallet";
 import { simulateContract, waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { compareVersions } from "compare-versions";
@@ -30,7 +29,6 @@ export function useDeleteProposal() {
   const chain = getChainFromId(contestConfig.chainId);
   const contestChainBlockExplorer = chain?.blockExplorers?.default?.url;
   const { removeProposal } = useProposal();
-  const { submissionsCount, setSubmissionsCount } = useProposalStore(state => state);
   const {
     isLoading,
     error,
@@ -99,7 +97,6 @@ export function useDeleteProposal() {
       }
 
       removeProposal(proposalIds);
-      setSubmissionsCount(submissionsCount - proposalIds.length);
       setIsLoading(false);
       setIsSuccess(true);
       toastSuccess({
