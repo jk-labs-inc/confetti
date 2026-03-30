@@ -89,8 +89,8 @@ export const SearchBar: FC<SearchBarProps> = ({ isInline, onSearch }) => {
             options={filterOptions}
             defaultValue={filterOptions[0].value}
             onChange={handleFilterTypeChange}
-            menuButtonWidth="w-32"
-            menuItemsWidth="w-32"
+            menuButtonWidth="w-36"
+            menuItemsWidth="w-36"
           />
         </div>
         {error && <div className="text-negative-11 mt-1 text-[14px]">{error}</div>}

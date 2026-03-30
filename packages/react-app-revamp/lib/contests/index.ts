@@ -190,8 +190,9 @@ export async function getLiveContests(
       }
 
       const processedData = await processContestsData(data as BaseContestData[]);
+      const filteredData = processedData.filter(contest => !contest.isCanceled);
 
-      return { data: processedData, count: count ?? 0 };
+      return { data: filteredData, count: (count ?? 0) - (processedData.length - filteredData.length) };
     } catch (e) {
       console.error(e);
       return { data: [], count: 0 };
@@ -263,8 +264,9 @@ export async function getUpcomingContests(
       }
 
       const processedData = await processContestsData(data as BaseContestData[]);
+      const filteredData = processedData.filter(contest => !contest.isCanceled);
 
-      return { data: processedData, count: count ?? 0 };
+      return { data: filteredData, count: (count ?? 0) - (processedData.length - filteredData.length) };
     } catch (e) {
       console.error(e);
       return { data: [], count: 0 };
