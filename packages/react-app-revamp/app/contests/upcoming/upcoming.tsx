@@ -39,7 +39,7 @@ function useContests(sortBy?: string) {
 }
 
 const UpcomingContests = () => {
-  const [sortBy, setSortBy] = useState<string>("");
+  const [sortBy, setSortBy] = useState<string>("newest");
   const sortOptions = useContestSortOptions("upcomingContests");
   const { page, setPage, status, contestData, rewardsData, error, isContestDataFetching, isRewardsFetching } =
     useContests(sortBy);
