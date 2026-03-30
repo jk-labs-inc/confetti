@@ -10,6 +10,8 @@ import { parse } from "node-html-parser";
 import { Abi } from "viem";
 import Contest from "./contest";
 
+export const dynamic = 'force-dynamic';
+
 const REGEX_ETHEREUM_ADDRESS = /^0x[a-fA-F0-9]{40}$/;
 
 const defaultMetadata = {

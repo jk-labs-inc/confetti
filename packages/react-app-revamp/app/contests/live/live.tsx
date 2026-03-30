@@ -42,7 +42,7 @@ function useContests(sortBy?: string) {
 
 const LiveContests = () => {
   const query = useSearchParams();
-  const [sortBy, setSortBy] = useState<string>("");
+  const [sortBy, setSortBy] = useState<string>("newest");
   const { page, setPage, status, contestData, rewardsData, isRewardsFetching, error, isContestDataFetching } =
     useContests(sortBy);
   const sortOptions = useContestSortOptions("liveContests");

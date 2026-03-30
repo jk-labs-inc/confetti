@@ -22,8 +22,6 @@ export interface MappedProposalIds {
   votes: number;
 }
 
-export type SortOptions = "leastRecent" | "mostRecent" | "random" | "votes";
-
 interface ProposalState {
   initialMappedProposalIds: MappedProposalIds[];
   listProposalsIds: string[];
@@ -39,7 +37,6 @@ interface ProposalState {
   currentPagePaginationProposals: number;
   hasPaginationProposalsNextPage: boolean;
   submissionsCount: number;
-  sortBy: SortOptions | null;
   addProposalId: (id: string) => void;
   setInitialMappedProposalIds: (initialList: MappedProposalIds[]) => void;
   setListProposalsIds: (list: string[]) => void;
@@ -55,7 +52,6 @@ interface ProposalState {
   setTotalPagesPaginationProposals: (value: number) => void;
   setCurrentPagePaginationProposals: (value: number) => void;
   setHasPaginationProposalsNextPage: (value: boolean) => void;
-  setSortBy: (sortBy: SortOptions | null) => void;
 }
 
 export const createProposalStore = () =>
@@ -74,7 +70,6 @@ export const createProposalStore = () =>
     currentPagePaginationProposals: 0,
     hasPaginationProposalsNextPage: false,
     submissionsCount: 0,
-    sortBy: null,
     setSubmissionsCount: value => set({ submissionsCount: value }),
     setIsPageProposalsLoading: value => set({ isPageProposalsLoading: value }),
     setIsPageProposalsSuccess: value => set({ isPageProposalSuccess: value }),
@@ -96,7 +91,6 @@ export const createProposalStore = () =>
     setListProposalsIds: list => set({ listProposalsIds: list }),
     setInitialMappedProposalIds: initialList => set({ initialMappedProposalIds: initialList }),
     setProposalData: proposals => set({ listProposalsData: proposals }),
-    setSortBy: sortBy => set({ sortBy }),
   }));
 
 export const ProposalContext = createContext<ReturnType<typeof createProposalStore> | null>(null);
