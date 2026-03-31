@@ -29,7 +29,7 @@ const SubmissionPageDesktopBodyContent = () => {
   const hasTitle = isEntryPreviewTitle && !!extractTitle(proposalStaticData.fieldsMetadata.stringArray, enabledPreview);
 
   return (
-    <div className="bg-primary-13 rounded-4xl flex flex-col h-full">
+    <div className="bg-primary-13 rounded-4xl flex flex-col h-full overflow-hidden">
       <div className="relative bg-gradient-entry-title rounded-t-4xl">
         {hasTitle && (
           <SubmissionPageDesktopBodyContentTitle
@@ -75,7 +75,7 @@ const SubmissionPageDesktopBodyContent = () => {
         </div>
       </div>
 
-      <div className="relative flex-1">
+      <div className="relative flex-1 min-h-0">
         <SubmissionPageDesktopBodyContentDescription description={proposalStaticData.description} />
         <div className="absolute bottom-4 right-6">
           <SubmissionPageDesktopEntryNavigation />
