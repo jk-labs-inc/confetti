@@ -1,4 +1,7 @@
 import { ListProposalVotes } from "@components/_pages/ListProposalVotes";
+import SubmissionEmailSignup from "@components/_pages/Submission/components/EmailSignup";
+import useContestVoteTimer, { VotingStatus } from "@components/_pages/Submission/hooks/useContestVoteTimer";
+import { useSubmissionPageStore } from "@components/_pages/Submission/store";
 import GradientText from "@components/UI/GradientText";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import Image from "next/image";
@@ -17,6 +20,12 @@ const SubmissionPageDesktopVotingAreaWidgetVoters: FC<SubmissionPageDesktopVotin
   proposalId,
 }) => {
   const { contestConfig } = useContestConfigStore(useShallow(state => state));
+  const voteTimings = useSubmissionPageStore(useShallow(state => state.voteTimings));
+  const { votingStatus } = useContestVoteTimer({
+    voteStart: voteTimings?.voteStart ?? null,
+    contestDeadline: voteTimings?.contestDeadline ?? null,
+  });
+  const isVotingClosed = votingStatus === VotingStatus.VotingClosed;
   const { addressesVoted, isLoadingAddressesVoted, isErrorAddressesVoted } = useAddressesVoted({
     contestAddress: contestConfig.address,
     contestAbi: contestConfig.abi,
@@ -42,8 +51,8 @@ const SubmissionPageDesktopVotingAreaWidgetVoters: FC<SubmissionPageDesktopVotin
 
   return (
     <div className="w-full flex-1 flex flex-col min-h-0">
-      <div className="bg-gradient-voting-area-purple rounded-4xl pl-6 pr-12 py-4 w-full flex flex-col flex-1">
-        <div className="flex flex-col gap-6">
+      <div className="bg-gradient-voting-area-purple rounded-4xl pl-6 pr-12 py-4 w-full flex flex-col flex-1 min-h-0">
+        <div className="flex flex-col gap-6 flex-1 min-h-0">
           <div className="flex items-baseline gap-2 pr-6">
             <Image src="/entry/vote-ballot.svg" alt="voters" width={24} height={24} className="self-center" />
             <GradientText isFontSabo={false} textSizeClassName="text-[24px] font-bold">
@@ -62,6 +71,11 @@ const SubmissionPageDesktopVotingAreaWidgetVoters: FC<SubmissionPageDesktopVotin
             />
           )}
         </div>
+        {!shouldShowPlaceholder && isVotingClosed && (
+          <div className="mt-auto pt-4">
+            <SubmissionEmailSignup />
+          </div>
+        )}
       </div>
     </div>
   );
