@@ -17,7 +17,7 @@ const SubmissionPageDesktopBodyContentDescription: FC<SubmissionPageDesktopBodyC
   const { shouldApplyFade, maskImageStyle } = useScrollFade(scrollRef, 3, [sanitizedContent]);
 
   return (
-    <div className="relative">
+    <div className="relative h-full">
       <div
         ref={scrollRef}
         className="pl-6 py-4 pr-4 overflow-y-auto h-full"
