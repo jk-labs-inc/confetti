@@ -23,8 +23,8 @@ export const createContestInfoSlice = (set: any): ContestInfoSlice => ({
   title: "",
   prompt: {
     summarize: "",
-    evaluateVoters: "Voters should evaluate based on 50% relevance to the prompt and 50% originality.",
-    contactDetails: "Join the confetti telegram: https://t.co/j7Fp3u7pqS.",
+    evaluateVoters: "Voters should evaluate based on whichever option they think will make the most <a href=\"https://docs.confetti.win/calculating-roi\" target=\"_blank\">money</a> 😈",
+    contactDetails: "<p>join the Confetti telegram: https://t.me/+rW5X0MqnTXBkOGIx</p><p>follow <a href=\"https://x.com/confetti_win\" target=\"_blank\">@Confetti_win</a></p>",
   },
   emailSubscriptionAddress: "",
 
