@@ -1,4 +1,3 @@
-import EthereumDeploymentModal from "@components/UI/Deployment/Ethereum";
 import TestnetDeploymentModal from "@components/UI/Deployment/Testnet";
 import GradientText from "@components/UI/GradientText";
 import { FOOTER_LINKS } from "@config/links";
@@ -20,7 +19,7 @@ import CreateContestConfirmPreview from "./components/Preview";
 import CreateContestConfirmRewards from "./components/Rewards";
 import CreateContestConfirmTiming from "./components/Timing";
 import CreateContestConfirmTitle from "./components/Title";
-import { displayWalletWarning, isEthereumMainnet, isWalletForbidden } from "./utils";
+import { displayWalletWarning, isWalletForbidden } from "./utils";
 
 const CreateContestConfirm = () => {
   const {
@@ -31,7 +30,6 @@ const CreateContestConfirm = () => {
   const state = useDeployContestStore(state => state);
   const { setEmailSubscriptionAddress, getVotingOpenDate, getVotingCloseDate } = state;
   const { deployContest } = useDeployContest();
-  const [isEthereumDeploymentModalOpen, setIsEthereumDeploymentModalOpen] = useState(false);
   const tosHref = FOOTER_LINKS.find(link => link.label === "Terms")?.href;
   const [emailError, setEmailError] = useState<string | null>(null);
   const [isTestnetDeploymentModalOpen, setIsTestnetDeploymentModalOpen] = useState(false);
@@ -56,9 +54,7 @@ const CreateContestConfirm = () => {
       return;
     }
 
-    if (isEthereumMainnet(chainId)) {
-      setIsEthereumDeploymentModalOpen(true);
-    } else if (testnet) {
+    if (testnet) {
       setIsTestnetDeploymentModalOpen(true);
     } else {
       deployContest();
@@ -141,12 +137,6 @@ const CreateContestConfirm = () => {
           </div>
         </div>
 
-        <EthereumDeploymentModal
-          isOpen={isEthereumDeploymentModalOpen}
-          setIsOpen={value => setIsEthereumDeploymentModalOpen(value)}
-          onDeploy={deployContest}
-          onChangeChain={handleChangeChain}
-        />
         <TestnetDeploymentModal
           isOpen={isTestnetDeploymentModalOpen}
           setIsOpen={value => setIsTestnetDeploymentModalOpen(value)}

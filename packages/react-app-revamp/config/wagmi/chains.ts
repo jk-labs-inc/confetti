@@ -21,6 +21,7 @@ type ChainImages = {
 type Transports = Record<Chain["id"], Transport>;
 
 export const chains: readonly [ChainWithIcon, ...ChainWithIcon[]] = [
+  mainnet,
   polygon,
   arbitrumOne,
   base,
@@ -30,7 +31,6 @@ export const chains: readonly [ChainWithIcon, ...ChainWithIcon[]] = [
   monad,
   sepolia,
   baseTestnet,
-  mainnet,
 ];
 
 // Transport creation
