@@ -3,6 +3,7 @@ export type Prompt = {
   evaluateVoters: string;
   contactDetails?: string;
   imageUrl?: string;
+  imageFileName?: string;
 };
 
 export interface ContestInfoSliceState {
