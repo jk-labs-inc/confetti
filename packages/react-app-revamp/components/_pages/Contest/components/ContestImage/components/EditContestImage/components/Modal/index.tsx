@@ -31,7 +31,7 @@ const EditContestImageModal: FC<EditContestImageModalProps> = ({ contestImageUrl
     <DialogModalV4 isOpen={isOpen} onClose={onClose}>
       <div className="flex flex-col gap-14 py-6 md:py-16 pl-8 md:pl-32 pr-4 md:pr-16">
         <div className="flex justify-between items-center">
-          <p className="text-[24px] text-neutral-11 font-bold">edit previewimage.png image</p>
+          <p className="text-[24px] text-neutral-11 font-bold">edit preview image</p>
           <img
             src="/modal/modal_close.svg"
             width={39}

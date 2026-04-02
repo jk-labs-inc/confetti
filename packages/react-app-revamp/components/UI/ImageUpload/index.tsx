@@ -8,12 +8,14 @@ import { ACCEPTED_FILE_TYPES } from "./utils";
 
 interface ImageUploadProps {
   initialImageUrl?: string;
-  onImageLoad?: (imageUrl: string) => void;
+  initialFileName?: string;
+  onImageLoad?: (imageUrl: string, fileName?: string) => void;
 }
 
-const ImageUpload: FC<ImageUploadProps> = ({ initialImageUrl, onImageLoad }) => {
+const ImageUpload: FC<ImageUploadProps> = ({ initialImageUrl, initialFileName, onImageLoad }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedImage, setSelectedImage] = useState<string | null>(initialImageUrl || null);
+  const [fileName, setFileName] = useState<string | null>(initialFileName || null);
   const [inputMethod, setInputMethod] = useState<"upload" | "url">("upload");
   const [imageUrl, setImageUrl] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -97,7 +99,8 @@ const ImageUpload: FC<ImageUploadProps> = ({ initialImageUrl, onImageLoad }) => 
       }
 
       setSelectedImage(imageUrl);
-      onImageLoad?.(imageUrl);
+      setFileName(file.name);
+      onImageLoad?.(imageUrl, file.name);
     } catch (error) {
       setIsNetworkError(true);
       setSelectedImage(null);
@@ -134,6 +137,7 @@ const ImageUpload: FC<ImageUploadProps> = ({ initialImageUrl, onImageLoad }) => 
   const handleRemoveImage = (e: React.MouseEvent) => {
     e.stopPropagation();
     setSelectedImage(null);
+    setFileName(null);
     onImageLoad?.("");
   };
 
@@ -149,13 +153,16 @@ const ImageUpload: FC<ImageUploadProps> = ({ initialImageUrl, onImageLoad }) => 
 
     if (!value) {
       setSelectedImage(null);
+      setFileName(null);
       onImageLoad?.("");
       return;
     }
 
     if (validateUrl(value)) {
+      const urlFileName = value.split("/").pop()?.split("?")[0] || "image";
       setSelectedImage(value);
-      onImageLoad?.(value);
+      setFileName(urlFileName);
+      onImageLoad?.(value, urlFileName);
       setIsNetworkError(false);
     }
   };
@@ -188,7 +195,7 @@ const ImageUpload: FC<ImageUploadProps> = ({ initialImageUrl, onImageLoad }) => 
   return (
     <div className="flex flex-col gap-4">
       {selectedImage && !isLoading ? (
-        <SelectedImagePreview imageUrl={selectedImage} onRemove={handleRemoveImage} />
+        <SelectedImagePreview imageUrl={selectedImage} fileName={fileName || "image"} onRemove={handleRemoveImage} />
       ) : isNetworkError ? (
         <NetworkErrorRetry
           inputMethod={inputMethod}
