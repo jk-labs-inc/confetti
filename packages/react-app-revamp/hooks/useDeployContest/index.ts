@@ -18,7 +18,7 @@ import {
 import { orchestrateRewardsDeployment } from "./deployment/process";
 import { useDeployContestStore } from "./store";
 
-export const MAX_SUBMISSIONS_LIMIT = 1000;
+export const MAX_SUBMISSIONS_LIMIT = 50;
 export const JK_LABS_SPLIT_DESTINATION_DEFAULT = "0xDc652C746A8F85e18Ce632d97c6118e8a52fa738";
 
 export function useDeployContest() {

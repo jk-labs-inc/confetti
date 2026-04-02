@@ -21,7 +21,6 @@
     {
       "matchFileNames": [
         "packages/react-app-revamp/package.json",
-        "package.json"
       ],
       "enabled": true
     },
