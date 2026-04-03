@@ -8,6 +8,7 @@ import {
 } from "@heroicons/react/24/outline";
 import useDisplayPrice from "@hooks/useCurrency/useDisplayPrice";
 import { ChainWithIcon } from "@config/wagmi";
+import { AnimatePresence, motion } from "motion/react";
 import { FC, useState } from "react";
 import Image from "next/image";
 import Skeleton from "react-loading-skeleton";
@@ -28,7 +29,7 @@ interface ProfileSectionProps {
   onAddFundsClick?: () => void;
   onSendFundsClick?: () => void;
   currentChain?: ChainWithIcon;
-  availableChains?: ChainWithIcon[];
+  availableChains?: readonly ChainWithIcon[];
   onChainSwitch?: (chainId: number) => void;
 }
 
@@ -47,7 +48,11 @@ const ProfileSection: FC<ProfileSectionProps> = ({
   const [isAddressCopied, setIsAddressCopied] = useState(false);
   const [isChainSelectorOpen, setIsChainSelectorOpen] = useState(false);
   const nativeRaw = formatUnits(balance?.value ?? 0n, balance?.decimals ?? 18);
-  const { displayValue, displaySymbol, isLoading: isPriceLoading } = useDisplayPrice(nativeRaw, balance?.symbol ?? "ETH");
+  const {
+    displayValue,
+    displaySymbol,
+    isLoading: isPriceLoading,
+  } = useDisplayPrice(nativeRaw, balance?.symbol ?? "ETH");
 
   const handleCopyAddress = () => {
     navigator.clipboard.writeText(address);
@@ -103,36 +108,44 @@ const ProfileSection: FC<ProfileSectionProps> = ({
                     className="rounded-full"
                   />
                 )}
-                <span className="text-[12px] text-neutral-9">{currentChain.name}</span>
+                <span className="text-[14px] text-neutral-9">{currentChain.name}</span>
                 <ChevronDownIcon
                   className={`w-3 h-3 text-neutral-9 transition-transform duration-200 ${isChainSelectorOpen ? "rotate-180" : ""}`}
                 />
               </button>
             )}
           </div>
-          {isChainSelectorOpen && availableChains && onChainSwitch && (
-            <div className="flex flex-wrap gap-1.5 mt-1">
-              {availableChains.map(chain => (
-                <button
-                  key={chain.id}
-                  onClick={() => {
-                    onChainSwitch(chain.id);
-                    setIsChainSelectorOpen(false);
-                  }}
-                  className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full transition-colors text-[12px] font-bold ${
-                    chain.id === currentChain?.id
-                      ? "bg-white/5 text-neutral-11 ring-1 ring-positive-11"
-                      : "bg-white/5 text-neutral-9 hover:bg-white/10"
-                  }`}
-                >
-                  {chain.iconUrl && (
-                    <Image src={chain.iconUrl} alt={chain.name} width={14} height={14} className="rounded-full" />
-                  )}
-                  <span>{chain.name}</span>
-                </button>
-              ))}
-            </div>
-          )}
+          <AnimatePresence>
+            {isChainSelectorOpen && availableChains && onChainSwitch && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.2, ease: "easeOut" }}
+                className="overflow-hidden flex flex-wrap gap-1.5 pt-1 p-px"
+              >
+                {availableChains.map(chain => (
+                  <button
+                    key={chain.id}
+                    onClick={() => {
+                      onChainSwitch(chain.id);
+                      setIsChainSelectorOpen(false);
+                    }}
+                    className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full transition-colors text-[12px] font-bold ${
+                      chain.id === currentChain?.id
+                        ? "bg-white/5 text-neutral-11 ring-1 ring-positive-11"
+                        : "bg-white/5 text-neutral-9 hover:bg-white/10"
+                    }`}
+                  >
+                    {chain.iconUrl && (
+                      <Image src={chain.iconUrl} alt={chain.name} width={14} height={14} className="rounded-full" />
+                    )}
+                    <span>{chain.name}</span>
+                  </button>
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
       {(onAddFundsClick || onSendFundsClick) && (
