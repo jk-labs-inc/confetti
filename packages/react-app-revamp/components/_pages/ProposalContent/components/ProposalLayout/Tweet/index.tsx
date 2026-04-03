@@ -3,21 +3,15 @@ import CustomLink from "@components/UI/Link";
 import { ChatBubbleLeftEllipsisIcon, CheckIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { ContestStatus } from "@hooks/useContestStatus/store";
 import { EntryPreview } from "@hooks/useDeployContest/slices/contestMetadataSlice";
+import { formatNumberWithCommas } from "@helpers/formatNumber";
 import { useRouter } from "next/navigation";
 import { FC, useEffect, useState } from "react";
 import ProposalContentVotePrimary from "../../Buttons/Vote/Primary";
-import ProposalContentProfile from "../../Profile";
 import { Tweet } from "./components/CustomTweet";
 import ProposalLayoutTweetRankOrPlaceholder from "./components/RankOrPlacehoder";
 
 interface ProposalLayoutTweetProps {
   proposal: Proposal;
-  proposalAuthorData: {
-    name: string;
-    avatar: string;
-    isLoading: boolean;
-    isError: boolean;
-  };
   isMobile: boolean;
   chainName: string;
   contestAddress: string;
@@ -39,7 +33,6 @@ const extractTweetId = (url: string): string => {
 
 const ProposalLayoutTweet: FC<ProposalLayoutTweetProps> = ({
   proposal,
-  proposalAuthorData,
   isMobile,
   chainName,
   contestAddress,
@@ -110,15 +103,10 @@ const ProposalLayoutTweet: FC<ProposalLayoutTweetProps> = ({
         <ProposalLayoutTweetRankOrPlaceholder proposal={proposal} />
         <div className="flex flex-col gap-1 items-end ml-auto">
           {tweetTitle ? <p className="text-[12px] font-bold text-neutral-11">{tweetTitle}</p> : null}
-          <ProposalContentProfile
-            name={proposalAuthorData.name}
-            avatar=""
-            isLoading={proposalAuthorData.isLoading}
-            isError={proposalAuthorData.isError}
-            textColor="text-neutral-15"
-            size="extraSmall"
-            dropShadow
-          />
+          {(contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed) &&
+          proposal.votes > 0 ? (
+            <p className="text-[12px] text-neutral-11">{formatNumberWithCommas(proposal.votes)} votes</p>
+          ) : null}
         </div>
       </div>
       <Tweet id={tweetId} apiUrl={`/api/tweet/${tweetId}`} />

@@ -1,16 +1,16 @@
 import DialogModalV4 from "@components/UI/DialogModalV4";
+import { getChainLogo } from "@helpers/getChainLogo";
 import { FilteredToken } from "@hooks/useTokenList";
 import { FC, useState } from "react";
 import TokenSearchModalERC20 from "../ERC20";
-import { Option } from "../types";
 import TokenSearchModalERC20MultiStepForm from "./components/Form";
 
 interface TokenSearchModalERC20MultiStepProps {
-  chains: Option[];
+  chainName: string;
+  chainId: number;
   isOpen: boolean;
   setIsOpen?: (isOpen: boolean) => void;
   onClose?: () => void;
-  onSelectChain?: (chain: string) => void;
   onSubmitTransfer?: (data: { token: FilteredToken; recipient: string; amount: string }) => void;
 }
 
@@ -22,9 +22,9 @@ enum STEPS {
 const TokenSearchModalERC20MultiStep: FC<TokenSearchModalERC20MultiStepProps> = ({
   isOpen,
   setIsOpen,
-  chains,
+  chainName,
+  chainId,
   onClose,
-  onSelectChain,
   onSubmitTransfer,
 }) => {
   const [currentStep, setCurrentStep] = useState(STEPS.SELECT_TOKEN);
@@ -61,15 +61,29 @@ const TokenSearchModalERC20MultiStep: FC<TokenSearchModalERC20MultiStepProps> = 
     <DialogModalV4 isOpen={isOpen} onClose={handleClose} width="w-full" lgWidth="lg:max-w-[552px]">
       <div className="flex flex-col gap-8 py-6 px-4">
         <div className="flex justify-between items-center">
-          <p className="text-[24px] text-neutral-11 font-bold">
-            {currentStep === STEPS.SELECT_TOKEN ? (
-              "select a token"
-            ) : (
-              <>
-                send <span className="uppercase">{selectedToken?.symbol}</span>
-              </>
+          <div className="flex items-center gap-3">
+            <p className="text-[24px] text-neutral-11 font-bold">
+              {currentStep === STEPS.SELECT_TOKEN ? (
+                "select a token"
+              ) : (
+                <>
+                  send <span className="uppercase">{selectedToken?.symbol}</span>
+                </>
+              )}
+            </p>
+            {getChainLogo(chainName) && (
+              <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-white/5">
+                <img
+                  src={getChainLogo(chainName)}
+                  width={16}
+                  height={16}
+                  alt="chain logo"
+                  className="rounded-full"
+                />
+                <span className="text-[12px] text-neutral-11 font-bold">{chainName}</span>
+              </div>
             )}
-          </p>
+          </div>
           <img
             src="/modal/modal_close.svg"
             alt="close"
@@ -82,7 +96,7 @@ const TokenSearchModalERC20MultiStep: FC<TokenSearchModalERC20MultiStepProps> = 
         <div className="bg-primary-5 h-[2px]" />
 
         {currentStep === STEPS.SELECT_TOKEN ? (
-          <TokenSearchModalERC20 chains={chains} onSelectToken={handleTokenSelect} onSelectChain={onSelectChain} />
+          <TokenSearchModalERC20 chainName={chainName} chainId={chainId} hideChains onSelectToken={handleTokenSelect} />
         ) : (
           <TokenSearchModalERC20MultiStepForm
             token={selectedToken!}

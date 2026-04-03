@@ -1,5 +1,3 @@
-import { Option } from "@components/UI/Dropdown";
-
 export type TokenConfig = {
   name: string;
   symbol: string;
@@ -106,32 +104,5 @@ const CHAIN_CONFIGS: ChainConfigs = {
     ],
   },
 };
-
-export const erc20ChainDropdownOptions: Option[] = [
-  {
-    value: "mainnet",
-    label: "ethereum",
-  },
-  {
-    value: "arbitrumone",
-    label: "arbitrum",
-  },
-  {
-    value: "avalanche",
-    label: "avalanche",
-  },
-  {
-    value: "base",
-    label: "base",
-  },
-  {
-    value: "celo",
-    label: "celo",
-  },
-  {
-    value: "polygon",
-    label: "polygon",
-  },
-];
 
 export default CHAIN_CONFIGS;
