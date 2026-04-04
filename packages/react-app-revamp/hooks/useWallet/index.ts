@@ -28,10 +28,10 @@ export function useWallet(): WalletHookReturn {
   const { data: paraWallet } = useParaWallet(); // Only available for embedded wallets
   const { logout: paraLogout } = useLogout();
   const { openModal } = useModal();
+  const switchChain = useSwitchChain();
 
   // Wagmi hooks for external wallet support
   const chainId = useChainId();
-  const switchChain = useSwitchChain();
 
   // Find current chain info
   const chain = chains.find(c => c.id === chainId);

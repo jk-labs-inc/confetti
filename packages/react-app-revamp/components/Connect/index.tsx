@@ -2,19 +2,8 @@ import { useModal } from "@getpara/react-sdk-lite";
 import { useWallet } from "@hooks/useWallet";
 import { FC } from "react";
 import AccountDropdown from "./components/AccountDropdown";
-import ChainDropdown from "./components/ChainDropdown";
 
-interface DisplayOptions {
-  showChainName?: boolean;
-  onlyChainSwitcher?: boolean;
-}
-
-interface ConnectButtonProps {
-  displayOptions?: DisplayOptions;
-}
-
-export const ConnectButtonCustom: FC<ConnectButtonProps> = ({ displayOptions = {} }) => {
-  const { onlyChainSwitcher = false } = displayOptions;
+export const ConnectButtonCustom: FC = () => {
   const { isConnected, userAddress, disconnect } = useWallet();
   const { openModal } = useModal();
 
@@ -31,15 +20,10 @@ export const ConnectButtonCustom: FC<ConnectButtonProps> = ({ displayOptions = {
   }
 
   return (
-    <div className="flex gap-3">
-      <ChainDropdown />
-      {!onlyChainSwitcher && (
-        <AccountDropdown
-          address={userAddress}
-          displayName={`${userAddress.slice(0, 6)}...${userAddress.slice(-4)}`}
-          onDisconnect={disconnect}
-        />
-      )}
-    </div>
+    <AccountDropdown
+      address={userAddress}
+      displayName={`${userAddress.slice(0, 6)}...${userAddress.slice(-4)}`}
+      onDisconnect={disconnect}
+    />
   );
 };
