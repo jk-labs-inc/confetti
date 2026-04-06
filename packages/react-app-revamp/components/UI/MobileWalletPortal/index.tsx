@@ -13,6 +13,8 @@ import SendFunds from "@components/SendFunds";
 import Drawer from "../Drawer";
 import ProfileSection from "@components/Connect/components/AccountDropdown/components/ProfileSection";
 import { useAddFundsChain } from "@hooks/useAddFundsChain";
+import { useWallet } from "@hooks/useWallet";
+import { chains } from "@config/wagmi";
 import { mainnet } from "viem/chains";
 import { useEnsAvatar, useEnsName, useBalance } from "wagmi";
 
@@ -46,6 +48,7 @@ export const MobileProfileDrawer: React.FC<MobileProfileDrawerProps> = ({ isOpen
   const [isAddFundsOpen, setIsAddFundsOpen] = useState(false);
   const [isSendFundsOpen, setIsSendFundsOpen] = useState(false);
   const { chainName, asset } = useAddFundsChain();
+  const { chain: currentChain, changeNetworks } = useWallet();
   const { data: ensName } = useEnsName({ address: address as `0x${string}`, chainId: mainnet.id });
   const { data: ensAvatar } = useEnsAvatar({ name: ensName as string, chainId: mainnet.id });
   const { data: balance } = useBalance({ address: address as `0x${string}` });
@@ -62,6 +65,9 @@ export const MobileProfileDrawer: React.FC<MobileProfileDrawerProps> = ({ isOpen
             ensName={ensName}
             displayName={displayName}
             balance={balance}
+            currentChain={currentChain}
+            availableChains={chains}
+            onChainSwitch={changeNetworks}
             onAddFundsClick={() => {
               onClose();
               setIsAddFundsOpen(true);
