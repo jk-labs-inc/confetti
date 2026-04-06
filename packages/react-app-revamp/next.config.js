@@ -11,10 +11,10 @@ const nextConfig = {
     config.resolve.modules = [path.resolve(__dirname, "node_modules"), ...(config.resolve.modules || ["node_modules"])];
     config.externals.push("pino-pretty", "lokijs", "encoding");
     
-    // this config is if we want to ignore wagmi connectors to suppress build warnings, we can safely ignore this since we are using Para SDK for wallet stuff
+    // ignore optional wagmi connectors and para providers to suppress build warnings
     config.plugins.push(
       new webpack.IgnorePlugin({
-        resourceRegExp: /^(@metamask\/sdk|@safe-global\/safe-apps-sdk|@safe-global\/safe-apps-provider|@gemini-wallet\/core|@base-org\/account)$/,
+        resourceRegExp: /^(@metamask\/(sdk|connect-evm)|@safe-global\/safe-apps-(sdk|provider)|@gemini-wallet\/core|@base-org\/account|@getpara\/aa-(alchemy|biconomy|cdp|gelato|pimlico|porto|rhinestone|safe|thirdweb|zerodev))$/,
       }),
     );
 
