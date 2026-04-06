@@ -1,11 +1,8 @@
 {
   "compilerOptions": {
+    "ignoreDeprecations": "6.0",
     "target": "es2022",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -22,31 +19,14 @@
     "allowSyntheticDefaultImports": true,
     "baseUrl": ".",
     "paths": {
-      "@components/*": [
-        "components/*",
-        "components/_pages/*"
-      ],
-      "@contracts/*": [
-        "contracts/*"
-      ],
-      "@config/*": [
-        "config/*"
-      ],
-      "@helpers/*": [
-        "helpers/*"
-      ],
-      "@hooks/*": [
-        "hooks/*"
-      ],
-      "@layouts/*": [
-        "layouts/*"
-      ],
-      "@styles/*": [
-        "styles/*"
-      ],
-      "@services/*": [
-        "services/*"
-      ]
+      "@components/*": ["components/*", "components/_pages/*"],
+      "@contracts/*": ["contracts/*"],
+      "@config/*": ["config/*"],
+      "@helpers/*": ["helpers/*"],
+      "@hooks/*": ["hooks/*"],
+      "@layouts/*": ["layouts/*"],
+      "@styles/*": ["styles/*"],
+      "@services/*": ["services/*"]
     },
     "plugins": [
       {
@@ -62,7 +42,5 @@
     "pages/_document.tsx",
     ".next/types/**/*.ts"
   ],
-  "exclude": [
-    "node_modules"
-  ]
+  "exclude": ["node_modules"]
 }
