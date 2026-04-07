@@ -7069,15 +7069,24 @@
     d3-time-format "4.1.0"
     internmap "2.0.3"
 
-"@wagmi/connectors@8.0.0":
-  version "8.0.0"
-  resolved "https://registry.yarnpkg.com/@wagmi/connectors/-/connectors-8.0.0.tgz#1fe988639a97d1bbbfd2354d4b6cfd9ce234d0d9"
-  integrity sha512-Uvo1Y75o7/5ShuVJdmNPpAreGKHTLongAn2CO1pwPhVvaInt9FqR8bHjIraUp8aHjE1Xk81drc7K62khKVMg+Q==
+"@wagmi/connectors@8.0.1":
+  version "8.0.1"
+  resolved "https://registry.yarnpkg.com/@wagmi/connectors/-/connectors-8.0.1.tgz#c89f36d0b6ee40a59db56829d274903864aa7da9"
+  integrity sha512-Rga0EDdcdUBlKtlUUPdBPAIlaFIkO8q0xcNObN/Q/CloM1zaruSFht1q3IaJKrytIDkncQa9uhHU6/imzysvpQ==
 
 "@wagmi/core@3.4.1":
   version "3.4.1"
   resolved "https://registry.yarnpkg.com/@wagmi/core/-/core-3.4.1.tgz#444c4cad1e4969e8388854bd443751d3f9bfd425"
   integrity sha512-sEiwTERUmmxYwcvTEmKfN8ERDftt7JwutSAwa8RRAjmtJblUNBJp5VcPEzgQ+NPfnSO9Kq05OBSKSiocLNhhOQ==
+  dependencies:
+    eventemitter3 "5.0.1"
+    mipd "0.0.7"
+    zustand "5.0.0"
+
+"@wagmi/core@3.4.2":
+  version "3.4.2"
+  resolved "https://registry.yarnpkg.com/@wagmi/core/-/core-3.4.2.tgz#4922e927a7d584ba4e22cdda4450e840708360b7"
+  integrity sha512-01i0ILBe74G8eairY2AIKC4Atrd00xw7EckZ5luU1ARl/6789UH79wXHwJDkHyktXtjn6QoSoBRW2brtlS8SWg==
   dependencies:
     eventemitter3 "5.0.1"
     mipd "0.0.7"
@@ -14026,13 +14035,13 @@ w3c-keyname@^2.2.0:
   resolved "https://registry.yarnpkg.com/w3c-keyname/-/w3c-keyname-2.2.8.tgz#7b17c8c6883d4e8b86ac8aba79d39e880f8869c5"
   integrity sha512-dpojBhNsCNN7T82Tm7k26A6G9ML3NkhDsnw9n/eoxSRlVBB4CEtIQ/KTCLI2Fwf3ataSXRhYFkQi3SlnFwPvPQ==
 
-wagmi@3.6.0:
-  version "3.6.0"
-  resolved "https://registry.yarnpkg.com/wagmi/-/wagmi-3.6.0.tgz#13d59026d5bba637dcf58ab5c3d495fed266748a"
-  integrity sha512-PIpihH3N4tDbtiJNmH4uExPjE4nwL7zU+y+DlUBoSGPw92bXl11mU6NXlruSCx+JKG+/ThAYeJivh+ByTpPQrw==
+wagmi@3.6.1:
+  version "3.6.1"
+  resolved "https://registry.yarnpkg.com/wagmi/-/wagmi-3.6.1.tgz#cb45f83f151b82968ec92166da4bf8e34ea57c38"
+  integrity sha512-GhOm/1FIhsendD+VmBknX+zCxYZCcysbraj/A7L7Lszm8+HgTdHj7eF6DrknKVG12NTXYdmM4vni+jHHrdBuaQ==
   dependencies:
-    "@wagmi/connectors" "8.0.0"
-    "@wagmi/core" "3.4.1"
+    "@wagmi/connectors" "8.0.1"
+    "@wagmi/core" "3.4.2"
     use-sync-external-store "1.4.0"
 
 watchpack@2.4.0:
