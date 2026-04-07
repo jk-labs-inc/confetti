@@ -1,4 +1,7 @@
 import { Menu, MenuButton, MenuItem, MenuItems, Transition } from "@headlessui/react";
+import { useEntryPreview } from "@components/_pages/Submission/Desktop/components/Body/components/Content/components/Title/hooks/useEntryPreview";
+import { extractTitle } from "@components/_pages/Submission/Desktop/components/Body/components/Content/components/Title/utils/extractTitle";
+import { useSubmissionPageStore } from "@components/_pages/Submission/store";
 import { generateTwitterShareUrlForSubmission, generateUrlSubmissions } from "@helpers/share";
 import { CheckIcon, DocumentDuplicateIcon } from "@heroicons/react/24/outline";
 import { ShareIcon } from "@heroicons/react/24/solid";
@@ -10,6 +13,14 @@ import { useShallow } from "zustand/shallow";
 const SubmissionPageDesktopHeaderShare = () => {
   const contestConfig = useContestConfigStore(useShallow(state => state.contestConfig));
   const proposalId = useProposalIdStore(useShallow(state => state.proposalId));
+  const { contestName, stringArray } = useSubmissionPageStore(
+    useShallow(state => ({
+      contestName: state.contestDetails.name,
+      stringArray: state.proposalStaticData?.fieldsMetadata?.stringArray ?? [],
+    })),
+  );
+  const { enabledPreview } = useEntryPreview();
+  const entryTitle = extractTitle(stringArray, enabledPreview);
   const [isCopied, setIsCopied] = useState(false);
 
   useEffect(() => {
@@ -47,7 +58,7 @@ const SubmissionPageDesktopHeaderShare = () => {
           <MenuItem>
             {({ focus, close }) => (
               <a
-                href={generateTwitterShareUrlForSubmission(contestConfig.address, contestConfig.chainName, proposalId)}
+                href={generateTwitterShareUrlForSubmission(contestConfig.address, contestConfig.chainName, proposalId, entryTitle, contestName)}
                 target="_blank"
                 rel="noreferrer"
                 onClick={close}
