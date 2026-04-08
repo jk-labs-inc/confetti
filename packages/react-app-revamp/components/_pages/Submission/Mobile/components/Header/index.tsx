@@ -53,7 +53,7 @@ const SubmissionPageMobileHeader = () => {
       </Link>
       <div className="flex items-center gap-3 self-end">
         <button
-          className="flex items-center justify-center w-8 h-8 bg-gradient-metallic rounded-full cursor-pointer"
+          className="flex items-center justify-center w-12 h-8 bg-gradient-metallic rounded-[40px] cursor-pointer"
           onClick={handleShare}
         >
           <ShareIcon className="w-4 h-4 text-true-black" />

@@ -1,4 +1,4 @@
-import { BellIcon } from "@heroicons/react/24/outline";
+import { BellIcon } from "@heroicons/react/24/solid";
 import { generateCalendarTitle, generateGoogleCalendarUrl } from "@helpers/calendar";
 import { FC } from "react";
 
@@ -32,7 +32,7 @@ const ContestNotifyButton: FC<ContestNotifyButtonProps> = ({
     votesClose,
   });
 
-  const containerSize = size === "sm" ? "w-7 h-7" : "w-8 h-8";
+  const containerSize = size === "sm" ? "w-10 h-7" : "w-12 h-8";
   const iconSize = size === "sm" ? "w-3 h-3" : "w-4 h-4";
 
   return (
@@ -41,7 +41,7 @@ const ContestNotifyButton: FC<ContestNotifyButtonProps> = ({
       target="_blank"
       rel="noreferrer"
       aria-label="Get notified when voting opens"
-      className={`flex items-center justify-center ${containerSize} bg-gradient-metallic rounded-full`}
+      className={`flex items-center justify-center ${containerSize} bg-gradient-metallic rounded-[40px]`}
     >
       <BellIcon className={`${iconSize} text-true-black`} />
     </a>
