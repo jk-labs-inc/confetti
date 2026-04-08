@@ -25,11 +25,29 @@ export const generateTwitterShareUrlForContest = (contestName: string, contestAd
   return buildUrl(BASE_TWITTER_URL, params);
 };
 
-export const generateTwitterShareUrlForSubmission = (contestAddress: string, chain: string, submissionId: string) => {
-  const params = {
+export const generateTwitterShareUrlForSubmission = (
+  contestAddress: string,
+  chain: string,
+  submissionId: string,
+  entryTitle?: string | null,
+  contestName?: string | null,
+) => {
+  const text =
+    entryTitle && contestName
+      ? `Vote on ${entryTitle} in ${contestName}\n`
+      : contestName
+        ? `Entry to ${contestName} contest\n`
+        : undefined;
+
+  const params: UrlParams = {
     url: `${BASE_JOKERACE_URL}${chain}/${contestAddress}/submission/${submissionId}`,
     via: "confetti_win",
   };
+
+  if (text) {
+    params.text = text;
+  }
+
   return buildUrl(BASE_TWITTER_URL, params);
 };
 

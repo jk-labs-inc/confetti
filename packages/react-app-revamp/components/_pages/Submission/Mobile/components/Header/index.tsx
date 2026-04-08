@@ -1,4 +1,7 @@
 import ContestNotifyButton from "@components/_pages/Contest/components/ContestNotifyButton";
+import { useEntryPreview } from "@components/_pages/Submission/Desktop/components/Body/components/Content/components/Title/hooks/useEntryPreview";
+import { extractTitle } from "@components/_pages/Submission/Desktop/components/Body/components/Content/components/Title/utils/extractTitle";
+import useNavigateProposals from "@components/_pages/Submission/hooks/useNavigateProposals";
 import { useSubmissionPageStore } from "@components/_pages/Submission/store";
 import { parseVoteTimings } from "@components/_pages/Submission/types";
 import { generateUrlSubmissions } from "@helpers/share";
@@ -6,22 +9,37 @@ import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { ShareIcon } from "@heroicons/react/24/solid";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import useProposalIdStore from "@hooks/useProposalId/store";
-import useNavigateProposals from "@components/_pages/Submission/hooks/useNavigateProposals";
 import { Link } from "interweave-autolink";
 import { useShallow } from "zustand/shallow";
 
 const SubmissionPageMobileHeader = () => {
   const contestConfig = useContestConfigStore(useShallow(state => state.contestConfig));
   const proposalId = useProposalIdStore(useShallow(state => state.proposalId));
-  const { contestDetails, voteTimings } = useSubmissionPageStore(
-    useShallow(state => ({ contestDetails: state.contestDetails, voteTimings: state.voteTimings })),
+  const { contestDetails, voteTimings, contestName, stringArray } = useSubmissionPageStore(
+    useShallow(state => ({
+      contestDetails: state.contestDetails,
+      voteTimings: state.voteTimings,
+      contestName: state.contestDetails.name,
+      stringArray: state.proposalStaticData?.fieldsMetadata?.stringArray ?? [],
+    })),
   );
+
+  const { enabledPreview } = useEntryPreview();
+  const entryTitle = extractTitle(stringArray, enabledPreview);
   const { closeUrl } = useNavigateProposals();
 
   const handleShare = () => {
     if (navigator.share) {
+      const text =
+        entryTitle && contestName
+          ? `Vote on ${entryTitle} in ${contestName}`
+          : contestName
+            ? `Entry to ${contestName} contest`
+            : undefined;
+
       navigator.share({
         url: generateUrlSubmissions(contestConfig.address, contestConfig.chainName, proposalId),
+        ...(text && { text }),
       });
     }
   };

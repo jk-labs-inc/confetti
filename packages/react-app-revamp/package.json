@@ -9,8 +9,8 @@
     "start": "next start"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "3.1024.0",
-    "@aws-sdk/s3-request-presigner": "3.1024.0",
+    "@aws-sdk/client-s3": "3.1025.0",
+    "@aws-sdk/s3-request-presigner": "3.1025.0",
     "@babel/core": "7.29.0",
     "@babel/preset-env": "7.29.2",
     "@bigmi/react": "0.8.0",
@@ -19,7 +19,7 @@
     "@getbrevo/brevo": "5.0.3",
     "@getpara/evm-wallet-connectors": "2.18.0",
     "@getpara/react-sdk-lite": "2.18.0",
-    "@headlessui/react": "2.2.9",
+    "@headlessui/react": "2.2.10",
     "@heroicons/react": "2.2.0",
     "@lifi/widget": "3.40.12",
     "@mysten/dapp-kit": "0.20.0",
@@ -102,8 +102,8 @@
     "underscore": "1.13.8",
     "uuid": "13.0.0",
     "vaul": "1.1.2",
-    "viem": "2.47.6",
-    "wagmi": "3.6.0",
+    "viem": "2.47.10",
+    "wagmi": "3.6.1",
     "webpack": "5.105.4",
     "zod": "4.3.6",
     "zustand": "5.0.12"
