@@ -19,7 +19,7 @@
     "@getbrevo/brevo": "5.0.3",
     "@getpara/evm-wallet-connectors": "2.18.0",
     "@getpara/react-sdk-lite": "2.18.0",
-    "@headlessui/react": "2.2.9",
+    "@headlessui/react": "2.2.10",
     "@heroicons/react": "2.2.0",
     "@lifi/widget": "3.40.12",
     "@mysten/dapp-kit": "0.20.0",
