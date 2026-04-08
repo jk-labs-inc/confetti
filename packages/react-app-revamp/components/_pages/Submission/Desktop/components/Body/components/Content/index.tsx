@@ -1,4 +1,6 @@
+import ContestNotifyButton from "@components/_pages/Contest/components/ContestNotifyButton";
 import { useSubmissionPageStore } from "@components/_pages/Submission/store";
+import { parseVoteTimings } from "@components/_pages/Submission/types";
 import SubmissionDelete from "@components/_pages/Submission/shared/components/SubmissionDelete";
 import UserProfileDisplay from "@components/UI/UserProfileDisplay";
 import useContestConfigStore from "@hooks/useContestConfig/store";
@@ -15,8 +17,15 @@ import { useEntryPreview } from "./components/Title/hooks/useEntryPreview";
 import { extractTitle } from "./components/Title/utils/extractTitle";
 
 const SubmissionPageDesktopBodyContent = () => {
-  const proposalStaticData = useSubmissionPageStore(useShallow(state => state.proposalStaticData));
-  const contestAddress = useContestConfigStore(useShallow(state => state.contestConfig.address));
+  const { proposalStaticData, contestDetails, voteTimings } = useSubmissionPageStore(
+    useShallow(state => ({
+      proposalStaticData: state.proposalStaticData,
+      contestDetails: state.contestDetails,
+      voteTimings: state.voteTimings,
+    })),
+  );
+  const contestConfig = useContestConfigStore(useShallow(state => state.contestConfig));
+  const contestAddress = contestConfig.address;
   const proposalId = useProposalIdStore(useShallow(state => state.proposalId));
   const { currentUserVotesOnProposal } = useFetchUserVotesOnProposal(contestAddress, proposalId);
   const hasVoted = (currentUserVotesOnProposal.data ?? 0) > 0;
@@ -26,7 +35,11 @@ const SubmissionPageDesktopBodyContent = () => {
     return null;
   }
 
-  const hasTitle = isEntryPreviewTitle && !!extractTitle(proposalStaticData.fieldsMetadata.stringArray, enabledPreview);
+  const entryTitle = isEntryPreviewTitle
+    ? extractTitle(proposalStaticData.fieldsMetadata.stringArray, enabledPreview) ?? undefined
+    : undefined;
+  const hasTitle = isEntryPreviewTitle && !!entryTitle;
+  const parsedTimings = parseVoteTimings(voteTimings);
 
   return (
     <div className="bg-primary-13 rounded-4xl flex flex-col h-full overflow-hidden">
@@ -41,6 +54,16 @@ const SubmissionPageDesktopBodyContent = () => {
         <div className="flex items-center gap-3 px-6 pt-2 pb-4">
           <SubmissionPageDesktopVotes />
           <SubmissionPageDesktopHeaderShare />
+          {parsedTimings && (
+            <ContestNotifyButton
+              contestName={contestDetails.name ?? ""}
+              contestAddress={contestAddress}
+              chainName={contestConfig.chainName}
+              votesOpen={parsedTimings.votesOpen}
+              votesClose={parsedTimings.votesClose}
+              entryTitle={entryTitle}
+            />
+          )}
           <div className="ml-auto">
             <SubmissionDelete />
           </div>

@@ -28,7 +28,7 @@ const SubmissionPageDesktopHeaderShare = () => {
   return (
     <Menu as="div" className="relative">
       <MenuButton
-        className="flex items-center justify-center w-12 h-8 bg-gradient-metallic rounded-[40px] focus:outline-none"
+        className="flex items-center justify-center w-8 h-8 bg-gradient-metallic rounded-full focus:outline-none"
         aria-label="Share entry"
       >
         <ShareIcon className="w-4 h-4 text-true-black" />

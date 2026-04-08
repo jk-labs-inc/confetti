@@ -26,13 +26,13 @@ const ContestShareButton: FC<ContestShareButtonProps> = ({ contestName, contestA
     setIsCopied(true);
   };
 
-  const buttonSize = size === "sm" ? "w-8 h-4" : "w-12 h-8";
+  const containerSize = size === "sm" ? "w-7 h-7" : "w-8 h-8";
   const iconSize = size === "sm" ? "w-3 h-3" : "w-4 h-4";
 
   return (
     <Menu as="div" className="relative">
       <MenuButton
-        className={`flex items-center justify-center ${buttonSize} bg-gradient-metallic rounded-[40px] focus:outline-none`}
+        className={`flex items-center justify-center ${containerSize} bg-gradient-metallic rounded-full focus:outline-none`}
         aria-label="Share contest"
       >
         <ShareIcon className={`${iconSize} text-true-black`} />

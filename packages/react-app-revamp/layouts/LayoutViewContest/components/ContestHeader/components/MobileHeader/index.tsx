@@ -1,10 +1,13 @@
 import BurgerMenu from "@components/UI/BurgerMenu";
 import CurrencyToggle from "@components/Header/CurrencyToggle";
 import UserProfileDisplay from "@components/UI/UserProfileDisplay";
+import ContestNotifyButton from "@components/_pages/Contest/components/ContestNotifyButton";
 import ContestShareButton from "@components/_pages/Contest/components/ContestShareButton";
+import { useContestStore } from "@hooks/useContest/store";
 import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
 import { FOOTER_LINKS } from "@config/links";
 import { FC, useMemo } from "react";
+import { useShallow } from "zustand/shallow";
 
 const BURGER_MENU_LINKS = ["Github", "Linktree", "Docs", "Report a bug", "Terms", "Privacy Policy", "Media Kit", "FAQ"];
 
@@ -24,6 +27,7 @@ const MobileHeader: FC<MobileHeaderProps> = ({
   contestAuthorEthereumAddress,
 }) => {
   const { contestState } = useContestStateStore(state => state);
+  const { votesOpen, votesClose } = useContestStore(useShallow(state => ({ votesOpen: state.votesOpen, votesClose: state.votesClose })));
   const isContestCanceled = contestState === ContestStateEnum.Canceled;
   const filteredLinks = useMemo(() => FOOTER_LINKS.filter(link => BURGER_MENU_LINKS.includes(link.label)), []);
 
@@ -45,6 +49,14 @@ const MobileHeader: FC<MobileHeaderProps> = ({
                 contestName={contestName}
                 contestAddress={contestAddress}
                 chainName={chainName}
+                size="sm"
+              />
+              <ContestNotifyButton
+                contestName={contestName}
+                contestAddress={contestAddress}
+                chainName={chainName}
+                votesOpen={votesOpen}
+                votesClose={votesClose}
                 size="sm"
               />
               <BurgerMenu iconClassName="w-6 h-4">
