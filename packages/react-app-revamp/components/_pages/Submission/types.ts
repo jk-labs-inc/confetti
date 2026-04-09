@@ -18,3 +18,13 @@ export interface ContestVoteTimings {
   voteStart: bigint;
   contestDeadline: bigint;
 }
+
+export const parseVoteTimings = (
+  voteTimings: ContestVoteTimings | null,
+): { votesOpen: Date; votesClose: Date } | null => {
+  if (!voteTimings) return null;
+  return {
+    votesOpen: new Date(Number(voteTimings.voteStart) * 1000 + 1000),
+    votesClose: new Date(Number(voteTimings.contestDeadline) * 1000 + 1000),
+  };
+};
