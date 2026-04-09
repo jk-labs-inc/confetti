@@ -15,9 +15,8 @@ import { useShallow } from "zustand/shallow";
 const SubmissionPageMobileHeader = () => {
   const contestConfig = useContestConfigStore(useShallow(state => state.contestConfig));
   const proposalId = useProposalIdStore(useShallow(state => state.proposalId));
-  const { contestDetails, voteTimings, contestName, stringArray } = useSubmissionPageStore(
+  const { voteTimings, contestName, stringArray } = useSubmissionPageStore(
     useShallow(state => ({
-      contestDetails: state.contestDetails,
       voteTimings: state.voteTimings,
       contestName: state.contestDetails.name,
       stringArray: state.proposalStaticData?.fieldsMetadata?.stringArray ?? [],
@@ -60,7 +59,7 @@ const SubmissionPageMobileHeader = () => {
         </button>
         {parsedTimings && (
           <ContestNotifyButton
-            contestName={contestDetails.name ?? ""}
+            contestName={contestName ?? ""}
             contestAddress={contestConfig.address}
             chainName={contestConfig.chainName}
             votesOpen={parsedTimings.votesOpen}

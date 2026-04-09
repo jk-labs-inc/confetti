@@ -1,5 +1,5 @@
 import { BellIcon } from "@heroicons/react/24/solid";
-import { generateCalendarTitle, generateGoogleCalendarUrl } from "@helpers/calendar";
+import { generateCalendarTitle, downloadIcsFile } from "@helpers/calendar";
 import { FC } from "react";
 
 interface ContestNotifyButtonProps {
@@ -23,28 +23,22 @@ const ContestNotifyButton: FC<ContestNotifyButtonProps> = ({
 }) => {
   if (new Date() >= votesOpen) return null;
 
-  const title = generateCalendarTitle({ contestName, entryTitle });
-  const calendarUrl = generateGoogleCalendarUrl({
-    title,
-    contestAddress,
-    chainName,
-    votesOpen,
-    votesClose,
-  });
+  const handleClick = () => {
+    const title = generateCalendarTitle({ contestName, entryTitle });
+    downloadIcsFile({ title, contestAddress, chainName, votesOpen, votesClose });
+  };
 
   const containerSize = size === "sm" ? "w-10 h-7" : "w-12 h-8";
   const iconSize = size === "sm" ? "w-3 h-3" : "w-4 h-4";
 
   return (
-    <a
-      href={calendarUrl}
-      target="_blank"
-      rel="noreferrer"
+    <button
+      onClick={handleClick}
       aria-label="Get notified when voting opens"
-      className={`flex items-center justify-center ${containerSize} bg-gradient-metallic rounded-[40px]`}
+      className={`flex items-center justify-center ${containerSize} bg-gradient-metallic rounded-[40px] cursor-pointer`}
     >
       <BellIcon className={`${iconSize} text-true-black`} />
-    </a>
+    </button>
   );
 };
 

@@ -1,9 +1,11 @@
 import { generateUrlContest } from "./share";
 
-const GOOGLE_CALENDAR_BASE_URL = "https://calendar.google.com/calendar/render";
-
-const formatDateForCalendar = (date: Date): string => {
+const formatDateForIcs = (date: Date): string => {
   return date.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
+};
+
+const escapeIcsText = (text: string): string => {
+  return text.replace(/\\/g, "\\\\").replace(/;/g, "\\;").replace(/,/g, "\\,").replace(/\n/g, "\\n");
 };
 
 export const generateCalendarTitle = ({
@@ -19,7 +21,7 @@ export const generateCalendarTitle = ({
   return `Voting on ${contestName}`;
 };
 
-export const generateGoogleCalendarUrl = ({
+export const downloadIcsFile = ({
   title,
   contestAddress,
   chainName,
@@ -31,16 +33,30 @@ export const generateGoogleCalendarUrl = ({
   chainName: string;
   votesOpen: Date;
   votesClose: Date;
-}): string => {
+}) => {
   const contestUrl = generateUrlContest(contestAddress, chainName);
-  const details = `Contest link: ${contestUrl}`;
 
-  const params = new URLSearchParams({
-    action: "TEMPLATE",
-    text: title,
-    dates: `${formatDateForCalendar(votesOpen)}/${formatDateForCalendar(votesClose)}`,
-    details,
-  });
+  const icsContent = [
+    "BEGIN:VCALENDAR",
+    "VERSION:2.0",
+    "CALSCALE:GREGORIAN",
+    "PRODID:-//Confetti//EN",
+    "BEGIN:VEVENT",
+    `UID:${contestAddress}-${chainName}@confetti.win`,
+    `DTSTART:${formatDateForIcs(votesOpen)}`,
+    `DTEND:${formatDateForIcs(votesClose)}`,
+    `SUMMARY:${escapeIcsText(title)}`,
+    `DESCRIPTION:${escapeIcsText(`Contest link: ${contestUrl}`)}`,
+    `URL:${contestUrl}`,
+    "END:VEVENT",
+    "END:VCALENDAR",
+  ].join("\r\n");
 
-  return `${GOOGLE_CALENDAR_BASE_URL}?${params.toString()}`;
+  const blob = new Blob([icsContent], { type: "text/calendar;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "voting-reminder.ics";
+  link.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
 };
