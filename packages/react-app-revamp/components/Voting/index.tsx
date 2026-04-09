@@ -10,6 +10,7 @@ import VotingWidgetRewardsProjection from "./components/RewardsProjection";
 import VoteAmountInput from "./components/VoteAmountInput";
 import VoteButton from "./components/VoteButton";
 import VoteInfoBlocks from "./components/VoteInfoBlocks";
+import { usePushToFirst } from "./hooks/usePushToFirst";
 import { useVoteExecution } from "./hooks/useVoteExecution";
 import { useVotingStore } from "./store";
 
@@ -66,6 +67,7 @@ const VotingWidget: FC<VotingWidgetProps> = ({
     isVotingClosed,
     onVote,
   });
+  const pushToFirstAmount = usePushToFirst({ costToVote });
 
   useEffect(() => {
     if (isMobile) return;
@@ -98,6 +100,7 @@ const VotingWidget: FC<VotingWidgetProps> = ({
             costToVote={costToVote}
             isConnected={isConnected}
             isBelowMinimum={isBelowMinimum}
+            pushToFirstAmount={pushToFirstAmount}
             style={style}
             inputRef={inputRef as RefObject<HTMLInputElement>}
             onKeyDown={handleKeyDownInputWithVote}
