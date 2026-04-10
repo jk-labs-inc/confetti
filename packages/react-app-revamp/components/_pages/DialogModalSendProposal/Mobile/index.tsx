@@ -139,7 +139,7 @@ const DialogModalSendProposalMobileLayout: FC<DialogModalSendProposalMobileLayou
                 size={ButtonSize.EXTRA_LARGE_LONG_MOBILE}
                 onClick={() => openWalletModal()}
               >
-                connect wallet to submit entry
+                connect wallet to enter
               </ButtonV3>
             ) : isCorrectNetwork ? (
               <ButtonV3

@@ -229,7 +229,7 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
                     size={ButtonSize.EXTRA_LARGE_LONG}
                     onClick={() => openWalletModal()}
                   >
-                    connect wallet to submit entry
+                    connect wallet to enter
                   </ButtonV3>
                 ) : isCorrectNetwork ? (
                   <div className="flex flex-col gap-2">
