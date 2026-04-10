@@ -13,6 +13,7 @@ export interface UseSubmitQualificationParams {
 export interface UseSubmitQualificationResult {
   qualifies: boolean;
   anyoneCanSubmit: boolean;
+  creator: string | undefined;
   isLoading: boolean;
   isError: boolean;
 }
@@ -61,11 +62,13 @@ export const useSubmitQualification = ({
   });
 
   const anyoneCanSubmit = data?.anyoneCanSubmit ?? false;
-  const qualifies = userAddress ? anyoneCanSubmit || userAddress === data?.creator : false;
+  const creator = data?.creator;
+  const qualifies = userAddress ? anyoneCanSubmit || userAddress === creator : false;
 
   return {
     qualifies,
     anyoneCanSubmit,
+    creator,
     isLoading,
     isError,
   };

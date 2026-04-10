@@ -16,7 +16,7 @@ const EmailSubscription: FC<EmailSubscriptionProps> = ({
   handleEmailChange,
 }) => {
   return (
-    <div className="flex flex-col gap-4 animate-appear">
+    <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-1">
         <input
           value={emailForSubscription}
