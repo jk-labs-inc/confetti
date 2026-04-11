@@ -27,7 +27,7 @@ const UploadArea: FC<UploadAreaProps> = ({
       onDragOver={onDragOver}
       onDrop={onDrop}
       onDragLeave={onDragLeave}
-      className={`relative flex shadow-file-upload flex-col w-full md:w-[376px] min-h-36 py-4 justify-center items-center border ${
+      className={`relative flex shadow-file-upload flex-col w-full md:w-[376px] min-h-28 py-3 justify-center items-center border ${
         validationError ? "border-negative-11" : "border-transparent hover:border-positive-11"
       } rounded-2xl cursor-pointer transition-all duration-300 ease-in-out`}
     >

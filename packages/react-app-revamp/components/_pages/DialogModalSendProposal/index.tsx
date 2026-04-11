@@ -11,11 +11,13 @@ import {
   saveSubmissionToLocalStorage,
 } from "@helpers/submissionCaching";
 import { useContestStore } from "@hooks/useContest/store";
+import useContestConfigStore from "@hooks/useContestConfig/store";
 import { useEditorStore } from "@hooks/useEditor/store";
 import useEmailSignup from "@hooks/useEmailSignup";
 import useSubmitProposal from "@hooks/useSubmitProposal";
 import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
 import { useUploadImageStore } from "@hooks/useUploadImage";
+import { useSubmitQualification } from "@hooks/useUserSubmitQualification";
 import { useWallet } from "@hooks/useWallet";
 import Document from "@tiptap/extension-document";
 import Heading from "@tiptap/extension-heading";
@@ -40,7 +42,15 @@ interface DialogModalSendProposalProps {
 }
 
 export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOpen, setIsOpen }) => {
-  const { userAddress, chain } = useWallet();
+  const { isConnected, userAddress, chain } = useWallet();
+  const { contestConfig } = useContestConfigStore(state => state);
+  const { qualifies, anyoneCanSubmit, creator } = useSubmitQualification({
+    address: contestConfig.address,
+    chainId: contestConfig.chainId,
+    abi: contestConfig.abi,
+    userAddress: userAddress as `0x${string}` | undefined,
+    enabled: isOpen,
+  });
   const asPath = usePathname();
   const isMobile = useMediaQuery({ maxWidth: "768px" });
   const { subscribeUser, checkIfEmailExists } = useEmailSignup();
@@ -195,11 +205,14 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
           contestId={contestId}
           proposal={proposal}
           editorProposal={editorProposal}
-          address={userAddress ?? ""}
           charge={charge}
           accountData={accountData}
           isOpen={isOpen}
+          isConnected={isConnected}
           isCorrectNetwork={isCorrectNetwork}
+          qualifies={qualifies}
+          anyoneCanSubmit={anyoneCanSubmit}
+          creator={creator}
           setIsOpen={setIsOpen}
           onSwitchNetwork={onSwitchNetwork}
           onSubmitProposal={onSubmitProposal}
@@ -210,11 +223,14 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
           chainName={chainName}
           contestId={contestId}
           editorProposal={editorProposal}
-          address={userAddress ?? ""}
           charge={charge}
           accountData={accountData}
           isOpen={isOpen}
+          isConnected={isConnected}
           isCorrectNetwork={isCorrectNetwork}
+          qualifies={qualifies}
+          anyoneCanSubmit={anyoneCanSubmit}
+          creator={creator}
           isDragging={isDragging}
           setIsOpen={setIsOpen}
           handleDrop={handleDrop}

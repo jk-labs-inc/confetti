@@ -2,12 +2,12 @@ import AddFunds from "@components/AddFunds";
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import DialogModalV3 from "@components/UI/DialogModalV3";
 import EmailSubscription from "@components/UI/EmailSubscription";
-import UserProfileDisplay from "@components/UI/UserProfileDisplay";
 import ContestPrompt from "@components/_pages/Contest/components/Prompt";
 import CreateGradientTitle from "@components/_pages/Create/components/GradientTitle";
 import { FOOTER_LINKS } from "@config/links";
 import { chains } from "@config/wagmi";
 import { emailRegex } from "@helpers/regex";
+import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
 import { useContestStore } from "@hooks/useContest/store";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import { Charge } from "@hooks/useDeployContest/types";
@@ -15,6 +15,7 @@ import useMetadataFields from "@hooks/useMetadataFields";
 import { useMetadataStore } from "@hooks/useMetadataFields/store";
 import useSubmitProposal from "@hooks/useSubmitProposal";
 import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
+import { useModal } from "@getpara/react-sdk-lite";
 import { Editor } from "@tiptap/react";
 import { type GetBalanceReturnType } from "@wagmi/core";
 import { FC, ReactNode, useEffect, useState } from "react";
@@ -29,9 +30,12 @@ interface DialogModalSendProposalDesktopLayoutProps {
   contestId: string;
   proposal: string;
   editorProposal: Editor | null;
-  address: string;
   isOpen: boolean;
+  isConnected: boolean;
   isCorrectNetwork: boolean;
+  qualifies: boolean;
+  anyoneCanSubmit: boolean;
+  creator: string | undefined;
   isDragging: boolean;
   charge: Charge;
   accountData: GetBalanceReturnType | undefined;
@@ -53,9 +57,12 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
   contestId,
   proposal,
   editorProposal,
-  address,
   isOpen,
+  isConnected,
   isCorrectNetwork,
+  qualifies,
+  anyoneCanSubmit,
+  creator,
   charge,
   accountData,
   isDragging,
@@ -66,6 +73,8 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
   onSwitchNetwork,
   onSubmitProposal,
 }) => {
+  const { openModal: openWalletModal } = useModal();
+  const isDisqualified = isConnected && !qualifies && !anyoneCanSubmit;
   const { contestConfig } = useContestConfigStore(useShallow(state => state));
   const { contestPrompt } = useContestStore(state => state);
   const {
@@ -143,8 +152,8 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
   };
 
   return (
-    <DialogModalV3 title="submission" isOpen={isOpen} setIsOpen={onCloseModal} className="w-full xl:w-[1100px]">
-      <div className="flex flex-col gap-4 md:pl-[50px] lg:pl-[100px] mt-[60px] mb-[60px]">
+    <DialogModalV3 title="submission" isOpen={isOpen} setIsOpen={onCloseModal} disableFocusTrap className="w-full xl:w-[1100px]">
+      <div className="flex flex-col gap-4 md:pl-[50px] lg:pl-[100px] mt-[36px] mb-[36px]">
         {showAddFundsModal ? (
           <AddFunds
             className="md:w-[400px]"
@@ -153,76 +162,98 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
             onGoBack={() => setShowAddFundsModal(false)}
           />
         ) : (
-          <div className="flex flex-col gap-8">
-            <div className="flex flex-col gap-4">
-              <ContestPrompt type="modal" prompt={contestPrompt} hidePrompt />
-              <div className="flex flex-col gap-2">
-                <UserProfileDisplay ethereumAddress={address ?? ""} shortenOnFallback={true} />
-              </div>
-            </div>
-            <div className="flex flex-col gap-8 rounded-md md:w-[650px]">
-              {hasEntryPreview ? (
-                <DialogModalSendProposalEntryPreviewLayout
-                  entryPreviewLayout={metadataFields[0].prompt}
-                  editorProposal={editorProposal}
-                  isDragging={isDragging}
-                  handleDrop={handleDrop}
-                  handleDragOver={handleDragOver}
-                  handleDragLeave={handleDragLeave}
-                />
-              ) : (
-                <DialogModalSendProposalEditor
-                  editorProposal={editorProposal}
-                  handleDrop={handleDrop}
-                  handleDragOver={handleDragOver}
-                  handleDragLeave={handleDragLeave}
-                  isDragging={isDragging}
-                />
-              )}
-
-              {isMetadataFieldsLoading ? (
-                <p className="loadingDots font-sabo-filled text-[16px] text-neutral-14">loading metadata fields</p>
-              ) : isMetadataFieldsError ? (
-                <p className="text-negative-11">Error while loading metadata fields. Please reload the page.</p>
-              ) : metadataFields.length > 0 ? (
-                <DialogModalSendProposalMetadataFields />
-              ) : null}
-              <div className="flex flex-col gap-4 -mt-2">
-                <CreateGradientTitle textSize="small" additionalInfo="optional">
-                  get updates by email
-                </CreateGradientTitle>
-                <EmailSubscription
-                  emailAlreadyExists={emailAlreadyExists ?? false}
-                  emailError={emailError}
-                  emailForSubscription={emailForSubscription ?? ""}
-                  tosHref={tosHref ?? ""}
-                  handleEmailChange={handleEmailChange}
-                />
-              </div>
-            </div>
-            <div className="flex flex-col gap-12 mt-12">
-              {isCorrectNetwork ? (
-                <div className="flex flex-col gap-2">
-                  <ButtonV3
-                    colorClass="bg-gradient-purple rounded-[40px]"
-                    size={ButtonSize.EXTRA_LARGE_LONG}
-                    onClick={buttonText === ButtonText.SUBMIT ? handleConfirm : () => setShowAddFundsModal(true)}
-                    isDisabled={isLoading}
-                  >
-                    {buttonText}
-                  </ButtonV3>
-                  {error && <>{error}</>}
+          <div className="flex flex-col gap-5">
+            {!anyoneCanSubmit && creator && !qualifies && (
+              <div className="bg-gradient-create rounded-[10px] p-[1px] md:w-[650px]">
+                <div className="flex items-center gap-3 rounded-[10px] bg-true-black py-3 px-4">
+                  <p className="text-[14px] text-neutral-11">
+                    {isConnected
+                      ? `only the contest creator (${shortenEthereumAddress(creator)}) can submit entries`
+                      : `if you are not the contest creator (${shortenEthereumAddress(creator)}) you will not be able to submit an entry`}
+                  </p>
                 </div>
-              ) : (
-                <ButtonV3
-                  colorClass="bg-gradient-create rounded-[40px]"
-                  size={ButtonSize.EXTRA_LARGE_LONG}
-                  onClick={onSwitchNetwork}
-                >
-                  switch network
-                </ButtonV3>
-              )}
+              </div>
+            )}
+            <div className={`flex flex-col gap-5 transition-opacity duration-300 ${
+              isDisqualified ? "opacity-30 pointer-events-none select-none" : ""
+            }`}>
+              <div className="flex flex-col gap-3">
+                <ContestPrompt type="modal" prompt={contestPrompt} hidePrompt />
+              </div>
+              <div className="flex flex-col gap-5 rounded-md md:w-[650px]">
+                {hasEntryPreview ? (
+                  <DialogModalSendProposalEntryPreviewLayout
+                    entryPreviewLayout={metadataFields[0].prompt}
+                    editorProposal={editorProposal}
+                    isDragging={isDragging}
+                    handleDrop={handleDrop}
+                    handleDragOver={handleDragOver}
+                    handleDragLeave={handleDragLeave}
+                  />
+                ) : (
+                  <DialogModalSendProposalEditor
+                    editorProposal={editorProposal}
+                    handleDrop={handleDrop}
+                    handleDragOver={handleDragOver}
+                    handleDragLeave={handleDragLeave}
+                    isDragging={isDragging}
+                  />
+                )}
+
+                {isMetadataFieldsLoading ? (
+                  <p className="loadingDots font-sabo-filled text-[16px] text-neutral-14">loading metadata fields</p>
+                ) : isMetadataFieldsError ? (
+                  <p className="text-negative-11">Error while loading metadata fields. Please reload the page.</p>
+                ) : metadataFields.length > 0 ? (
+                  <DialogModalSendProposalMetadataFields />
+                ) : null}
+                <div className="flex flex-col gap-4 -mt-2">
+                  <CreateGradientTitle textSize="small" additionalInfo="optional">
+                    get updates by email
+                  </CreateGradientTitle>
+                  <EmailSubscription
+                    emailAlreadyExists={emailAlreadyExists ?? false}
+                    emailError={emailError}
+                    emailForSubscription={emailForSubscription ?? ""}
+                    tosHref={tosHref ?? ""}
+                    handleEmailChange={handleEmailChange}
+                  />
+                </div>
+              </div>
             </div>
+            {!isDisqualified && (
+              <div className="flex flex-col gap-6 mt-6">
+                {!isConnected ? (
+                  <ButtonV3
+                    colorClass="bg-gradient-vote rounded-[40px]"
+                    size={ButtonSize.EXTRA_LARGE_LONG}
+                    onClick={() => openWalletModal()}
+                  >
+                    connect wallet to enter
+                  </ButtonV3>
+                ) : isCorrectNetwork ? (
+                  <div className="flex flex-col gap-2">
+                    <ButtonV3
+                      colorClass="bg-gradient-purple rounded-[40px]"
+                      size={ButtonSize.EXTRA_LARGE_LONG}
+                      onClick={buttonText === ButtonText.SUBMIT ? handleConfirm : () => setShowAddFundsModal(true)}
+                      isDisabled={isLoading}
+                    >
+                      {buttonText}
+                    </ButtonV3>
+                    {error && <>{error}</>}
+                  </div>
+                ) : (
+                  <ButtonV3
+                    colorClass="bg-gradient-create rounded-[40px]"
+                    size={ButtonSize.EXTRA_LARGE_LONG}
+                    onClick={onSwitchNetwork}
+                  >
+                    switch network
+                  </ButtonV3>
+                )}
+              </div>
+            )}
           </div>
         )}
       </div>
