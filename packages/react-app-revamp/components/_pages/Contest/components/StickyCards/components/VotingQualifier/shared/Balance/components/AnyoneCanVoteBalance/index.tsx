@@ -100,7 +100,7 @@ const VotingQualifierAnyoneCanVoteBalance: FC<VotingQualifierAnyoneCanVoteBalanc
           textColorClass="text-neutral-11"
           onClick={() => setIsAddFundsOpen(true)}
         >
-          add funds
+          add funds to vote
         </ButtonV3>
       </>
     );
