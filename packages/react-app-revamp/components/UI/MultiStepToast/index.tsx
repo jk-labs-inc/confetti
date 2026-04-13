@@ -14,9 +14,16 @@ type MultiStepToastProps = {
   promises: (() => Promise<any>)[];
   toastIdRef: RefObject<any>;
   completionMessage: string;
+  onCompleted?: () => void;
 };
 
-const MultiStepToast: FC<MultiStepToastProps> = ({ messages, promises, toastIdRef, completionMessage }) => {
+const MultiStepToast: FC<MultiStepToastProps> = ({
+  messages,
+  promises,
+  toastIdRef,
+  completionMessage,
+  onCompleted,
+}) => {
   const [step, setStep] = useState(0);
   const [loading, setLoading] = useState(true);
 
@@ -49,6 +56,7 @@ const MultiStepToast: FC<MultiStepToastProps> = ({ messages, promises, toastIdRe
           type: "success",
           autoClose: 4000,
         });
+        onCompleted?.();
       }
     };
 
