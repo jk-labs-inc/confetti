@@ -45,7 +45,7 @@ interface DialogModalSendProposalDesktopLayoutProps {
 
 enum ButtonText {
   SUBMIT = "submit",
-  ADD_FUNDS = "add funds",
+  ADD_FUNDS = "add funds to enter",
 }
 
 const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLayoutProps> = ({
