@@ -1,7 +1,6 @@
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import Drawer from "@components/UI/Drawer";
 import ContestPrompt from "@components/_pages/Contest/components/Prompt";
-import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
 import { useContestStore } from "@hooks/useContest/store";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import { Charge } from "@hooks/useDeployContest/types";
@@ -29,9 +28,6 @@ interface DialogModalSendProposalMobileLayoutProps {
   isOpen: boolean;
   isConnected: boolean;
   isCorrectNetwork: boolean;
-  qualifies: boolean;
-  anyoneCanSubmit: boolean;
-  creator: string | undefined;
   setIsOpen: (isOpen: boolean) => void;
   onSwitchNetwork?: () => void;
   onSubmitProposal?: () => void;
@@ -47,9 +43,6 @@ const DialogModalSendProposalMobileLayout: FC<DialogModalSendProposalMobileLayou
   isOpen,
   isConnected,
   isCorrectNetwork,
-  qualifies,
-  anyoneCanSubmit,
-  creator,
   setIsOpen,
   onSwitchNetwork,
   onSubmitProposal,
@@ -67,7 +60,6 @@ const DialogModalSendProposalMobileLayout: FC<DialogModalSendProposalMobileLayou
   });
   const { fields: metadataFields } = useMetadataStore(state => state);
   const hasEntryPreview = metadataFields.length > 0 && isEntryPreviewPrompt(metadataFields[0].prompt);
-  const isDisqualified = isConnected && !qualifies && !anyoneCanSubmit;
 
   useEffect(() => {
     if (error || isSuccess) {
@@ -95,20 +87,7 @@ const DialogModalSendProposalMobileLayout: FC<DialogModalSendProposalMobileLayou
   return (
     <Drawer isOpen={isOpen} onClose={() => setIsOpen(false)} className="bg-true-black">
       <div className="flex flex-col gap-6 px-6 pb-6">
-        {!anyoneCanSubmit && creator && !qualifies && (
-          <div className="bg-gradient-create rounded-[10px] p-[1px]">
-            <div className="flex items-center gap-3 rounded-[10px] bg-true-black py-3 px-4">
-              <p className="text-[14px] text-neutral-11">
-                {isConnected
-                  ? `only the contest creator (${shortenEthereumAddress(creator)}) can submit entries`
-                  : `if you are not the contest creator (${shortenEthereumAddress(creator)}) you will not be able to submit an entry`}
-              </p>
-            </div>
-          </div>
-        )}
-        <div className={`flex flex-col gap-4 transition-opacity duration-300 ${
-          isDisqualified ? "opacity-30 pointer-events-none select-none" : ""
-        }`}>
+        <div className="flex flex-col gap-4">
           <ContestPrompt type="modal" prompt={contestPrompt} hidePrompt />
           <div className="flex flex-col gap-4">
             {hasEntryPreview ? (
@@ -131,36 +110,34 @@ const DialogModalSendProposalMobileLayout: FC<DialogModalSendProposalMobileLayou
             </div>
           </div>
         </div>
-        {!isDisqualified && (
-          <div className="flex flex-col gap-4">
-            {!isConnected ? (
-              <ButtonV3
-                colorClass="bg-gradient-vote rounded-[40px]"
-                size={ButtonSize.EXTRA_LARGE_LONG_MOBILE}
-                onClick={() => openWalletModal()}
-              >
-                connect wallet to enter
-              </ButtonV3>
-            ) : isCorrectNetwork ? (
-              <ButtonV3
-                colorClass="bg-gradient-purple rounded-[40px]"
-                size={ButtonSize.EXTRA_LARGE_LONG_MOBILE}
-                onClick={handleOpenConfirmModal}
-                isDisabled={isLoading || isSubmitButtonDisabled()}
-              >
-                submit
-              </ButtonV3>
-            ) : (
-              <ButtonV3
-                colorClass="bg-gradient-create rounded-[40px]"
-                size={ButtonSize.EXTRA_LARGE_LONG_MOBILE}
-                onClick={onSwitchNetwork}
-              >
-                switch network
-              </ButtonV3>
-            )}
-          </div>
-        )}
+        <div className="flex flex-col gap-4">
+          {!isConnected ? (
+            <ButtonV3
+              colorClass="bg-gradient-vote rounded-[40px]"
+              size={ButtonSize.EXTRA_LARGE_LONG_MOBILE}
+              onClick={() => openWalletModal()}
+            >
+              connect wallet to enter
+            </ButtonV3>
+          ) : isCorrectNetwork ? (
+            <ButtonV3
+              colorClass="bg-gradient-purple rounded-[40px]"
+              size={ButtonSize.EXTRA_LARGE_LONG_MOBILE}
+              onClick={handleOpenConfirmModal}
+              isDisabled={isLoading || isSubmitButtonDisabled()}
+            >
+              submit
+            </ButtonV3>
+          ) : (
+            <ButtonV3
+              colorClass="bg-gradient-create rounded-[40px]"
+              size={ButtonSize.EXTRA_LARGE_LONG_MOBILE}
+              onClick={onSwitchNetwork}
+            >
+              switch network
+            </ButtonV3>
+          )}
+        </div>
       </div>
       <DialogModalSendProposalMobileLayoutConfirm
         chainName={chainName}

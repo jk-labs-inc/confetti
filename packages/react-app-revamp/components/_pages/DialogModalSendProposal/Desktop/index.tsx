@@ -7,7 +7,6 @@ import CreateGradientTitle from "@components/_pages/Create/components/GradientTi
 import { FOOTER_LINKS } from "@config/links";
 import { chains } from "@config/wagmi";
 import { emailRegex } from "@helpers/regex";
-import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
 import { useContestStore } from "@hooks/useContest/store";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import { Charge } from "@hooks/useDeployContest/types";
@@ -33,9 +32,6 @@ interface DialogModalSendProposalDesktopLayoutProps {
   isOpen: boolean;
   isConnected: boolean;
   isCorrectNetwork: boolean;
-  qualifies: boolean;
-  anyoneCanSubmit: boolean;
-  creator: string | undefined;
   isDragging: boolean;
   charge: Charge;
   accountData: GetBalanceReturnType | undefined;
@@ -60,9 +56,6 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
   isOpen,
   isConnected,
   isCorrectNetwork,
-  qualifies,
-  anyoneCanSubmit,
-  creator,
   charge,
   accountData,
   isDragging,
@@ -74,7 +67,6 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
   onSubmitProposal,
 }) => {
   const { openModal: openWalletModal } = useModal();
-  const isDisqualified = isConnected && !qualifies && !anyoneCanSubmit;
   const { contestConfig } = useContestConfigStore(useShallow(state => state));
   const { contestPrompt } = useContestStore(state => state);
   const {
@@ -163,20 +155,7 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
           />
         ) : (
           <div className="flex flex-col gap-5">
-            {!anyoneCanSubmit && creator && !qualifies && (
-              <div className="bg-gradient-create rounded-[10px] p-[1px] md:w-[650px]">
-                <div className="flex items-center gap-3 rounded-[10px] bg-true-black py-3 px-4">
-                  <p className="text-[14px] text-neutral-11">
-                    {isConnected
-                      ? `only the contest creator (${shortenEthereumAddress(creator)}) can submit entries`
-                      : `if you are not the contest creator (${shortenEthereumAddress(creator)}) you will not be able to submit an entry`}
-                  </p>
-                </div>
-              </div>
-            )}
-            <div className={`flex flex-col gap-5 transition-opacity duration-300 ${
-              isDisqualified ? "opacity-30 pointer-events-none select-none" : ""
-            }`}>
+            <div className="flex flex-col gap-5">
               <div className="flex flex-col gap-3">
                 <ContestPrompt type="modal" prompt={contestPrompt} hidePrompt />
               </div>
@@ -221,39 +200,37 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
                 </div>
               </div>
             </div>
-            {!isDisqualified && (
-              <div className="flex flex-col gap-6 mt-6">
-                {!isConnected ? (
+            <div className="flex flex-col gap-6 mt-6">
+              {!isConnected ? (
+                <ButtonV3
+                  colorClass="bg-gradient-vote rounded-[40px]"
+                  size={ButtonSize.EXTRA_LARGE_LONG}
+                  onClick={() => openWalletModal()}
+                >
+                  connect wallet to enter
+                </ButtonV3>
+              ) : isCorrectNetwork ? (
+                <div className="flex flex-col gap-2">
                   <ButtonV3
-                    colorClass="bg-gradient-vote rounded-[40px]"
+                    colorClass="bg-gradient-purple rounded-[40px]"
                     size={ButtonSize.EXTRA_LARGE_LONG}
-                    onClick={() => openWalletModal()}
+                    onClick={buttonText === ButtonText.SUBMIT ? handleConfirm : () => setShowAddFundsModal(true)}
+                    isDisabled={isLoading}
                   >
-                    connect wallet to enter
+                    {buttonText}
                   </ButtonV3>
-                ) : isCorrectNetwork ? (
-                  <div className="flex flex-col gap-2">
-                    <ButtonV3
-                      colorClass="bg-gradient-purple rounded-[40px]"
-                      size={ButtonSize.EXTRA_LARGE_LONG}
-                      onClick={buttonText === ButtonText.SUBMIT ? handleConfirm : () => setShowAddFundsModal(true)}
-                      isDisabled={isLoading}
-                    >
-                      {buttonText}
-                    </ButtonV3>
-                    {error && <>{error}</>}
-                  </div>
-                ) : (
-                  <ButtonV3
-                    colorClass="bg-gradient-create rounded-[40px]"
-                    size={ButtonSize.EXTRA_LARGE_LONG}
-                    onClick={onSwitchNetwork}
-                  >
-                    switch network
-                  </ButtonV3>
-                )}
-              </div>
-            )}
+                  {error && <>{error}</>}
+                </div>
+              ) : (
+                <ButtonV3
+                  colorClass="bg-gradient-create rounded-[40px]"
+                  size={ButtonSize.EXTRA_LARGE_LONG}
+                  onClick={onSwitchNetwork}
+                >
+                  switch network
+                </ButtonV3>
+              )}
+            </div>
           </div>
         )}
       </div>
