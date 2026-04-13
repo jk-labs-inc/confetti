@@ -1,6 +1,6 @@
 import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
 import { useContestStore } from "@hooks/useContest/store";
-import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
+import useProfileData from "@hooks/useProfileData";
 import { ROUTE_VIEW_USER } from "@config/routes";
 import { FC } from "react";
 import { useMediaQuery } from "react-responsive";
@@ -34,6 +34,7 @@ const ContestName: FC<ContestNameProps> = ({
   const { votesOpen, votesClose } = useContestStore(useShallow(state => ({ votesOpen: state.votesOpen, votesClose: state.votesClose })));
   const isContestCanceled = contestState === ContestStateEnum.Canceled;
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
+  const { profileName: contestAuthorProfileName } = useProfileData(contestAuthorEthereumAddress ?? "", true);
 
   if (isMobile) {
     return (
@@ -81,7 +82,7 @@ const ContestName: FC<ContestNameProps> = ({
               href={ROUTE_VIEW_USER.replace("[address]", contestAuthorEthereumAddress)}
               target="_blank"
             >
-              {shortenEthereumAddress(contestAuthorEthereumAddress)}
+              {contestAuthorProfileName}
             </CustomLink>
           </p>
         )}
