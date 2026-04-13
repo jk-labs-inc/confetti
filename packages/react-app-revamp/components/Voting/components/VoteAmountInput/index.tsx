@@ -120,6 +120,16 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
       <div className="flex flex-col items-end gap-3 ml-auto shrink-0">
         {showPresets && (
           <div className="flex items-center gap-1">
+            {pushToFirstAmount && (
+              <motion.button
+                onClick={handlePushToFirst}
+                className="w-auto h-4 px-2 rounded-[40px] border border-[#84679B] text-positive-11 font-bold flex items-center justify-center hover:bg-positive-11/10 transition-colors duration-150"
+                style={{ willChange: "transform" }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <span className="text-[12px] whitespace-nowrap">push to 1st</span>
+              </motion.button>
+            )}
             {[25, 50, 75, 100].map(percent => {
               const isMax = percent === 100;
               return (
@@ -141,16 +151,6 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
                 </motion.button>
               );
             })}
-            {pushToFirstAmount && (
-              <motion.button
-                onClick={handlePushToFirst}
-                className="w-auto h-4 px-2 rounded-[40px] border border-[#84679B] text-positive-11 font-bold flex items-center justify-center hover:bg-positive-11/10 transition-colors duration-150"
-                style={{ willChange: "transform" }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <span className="text-[12px] whitespace-nowrap">push to 1st</span>
-              </motion.button>
-            )}
           </div>
         )}
         <span className="text-[16px] text-neutral-9 font-bold">{votesText}</span>
