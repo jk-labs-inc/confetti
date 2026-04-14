@@ -40,7 +40,7 @@ interface DialogModalSendProposalProps {
 }
 
 export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOpen, setIsOpen }) => {
-  const { userAddress, chain } = useWallet();
+  const { isConnected, userAddress, chain } = useWallet();
   const asPath = usePathname();
   const isMobile = useMediaQuery({ maxWidth: "768px" });
   const { subscribeUser, checkIfEmailExists } = useEmailSignup();
@@ -195,10 +195,10 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
           contestId={contestId}
           proposal={proposal}
           editorProposal={editorProposal}
-          address={userAddress ?? ""}
           charge={charge}
           accountData={accountData}
           isOpen={isOpen}
+          isConnected={isConnected}
           isCorrectNetwork={isCorrectNetwork}
           setIsOpen={setIsOpen}
           onSwitchNetwork={onSwitchNetwork}
@@ -210,10 +210,10 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
           chainName={chainName}
           contestId={contestId}
           editorProposal={editorProposal}
-          address={userAddress ?? ""}
           charge={charge}
           accountData={accountData}
           isOpen={isOpen}
+          isConnected={isConnected}
           isCorrectNetwork={isCorrectNetwork}
           isDragging={isDragging}
           setIsOpen={setIsOpen}

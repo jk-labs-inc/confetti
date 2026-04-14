@@ -72,6 +72,7 @@ export const DialogAddFundsToRewardsModule = (props: DialogAddFundsToRewardsModu
         promises={promises}
         toastIdRef={toastIdRef}
         completionMessage="all rewards have been funded!"
+        onCompleted={() => props.setIsOpen(false)}
       />,
       {
         position: "bottom-center",

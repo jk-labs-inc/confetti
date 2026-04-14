@@ -15,6 +15,7 @@ interface VoteAmountInputProps {
   inputRef: RefObject<HTMLInputElement>;
   isConnected: boolean;
   isBelowMinimum?: boolean;
+  pushToFirstAmount?: string | null;
   style?: VotingWidgetStyle;
   onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 }
@@ -36,6 +37,7 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
   costToVote,
   isConnected,
   isBelowMinimum = false,
+  pushToFirstAmount,
   style = VotingWidgetStyle.classic,
   inputRef,
   onKeyDown,
@@ -46,10 +48,11 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
       maxBalance,
       isConnected,
     });
-  const { inputValue, setSliderValue } = useVotingStore(
+  const { inputValue, setSliderValue, setInputValue } = useVotingStore(
     useShallow(state => ({
       inputValue: state.inputValue,
       setSliderValue: state.setSliderValue,
+      setInputValue: state.setInputValue,
     })),
   );
   const totalVotes = useVotesFromInput({ inputValue, costToVote });
@@ -59,6 +62,12 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
       handleDisplayMax();
     } else {
       setSliderValue(percent, maxBalance, isConnected);
+    }
+  };
+
+  const handlePushToFirst = () => {
+    if (pushToFirstAmount) {
+      setInputValue(pushToFirstAmount, maxBalance);
     }
   };
 
@@ -77,6 +86,16 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
 
   const showPresets = hasBalance && isConnected;
 
+  const valueLength = valueString.length;
+  const mobileTextSize =
+    valueLength <= 4
+      ? "text-[24px]"
+      : valueLength <= 6
+        ? "text-[20px]"
+        : valueLength <= 9
+          ? "text-[20px]"
+          : "text-[16px]";
+
   return (
     <div
       className={`flex w-full items-center px-6 py-2 text-[16px] ${styleConfig.background} font-bold ${textColor} border ${borderColor} rounded-[40px] transition-colors duration-300`}
@@ -87,7 +106,7 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
         ) : (
           <>
             {displaySymbol === "$" && (
-              <span className="text-[28px] md:text-[40px] text-neutral-9 whitespace-nowrap mr-1">{displaySymbol}</span>
+              <span className={`${mobileTextSize} md:text-[40px] text-neutral-9 whitespace-nowrap mr-1 transition-[font-size] duration-150`}>{displaySymbol}</span>
             )}
             <input
               ref={inputRef}
@@ -98,7 +117,7 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
               onBlur={() => setIsFocused(false)}
               placeholder={placeholder}
               onKeyDown={onKeyDown}
-              className="text-[28px] md:text-[40px] bg-transparent outline-none placeholder-neutral-9 min-w-0"
+              className={`${mobileTextSize} md:text-[40px] bg-transparent outline-none placeholder-neutral-9 min-w-0 transition-[font-size] duration-150`}
               style={{ width: `${charCount || 1}ch`, maxWidth: "70%" }}
             />
             {displaySymbol !== "$" && (
@@ -111,6 +130,16 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
       <div className="flex flex-col items-end gap-3 ml-auto shrink-0">
         {showPresets && (
           <div className="flex items-center gap-1">
+            {pushToFirstAmount && (
+              <motion.button
+                onClick={handlePushToFirst}
+                className="w-auto h-4 px-2 rounded-[40px] border border-[#84679B] text-positive-11 font-bold flex items-center justify-center hover:bg-positive-11/10 transition-colors duration-150"
+                style={{ willChange: "transform" }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <span className="text-[12px] whitespace-nowrap">push to 1st</span>
+              </motion.button>
+            )}
             {[25, 50, 75, 100].map(percent => {
               const isMax = percent === 100;
               return (

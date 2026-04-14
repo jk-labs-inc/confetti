@@ -18,7 +18,7 @@ interface CreateContestButtonProps {
 enum CreateButtonText {
   CREATE = "create contest",
   CONNECT_WALLET = "connect wallet",
-  ADD_FUNDS = "add funds",
+  ADD_FUNDS = "add funds to create",
 }
 
 const CreateContestButton: FC<CreateContestButtonProps> = ({ step, onClick, isDisabled }) => {
@@ -83,7 +83,11 @@ const CreateContestButton: FC<CreateContestButtonProps> = ({ step, onClick, isDi
               onClick={handleClick}
               colorClass="text-[20px] bg-gradient-create rounded-[15px] font-bold text-true-black hover:scale-105 transition-transform duration-200 ease-in-out"
             >
-              {!isConnected ? "connect wallet" : insufficientBalance && !isUnsupportedWallet ? "add funds" : "create"}
+              {!isConnected
+                ? "connect wallet"
+                : insufficientBalance && !isUnsupportedWallet
+                  ? "add funds to create"
+                  : "create"}
             </ButtonV3>
           </div>
         </MobileBottomButton>
@@ -104,7 +108,7 @@ const CreateContestButton: FC<CreateContestButtonProps> = ({ step, onClick, isDi
           colorClass={`bg-gradient-create text-[20px] rounded-[10px] font-bold ${
             shake ? "animate-shake-top" : ""
           }  text-true-black`}
-          size={ButtonSize.LARGE}
+          size={createButtonText === CreateButtonText.ADD_FUNDS ? ButtonSize.EXTRA_LARGE : ButtonSize.LARGE}
           type={ButtonType.TX_ACTION}
           onClick={handleClick}
         >
