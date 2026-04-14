@@ -10,6 +10,8 @@ const COINBASE_CHAIN_MAPPING: Record<string, string> = {
   polygon: "polygon",
   avalanche: "avalanche-c-chain",
   celo: "celo",
+  world: "Worldchain",
+  monad: "Monad",
 };
 
 export const isChainSupportedForOnramp = (chainName: string): boolean => {
