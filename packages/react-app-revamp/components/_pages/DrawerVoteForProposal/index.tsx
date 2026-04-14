@@ -65,7 +65,7 @@ export const DrawerVoteForProposal: FC<DrawerVoteForProposalProps> = ({ isOpen, 
       isHandleHidden={!isMobile}
       isOpen={isOpen}
       onClose={handleDrawerClose}
-      className="bg-true-black w-full h-auto md:max-w-[500px] m-auto"
+      className="bg-true-black w-full h-auto md:max-w-[550px] m-auto"
     >
       <div className="flex flex-col gap-4 p-6 md:p-8">
         {showAddFunds ? (
