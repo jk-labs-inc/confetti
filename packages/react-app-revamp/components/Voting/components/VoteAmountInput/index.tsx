@@ -86,6 +86,16 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
 
   const showPresets = hasBalance && isConnected;
 
+  const valueLength = valueString.length;
+  const mobileTextSize =
+    valueLength <= 4
+      ? "text-[24px]"
+      : valueLength <= 6
+        ? "text-[20px]"
+        : valueLength <= 9
+          ? "text-[20px]"
+          : "text-[16px]";
+
   return (
     <div
       className={`flex w-full items-center px-6 py-2 text-[16px] ${styleConfig.background} font-bold ${textColor} border ${borderColor} rounded-[40px] transition-colors duration-300`}
@@ -96,7 +106,7 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
         ) : (
           <>
             {displaySymbol === "$" && (
-              <span className="text-[28px] md:text-[40px] text-neutral-9 whitespace-nowrap mr-1">{displaySymbol}</span>
+              <span className={`${mobileTextSize} md:text-[40px] text-neutral-9 whitespace-nowrap mr-1 transition-[font-size] duration-150`}>{displaySymbol}</span>
             )}
             <input
               ref={inputRef}
@@ -107,7 +117,7 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
               onBlur={() => setIsFocused(false)}
               placeholder={placeholder}
               onKeyDown={onKeyDown}
-              className="text-[28px] md:text-[40px] bg-transparent outline-none placeholder-neutral-9 min-w-0"
+              className={`${mobileTextSize} md:text-[40px] bg-transparent outline-none placeholder-neutral-9 min-w-0 transition-[font-size] duration-150`}
               style={{ width: `${charCount || 1}ch`, maxWidth: "70%" }}
             />
             {displaySymbol !== "$" && (
