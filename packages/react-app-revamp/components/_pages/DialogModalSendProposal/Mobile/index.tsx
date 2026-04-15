@@ -1,7 +1,5 @@
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import Drawer from "@components/UI/Drawer";
-import ContestPrompt from "@components/_pages/Contest/components/Prompt";
-import { useContestStore } from "@hooks/useContest/store";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import { Charge } from "@hooks/useDeployContest/types";
 import useMetadataFields from "@hooks/useMetadataFields";
@@ -51,7 +49,6 @@ const DialogModalSendProposalMobileLayout: FC<DialogModalSendProposalMobileLayou
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const { isLoading, isSuccess, error } = useSubmitProposal();
   const { contestConfig } = useContestConfigStore(useShallow(state => state));
-  const { contestPrompt } = useContestStore(state => state);
   const { isLoading: isMetadataFieldsLoading, isError: isMetadataFieldsError } = useMetadataFields({
     address: contestConfig.address,
     chainId: contestConfig.chainId,
@@ -86,35 +83,40 @@ const DialogModalSendProposalMobileLayout: FC<DialogModalSendProposalMobileLayou
 
   return (
     <Drawer isOpen={isOpen} onClose={() => setIsOpen(false)} className="bg-true-black">
-      <div className="flex flex-col gap-6 px-6 pb-6">
+      <div className="flex flex-col gap-4 px-6">
         <div className="flex flex-col gap-4">
-          <ContestPrompt type="modal" prompt={contestPrompt} hidePrompt />
-          <div className="flex flex-col gap-4">
-            {hasEntryPreview ? (
-              <DialogModalSendProposalEntryPreviewLayout
-                entryPreviewLayout={metadataFields[0].prompt}
-                editorProposal={editorProposal}
-              />
-            ) : (
-              <DialogModalSendProposalEditor editorProposal={editorProposal} />
-            )}
+          {hasEntryPreview ? (
+            <DialogModalSendProposalEntryPreviewLayout
+              entryPreviewLayout={metadataFields[0].prompt}
+              editorProposal={editorProposal}
+            />
+          ) : (
+            <DialogModalSendProposalEditor editorProposal={editorProposal} />
+          )}
 
-            <div className="flex flex-col gap-8">
-              {isMetadataFieldsLoading ? (
-                <p className="loadingDots font-sabo-filled text-[16px] text-neutral-14">loading metadata fields</p>
-              ) : isMetadataFieldsError ? (
-                <p className="text-negative-11">Error while loading metadata fields. Please reload the page.</p>
-              ) : metadataFields.length > 0 ? (
-                <DialogModalSendProposalMetadataFields />
-              ) : null}
-            </div>
+          <div className="flex flex-col gap-8">
+            {isMetadataFieldsLoading ? (
+              <p className="loadingDots font-sabo-filled text-[16px] text-neutral-14">loading metadata fields</p>
+            ) : isMetadataFieldsError ? (
+              <p className="text-negative-11">Error while loading metadata fields. Please reload the page.</p>
+            ) : metadataFields.length > 0 ? (
+              <DialogModalSendProposalMetadataFields />
+            ) : null}
           </div>
         </div>
-        <div className="flex flex-col gap-4">
-          {!isConnected ? (
+      </div>
+      <div
+        className="sticky bottom-0 z-10 px-6 pt-4 pb-6 flex flex-col gap-4"
+        style={{
+          backgroundColor: "rgba(0, 0, 0, 0.5)",
+          backdropFilter: "blur(24px) saturate(1.8)",
+          WebkitBackdropFilter: "blur(24px) saturate(1.8)",
+        }}
+      >
+        {!isConnected ? (
             <ButtonV3
               colorClass="bg-gradient-vote rounded-[40px]"
-              size={ButtonSize.EXTRA_LARGE_LONG_MOBILE}
+              size={ButtonSize.FULL}
               onClick={() => openWalletModal()}
             >
               connect wallet to enter
@@ -122,7 +124,7 @@ const DialogModalSendProposalMobileLayout: FC<DialogModalSendProposalMobileLayou
           ) : isCorrectNetwork ? (
             <ButtonV3
               colorClass="bg-gradient-purple rounded-[40px]"
-              size={ButtonSize.EXTRA_LARGE_LONG_MOBILE}
+              size={ButtonSize.FULL}
               onClick={handleOpenConfirmModal}
               isDisabled={isLoading || isSubmitButtonDisabled()}
             >
@@ -131,13 +133,12 @@ const DialogModalSendProposalMobileLayout: FC<DialogModalSendProposalMobileLayou
           ) : (
             <ButtonV3
               colorClass="bg-gradient-create rounded-[40px]"
-              size={ButtonSize.EXTRA_LARGE_LONG_MOBILE}
+              size={ButtonSize.FULL}
               onClick={onSwitchNetwork}
             >
               switch network
             </ButtonV3>
           )}
-        </div>
       </div>
       <DialogModalSendProposalMobileLayoutConfirm
         chainName={chainName}

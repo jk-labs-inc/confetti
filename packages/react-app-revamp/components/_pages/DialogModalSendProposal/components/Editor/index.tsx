@@ -28,7 +28,7 @@ const DialogModalSendProposalEditor: FC<DialogModalSendProposalEditorProps> = ({
         onDrop={handleDrop}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
-        className={`p-4 text-[16px] bg-secondary-1 outline-none rounded-[10px] border border-neutral-17 w-full overflow-y-auto h-40 md:h-44 ${
+        className={`p-4 text-[16px] bg-secondary-1 outline-none rounded-[10px] border border-neutral-17 w-full min-h-40 md:h-44 md:overflow-y-auto ${
           isDragging ? "backdrop-blur-md opacity-70" : ""
         }`}
       />
