@@ -13,7 +13,7 @@ import { useShallow } from "zustand/shallow";
 import DialogModalSendProposalEditor from "../components/Editor";
 import DialogModalSendProposalEntryPreviewLayout from "../components/EntryPreviewLayout";
 import DialogModalSendProposalMetadataFields from "../components/MetadataFields";
-import { isEntryPreviewPrompt } from "../utils";
+import { isAnyMetadataFieldEmpty, isEntryPreviewPrompt } from "../utils";
 import DialogModalSendProposalMobileLayoutConfirm from "./components/ConfirmDialog";
 
 interface DialogModalSendProposalMobileLayoutProps {
@@ -57,6 +57,7 @@ const DialogModalSendProposalMobileLayout: FC<DialogModalSendProposalMobileLayou
   });
   const { fields: metadataFields } = useMetadataStore(state => state);
   const hasEntryPreview = metadataFields.length > 0 && isEntryPreviewPrompt(metadataFields[0].prompt);
+  const [validationError, setValidationError] = useState<string | null>(null);
 
   useEffect(() => {
     if (error || isSuccess) {
@@ -65,20 +66,18 @@ const DialogModalSendProposalMobileLayout: FC<DialogModalSendProposalMobileLayou
   }, [error, isSuccess]);
 
   const handleOpenConfirmModal = () => {
-    setIsConfirmModalOpen(true);
-  };
-
-  const isAnyMetadataFieldEmpty = () => {
-    if (metadataFields.length === 0) return false;
-    return metadataFields.some(field => field.inputValue === "");
-  };
-
-  const isSubmitButtonDisabled = () => {
-    if (metadataFields.length > 0) {
-      return isAnyMetadataFieldEmpty();
-    } else {
-      return !proposal.length || editorProposal?.isEmpty;
+    if (metadataFields.length > 0 && isAnyMetadataFieldEmpty(metadataFields)) {
+      setValidationError("please fill in all required fields before submitting.");
+      return;
     }
+
+    if (metadataFields.length === 0 && (!proposal.length || editorProposal?.isEmpty)) {
+      setValidationError("please fill in your proposal.");
+      return;
+    }
+
+    setValidationError(null);
+    setIsConfirmModalOpen(true);
   };
 
   return (
@@ -105,40 +104,38 @@ const DialogModalSendProposalMobileLayout: FC<DialogModalSendProposalMobileLayou
           </div>
         </div>
       </div>
-      <div
-        className="sticky bottom-0 z-10 px-6 pt-4 pb-6 flex flex-col gap-4"
-        style={{
-          backgroundColor: "rgba(0, 0, 0, 0.5)",
-          backdropFilter: "blur(24px) saturate(1.8)",
-          WebkitBackdropFilter: "blur(24px) saturate(1.8)",
-        }}
-      >
+      <div className="sticky bottom-0 z-10 px-6 pt-4 pb-6 flex flex-col gap-2">
         {!isConnected ? (
-            <ButtonV3
-              colorClass="bg-gradient-vote rounded-[40px]"
-              size={ButtonSize.FULL}
-              onClick={() => openWalletModal()}
-            >
-              connect wallet to enter
-            </ButtonV3>
-          ) : isCorrectNetwork ? (
+          <ButtonV3
+            colorClass="bg-gradient-vote rounded-[40px]"
+            size={ButtonSize.FULL}
+            onClick={() => openWalletModal()}
+          >
+            connect wallet to enter
+          </ButtonV3>
+        ) : isCorrectNetwork ? (
+          <>
             <ButtonV3
               colorClass="bg-gradient-purple rounded-[40px]"
               size={ButtonSize.FULL}
               onClick={handleOpenConfirmModal}
-              isDisabled={isLoading || isSubmitButtonDisabled()}
+              isDisabled={isLoading}
             >
               submit
             </ButtonV3>
-          ) : (
-            <ButtonV3
-              colorClass="bg-gradient-create rounded-[40px]"
-              size={ButtonSize.FULL}
-              onClick={onSwitchNetwork}
-            >
-              switch network
-            </ButtonV3>
-          )}
+            {validationError && (
+              <p className="text-negative-11 font-bold text-[12px] text-center">{validationError}</p>
+            )}
+          </>
+        ) : (
+          <ButtonV3
+            colorClass="bg-gradient-create rounded-[40px]"
+            size={ButtonSize.FULL}
+            onClick={onSwitchNetwork}
+          >
+            switch network
+          </ButtonV3>
+        )}
       </div>
       <DialogModalSendProposalMobileLayoutConfirm
         chainName={chainName}

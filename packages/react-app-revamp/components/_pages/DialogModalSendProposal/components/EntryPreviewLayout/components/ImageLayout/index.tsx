@@ -1,4 +1,5 @@
 import ImageUpload from "@components/UI/ImageUpload";
+import CreateGradientTitle from "@components/_pages/Create/components/GradientTitle";
 import { FC } from "react";
 
 interface DialogModalSendProposalImageLayoutProps {
@@ -12,7 +13,7 @@ const DialogModalSendProposalEntryPreviewImageLayout: FC<DialogModalSendProposal
 
   return (
     <div className="flex flex-col gap-4">
-      <p className="text-neutral-11 text-[16px] font-bold">image upload</p>
+      <CreateGradientTitle textSize="small">image upload</CreateGradientTitle>
       <ImageUpload onImageLoad={onImageLoadHandler} />
     </div>
   );

@@ -1,3 +1,4 @@
+import CreateGradientTitle from "@components/_pages/Create/components/GradientTitle";
 import { FC, useState } from "react";
 
 interface DialogModalSendProposalEntryPreviewTitleLayoutProps {
@@ -21,7 +22,7 @@ const DialogModalSendProposalEntryPreviewTitleLayout: FC<DialogModalSendProposal
 
   return (
     <div className="flex flex-col gap-4">
-      <p className="text-[16px] font-bold text-neutral-11">title</p>
+      <CreateGradientTitle textSize="small">title</CreateGradientTitle>
       <input
         type="text"
         value={inputValue}

@@ -1,4 +1,5 @@
 import ImageUpload from "@components/UI/ImageUpload";
+import CreateGradientTitle from "@components/_pages/Create/components/GradientTitle";
 import { FC, useState } from "react";
 import { MAX_IMAGE_TITLE_LENGTH } from "../../constants";
 
@@ -43,7 +44,7 @@ const DialogModalSendProposalEntryPreviewImageAndTitleLayout: FC<DialogModalSend
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-4">
-        <p className="text-[16px] font-bold text-neutral-11">title</p>
+        <CreateGradientTitle textSize="small">title</CreateGradientTitle>
         <input
           type="text"
           value={inputValue}
@@ -55,7 +56,7 @@ const DialogModalSendProposalEntryPreviewImageAndTitleLayout: FC<DialogModalSend
         {isExceeded && <p className="text-negative-11 text-[12px] font-bold">maximum character limit reached!</p>}
       </div>
       <div className="flex flex-col gap-4">
-        <p className="text-neutral-11 text-[16px] font-bold">image upload</p>
+        <CreateGradientTitle textSize="small">image upload</CreateGradientTitle>
         <ImageUpload onImageLoad={onImageLoadHandler} initialImageUrl={imageUrl} />
       </div>
     </div>
