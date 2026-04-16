@@ -1,6 +1,6 @@
 import ImageUpload from "@components/UI/ImageUpload";
+import CreateGradientTitle from "@components/_pages/Create/components/GradientTitle";
 import { FC, useState } from "react";
-import { useMediaQuery } from "react-responsive";
 import { MAX_IMAGE_TITLE_LENGTH } from "../../constants";
 
 interface DialogModalSendProposalImageAndTitleLayoutProps {
@@ -10,7 +10,6 @@ interface DialogModalSendProposalImageAndTitleLayoutProps {
 const DialogModalSendProposalEntryPreviewImageAndTitleLayout: FC<DialogModalSendProposalImageAndTitleLayoutProps> = ({
   onChange,
 }) => {
-  const isMobile = useMediaQuery({ maxWidth: 768 });
   const [isExceeded, setIsExceeded] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const [imageUrl, setImageUrl] = useState<string>("");
@@ -45,21 +44,19 @@ const DialogModalSendProposalEntryPreviewImageAndTitleLayout: FC<DialogModalSend
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-4">
-        <p className="text-[16px] font-bold text-neutral-11">title</p>
-        <div className={`bg-true-black rounded-[16px] border-true-black ${isMobile ? "" : "shadow-file-upload p-2"} `}>
-          <input
-            type="text"
-            value={inputValue}
-            onChange={handleInputChange}
-            className="text-[16px] bg-secondary-1 outline-none rounded-[16px] placeholder-neutral-10 w-full h-12 indent-4 focus:outline-none"
-            placeholder="this is my entry..."
-            maxLength={MAX_IMAGE_TITLE_LENGTH}
-          />
-        </div>
+        <CreateGradientTitle textSize="small">title</CreateGradientTitle>
+        <input
+          type="text"
+          value={inputValue}
+          onChange={handleInputChange}
+          className="w-full text-[16px] bg-secondary-1 outline-none rounded-[10px] border border-neutral-17 placeholder-neutral-10 h-12 indent-4 focus:outline-none"
+          placeholder="this is my entry..."
+          maxLength={MAX_IMAGE_TITLE_LENGTH}
+        />
         {isExceeded && <p className="text-negative-11 text-[12px] font-bold">maximum character limit reached!</p>}
       </div>
       <div className="flex flex-col gap-4">
-        <p className="text-neutral-11 text-[16px] font-bold">image upload</p>
+        <CreateGradientTitle textSize="small">image upload</CreateGradientTitle>
         <ImageUpload onImageLoad={onImageLoadHandler} initialImageUrl={imageUrl} />
       </div>
     </div>
