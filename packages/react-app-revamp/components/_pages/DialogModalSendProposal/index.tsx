@@ -88,7 +88,7 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
     content: proposal,
     editorProps: {
       attributes: {
-        class: "prose prose-invert pt-4 pl-4 grow focus:outline-none",
+        class: "prose prose-invert grow focus:outline-none",
       },
       handleDOMEvents: {
         keydown: (view, event) => {

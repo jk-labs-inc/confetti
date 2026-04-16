@@ -1,8 +1,8 @@
 import "@getpara/react-sdk-lite/styles.css";
 import LayoutBase from "@layouts/LayoutBase";
-import { GoogleAnalytics } from "@next/third-parties/google";
+import { GoogleAnalytics, GoogleTagManager } from "@next/third-parties/google";
 import { polyfill } from "interweave-ssr";
-import { GA_TRACKING_ID } from "lib/gtag";
+import { GA_TRACKING_ID, GTM_ID } from "lib/gtag";
 import { Metadata, Viewport } from "next";
 import dynamic from "next/dynamic";
 import localFont from "next/font/local";
@@ -92,6 +92,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <Providers>
             <LayoutBase>{children}</LayoutBase>
             <DynamicPortal />
+            <GoogleTagManager gtmId={GTM_ID} />
             <GoogleAnalytics gaId={GA_TRACKING_ID} />
           </Providers>
         </div>

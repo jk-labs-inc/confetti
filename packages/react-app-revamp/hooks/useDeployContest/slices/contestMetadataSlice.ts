@@ -52,7 +52,7 @@ export const createMetadataSlice = (set: any): MetadataSlice => ({
   metadataFields: metadataFields.slice(0, 1),
   entryPreviewConfig: {
     preview: EntryPreview.IMAGE,
-    isTitleRequired: false,
+    isTitleRequired: true,
     isAnyoneCanSubmit: EntryPermission.ANYONE_CAN_SUBMIT,
   },
 
