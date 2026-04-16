@@ -10,6 +10,7 @@ import { useMediaQuery } from "react-responsive";
 import { useShallow } from "zustand/shallow";
 import ContestPrompt from "../components/Prompt";
 import ContestStickyCards from "../components/StickyCards";
+import ContestSubmitBar from "./ContestSubmitBar";
 import { useContestSubmitButton } from "./useContestSubmitButton";
 
 const ContestTab = () => {
@@ -27,9 +28,12 @@ const ContestTab = () => {
   const isMobile = useMediaQuery({ maxWidth: 768 });
   const isInPwaMode = window.matchMedia("(display-mode: standalone)").matches;
   const isContestCanceled = contestState === ContestStateEnum.Canceled;
-  const { renderSubmitButton } = useContestSubmitButton({
+  const { variant } = useContestSubmitButton({
     onOpenModal: () => setIsSubmitProposalModalOpen(true),
   });
+
+  const isSubmissionOpen = contestStatus === ContestStatus.SubmissionOpen;
+  const hasMobileFixedBar = isMobile && isSubmissionOpen && (variant.kind === "counter-submit" || variant.kind === "connect");
 
   return (
     <div className="animate-fade-in">
@@ -49,14 +53,10 @@ const ContestTab = () => {
           <ContestPrompt prompt={contestPrompt} type="page" />
         </div>
       </div>
-      {contestStatus === ContestStatus.SubmissionOpen && (
-        <div className="fixed z-50 bottom-20 left-0 right-0 flex w-full justify-center md:justify-normal md:static md:mt-8 md:mb-8">
-          {renderSubmitButton()}
-        </div>
-      )}
+      {isSubmissionOpen && <ContestSubmitBar variant={variant} />}
       {isMobile && <ContestStickyCards />}
 
-      <div className={`mt-6 ${isInPwaMode ? "mb-12" : "mb-0"}`}>
+      <div className={`mt-6 ${hasMobileFixedBar ? "pb-24" : ""} ${isInPwaMode ? "mb-12" : "mb-0"}`}>
         <div className="flex flex-col gap-2">
           {!isContestLoading && !isListProposalsLoading && isContestSuccess && isListProposalsSuccess && (
             <div className="animate-fade-in">
