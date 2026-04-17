@@ -1,4 +1,5 @@
 import { EntryPreview } from "@hooks/useDeployContest/slices/contestMetadataSlice";
+import { MetadataFieldWithInput } from "@hooks/useMetadataFields/store";
 
 export const DESCRIPTION_ENABLED = "_DESCRIPTION_ENABLED";
 export const DESCRIPTION_NOT_ENABLED = "_DESCRIPTION_NOT_ENABLED";
@@ -22,4 +23,9 @@ export const verifyEntryPreviewPrompt = (
     enabledPreview,
     isDescriptionEnabled,
   };
+};
+
+export const isAnyMetadataFieldEmpty = (fields: MetadataFieldWithInput[]): boolean => {
+  if (fields.length === 0) return false;
+  return fields.some(field => field.inputValue === "");
 };

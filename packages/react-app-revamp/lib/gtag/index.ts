@@ -1,4 +1,5 @@
 export const GA_TRACKING_ID = "G-ZMLFLXBZCD";
+export const GTM_ID = "GTM-W2WHJ2QJ";
 
 type GTagEvent = {
   action: string;

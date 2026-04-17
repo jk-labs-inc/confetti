@@ -22,7 +22,7 @@ import { useShallow } from "zustand/shallow";
 import DialogModalSendProposalEditor from "../components/Editor";
 import DialogModalSendProposalEntryPreviewLayout from "../components/EntryPreviewLayout";
 import DialogModalSendProposalMetadataFields from "../components/MetadataFields";
-import { isEntryPreviewPrompt } from "../utils";
+import { isAnyMetadataFieldEmpty, isEntryPreviewPrompt } from "../utils";
 
 interface DialogModalSendProposalDesktopLayoutProps {
   chainName: string;
@@ -109,7 +109,7 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
     setError(null);
 
     if (metadataFields.length > 0) {
-      if (isAnyMetadataFieldEmpty()) {
+      if (isAnyMetadataFieldEmpty(metadataFields)) {
         setError(
           <p className="text-negative-11 font-bold text-[12px]">
             Please fill in all required fields before submitting.
@@ -131,11 +131,6 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
 
     setEmailError(null);
     onSubmitProposal?.();
-  };
-
-  const isAnyMetadataFieldEmpty = () => {
-    if (metadataFields.length === 0) return false;
-    return metadataFields.some(field => field.inputValue === "");
   };
 
   const onCloseModal = () => {

@@ -1,3 +1,4 @@
+import CreateGradientTitle from "@components/_pages/Create/components/GradientTitle";
 import { twitterRegex } from "@helpers/regex";
 import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/24/outline";
 import { debounce } from "lodash";
@@ -73,7 +74,7 @@ const DialogModalSendProposalEntryPreviewTweetAndTitleLayout: FC<
 
   return (
     <div className="flex flex-col gap-4">
-      <p className="text-[16px] font-bold text-neutral-11">title</p>
+      <CreateGradientTitle textSize="small">title</CreateGradientTitle>
       <div className={`bg-true-black rounded-[16px] border-true-black ${isMobile ? "" : "shadow-file-upload p-2"} `}>
         <input
           type="text"
@@ -85,7 +86,7 @@ const DialogModalSendProposalEntryPreviewTweetAndTitleLayout: FC<
         />
         {isExceeded && <p className="text-negative-11 text-[12px] font-bold">maximum character limit reached!</p>}
       </div>
-      <p className="text-[16px] font-bold text-neutral-11">tweet</p>
+      <CreateGradientTitle textSize="small">tweet</CreateGradientTitle>
       <div
         className={`bg-true-black rounded-[16px] border-true-black ${
           isMobile ? "" : "shadow-file-upload p-2"
