@@ -32,7 +32,8 @@ abstract contract Governor is GovernorSorting, GovernorAnalytics {
     }
 
     enum PriceCurveTypes {
-        Exponential
+        Exponential,
+        Logarithmic
     }
 
     struct IntConstructorArgs {
@@ -109,7 +110,7 @@ abstract contract Governor is GovernorSorting, GovernorAnalytics {
     uint256 public percentageToRewards;
     uint256 public costToVote; // Starting/minimum price
     uint256 public priceCurveType; // Enum value of PriceCurveTypes.
-    uint256 public multiple; // Exponent multiple for an exponential price curve if applicable.
+    uint256 public multiple; // Multiple for price curves.
     uint256 public creatorSplitEnabled; // If 1, half of the jk labs split is sent to the creator; if 0, none of it is.
     address public jkLabsSplitDestination; // Where the jk labs split of revenue goes.
     string public metadataFieldsSchema; // JSON Schema of what the metadata fields are.
@@ -349,14 +350,19 @@ abstract contract Governor is GovernorSorting, GovernorAnalytics {
     function currentPricePerVote() public view returns (uint256) {
         if (state() != ContestState.Active) revert ContestMustBeActiveToGetCurrentVotePrice();
 
+        uint256 currentInterval = (block.timestamp - (voteStart() + 1)) / PRICE_CURVE_UPDATE_INTERVAL; // voteStart is the last block that one can enter, so voting period is exclusive of it, hence the plus 1
+        UD60x18 percentThroughVotingPeriod =
+            (ud(currentInterval * 1e18) / (ud(votingPeriod * 1e18) / ud(PRICE_CURVE_UPDATE_INTERVAL * 1e18)))
+                * ud(100 * 1e18); // percentage as whole number so curve is 0 to 100
+        UD60x18 xTimesMultiple = percentThroughVotingPeriod * (ud(multiple) / ud(1e18));
+
         if (PriceCurveTypes(priceCurveType) == PriceCurveTypes.Exponential) {
-            uint256 currentInterval = (block.timestamp - (voteStart() + 1)) / PRICE_CURVE_UPDATE_INTERVAL; // voteStart is the last block that one can enter, so voting period is exclusive of it, hence the plus 1
-            UD60x18 percentThroughVotingPeriod =
-                (ud(currentInterval * 1e18) / (ud(votingPeriod * 1e18) / ud(PRICE_CURVE_UPDATE_INTERVAL * 1e18)))
-                    * ud(100 * 1e18); // percentage as whole number so curve is 0 to 100
-            UD60x18 exponent = percentThroughVotingPeriod * (ud(multiple) / ud(1e18));
-            UD60x18 curveMultiple = exponent.exp2();
-            uint256 result = ((ud(costToVote) / ud(1e18)) * curveMultiple).intoUint256(); // costToVote is the minimum cost per vote for exponential curves
+            UD60x18 curvePosition = xTimesMultiple.exp2();
+            uint256 result = ((ud(costToVote) / ud(1e18)) * curvePosition).intoUint256(); // c * 2^bx where b is multiple and c is starting price
+            return (result / COST_ROUNDING_VALUE) * COST_ROUNDING_VALUE; // round to keep things clean on frontend
+        } else if (PriceCurveTypes(priceCurveType) == PriceCurveTypes.Logarithmic) {
+            UD60x18 curvePosition = (xTimesMultiple + ud(1 * 1e18)).log10();
+            uint256 result = (curvePosition + (ud(costToVote) / ud(1e18))).intoUint256(); // log(bx + 1) + c where b is multiple and c is starting price
             return (result / COST_ROUNDING_VALUE) * COST_ROUNDING_VALUE; // round to keep things clean on frontend
         } else {
             return costToVote;
