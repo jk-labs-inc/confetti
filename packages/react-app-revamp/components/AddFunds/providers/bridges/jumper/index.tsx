@@ -8,6 +8,7 @@ import useJumperBridgeChains from "./hooks/useJumperBridgeChains";
 interface AddFundsJumperProviderProps {
   chain: string;
   asset: string;
+  onBridgeSuccess?: () => void;
 }
 
 const JUMPER_PARAMS = {
@@ -16,7 +17,7 @@ const JUMPER_PARAMS = {
   logo: "/add-funds/jumper.svg",
 };
 
-const AddFundsJumperProvider: FC<AddFundsJumperProviderProps> = ({ chain, asset }) => {
+const AddFundsJumperProvider: FC<AddFundsJumperProviderProps> = ({ chain, asset, onBridgeSuccess }) => {
   const chainId = getChainId(chain);
   const { data: isSupported, isLoading, isError, retry } = useJumperBridgeChains(chainId);
 
@@ -47,7 +48,7 @@ const AddFundsJumperProvider: FC<AddFundsJumperProviderProps> = ({ chain, asset 
 
   return (
     <AddFundsCard {...JUMPER_PARAMS}>
-      <AddFundsJumperWidget chainId={chainId} asset={asset} />
+      <AddFundsJumperWidget chainId={chainId} asset={asset} onBridgeSuccess={onBridgeSuccess} />
     </AddFundsCard>
   );
 };

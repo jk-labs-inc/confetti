@@ -9,9 +9,10 @@ interface UseAddFundsProvidersParams {
   chain: string;
   asset: string;
   onCloseModal?: () => void;
+  onBridgeSuccess?: () => void;
 }
 
-const useAddFundsProviders = ({ type, chain, asset, onCloseModal }: UseAddFundsProvidersParams) => {
+const useAddFundsProviders = ({ type, chain, asset, onCloseModal, onBridgeSuccess }: UseAddFundsProvidersParams) => {
   const providers = useMemo(() => {
     switch (type) {
       case AddFundsProviderType.ONRAMP:
@@ -20,11 +21,11 @@ const useAddFundsProviders = ({ type, chain, asset, onCloseModal }: UseAddFundsP
           <AddFundsParaProvider key="para" chain={chain} onCloseModal={onCloseModal} />,
         ];
       case AddFundsProviderType.BRIDGE:
-        return [<AddFundsJumperProvider key="jumper" chain={chain} asset={asset} />];
+        return [<AddFundsJumperProvider key="jumper" chain={chain} asset={asset} onBridgeSuccess={onBridgeSuccess} />];
       default:
         return [];
     }
-  }, [type, chain, asset, onCloseModal]);
+  }, [type, chain, asset, onCloseModal, onBridgeSuccess]);
 
   return providers;
 };
