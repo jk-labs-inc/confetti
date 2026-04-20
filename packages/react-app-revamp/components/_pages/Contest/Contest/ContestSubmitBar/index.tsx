@@ -69,7 +69,7 @@ const ContestSubmitBar = ({ variant }: ContestSubmitBarProps) => {
             {submitButton}
           </>
         ) : (
-          <div className="flex w-full justify-end">{submitButton}</div>
+          <div className="w-full">{submitButton}</div>
         )}
       </div>,
       mobileSlot,
@@ -107,7 +107,7 @@ const renderButton = (variant: SubmitBarVariant, isMobile: boolean) => {
       <ButtonV3
         colorClass="bg-gradient-vote rounded-[40px]"
         textColorClass="text-[16px] font-bold text-true-black"
-        size={ButtonSize.SUBMIT_ENTRY}
+        size={isMobile ? ButtonSize.SUBMIT_ENTRY_FULL : ButtonSize.SUBMIT_ENTRY}
         onClick={variant.onClick}
       >
         connect wallet to enter
