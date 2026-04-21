@@ -9,6 +9,7 @@ interface AddFundsProvidersProps {
   chain: string;
   asset: string;
   onCloseModal?: () => void;
+  onBridgeSuccess?: () => void;
 }
 
 const OnrampDescription = () => (
@@ -19,8 +20,8 @@ const BridgeDescription = ({ chain }: { chain: string }) => (
   <p className="text-neutral-11 text-base">fund from another chain into {chain}</p>
 );
 
-const AddFundsProviders: FC<AddFundsProvidersProps> = ({ type, chain, asset, onCloseModal }) => {
-  const providers = useAddFundsProviders({ type, chain, asset, onCloseModal });
+const AddFundsProviders: FC<AddFundsProvidersProps> = ({ type, chain, asset, onCloseModal, onBridgeSuccess }) => {
+  const providers = useAddFundsProviders({ type, chain, asset, onCloseModal, onBridgeSuccess });
 
   return (
     <div className="flex flex-col gap-6 w-full">

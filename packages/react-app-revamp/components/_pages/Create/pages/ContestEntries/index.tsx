@@ -38,7 +38,7 @@ const CreateContestEntries = () => {
           <CreateContestEntriesEntrySettings />
 
           <div className="hidden md:block mt-4 pl-6">
-            <CreateNextButton step={step + 1} onClick={() => onNextStep()} />
+            <CreateNextButton id="create_flow_entries_next" step={step + 1} onClick={() => onNextStep()} />
           </div>
         </div>
       </div>

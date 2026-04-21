@@ -35,6 +35,7 @@ const SubmissionPageDesktopVotingAreaWidgetHandler: FC<SubmissionPageDesktopVoti
   );
 
   const onAddFunds = useCallback(() => setShowAddFundsModal(true), []);
+  const closeAddFunds = () => setShowAddFundsModal(false);
 
   return (
     <div className="relative">
@@ -43,7 +44,8 @@ const SubmissionPageDesktopVotingAreaWidgetHandler: FC<SubmissionPageDesktopVoti
           <AddFunds
             chain={contestConfig.chainName}
             asset={contestConfig.chainNativeCurrencySymbol}
-            onGoBack={() => setShowAddFundsModal(false)}
+            onGoBack={closeAddFunds}
+            onBridgeSuccess={closeAddFunds}
           />
         ) : (
           <VotingWidget
