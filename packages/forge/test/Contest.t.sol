@@ -8,6 +8,7 @@ import "../src/governance/Governor.sol";
 contract ContestTest is Test {
     // CONTEST VARS
     Contest public payPerVoteExpCurveContest;
+    Contest public payPerVoteLogCurveContest;
 
     // BASIC PARAMS
     string public constant CONTEST_NAME = "test";
@@ -25,8 +26,9 @@ contract ContestTest is Test {
     uint256 public constant ZERO_COST_TO_VOTE = 0;
     uint256 public constant STANDARD_COST_TO_VOTE = 100000000000000;
     uint256 public constant EXPONENTIAL_PRICE_CURVE_TYPE = 0;
-    uint256 public constant ZERO_EXPONENT_MULTIPLE = 0;
     uint256 public constant STANDARD_EXPONENT_MULTIPLE = 33000000000000000; // for a terminal value 10x from min
+    uint256 public constant LOGARITHMIC_PRICE_CURVE_TYPE = 1;
+    uint256 public constant STANDARD_LOGARITHMIC_MULTIPLE = 20744750000000; // for a terminal value 10x from min
     address public constant JK_LABS_SPLIT_DESTINATION = JK_LABS_ADDRESS;
 
     // SORTING INT PARAMS
@@ -51,10 +53,33 @@ contract ContestTest is Test {
         CREATOR_SPLIT_ENABLED
     );
 
+    Governor.IntConstructorArgs public payPerVoteLogCurveIntConstructorArgs = Governor.IntConstructorArgs(
+        ANYONE_CAN_SUBMIT,
+        CONTEST_START,
+        VOTING_DELAY,
+        VOTING_PERIOD,
+        NUM_ALLOWED_PROPOSAL_SUBMISSIONS,
+        MAX_PROPOSAL_COUNT,
+        RANK_LIMIT_250,
+        NINETY_PERCENT_TO_REWARDS,
+        STANDARD_COST_TO_VOTE,
+        LOGARITHMIC_PRICE_CURVE_TYPE,
+        STANDARD_LOGARITHMIC_MULTIPLE,
+        CREATOR_SPLIT_ENABLED
+    );
+
     Governor.ConstructorArgs public payPerVoteExpCurveParams = Governor.ConstructorArgs(
         CONTEST_NAME,
         CONTEST_PROMPT,
         payPerVoteExpCurveIntConstructorArgs,
+        JK_LABS_SPLIT_DESTINATION,
+        METADATA_FIELDS_SCHEMA
+    );
+
+    Governor.ConstructorArgs public payPerVoteLogCurveParams = Governor.ConstructorArgs(
+        CONTEST_NAME,
+        CONTEST_PROMPT,
+        payPerVoteLogCurveIntConstructorArgs,
         JK_LABS_SPLIT_DESTINATION,
         METADATA_FIELDS_SCHEMA
     );
@@ -100,6 +125,8 @@ contract ContestTest is Test {
         payPerVoteExpCurveContest = new Contest(payPerVoteExpCurveParams);
         voterRewardsModule = new VoterRewardsModule(payees, shares, Contest(payPerVoteExpCurveContest));
         payPerVoteExpCurveContest.setOfficialRewardsModule(address(voterRewardsModule));
+
+        payPerVoteLogCurveContest = new Contest(payPerVoteLogCurveParams);
 
         vm.stopPrank();
     }
@@ -193,6 +220,16 @@ contract ContestTest is Test {
     function testVoteExpCurve2() public {
         vm.warp(1681670000);
         assertEq(payPerVoteExpCurveContest.currentPricePerVote(), 975000000000000); // 99.6% of way through
+    }
+
+    function testVoteLogCurve1() public {
+        vm.warp(1681665000);
+        assertEq(payPerVoteLogCurveContest.currentPricePerVote(), 548000000000000); // 49.8% of way through
+    }
+
+    function testVoteLogCurve2() public {
+        vm.warp(1681670000);
+        assertEq(payPerVoteLogCurveContest.currentPricePerVote(), 996000000000000); // 99.6% of way through
     }
 
     function testCreatorCancelBeforeFirstVote() public {
