@@ -82,7 +82,12 @@ const CreateContestTiming = () => {
               </div>
             </div>
             <div className="hidden md:block mt-4 pl-6">
-              <CreateNextButton step={step + 1} onClick={() => onNextStep()} isDisabled={!!currentError} />
+              <CreateNextButton
+                id="create_flow_timing_next"
+                step={step + 1}
+                onClick={() => onNextStep()}
+                isDisabled={!!currentError}
+              />
             </div>
           </div>
         </div>
