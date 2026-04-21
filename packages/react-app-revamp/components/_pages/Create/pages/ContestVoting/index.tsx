@@ -48,7 +48,12 @@ const CreateContestVoting = () => {
           {switchLayout}
           {isConnected && (
             <div className="hidden md:block mt-16 pl-6">
-              <CreateNextButton step={step + 1} isDisabled={disableNextStep} onClick={() => onNextStep()} />
+              <CreateNextButton
+                id="create_flow_voting_next"
+                step={step + 1}
+                isDisabled={disableNextStep}
+                onClick={() => onNextStep()}
+              />
             </div>
           )}
         </div>

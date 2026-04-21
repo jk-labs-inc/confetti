@@ -65,7 +65,12 @@ const CreateContestRewards = () => {
               <CreateRewardsFundPool />
             </div>
             <div className="hidden md:block mt-4 pl-6">
-              <CreateNextButton step={step + 1} onClick={handleNextStep} isDisabled={isDisabled} />
+              <CreateNextButton
+                id="create_flow_rewards_next"
+                step={step + 1}
+                onClick={handleNextStep}
+                isDisabled={isDisabled}
+              />
             </div>
           </div>
         </div>

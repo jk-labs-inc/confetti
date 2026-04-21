@@ -80,6 +80,7 @@ const CreateContestButton: FC<CreateContestButtonProps> = ({ step, onClick, isDi
               back
             </p>
             <ButtonV3
+              id="create_flow_deploy"
               onClick={handleClick}
               colorClass="text-[20px] bg-gradient-create rounded-[15px] font-bold text-true-black hover:scale-105 transition-transform duration-200 ease-in-out"
             >
@@ -104,6 +105,7 @@ const CreateContestButton: FC<CreateContestButtonProps> = ({ step, onClick, isDi
     <div className="flex gap-4 items-start pb-5 md:pb-0">
       <div className={`flex flex-col items-center gap-4`}>
         <ButtonV3
+          id="create_flow_deploy"
           isDisabled={isDisabled}
           colorClass={`bg-gradient-create text-[20px] rounded-[10px] font-bold ${
             shake ? "animate-shake-top" : ""
