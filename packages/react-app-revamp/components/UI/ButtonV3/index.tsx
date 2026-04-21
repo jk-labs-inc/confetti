@@ -19,6 +19,9 @@ export enum ButtonSize {
   EXTRA_LARGE = "extraLarge",
   EXTRA_LARGE_LONG = "extraLargeLong",
   EXTRA_LARGE_LONG_MOBILE = "extraLargeLongMobile",
+  SUBMIT_ENTRY = "submitEntry",
+  SUBMIT_ENTRY_MOBILE = "submitEntryMobile",
+  SUBMIT_ENTRY_FULL = "submitEntryFull",
   FULL = "full",
 }
 
@@ -43,6 +46,9 @@ const sizeClasses = {
   [ButtonSize.EXTRA_LARGE]: "w-[216px] h-[40px]",
   [ButtonSize.EXTRA_LARGE_LONG]: "w-[280px] h-[48px]",
   [ButtonSize.EXTRA_LARGE_LONG_MOBILE]: "w-[320px] h-[40px]",
+  [ButtonSize.SUBMIT_ENTRY]: "w-[200px] h-8",
+  [ButtonSize.SUBMIT_ENTRY_MOBILE]: "w-[120px] h-8",
+  [ButtonSize.SUBMIT_ENTRY_FULL]: "w-full h-8",
   [ButtonSize.FULL]: "w-full h-[40px]",
 };
 
