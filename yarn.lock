@@ -10633,10 +10633,10 @@ own-keys@^1.0.1:
     object-keys "^1.1.1"
     safe-push-apply "^1.0.0"
 
-ox@0.14.17:
-  version "0.14.17"
-  resolved "https://registry.yarnpkg.com/ox/-/ox-0.14.17.tgz#3e35260162c1cd89e41bd6ea187e205b24416c46"
-  integrity sha512-jOzNb2Wlfzsr8z/GoCtd1bf6OSRuWuysvbhnHGD+7fV1WRbcBR6B0RYoe3xWnUedF7zp4l5APmS7CzAhUok/lA==
+ox@0.14.20:
+  version "0.14.20"
+  resolved "https://registry.yarnpkg.com/ox/-/ox-0.14.20.tgz#b9ff923c88976508b63648fa7a01b6106cf71ff4"
+  integrity sha512-rby38C3nDn8eQkf29Zgw4hkCZJ64Qqi0zRPWL8ENUQ7JVuoITqrVtwWQgM/He19SCMUEc7hS/Sjw0jIOSLJhOw==
   dependencies:
     "@adraffy/ens-normalize" "^1.11.0"
     "@noble/ciphers" "^1.3.0"
@@ -12951,10 +12951,10 @@ vaul@1.1.2:
   dependencies:
     "@radix-ui/react-dialog" "^1.1.1"
 
-viem@2.48.2:
-  version "2.48.2"
-  resolved "https://registry.yarnpkg.com/viem/-/viem-2.48.2.tgz#5fcf748975e6cb410c0749b186a0ad26079b9741"
-  integrity sha512-qRJlttIe90n1+u90xr6NhGxqA519nPpGnktFeyufT6d7t7Y2mt8tf8+mEHfN1BA945R507arwr1CL34OR8gEug==
+viem@2.48.4:
+  version "2.48.4"
+  resolved "https://registry.yarnpkg.com/viem/-/viem-2.48.4.tgz#4de30b8564d26a7409559d812e9367213b2ec769"
+  integrity sha512-mReP/rgY2P+WeeRSG4sUvccCLKfyAW1C73Y3KkobAqgzYmVna9qyUMNE44xIUkDtfvRuC33r24UhF4baBYovsg==
   dependencies:
     "@noble/curves" "1.9.1"
     "@noble/hashes" "1.8.0"
@@ -12962,7 +12962,7 @@ viem@2.48.2:
     "@scure/bip39" "1.6.0"
     abitype "1.2.3"
     isows "1.0.7"
-    ox "0.14.17"
+    ox "0.14.20"
     ws "8.18.3"
 
 viem@>=2.37.9, viem@^2.23.15, viem@^2.27.2, viem@^2.33.2, viem@^2.47.2:
