@@ -1,20 +1,12 @@
-import { useEntryPreviewTitleToggleStore } from "@components/_pages/Contest/components/EntryPreviewTitleToggle/store";
 import { Proposal } from "@components/_pages/ProposalContent";
-import { transform } from "@components/_pages/ProposalContent/utils/markdown";
 import CustomLink from "@components/UI/Link";
-import { toastInfo } from "@components/UI/Toast";
-import { getNumberWithSymbol } from "@helpers/formatNumber";
-import { ChatBubbleLeftEllipsisIcon, ChevronDownIcon, ChevronRightIcon, LinkIcon } from "@heroicons/react/24/outline";
+import { formatNumberWithCommas } from "@helpers/formatNumber";
 import { ContestStatus } from "@hooks/useContestStatus/store";
-import { Interweave } from "interweave";
-import { UrlMatcher } from "interweave-autolink";
-import { FC, useEffect, useState } from "react";
+import { FC } from "react";
 import ProposalContentDeleteButton from "../../Buttons/Delete";
-import ProposalContentProfile from "../../Profile";
+import ProposalContentVotePrimary from "../../Buttons/Vote/Primary";
 import ProposalLayoutLeaderboardMobile from "./components/Mobile";
 import ProposalLayoutLeaderboardRankOrPlaceholder from "./components/RankOrPlaceholder";
-import ProposalContentVotePrimary from "../../Buttons/Vote/Primary";
-import ProposalContentVoteSecondary from "../../Buttons/Vote/Secondary";
 
 interface ProposalLayoutLeaderboardProps {
   proposal: Proposal;
@@ -52,28 +44,10 @@ const ProposalLayoutLeaderboard: FC<ProposalLayoutLeaderboardProps> = ({
   handleVotingDrawerOpen,
   toggleProposalSelection,
 }) => {
-  const [isContentHidden, setIsContentHidden] = useState(true);
   const entryTitle = proposal.metadataFields.stringArray[0];
-  const { isExpanded } = useEntryPreviewTitleToggleStore(state => state);
-
-  useEffect(() => {
-    if (isExpanded) setIsContentHidden(false);
-    else setIsContentHidden(true);
-  }, [isExpanded]);
-
-  const handleToggleVisibility = () => {
-    setIsContentHidden(!isContentHidden);
-  };
-
-  const copyLink = () => {
-    const url = `${window.location.origin}/contest/${chainName.toLowerCase()}/${contestAddress}/submission/${
-      proposal.id
-    }`;
-    navigator.clipboard.writeText(url);
-    toastInfo({
-      message: "link copied!",
-    });
-  };
+  const isVotingActive =
+    contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed;
+  const submissionUrl = `/contest/${chainName.toLowerCase()}/${contestAddress}/submission/${proposal.id}`;
 
   if (isMobile) {
     return (
@@ -94,96 +68,47 @@ const ProposalLayoutLeaderboard: FC<ProposalLayoutLeaderboardProps> = ({
   }
 
   return (
-    <div className={`flex gap-6 ${isContentHidden ? "items-center" : "items-start"}`}>
-      {allowDelete && (
-        <ProposalContentDeleteButton
-          proposalId={proposal.id}
-          selectedProposalIds={selectedProposalIds}
-          toggleProposalSelection={toggleProposalSelection}
-        />
+    <div className="relative">
+      {isVotingActive && (
+        <div className="hidden md:block absolute left-0 top-1/2 -translate-x-full -translate-y-1/2 -ml-6">
+          <ProposalLayoutLeaderboardRankOrPlaceholder proposal={proposal} contestStatus={contestStatus} />
+        </div>
       )}
       <div
-        className={`w-full flex flex-col min-h-16 gap-6 bg-true-black shadow-entry-card px-8 py-6 rounded-2xl border transition-colors duration-300 ease-in-out ${
-          isHighlighted ? "border-secondary-14" : "border-transparent hover:border-primary-3"
+        className={`min-w-0 grid ${
+          isVotingActive ? "grid-cols-[1fr_120px_80px]" : allowDelete ? "grid-cols-[1fr_auto]" : "grid-cols-[1fr]"
+        } items-center gap-6 py-4 border-b transition-colors duration-300 ease-in-out ${
+          isHighlighted ? "border-secondary-14" : "border-neutral-4"
         }`}
       >
-        <div className={`flex gap-6 ${isContentHidden ? "items-center" : ""}`}>
-          <div className={`${isContentHidden ? "" : "-mt-1"}`}>
-            <ProposalLayoutLeaderboardRankOrPlaceholder proposal={proposal} contestStatus={contestStatus} />
-          </div>
-          <div className="flex flex-col gap-8 w-full">
-            <div className="grid grid-cols-[200px_1fr_auto] items-center gap-6">
-              <div className="flex items-center gap-4">
-                <ProposalContentProfile
-                  name={proposalAuthorData.name}
-                  avatar={proposalAuthorData.avatar}
-                  isLoading={proposalAuthorData.isLoading}
-                  isError={proposalAuthorData.isError}
-                  textColor="text-neutral-10"
-                />
-              </div>
-              <div className="flex gap-2 items-center min-w-0">
-                <p className="text-[16px] text-neutral-11 font-bold normal-case truncate">{entryTitle}</p>
-                <CustomLink
-                  scroll={false}
-                  href={`/contest/${chainName.toLowerCase()}/${contestAddress}/submission/${proposal.id}`}
-                  className="shrink-0 w-4 h-4 flex justify-center items-center rounded-full border text-positive-11 border-positive-11 hover:bg-positive-11 hover:text-true-black transition-colors duration-300 ease-in-out group"
-                >
-                  <ChevronRightIcon className="w-4 h-4 group-hover:brightness-0 group-hover:saturate-0" />
-                </CustomLink>
-              </div>
-              <div className="flex gap-4 items-center">
-                {contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed ? (
-                  <ProposalContentVotePrimary proposal={proposal} handleVotingModalOpen={handleVotingDrawerOpen} />
-                ) : null}
-                <ChevronDownIcon
-                  className={`w-6 h-6 text-positive-11 cursor-pointer transition-transform duration-300 ${
-                    isContentHidden ? "" : "transform rotate-180"
-                  }`}
-                  onClick={handleToggleVisibility}
-                />
-              </div>
+        <CustomLink
+          scroll={false}
+          href={submissionUrl}
+          className="min-w-0 text-[16px] text-neutral-11 font-bold normal-case truncate hover:text-positive-11 transition-colors duration-300 ease-in-out"
+        >
+          {entryTitle}
+        </CustomLink>
+        {isVotingActive ? (
+          <>
+            <p className="text-[16px] text-neutral-11 font-bold tabular-nums">
+              {formatNumberWithCommas(proposal.votes)}
+            </p>
+            <div className="flex justify-end">
+              <ProposalContentVotePrimary proposal={proposal} handleVotingModalOpen={handleVotingDrawerOpen} />
             </div>
-            {!isContentHidden && (
-              <>
-                <div className="animate-fade-in">
-                  <Interweave
-                    className="prose prose-invert inline-block w-full overflow-hidden [&>*:not(.not-prose)]:text-neutral-9 [&>*:not(.not-prose) *]:text-neutral-9 max-w-[560px]"
-                    content={proposal.content}
-                    transform={transform}
-                    tagName="div"
-                    matchers={[new UrlMatcher("url")]}
-                  />
-                </div>
-                <div className="flex gap-2 items-center">
-                  {contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed ? (
-                    <ProposalContentVoteSecondary proposal={proposal} handleVotingModalOpen={handleVotingDrawerOpen} />
-                  ) : (
-                    <p className="text-neutral-10 text-[16px] font-bold">
-                      voting opens {formattedVotingOpen.format("MMMM Do, h:mm a")}
-                    </p>
-                  )}
-                  <CustomLink
-                    href={commentLink}
-                    className="min-w-16 shrink-0 h-6 p-2 flex items-center justify-between gap-2 bg-true-black rounded-[16px] cursor-pointer text-neutral-9  border border-neutral-9 hover:bg-neutral-9 hover:text-true-black transition-colors duration-300 ease-in-out"
-                    shallow
-                    scroll={false}
-                  >
-                    <ChatBubbleLeftEllipsisIcon className="w-4 h-4 shrink-0" />
-                    <p className="text-[16px] font-bold grow text-center">{proposal.commentsCount}</p>
-                  </CustomLink>
-                  <button
-                    onClick={copyLink}
-                    className="min-w-16 text-[16px] font-bold shrink-0 h-6 p-2 flex items-center justify-between gap-2 bg-true-black rounded-[16px] cursor-pointer text-neutral-9  border border-neutral-9 hover:bg-neutral-9 hover:text-true-black transition-colors duration-300 ease-in-out"
-                  >
-                    <LinkIcon className="w-4 h-4" />
-                    copy link
-                  </button>
-                </div>
-              </>
-            )}
-          </div>
-        </div>
+          </>
+        ) : (
+          allowDelete && (
+            <div className="flex justify-end">
+              <ProposalContentDeleteButton
+                proposalId={proposal.id}
+                selectedProposalIds={selectedProposalIds}
+                toggleProposalSelection={toggleProposalSelection}
+                inline
+              />
+            </div>
+          )
+        )}
       </div>
     </div>
   );

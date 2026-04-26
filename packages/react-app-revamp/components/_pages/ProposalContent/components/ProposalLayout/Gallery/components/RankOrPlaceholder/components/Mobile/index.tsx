@@ -8,43 +8,24 @@ interface ProposalLayoutGalleryRankOrPlaceholderMobileProps {
   contestStatus: ContestStatus;
 }
 
+const MEDAL_IMAGES: Record<number, string> = {
+  1: "/contest/gold-medal.png",
+  2: "/contest/silver-medal.png",
+  3: "/contest/bronze-medal.png",
+};
+
 const ProposalLayoutGalleryRankOrPlaceholderMobile: FC<ProposalLayoutGalleryRankOrPlaceholderMobileProps> = ({
   proposal,
-  contestStatus,
 }) => {
-  const MEDAL_IMAGES: Record<number, string> = {
-    1: "/contest/gold-medal.png",
-    2: "/contest/silver-medal.png",
-    3: "/contest/bronze-medal.png",
-  };
-
-  if (proposal.rank) {
-    const medalSrc = MEDAL_IMAGES[proposal.rank];
-    if (medalSrc) {
-      return <img src={medalSrc} alt={`Rank ${proposal.rank}`} className="w-6 h-6 object-contain" />;
-    } else {
-      return <RankBadge rank={proposal.rank} size="sm" />;
-    }
-  } else {
-    const isContestOpen = contestStatus === ContestStatus.ContestOpen || contestStatus === ContestStatus.SubmissionOpen;
-    const isVotingOpen = contestStatus === ContestStatus.VotingOpen;
-    if (isContestOpen || isVotingOpen) {
-      return (
-        <div className="w-6 h-6 flex items-center justify-center">
-          <span className="relative flex h-3 w-3">
-            <span
-              className={`animate-ping absolute inline-flex h-full w-full rounded-full  ${isContestOpen ? "bg-primary-10" : "bg-positive-11"} opacity-75`}
-            ></span>
-            <span
-              className={`relative inline-flex rounded-full h-3 w-3 ${isContestOpen ? "bg-primary-10" : "bg-positive-11"}`}
-            ></span>
-          </span>
-        </div>
-      );
-    } else {
-      return <div className="w-3 h-3 md:w-10 md:h-10 flex items-center justify-center" />;
-    }
+  if (!proposal.rank) {
+    return <div className="w-6 h-6" />;
   }
+
+  const medalSrc = MEDAL_IMAGES[proposal.rank];
+  if (medalSrc) {
+    return <img src={medalSrc} alt={`Rank ${proposal.rank}`} className="w-6 h-6 object-contain" />;
+  }
+  return <RankBadge rank={proposal.rank} size="sm" />;
 };
 
 export default ProposalLayoutGalleryRankOrPlaceholderMobile;
