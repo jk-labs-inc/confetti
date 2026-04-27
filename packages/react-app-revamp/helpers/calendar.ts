@@ -1,6 +1,14 @@
 import { generateUrlContest } from "./share";
 
-const formatDateForIcs = (date: Date): string => {
+export interface CalendarEventParams {
+  title: string;
+  contestAddress: string;
+  chainName: string;
+  votesOpen: Date;
+  votesClose: Date;
+}
+
+const formatDateForCalendar = (date: Date): string => {
   return date.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
 };
 
@@ -21,19 +29,7 @@ export const generateCalendarTitle = ({
   return `Voting on ${contestName}`;
 };
 
-export const downloadIcsFile = ({
-  title,
-  contestAddress,
-  chainName,
-  votesOpen,
-  votesClose,
-}: {
-  title: string;
-  contestAddress: string;
-  chainName: string;
-  votesOpen: Date;
-  votesClose: Date;
-}) => {
+export const downloadIcsFile = ({ title, contestAddress, chainName, votesOpen, votesClose }: CalendarEventParams) => {
   const contestUrl = generateUrlContest(contestAddress, chainName);
 
   const icsContent = [
@@ -43,8 +39,8 @@ export const downloadIcsFile = ({
     "PRODID:-//Confetti//EN",
     "BEGIN:VEVENT",
     `UID:${contestAddress}-${chainName}@confetti.win`,
-    `DTSTART:${formatDateForIcs(votesOpen)}`,
-    `DTEND:${formatDateForIcs(votesClose)}`,
+    `DTSTART:${formatDateForCalendar(votesOpen)}`,
+    `DTEND:${formatDateForCalendar(votesClose)}`,
     `SUMMARY:${escapeIcsText(title)}`,
     `DESCRIPTION:${escapeIcsText(`Contest link: ${contestUrl}`)}`,
     `URL:${contestUrl}`,
@@ -59,4 +55,22 @@ export const downloadIcsFile = ({
   link.download = "voting-reminder.ics";
   link.click();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
+};
+
+export const buildGoogleCalendarUrl = ({
+  title,
+  contestAddress,
+  chainName,
+  votesOpen,
+  votesClose,
+}: CalendarEventParams): string => {
+  const contestUrl = generateUrlContest(contestAddress, chainName);
+  const params = new URLSearchParams({
+    action: "TEMPLATE",
+    text: title,
+    dates: `${formatDateForCalendar(votesOpen)}/${formatDateForCalendar(votesClose)}`,
+    details: `Contest link: ${contestUrl}`,
+    location: contestUrl,
+  });
+  return `https://calendar.google.com/calendar/render?${params.toString()}`;
 };
