@@ -1,7 +1,7 @@
 import ImageUpload from "@components/UI/ImageUpload";
 import CreateGradientTitle from "@components/_pages/Create/components/GradientTitle";
 import { FC, useState } from "react";
-import { MAX_IMAGE_TITLE_LENGTH } from "../../constants";
+import { MAX_TITLE_LENGTH } from "../../constants";
 
 interface DialogModalSendProposalImageAndTitleLayoutProps {
   onChange?: (value: string) => void;
@@ -10,7 +10,6 @@ interface DialogModalSendProposalImageAndTitleLayoutProps {
 const DialogModalSendProposalEntryPreviewImageAndTitleLayout: FC<DialogModalSendProposalImageAndTitleLayoutProps> = ({
   onChange,
 }) => {
-  const [isExceeded, setIsExceeded] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const [imageUrl, setImageUrl] = useState<string>("");
 
@@ -32,7 +31,6 @@ const DialogModalSendProposalEntryPreviewImageAndTitleLayout: FC<DialogModalSend
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setInputValue(value);
-    setIsExceeded(value.length >= MAX_IMAGE_TITLE_LENGTH);
     updateCombinedValue(imageUrl, value);
   };
 
@@ -51,9 +49,11 @@ const DialogModalSendProposalEntryPreviewImageAndTitleLayout: FC<DialogModalSend
           onChange={handleInputChange}
           className="w-full text-[16px] bg-secondary-1 outline-none rounded-[10px] border border-neutral-17 placeholder-neutral-10 h-12 indent-4 focus:outline-none"
           placeholder="this is my entry..."
-          maxLength={MAX_IMAGE_TITLE_LENGTH}
+          maxLength={MAX_TITLE_LENGTH}
         />
-        {isExceeded && <p className="text-negative-11 text-[12px] font-bold">maximum character limit reached!</p>}
+        <p className="text-[16px] text-[#6A6A6A] ml-4">
+          {inputValue.length}/{MAX_TITLE_LENGTH} characters
+        </p>
       </div>
       <div className="flex flex-col gap-4">
         <CreateGradientTitle textSize="small">image upload</CreateGradientTitle>
