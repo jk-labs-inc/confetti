@@ -1,6 +1,13 @@
 import Tooltip from "@components/UI/Tooltip";
+import { flip, offset, shift } from "@floating-ui/dom";
 import { InformationCircleIcon } from "@heroicons/react/24/outline";
 import { useId } from "react";
+
+const middlewares = [
+  offset(10),
+  flip({ fallbackPlacements: ["bottom"] }),
+  shift({ padding: 5 }),
+];
 
 const InfoButton = () => {
   const id = useId();
@@ -22,6 +29,9 @@ const InfoButton = () => {
         id={tooltipId}
         place="right"
         positionStrategy="fixed"
+        offset={10}
+        middlewares={middlewares}
+        style={{ padding: 8 }}
         className="w-[200px]! md:w-[254px]! rounded-lg! normal-case"
       >
         <div className="text-[12px] text-true-black leading-tight flex flex-col gap-2 normal-case">
