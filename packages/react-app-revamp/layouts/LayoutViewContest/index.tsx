@@ -69,7 +69,7 @@ const LayoutViewContest = () => {
           contestVersion={contestConfig.version}
         />
         <div>
-          <div className="mt-4 md:mt-8 gap-3 flex flex-col">
+          <div className="mt-4 gap-3 flex flex-col">
             <ContestTabs tab={tab} excludeTabs={excludeTabs} onChange={tab => setTab(tab)} />
           </div>
 
