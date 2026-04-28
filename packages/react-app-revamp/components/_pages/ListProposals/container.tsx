@@ -21,7 +21,7 @@ const TitleContainer = ({ children }: { children: ReactNode }) => {
     <div className="flex flex-col">
       {hasEntries && (
         <div
-          className={`grid ${gridCols} items-center gap-4 md:gap-6 py-3 border-t border-b border-neutral-4`}
+          className={`grid ${gridCols} items-center gap-4 md:gap-6 py-3 border-b border-neutral-4`}
         >
           {isVotingActive ? (
             <>
