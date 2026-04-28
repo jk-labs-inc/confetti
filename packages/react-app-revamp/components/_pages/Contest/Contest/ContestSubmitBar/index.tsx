@@ -52,7 +52,7 @@ const ContestSubmitBar = ({ variant }: ContestSubmitBarProps) => {
   if (variant.kind === "hidden") return null;
 
   if (variant.kind === "creator-only-message") {
-    return <p className="mt-6 text-[16px] text-secondary-11">only the contest creator can submit entries</p>;
+    return <p className="text-[16px] text-secondary-11">only the contest creator can submit entries</p>;
   }
 
   const submitButton = renderButton(variant, isMobile);
