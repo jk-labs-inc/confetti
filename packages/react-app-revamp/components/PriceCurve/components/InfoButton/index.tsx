@@ -1,7 +1,7 @@
 import Tooltip from "@components/UI/Tooltip";
 import { flip, offset, shift } from "@floating-ui/dom";
 import { InformationCircleIcon } from "@heroicons/react/24/outline";
-import { useId } from "react";
+import { useId, useRef, useState } from "react";
 
 const middlewares = [
   offset(10),
@@ -9,9 +9,30 @@ const middlewares = [
   shift({ padding: 5 }),
 ];
 
+const HIDE_DELAY_MS = 150;
+
 const InfoButton = () => {
   const id = useId();
   const tooltipId = `price-curve-info-${id}`;
+  const [isOpen, setIsOpen] = useState(false);
+  const hideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const cancelHide = () => {
+    if (hideTimerRef.current) {
+      clearTimeout(hideTimerRef.current);
+      hideTimerRef.current = null;
+    }
+  };
+
+  const scheduleHide = () => {
+    cancelHide();
+    hideTimerRef.current = setTimeout(() => setIsOpen(false), HIDE_DELAY_MS);
+  };
+
+  const open = () => {
+    cancelHide();
+    setIsOpen(true);
+  };
 
   return (
     <>
@@ -21,6 +42,10 @@ const InfoButton = () => {
         data-tooltip-id={tooltipId}
         data-tooltip-place="right"
         data-tooltip-position-strategy="fixed"
+        onMouseEnter={open}
+        onMouseLeave={scheduleHide}
+        onFocus={open}
+        onBlur={scheduleHide}
         className="flex items-center justify-center text-neutral-9 hover:text-neutral-11 transition-colors"
       >
         <InformationCircleIcon className="w-5 h-5" />
@@ -31,19 +56,22 @@ const InfoButton = () => {
         positionStrategy="fixed"
         offset={10}
         middlewares={middlewares}
+        isOpen={isOpen}
+        imperativeModeOnly
         style={{ padding: 8 }}
         className="w-[200px]! md:w-[254px]! rounded-lg! normal-case"
       >
-        <div className="text-[12px] text-true-black leading-tight flex flex-col gap-2 normal-case">
+        <div
+          onMouseEnter={cancelHide}
+          onMouseLeave={scheduleHide}
+          className="text-[12px] text-true-black leading-tight flex flex-col gap-2 normal-case"
+        >
           <p className="normal-case">
             <b className="normal-case">The earlier you vote, the more you can earn</b>—by acquiring votes for cheap.
           </p>
           <p className="normal-case">
             But careful. <b className="normal-case">Wait too long, and you might not earn at all</b>… even if you pick a
-            winner.
-          </p>
-          <p className="normal-case">
-            Check math{" "}
+            winner. Check math{" "}
             <a
               href="https://docs.confetti.win/calculating-roi"
               target="_blank"
