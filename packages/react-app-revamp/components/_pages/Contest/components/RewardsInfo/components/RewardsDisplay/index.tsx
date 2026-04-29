@@ -106,7 +106,7 @@ const RewardsDisplay: FC<RewardsDisplayProps> = ({
           </motion.p>
         </AnimatePresence>
       ) : null}
-      <p className="text-[16px] text-neutral-11 hidden md:block">
+      <p className="text-[16px] text-neutral-11">
         to <b>{rewards?.moduleType === ModuleType.VOTER_REWARDS ? "voters" : "entrants"}</b>
       </p>
     </div>

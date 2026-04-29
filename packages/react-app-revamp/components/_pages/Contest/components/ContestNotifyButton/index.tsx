@@ -32,8 +32,8 @@ const ContestNotifyButton: FC<ContestNotifyButtonProps> = ({
   if (new Date() >= votesOpen) return null;
 
   const containerSize = size === "sm" ? "w-10 h-7" : "w-12 h-8";
-  const iconSize = size === "sm" ? 12 : 16;
-  const className = `flex items-center justify-center ${containerSize} bg-gradient-metallic rounded-[40px] cursor-pointer`;
+  const iconSize = size === "sm" ? 16 : 20;
+  const className = `flex items-center justify-center ${containerSize} bg-gradient-calendar rounded-[40px] cursor-pointer`;
   const ariaLabel = "Remind me when voting opens";
 
   const icon = (
