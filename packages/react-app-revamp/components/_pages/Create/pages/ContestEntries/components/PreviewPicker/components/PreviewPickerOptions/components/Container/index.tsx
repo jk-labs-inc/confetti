@@ -21,7 +21,7 @@ const CreateContestEntriesPreviewPickerOptionsContainer: FC<CreateContestEntries
         borderColor: isActive ? "rgb(250, 250, 250)" : "rgb(64, 64, 64)", // neutral-11 : neutral-10
       }}
       transition={{ duration: 0.2, ease: "easeInOut" }}
-      className={`flex flex-col w-40 md:w-[400px] h-[140px] md:h-[320px] gap-1.5 md:gap-4 p-2 md:p-4 rounded-xl md:rounded-2xl bg-true-black border cursor-pointer ${
+      className={`flex flex-col w-full md:w-[400px] h-[200px] md:h-[320px] gap-2 md:gap-4 p-2 md:p-4 rounded-xl md:rounded-2xl bg-true-black border cursor-pointer overflow-hidden ${
         isActive ? "border-neutral-11" : "border-neutral-10"
       }`}
     >
