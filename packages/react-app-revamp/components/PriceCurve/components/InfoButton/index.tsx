@@ -42,6 +42,18 @@ const InfoButton = () => {
             But careful. <b className="normal-case">Wait too long, and you might not earn at all</b>… even if you pick a
             winner.
           </p>
+          <p className="normal-case">
+            Check math{" "}
+            <a
+              href="https://docs.confetti.win/calculating-roi"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline font-bold normal-case"
+            >
+              here
+            </a>
+            .
+          </p>
         </div>
       </Tooltip>
     </>
