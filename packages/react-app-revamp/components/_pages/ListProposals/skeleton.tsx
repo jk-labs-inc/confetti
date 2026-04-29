@@ -25,9 +25,9 @@ const ListProposalsSkeleton = forwardRef<HTMLDivElement, ListProposalsSkeletonPr
         return (
           <ProposalSkeleton ref={ref} highlightColor={highlightColor}>
             <Skeleton
-              borderRadius={16}
+              borderRadius={4}
               count={count}
-              className="flex flex-col w-full h-24 md:h-[88px] animate-appear rounded-2xl mt-3"
+              className="flex flex-col w-full h-[60px] md:h-[72px] animate-appear"
             />
           </ProposalSkeleton>
         );

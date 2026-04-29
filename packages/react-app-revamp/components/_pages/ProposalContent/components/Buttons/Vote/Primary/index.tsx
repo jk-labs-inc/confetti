@@ -15,9 +15,9 @@ const ProposalContentVotePrimary: FC<ProposalContentVotePrimaryProps> = ({ propo
   return (
     <button
       onClick={handleClick}
-      className="group shrink-0 w-16 h-6 p-2 flex items-center justify-center bg-gradient-vote hover:shadow-button-embossed-hover transition-all duration-200 rounded-[16px] cursor-pointer text-true-black"
+      className="group shrink-0 w-12 md:w-20 h-8 p-2 flex items-center justify-center bg-gradient-vote hover:shadow-button-embossed-hover transition-all duration-200 rounded-[16px] cursor-pointer text-true-black"
     >
-      <img src="/contest/upvote-2.svg" width={13} height={15} alt="upvote" className="shrink-0" />
+      <img src="/contest/upvote-2.svg" width={18} height={20} alt="upvote" className="shrink-0" />
     </button>
   );
 };
