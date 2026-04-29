@@ -89,12 +89,12 @@ const RewardsDisplay: FC<RewardsDisplayProps> = ({
     <div className="flex items-baseline gap-1">
       <span className="text-[24px]">💰</span>
       {displayCurrency === "usd" && totalUsd !== null ? (
-        <p className="text-neutral-11 text-[16px] md:text-[24px] font-bold md:font-normal">${totalUsd}</p>
+        <p className="text-neutral-11 text-[16px] md:text-[20px] font-bold md:font-normal">${totalUsd}</p>
       ) : currentReward ? (
         <AnimatePresence mode="wait">
           <motion.p
             key={`reward-${currentIndex}`}
-            className="text-neutral-11 text-[16px] md:text-[24px] font-bold md:font-normal"
+            className="text-neutral-11 text-[16px] md:text-[20px] font-bold md:font-normal"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
