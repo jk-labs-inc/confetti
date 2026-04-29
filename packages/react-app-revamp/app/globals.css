@@ -463,10 +463,6 @@ li {
 
 /* React tweet custom styles */
 
-#tweet-skeleton > .react-tweet-theme {
-  min-width: 100% !important;
-}
-
 .react-tweet-theme {
   background-color: #141414 !important;
   min-width: 580px !important;
