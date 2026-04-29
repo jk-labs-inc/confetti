@@ -118,7 +118,7 @@ const ContestTiming: FC<ContestTimingProps> = ({ compact }) => {
   return (
     <div className={`flex items-baseline gap-1 whitespace-nowrap ${display.dimmed ? "text-neutral-9" : "text-neutral-11"}`}>
       <span className="text-2xl">⏱️</span>
-      <p className="text-[16px] md:text-[20px] font-bold md:font-normal">{display.content}</p>
+      <p className="text-[16px] md:text-[24px] font-bold md:font-normal">{display.content}</p>
     </div>
   );
 };
