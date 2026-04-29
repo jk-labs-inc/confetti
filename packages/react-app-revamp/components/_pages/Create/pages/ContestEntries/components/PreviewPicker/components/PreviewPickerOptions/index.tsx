@@ -2,6 +2,9 @@ import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import CreateContestEntriesPreviewPickerOptionsContainer from "./components/Container";
 import { useShallow } from "zustand/shallow";
 import { EntryPreview } from "@hooks/useDeployContest/slices/contestMetadataSlice";
+import TitlePreview from "./components/previews/TitlePreview";
+import ImagePreview from "./components/previews/ImagePreview";
+import TweetPreview from "./components/previews/TweetPreview";
 
 const CreateContestEntriesPreviewPickerOptions = () => {
   const { entryPreviewConfig, setEntryPreviewConfig } = useDeployContestStore(
@@ -24,25 +27,28 @@ const CreateContestEntriesPreviewPickerOptions = () => {
   };
 
   return (
-    <div className="grid grid-cols-2 w-fit gap-4 md:gap-14">
+    <div className="grid grid-cols-2 w-fit gap-4 md:gap-6">
       <CreateContestEntriesPreviewPickerOptionsContainer
         title="titles"
         isActive={entryPreviewConfig.preview === EntryPreview.TITLE}
-        imageSrc="/create-flow/title-preview.png"
         onClick={handleTitlesOptionClick}
-      />
+      >
+        <TitlePreview />
+      </CreateContestEntriesPreviewPickerOptionsContainer>
       <CreateContestEntriesPreviewPickerOptionsContainer
         title="images"
         isActive={entryPreviewConfig.preview === EntryPreview.IMAGE}
-        imageSrc="/create-flow/image-preview.png"
         onClick={handleImageOptionClick}
-      />
+      >
+        <ImagePreview />
+      </CreateContestEntriesPreviewPickerOptionsContainer>
       <CreateContestEntriesPreviewPickerOptionsContainer
         title="tweets"
         isActive={entryPreviewConfig.preview === EntryPreview.TWEET}
-        imageSrc="/create-flow/tweet-preview.png"
         onClick={handleTweetsOptionClick}
-      />
+      >
+        <TweetPreview />
+      </CreateContestEntriesPreviewPickerOptionsContainer>
     </div>
   );
 };

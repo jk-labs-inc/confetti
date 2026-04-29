@@ -51,13 +51,13 @@ const ProposalLayoutLeaderboardMobile: FC<ProposalLayoutLeaderboardMobileProps> 
     >
       <CustomLink
         href={submissionUrl}
-        className="min-w-0 text-[16px] text-neutral-11 font-bold normal-case truncate hover:text-positive-11 transition-colors duration-300 ease-in-out"
+        className="min-w-0 text-[16px] text-neutral-11 normal-case truncate hover:text-positive-11 transition-colors duration-300 ease-in-out"
       >
         {entryTitle}
       </CustomLink>
       {isVotingActive ? (
         <>
-          <p className="text-[16px] text-neutral-11 font-bold tabular-nums">
+          <p className="text-[16px] text-neutral-11 tabular-nums">
             {formatNumberWithCommas(proposal.votes)}
           </p>
           <div className="flex justify-end">

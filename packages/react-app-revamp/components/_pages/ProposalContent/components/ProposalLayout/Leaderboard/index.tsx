@@ -2,6 +2,7 @@ import { Proposal } from "@components/_pages/ProposalContent";
 import CustomLink from "@components/UI/Link";
 import { formatNumberWithCommas } from "@helpers/formatNumber";
 import { ContestStatus } from "@hooks/useContestStatus/store";
+import { useProposalStore } from "@hooks/useProposal/store";
 import { FC } from "react";
 import ProposalContentDeleteButton from "../../Buttons/Delete";
 import ProposalContentVotePrimary from "../../Buttons/Vote/Primary";
@@ -48,6 +49,9 @@ const ProposalLayoutLeaderboard: FC<ProposalLayoutLeaderboardProps> = ({
   const isVotingActive =
     contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed;
   const submissionUrl = `/contest/${chainName.toLowerCase()}/${contestAddress}/submission/${proposal.id}`;
+  const initialMappedProposalIds = useProposalStore(state => state.initialMappedProposalIds);
+  const totalVotes = initialMappedProposalIds.reduce((sum, p) => sum + p.votes, 0);
+  const votePercentage = totalVotes > 0 ? Math.round((proposal.votes / totalVotes) * 100) : 0;
 
   if (isMobile) {
     return (
@@ -76,7 +80,11 @@ const ProposalLayoutLeaderboard: FC<ProposalLayoutLeaderboardProps> = ({
       )}
       <div
         className={`min-w-0 grid ${
-          isVotingActive ? "grid-cols-[1fr_120px_80px]" : allowDelete ? "grid-cols-[1fr_auto]" : "grid-cols-[1fr]"
+          isVotingActive
+            ? "grid-cols-[1fr_120px_80px_80px]"
+            : allowDelete
+              ? "grid-cols-[1fr_auto]"
+              : "grid-cols-[1fr]"
         } items-center gap-6 py-4 border-b transition-colors duration-300 ease-in-out ${
           isHighlighted ? "border-secondary-14" : "border-neutral-4"
         }`}
@@ -84,15 +92,16 @@ const ProposalLayoutLeaderboard: FC<ProposalLayoutLeaderboardProps> = ({
         <CustomLink
           scroll={false}
           href={submissionUrl}
-          className="min-w-0 text-[16px] text-neutral-11 font-bold normal-case truncate hover:text-positive-11 transition-colors duration-300 ease-in-out"
+          className="min-w-0 text-[16px] text-neutral-11 normal-case truncate hover:text-positive-11 transition-colors duration-300 ease-in-out"
         >
           {entryTitle}
         </CustomLink>
         {isVotingActive ? (
           <>
-            <p className="text-[16px] text-neutral-11 font-bold tabular-nums">
+            <p className="text-[16px] text-neutral-11 tabular-nums">
               {formatNumberWithCommas(proposal.votes)}
             </p>
+            <p className="text-[16px] text-neutral-11 tabular-nums">{votePercentage}%</p>
             <div className="flex justify-end">
               <ProposalContentVotePrimary proposal={proposal} handleVotingModalOpen={handleVotingDrawerOpen} />
             </div>

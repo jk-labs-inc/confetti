@@ -14,7 +14,7 @@ const TitleContainer = ({ children }: { children: ReactNode }) => {
     contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed;
   const hasEntries = React.Children.count(children) > 0;
   const gridCols = isVotingActive
-    ? "grid-cols-[1fr_64px_48px] md:grid-cols-[1fr_120px_80px]"
+    ? "grid-cols-[1fr_64px_48px] md:grid-cols-[1fr_120px_80px_80px]"
     : "grid-cols-[1fr]";
 
   return (
@@ -27,6 +27,7 @@ const TitleContainer = ({ children }: { children: ReactNode }) => {
             <>
               <p className="text-[16px] text-neutral-11 font-bold normal-case">entry</p>
               <p className="text-[16px] text-neutral-11 font-bold normal-case">votes</p>
+              <p className="hidden md:block text-[16px] text-neutral-11 font-bold normal-case">% of votes</p>
               <div />
             </>
           ) : (
