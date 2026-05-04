@@ -32,10 +32,10 @@ const ContestShareButton: FC<ContestShareButtonProps> = ({ contestName, contestA
   return (
     <Menu as="div" className="relative">
       <MenuButton
-        className={`flex items-center justify-center ${containerSize} bg-gradient-metallic rounded-[40px] focus:outline-none`}
+        className={`flex items-center justify-center ${containerSize} bg-true-black border border-neutral-10 rounded-[40px] focus:outline-none`}
         aria-label="Share contest"
       >
-        <ShareIcon className={`${iconSize} text-true-black`} />
+        <ShareIcon className={`${iconSize} text-neutral-11`} />
       </MenuButton>
 
       <Transition

@@ -1,22 +1,19 @@
 import CreateGradientTitle from "@components/_pages/Create/components/GradientTitle";
 import { FC, useState } from "react";
+import { MAX_TITLE_LENGTH } from "../../constants";
 
 interface DialogModalSendProposalEntryPreviewTitleLayoutProps {
   onChange?: (value: string) => void;
 }
 
-const MAX_TITLE_LENGTH = 32;
-
 const DialogModalSendProposalEntryPreviewTitleLayout: FC<DialogModalSendProposalEntryPreviewTitleLayoutProps> = ({
   onChange,
 }) => {
   const [inputValue, setInputValue] = useState("");
-  const [isExceeded, setIsExceeded] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setInputValue(value);
-    setIsExceeded(value.length >= MAX_TITLE_LENGTH);
     onChange?.(value.slice(0, MAX_TITLE_LENGTH));
   };
 
@@ -31,7 +28,9 @@ const DialogModalSendProposalEntryPreviewTitleLayout: FC<DialogModalSendProposal
         placeholder="this is my entry..."
         maxLength={MAX_TITLE_LENGTH}
       />
-      {isExceeded && <p className="text-negative-11 text-[12px] font-bold">maximum character limit reached!</p>}
+      <p className="text-[16px] text-[#6A6A6A] ml-4">
+        {inputValue.length}/{MAX_TITLE_LENGTH} characters
+      </p>
     </div>
   );
 };

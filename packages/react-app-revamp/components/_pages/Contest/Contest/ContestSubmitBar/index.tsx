@@ -52,7 +52,7 @@ const ContestSubmitBar = ({ variant }: ContestSubmitBarProps) => {
   if (variant.kind === "hidden") return null;
 
   if (variant.kind === "creator-only-message") {
-    return <p className="mt-6 text-[16px] text-secondary-11">only the contest creator can submit entries</p>;
+    return <p className="text-[16px] text-secondary-11">only the contest creator can submit entries</p>;
   }
 
   const submitButton = renderButton(variant, isMobile);
@@ -77,7 +77,7 @@ const ContestSubmitBar = ({ variant }: ContestSubmitBarProps) => {
   }
 
   return (
-    <div className="flex flex-col items-start gap-4 my-6">
+    <div className="flex items-center justify-between gap-4">
       {submitButton}
       {variant.kind === "counter-submit" && (
         <p className="text-[16px] font-bold text-neutral-9">
@@ -92,8 +92,8 @@ const renderButton = (variant: SubmitBarVariant, isMobile: boolean) => {
   if (variant.kind === "counter-submit") {
     return (
       <ButtonV3
-        colorClass="bg-gradient-purple rounded-[40px]"
-        textColorClass="text-[16px] font-bold text-true-black"
+        colorClass={`rounded-[40px] ${isMobile ? "bg-gradient-purple" : "bg-neutral-11 w-[160px]! h-8!"}`}
+        textColorClass={`font-bold text-true-black ${isMobile ? "text-[16px]" : "text-[20px]!"}`}
         size={isMobile ? ButtonSize.SUBMIT_ENTRY_MOBILE : ButtonSize.SUBMIT_ENTRY}
         onClick={variant.onClick}
       >
@@ -110,7 +110,7 @@ const renderButton = (variant: SubmitBarVariant, isMobile: boolean) => {
         size={isMobile ? ButtonSize.SUBMIT_ENTRY_FULL : ButtonSize.SUBMIT_ENTRY}
         onClick={variant.onClick}
       >
-        connect wallet to enter
+        sign in to enter
       </ButtonV3>
     );
   }

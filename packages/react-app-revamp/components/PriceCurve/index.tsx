@@ -41,6 +41,8 @@ interface PriceCurveProps {
   updateIntervalSeconds: number;
   noPadding?: boolean;
   showAxisLabels?: boolean;
+  isExpanded?: boolean;
+  onToggleExpand?: () => void;
 }
 
 const PriceCurve: FC<PriceCurveProps> = ({
@@ -59,6 +61,8 @@ const PriceCurve: FC<PriceCurveProps> = ({
   updateIntervalSeconds,
   noPadding = false,
   showAxisLabels = false,
+  isExpanded,
+  onToggleExpand,
 }) => {
   const svgRef = useRef<SVGSVGElement>(null);
 
@@ -77,7 +81,10 @@ const PriceCurve: FC<PriceCurveProps> = ({
     chartPad.left,
   );
 
-  if (width <= 0 || height <= 0 || data.length === 0 || chartWidth <= 0 || chartHeight <= 0) return null;
+  const collapsed = isExpanded === false;
+
+  if (width <= 0 || data.length === 0) return null;
+  if (!collapsed && (height <= 0 || chartWidth <= 0 || chartHeight <= 0)) return null;
 
   const currentPoint = data[currentIndex] || data[0];
   const currentDotX = currentPoint ? getX(currentPoint) : 0;
@@ -99,8 +106,14 @@ const PriceCurve: FC<PriceCurveProps> = ({
       className={`relative w-full select-none touch-pan-y overflow-visible ${noPadding ? "" : "rounded-[32px] bg-true-black"}`}
       style={noPadding ? undefined : CARD_PADDING_STYLE}
     >
-      <PriceCurveHeader headerPrice={headerPrice} intervalText={intervalText} />
+      <PriceCurveHeader
+        headerPrice={headerPrice}
+        intervalText={intervalText}
+        isExpanded={isExpanded}
+        onToggleExpand={onToggleExpand}
+      />
 
+      {collapsed ? null : (
       <svg ref={svgRef} width={svgWidth} height={Math.max(svgHeight, 0)} style={SVG_OVERFLOW_STYLE}>
         <Group left={chartPad.left} top={chartPad.top}>
           <GridLines gridLines={gridLines} chartWidth={chartWidth} />
@@ -160,6 +173,7 @@ const PriceCurve: FC<PriceCurveProps> = ({
           )}
         </Group>
       </svg>
+      )}
     </div>
   );
 };

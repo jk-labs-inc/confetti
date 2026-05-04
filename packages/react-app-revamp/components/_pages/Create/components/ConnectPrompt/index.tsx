@@ -16,7 +16,7 @@ const CreateConnectPrompt = () => {
     <div className="flex flex-col gap-14">
       <div className="flex flex-col gap-4">
         <p className="text-[16px] text-neutral-11">
-          to proceed, you need to connect a wallet and pick which chain <br /> you want the contest on.
+          to proceed, you need to sign in and pick which chain <br /> you want the contest on.
         </p>
         <p className="text-[16px] text-neutral-11">this way, you can price charges in the native token of the chain.</p>
       </div>
@@ -28,7 +28,7 @@ const CreateConnectPrompt = () => {
             onClick={() => openModal()}
             isDisabled={false}
           >
-            connect wallet
+            sign in
           </ButtonV3>
           <div
             className="hidden lg:flex items-center gap-[5px] -ml-[15px] cursor-pointer group"

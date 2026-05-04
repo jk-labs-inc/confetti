@@ -3,6 +3,7 @@ import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/s
 import { useCountdownTimer } from "@hooks/useTimer";
 import moment from "moment";
 import { FC, ReactNode, useMemo } from "react";
+import { useMediaQuery } from "react-responsive";
 
 interface CountdownSegment {
   value: number;
@@ -14,7 +15,7 @@ const getCountdownSegments = (totalSeconds: number, compact = false): CountdownS
   const minutes = Math.floor((totalSeconds % 3600) / 60);
   const seconds = totalSeconds % 60;
 
-  const h = compact ? "h" : "hr";
+  const h = "hr";
   const m = compact ? "m" : "min";
   const s = compact ? "s" : "sec";
 
@@ -72,11 +73,13 @@ interface ContestTimingProps {
   compact?: boolean;
 }
 
-const ContestTiming: FC<ContestTimingProps> = ({ compact = false }) => {
+const ContestTiming: FC<ContestTimingProps> = ({ compact }) => {
   const { votesOpen, votesClose } = useContestStore(state => state);
   const { contestState } = useContestStateStore(state => state);
   const isCanceled = contestState === ContestStateEnum.Canceled;
   const votingTimeLeft = useCountdownTimer(votesClose);
+  const isMobile = useMediaQuery({ maxWidth: 768 });
+  const useCompact = compact ?? isMobile;
 
   const display = useMemo<{ content: ReactNode; dimmed: boolean }>(() => {
     if (isCanceled) return { content: "canceled", dimmed: true };
@@ -88,11 +91,11 @@ const ContestTiming: FC<ContestTimingProps> = ({ compact = false }) => {
     if (now.isSameOrAfter(end)) return { content: "ended", dimmed: true };
 
     if (now.isSameOrAfter(voteStart) && now.isBefore(end)) {
-      const segments = getCountdownSegments(votingTimeLeft, compact);
+      const segments = getCountdownSegments(votingTimeLeft, useCompact);
       const content = segments.map((seg, i) => (
         <span key={i}>
-          <span className="text-base md:text-[24px] md:font-normal">{seg.value}</span>{" "}
-          <span className="text-base">{seg.unit}</span>
+          <span className="text-[20px] md:text-[24px] font-bold">{seg.value}</span>{" "}
+          <span className="text-base font-bold">{seg.unit}</span>
           {i < segments.length - 1 ? " " : ""}
         </span>
       ));
@@ -110,14 +113,12 @@ const ContestTiming: FC<ContestTimingProps> = ({ compact = false }) => {
 
     const monthDay = voteStart.format("MMM D").toLowerCase();
     return { content: `${monthDay}${separator}${timeWindow.display}`, dimmed: false };
-  }, [isCanceled, votesOpen, votesClose, votingTimeLeft, compact]);
+  }, [isCanceled, votesOpen, votesClose, votingTimeLeft, useCompact]);
 
   return (
-    <div className="flex items-baseline gap-1 whitespace-nowrap">
+    <div className={`flex items-baseline gap-1 whitespace-nowrap ${display.dimmed ? "text-neutral-9" : "text-neutral-11"}`}>
       <span className="text-2xl">⏱️</span>
-      <p className={`text-base font-bold ${display.dimmed ? "text-neutral-9" : "text-neutral-11"}`}>
-        {display.content}
-      </p>
+      <p className="text-[16px] md:text-[24px] font-bold md:font-normal">{display.content}</p>
     </div>
   );
 };

@@ -17,7 +17,7 @@ interface CreateContestButtonProps {
 
 enum CreateButtonText {
   CREATE = "create contest",
-  CONNECT_WALLET = "connect wallet",
+  CONNECT_WALLET = "sign in",
   ADD_FUNDS = "add funds to create",
 }
 
@@ -85,7 +85,7 @@ const CreateContestButton: FC<CreateContestButtonProps> = ({ step, onClick, isDi
               colorClass="text-[20px] bg-gradient-create rounded-[15px] font-bold text-true-black hover:scale-105 transition-transform duration-200 ease-in-out"
             >
               {!isConnected
-                ? "connect wallet"
+                ? "sign in"
                 : insufficientBalance && !isUnsupportedWallet
                   ? "add funds to create"
                   : "create"}
