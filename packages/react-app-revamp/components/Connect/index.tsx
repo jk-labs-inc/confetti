@@ -14,7 +14,7 @@ export const ConnectButtonCustom: FC = () => {
         type="button"
         className="w-36 h-8 bg-secondary-1 border border-primary-3 text-base font-bold text-neutral-9 rounded-[40px]"
       >
-        connect wallet
+        sign in
       </button>
     );
   }

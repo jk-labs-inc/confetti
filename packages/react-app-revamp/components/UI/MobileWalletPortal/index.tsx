@@ -95,7 +95,7 @@ export const MobileProfileDrawer: React.FC<MobileProfileDrawerProps> = ({ isOpen
               className="flex flex-col gap-2 w-full items-center justify-center text-[16px] font-bold uppercase px-4 py-3 rounded-lg hover:bg-white/10 transition-colors"
             >
               <PowerIcon width={32} height={32} className="text-negative-11" />
-              <p className="text-base font-bold text-neutral-11">disconnect wallet</p>
+              <p className="text-base font-bold text-neutral-11">sign out</p>
             </button>
           </div>
         </div>

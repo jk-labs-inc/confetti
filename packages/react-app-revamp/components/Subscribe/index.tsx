@@ -69,7 +69,7 @@ const Subscribe = () => {
           >
             <p className="text-[16px] md:text-[18px] font-bold text-true-black whitespace-nowrap px-2">
               {!userAddress && !isMounted
-                ? "connect wallet"
+                ? "sign in"
                 : isMounted && isMobile
                 ? "get updates"
                 : "get contest updates"}
@@ -82,7 +82,7 @@ const Subscribe = () => {
       ) : emailAlreadyExistsMessage ? (
         <p className="text-positive-11 text-[16px] font-bold pl-2">{emailAlreadyExistsMessage}</p>
       ) : !userAddress ? (
-        <p className="text-neutral-11 text-[14px] font-medium pl-2">connect your wallet to get contest updates</p>
+        <p className="text-neutral-11 text-[14px] font-medium pl-2">sign in to get contest updates</p>
       ) : null}
     </div>
   );

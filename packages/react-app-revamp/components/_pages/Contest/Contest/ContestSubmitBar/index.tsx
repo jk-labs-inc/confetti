@@ -110,7 +110,7 @@ const renderButton = (variant: SubmitBarVariant, isMobile: boolean) => {
         size={isMobile ? ButtonSize.SUBMIT_ENTRY_FULL : ButtonSize.SUBMIT_ENTRY}
         onClick={variant.onClick}
       >
-        connect wallet to enter
+        sign in to enter
       </ButtonV3>
     );
   }
