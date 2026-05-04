@@ -27,7 +27,7 @@ const AddFundsCoinbaseProvider: FC<AddFundsCoinbaseProviderProps> = ({ chain, as
     if (isDisabled || isLoading) return;
 
     if (!userAddress) {
-      toastError({ message: "Please connect your wallet first" });
+      toastError({ message: "Please sign in first" });
       return;
     }
 

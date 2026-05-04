@@ -28,7 +28,7 @@ enum VoteButtonType {
 
 const ButtonText = {
   [VoteButtonType.INSUFFICIENT_BALANCE]: "add funds to vote",
-  [VoteButtonType.CONNECT_WALLET]: "connect wallet",
+  [VoteButtonType.CONNECT_WALLET]: "sign in",
   [VoteButtonType.DEFAULT]: "buy votes",
 };
 
