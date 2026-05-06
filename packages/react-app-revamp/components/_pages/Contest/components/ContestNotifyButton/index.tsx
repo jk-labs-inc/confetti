@@ -1,6 +1,6 @@
-import { BellIcon } from "@heroicons/react/24/solid";
-import { generateCalendarTitle, downloadIcsFile } from "@helpers/calendar";
-import { FC } from "react";
+import { useContestReminder } from "@hooks/useContestReminder";
+import { motion } from "motion/react";
+import { FC, MouseEvent } from "react";
 
 interface ContestNotifyButtonProps {
   contestName: string;
@@ -10,6 +10,7 @@ interface ContestNotifyButtonProps {
   votesClose: Date;
   entryTitle?: string;
   size?: "sm" | "md";
+  className?: string;
 }
 
 const ContestNotifyButton: FC<ContestNotifyButtonProps> = ({
@@ -20,25 +21,38 @@ const ContestNotifyButton: FC<ContestNotifyButtonProps> = ({
   votesClose,
   entryTitle,
   size = "md",
+  className,
 }) => {
+  const reminder = useContestReminder({
+    contestName,
+    contestAddress,
+    chainName,
+    votesOpen,
+    votesClose,
+    entryTitle,
+  });
+
   if (new Date() >= votesOpen) return null;
 
-  const handleClick = () => {
-    const title = generateCalendarTitle({ contestName, entryTitle });
-    downloadIcsFile({ title, contestAddress, chainName, votesOpen, votesClose });
+  const containerSize = size === "sm" ? "w-10 h-7" : "w-12 h-8";
+  const iconSize = size === "sm" ? 16 : 20;
+  const buttonClassName = `flex items-center justify-center ${containerSize} bg-gradient-calendar rounded-[40px] cursor-pointer ${className ?? ""}`;
+
+  const handleClick = (e: MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    e.preventDefault();
+    reminder.trigger();
   };
 
-  const containerSize = size === "sm" ? "w-10 h-7" : "w-12 h-8";
-  const iconSize = size === "sm" ? "w-3 h-3" : "w-4 h-4";
-
   return (
-    <button
+    <motion.button
       onClick={handleClick}
-      aria-label="Get notified when voting opens"
-      className={`flex items-center justify-center ${containerSize} bg-gradient-metallic rounded-[40px] cursor-pointer`}
+      aria-label="Remind me when voting opens"
+      className={buttonClassName}
+      whileTap={{ scale: 0.97 }}
     >
-      <BellIcon className={`${iconSize} text-true-black`} />
-    </button>
+      <img src="/contest/reminder.svg" alt="" width={iconSize} height={iconSize} />
+    </motion.button>
   );
 };
 

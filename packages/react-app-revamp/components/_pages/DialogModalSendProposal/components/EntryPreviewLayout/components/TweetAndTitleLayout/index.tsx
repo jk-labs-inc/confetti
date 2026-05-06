@@ -4,7 +4,7 @@ import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/24/outline";
 import { debounce } from "lodash";
 import { FC, useCallback, useState } from "react";
 import { useMediaQuery } from "react-responsive";
-import { MAX_IMAGE_TITLE_LENGTH } from "../../constants";
+import { MAX_TITLE_LENGTH } from "../../constants";
 
 interface DialogModalSendProposalEntryPreviewTweetAndTitleLayoutProps {
   onChange?: (value: string) => void;
@@ -15,7 +15,6 @@ const DialogModalSendProposalEntryPreviewTweetAndTitleLayout: FC<
 > = ({ onChange }) => {
   const isMobile = useMediaQuery({ maxWidth: 768 });
   const [isValid, setIsValid] = useState<boolean | null>(null);
-  const [isExceeded, setIsExceeded] = useState(false);
   const [tweetUrl, setTweetUrl] = useState("");
   const [title, setTitle] = useState("");
 
@@ -61,7 +60,6 @@ const DialogModalSendProposalEntryPreviewTweetAndTitleLayout: FC<
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setTitle(value);
-    setIsExceeded(value.length >= MAX_IMAGE_TITLE_LENGTH);
     updateCombinedValue(tweetUrl, value);
   };
 
@@ -82,9 +80,11 @@ const DialogModalSendProposalEntryPreviewTweetAndTitleLayout: FC<
           onChange={handleTitleChange}
           className="text-[16px] bg-secondary-1 outline-none rounded-[16px] placeholder-neutral-10 w-full h-12 indent-4 focus:outline-none"
           placeholder="this is my entry..."
-          maxLength={MAX_IMAGE_TITLE_LENGTH}
+          maxLength={MAX_TITLE_LENGTH}
         />
-        {isExceeded && <p className="text-negative-11 text-[12px] font-bold">maximum character limit reached!</p>}
+        <p className="text-[16px] text-[#6A6A6A] ml-4">
+          {title.length}/{MAX_TITLE_LENGTH} characters
+        </p>
       </div>
       <CreateGradientTitle textSize="small">tweet</CreateGradientTitle>
       <div

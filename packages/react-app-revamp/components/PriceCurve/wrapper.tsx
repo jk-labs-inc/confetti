@@ -27,6 +27,8 @@ interface PriceCurveWrapperProps {
   showPriceWarning?: boolean;
   noPadding?: boolean;
   showAxisLabels?: boolean;
+  isExpanded?: boolean;
+  onToggleExpand?: () => void;
 }
 
 const PriceCurveWrapper = ({
@@ -34,6 +36,8 @@ const PriceCurveWrapper = ({
   showPriceWarning = false,
   noPadding = false,
   showAxisLabels = false,
+  isExpanded,
+  onToggleExpand,
 }: PriceCurveWrapperProps) => {
   const { parentRef, width } = useParentSize({ debounceTime: 150 });
   const contestConfig = useContestConfigStore(useShallow(state => state.contestConfig));
@@ -199,6 +203,8 @@ const PriceCurveWrapper = ({
         updateIntervalSeconds={priceCurveUpdateInterval}
         noPadding={noPadding}
         showAxisLabels={showAxisLabels}
+        isExpanded={isExpanded}
+        onToggleExpand={onToggleExpand}
       />
     </div>
   );

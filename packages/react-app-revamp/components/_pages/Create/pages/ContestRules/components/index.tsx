@@ -32,7 +32,12 @@ const CreateContestRules = () => {
           <CreateContestRulesTitleAndImage />
           <CreateContestRulesDescription />
           <div className="hidden md:block mt-8">
-            <CreateNextButton step={step + 1} onClick={() => onNextStep()} isDisabled={isDisabled} />
+            <CreateNextButton
+              id="create_flow_rules_next"
+              step={step + 1}
+              onClick={() => onNextStep()}
+              isDisabled={isDisabled}
+            />
           </div>
         </div>
       </div>

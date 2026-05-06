@@ -43,7 +43,7 @@ const useCurrentPricePercentageIncrease = ({
   });
 
   const currentPricePercentageData = useMemo(() => {
-    if (!costToVote || !priceCurveMultiple || isMultipleLoading) {
+    if (!costToVote || !priceCurveMultiple || isMultipleLoading || totalVotingMinutes <= 0) {
       return null;
     }
 
