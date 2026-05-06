@@ -30,6 +30,7 @@ export const useVotingRewardsProjection = ({
     percentageToRewards,
     costToVote,
     multiple,
+    priceCurveType,
     isLoading: isLoadingPricing,
     isError: isErrorPricing,
   } = useContestPricingData();
@@ -62,6 +63,7 @@ export const useVotingRewardsProjection = ({
     percentageToRewards,
     firstPlaceSharePercentage,
     submissionsCount,
+    priceCurveType,
   });
 
   return {

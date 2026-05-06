@@ -4,12 +4,16 @@ import { useCurrencyStore } from "@hooks/useCurrency/store";
 import { convertToDisplayPrice } from "@hooks/useCurrency/useDisplayPrice";
 import useNativeRates from "@hooks/useCurrency/useNativeRates";
 import useCurrentPricePercentageIncrease from "@hooks/useCurrentPricePercentageIncrease";
+import { PriceCurveType } from "@hooks/useDeployContest/types";
 import usePriceCurveChartData from "@hooks/usePriceCurveChartData";
 import usePriceCurveMultiple from "@hooks/usePriceCurveMultiple";
 import usePriceCurvePoints from "@hooks/usePriceCurvePoints";
+import usePriceCurveType from "@hooks/usePriceCurveType";
 import usePriceCurveUpdateInterval from "@hooks/usePriceCurveUpdateInterval";
 import { useCountdownTimer } from "@hooks/useTimer";
 import { useParentSize } from "@visx/responsive";
+import { compareVersions } from "compare-versions";
+import { LOG_CURVE_VERSION } from "constants/versions";
 import { useCallback, useEffect } from "react";
 import { useReadContract } from "wagmi";
 import PriceCurve from "./index";
@@ -87,6 +91,16 @@ const PriceCurveWrapper = ({
     chainId: contestConfig.chainId,
   });
 
+  const isLogCurveVersion =
+    !!contestConfig.version && compareVersions(contestConfig.version, LOG_CURVE_VERSION) >= 0;
+
+  const { priceCurveType } = usePriceCurveType({
+    address: contestConfig.address,
+    abi: contestConfig.abi,
+    chainId: contestConfig.chainId,
+    enabled: isLogCurveVersion,
+  });
+
   const {
     pricePoints,
     isLoading: isPointsLoading,
@@ -97,6 +111,7 @@ const PriceCurveWrapper = ({
     startTime,
     endTime,
     updateIntervalSeconds: priceCurveUpdateInterval,
+    priceCurveType,
     enabled:
       !isTimingsLoading &&
       !isTimingsError &&
@@ -120,6 +135,8 @@ const PriceCurveWrapper = ({
     chainId: contestConfig.chainId,
     costToVote: BigInt(startPrice),
     totalVotingMinutes,
+    priceCurveType,
+    votingTimeLeft,
   });
 
   const secondsUntilNextUpdate = priceCurveUpdateInterval > 0 ? votingTimeLeft % priceCurveUpdateInterval : 0;

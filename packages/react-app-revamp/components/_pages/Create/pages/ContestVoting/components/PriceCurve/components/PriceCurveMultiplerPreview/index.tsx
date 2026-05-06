@@ -12,7 +12,7 @@ const PriceCurveMultiplierPreview: FC<PriceCurveMultiplierPreviewProps> = ({ cha
   const { multipler, errorMessage, handleMultiplierChange } = useMultiplierCalculations(onError);
 
   return (
-    <div className="flex flex-col gap-8 pl-6">
+    <div className="flex flex-col gap-6 pl-6">
       <p className="text-[20px] text-neutral-11">what multiple would you like for your price curve?</p>
       <div className="flex flex-col gap-6">
         <CreateFlowMonetizationInput value={multipler} errorMessage={errorMessage} onChange={handleMultiplierChange} />

@@ -33,15 +33,13 @@ const usePriceCurveType = ({ address, abi, chainId, enabled = true }: PriceCurve
     chainId,
     query: {
       staleTime: Infinity,
-      select: data => {
-        return PriceCurveType.Exponential;
-      },
+      select: data => Number(data) as PriceCurveType,
       enabled: !!address && !!abi && enabled,
     },
   });
 
   return {
-    priceCurveType: contractPriceCurveType as PriceCurveType,
+    priceCurveType: (contractPriceCurveType as PriceCurveType | undefined) ?? PriceCurveType.Exponential,
     refetch,
     isLoading,
     isError,

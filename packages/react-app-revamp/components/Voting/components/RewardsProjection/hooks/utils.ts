@@ -1,5 +1,6 @@
 import { toFixedString } from "@helpers/formatBalance";
-import { calculateEndPrice } from "lib/priceCurve";
+import { PriceCurveType } from "@hooks/useDeployContest/types";
+import { calculateEndPriceForType } from "lib/priceCurve";
 import { formatEther, parseEther } from "viem";
 
 interface CalculateWinUpToParams {
@@ -10,6 +11,7 @@ interface CalculateWinUpToParams {
   percentageToRewards: number;
   firstPlaceSharePercentage: number;
   submissionsCount: number;
+  priceCurveType?: PriceCurveType;
 }
 
 export const calculateVotingRewardsProjection = ({
@@ -20,6 +22,7 @@ export const calculateVotingRewardsProjection = ({
   percentageToRewards,
   firstPlaceSharePercentage,
   submissionsCount,
+  priceCurveType = PriceCurveType.Exponential,
 }: CalculateWinUpToParams): string => {
   if (!spendingAmount || spendingAmount <= 0 || currentPricePerVote <= 0n) return "0";
 
@@ -30,8 +33,8 @@ export const calculateVotingRewardsProjection = ({
 
   if (numberOfVotes <= 0) return "0";
 
-  // Calculate final price per vote (end of exponential curve) - returns bigint in wei
-  const finalPricePerVoteWei = calculateEndPrice(Number(costToVoteAtStart), multiple);
+  // Calculate final price per vote (end of curve) - returns bigint in wei
+  const finalPricePerVoteWei = calculateEndPriceForType(priceCurveType, Number(costToVoteAtStart), multiple);
 
   // Convert final price to ETH for calculation
   const finalPricePerVote = Number(formatEther(finalPricePerVoteWei));

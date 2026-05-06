@@ -1,4 +1,5 @@
 import useContestConfigStore from "@hooks/useContestConfig/store";
+import { PriceCurveType } from "@hooks/useDeployContest/types";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import usePriceCurveUpdateInterval from "@hooks/usePriceCurveUpdateInterval";
 import { FC } from "react";
@@ -10,10 +11,12 @@ import VotingQualifierAnyoneCanVoteExponentialVotePrice from "./components/VoteP
 
 interface VotingQualifierAnyoneCanVoteExponentialProps {
   votingTimeLeft: number;
+  priceCurveType?: PriceCurveType;
 }
 
 const VotingQualifierAnyoneCanVoteExponential: FC<VotingQualifierAnyoneCanVoteExponentialProps> = ({
   votingTimeLeft,
+  priceCurveType = PriceCurveType.Exponential,
 }) => {
   const contestStatus = useContestStatusStore(useShallow(state => state.contestStatus));
   const { contestConfig } = useContestConfigStore(useShallow(state => state));
@@ -41,9 +44,10 @@ const VotingQualifierAnyoneCanVoteExponential: FC<VotingQualifierAnyoneCanVoteEx
           <VotingQualifierAnyoneCanVoteExponentialTimer
             votingTimeLeft={votingTimeLeft}
             priceCurveUpdateInterval={priceCurveUpdateInterval}
+            priceCurveType={priceCurveType}
           />
         </div>
-        <VotingQualifierAnyoneCanVoteExponentialVotePrice />
+        <VotingQualifierAnyoneCanVoteExponentialVotePrice priceCurveType={priceCurveType} />
       </div>
     </div>
   );

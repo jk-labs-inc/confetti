@@ -19,6 +19,7 @@ export interface PriceCurve {
 
 export enum PriceCurveType {
   Exponential = 0,
+  Logarithmic = 1,
 }
 
 export interface ContestValues {

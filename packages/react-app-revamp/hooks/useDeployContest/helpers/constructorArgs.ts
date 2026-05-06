@@ -1,3 +1,4 @@
+import { toFixedString } from "@helpers/formatBalance";
 import { differenceInSeconds, getUnixTime } from "date-fns";
 import { parseEther } from "viem";
 import { JK_LABS_SPLIT_DESTINATION_DEFAULT, MAX_SUBMISSIONS_LIMIT } from "../index";
@@ -48,8 +49,8 @@ export const prepareConstructorArgs = (params: ConstructorArgsParams) => {
     percentageToRewards: charge.percentageToRewards,
     creatorSplitEnabled: charge.creatorSplitEnabled,
     priceCurveType: priceCurve.type,
-    costToVote: parseEther(charge.costToVote.toString()),
-    multiple: parseEther(priceCurve.multiple.toString()),
+    costToVote: parseEther(toFixedString(charge.costToVote)),
+    multiple: parseEther(toFixedString(priceCurve.multiple)),
   };
 
   const constructorArgs = {

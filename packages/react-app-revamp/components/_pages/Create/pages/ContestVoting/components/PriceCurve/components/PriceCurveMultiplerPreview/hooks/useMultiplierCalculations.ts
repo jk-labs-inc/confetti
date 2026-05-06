@@ -1,22 +1,32 @@
+import { toFixedString } from "@helpers/formatBalance";
+import { DEFAULT_MULTIPLIERS, MULTIPLIER_RANGES } from "@hooks/useDeployContest/slices/contestMonetizationSlice";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
-import { Charge, PriceCurve } from "@hooks/useDeployContest/types";
-import { calculateExponentialMultiple } from "lib/priceCurve";
+import { Charge, PriceCurve, PriceCurveType } from "@hooks/useDeployContest/types";
+import {
+  calculateExponentialMultiple,
+  calculateLogarithmicEndPrice,
+  calculateLogarithmicMultiple,
+} from "lib/priceCurve";
 import { useEffect, useRef, useState } from "react";
+import { formatEther, parseEther } from "viem";
 import { useShallow } from "zustand/shallow";
 
-const validateMultiplier = (value: number): string => {
-  if (value < 8.0) {
-    return "multiplier must be at least 8x";
+const validateMultiplier = (value: number, type: PriceCurveType): string => {
+  const { min, max } = MULTIPLIER_RANGES[type];
+
+  if (value < min) {
+    return `multiplier must be at least ${min}x`;
   }
 
-  if (value > 20.0) {
-    return "multiplier cannot exceed 20x";
+  if (value > max) {
+    return `multiplier cannot exceed ${max}x`;
   }
 
   return "";
 };
 
 const calculatePricesAndMultiple = (
+  type: PriceCurveType,
   startPrice: number,
   multipler: number,
   setCharge: (updater: Charge | ((prev: Charge) => Charge)) => void,
@@ -24,32 +34,54 @@ const calculatePricesAndMultiple = (
 ) => {
   if (!startPrice || startPrice <= 0) return;
 
-  const endPrice = startPrice * multipler;
-
-  setCharge((prev: Charge) => ({
-    ...prev,
-    costToVote: startPrice,
-    costToVoteEndPrice: endPrice,
-  }));
-
   try {
+    if (type === PriceCurveType.Logarithmic) {
+      const multiple = calculateLogarithmicMultiple({
+        startPrice,
+        multiplier: multipler,
+      });
+
+      const endPriceWei = calculateLogarithmicEndPrice(Number(parseEther(toFixedString(startPrice))), multiple);
+      const endPrice = Number(formatEther(endPriceWei));
+
+      setCharge((prev: Charge) => ({
+        ...prev,
+        costToVote: startPrice,
+        costToVoteEndPrice: endPrice,
+      }));
+
+      setPriceCurve((prev: PriceCurve) => ({
+        ...prev,
+        multiple,
+      }));
+      return;
+    }
+
+    const endPrice = startPrice * multipler;
     const multiple = calculateExponentialMultiple({
       startPrice,
       endPrice,
     });
+
+    setCharge((prev: Charge) => ({
+      ...prev,
+      costToVote: startPrice,
+      costToVoteEndPrice: endPrice,
+    }));
 
     setPriceCurve((prev: PriceCurve) => ({
       ...prev,
       multiple,
     }));
   } catch (error) {
-    console.error("Error calculating exponential multiple:", error);
+    console.error("Error calculating price curve multiple:", error);
   }
 };
 
 export const useMultiplierCalculations = (onError?: (hasError: boolean) => void) => {
-  const { multipler, costToVote, setCharge, setPriceCurve } = useDeployContestStore(
+  const { type, multipler, costToVote, setCharge, setPriceCurve } = useDeployContestStore(
     useShallow(state => ({
+      type: state.priceCurve.type,
       multipler: state.priceCurve.multipler,
       costToVote: state.charge.costToVote,
       setCharge: state.setCharge,
@@ -59,21 +91,48 @@ export const useMultiplierCalculations = (onError?: (hasError: boolean) => void)
 
   const [errorMessage, setErrorMessage] = useState("");
   const hasInitialized = useRef(false);
+  const prevTypeRef = useRef<PriceCurveType>(type);
 
   useEffect(() => {
     if (hasInitialized.current || !costToVote || costToVote <= 0) return;
 
     hasInitialized.current = true;
 
-    const error = validateMultiplier(multipler);
+    const error = validateMultiplier(multipler, type);
     if (error) {
       setErrorMessage(error);
       onError?.(true);
       return;
     }
 
-    calculatePricesAndMultiple(costToVote, multipler, setCharge, setPriceCurve);
-  }, [costToVote, multipler, setCharge, setPriceCurve, onError]);
+    calculatePricesAndMultiple(type, costToVote, multipler, setCharge, setPriceCurve);
+  }, [costToVote, multipler, type, setCharge, setPriceCurve, onError]);
+
+  // When the curve type changes, clamp the multipler if it falls outside the new range
+  // and recompute prices.
+  useEffect(() => {
+    if (prevTypeRef.current === type) return;
+    prevTypeRef.current = type;
+
+    if (!costToVote || costToVote <= 0) return;
+
+    const range = MULTIPLIER_RANGES[type];
+    const nextMultipler =
+      multipler < range.min || multipler > range.max ? DEFAULT_MULTIPLIERS[type] : multipler;
+
+    if (nextMultipler !== multipler) {
+      setPriceCurve(prev => ({
+        ...prev,
+        multipler: nextMultipler,
+      }));
+    }
+
+    const error = validateMultiplier(nextMultipler, type);
+    setErrorMessage(error);
+    onError?.(!!error);
+
+    calculatePricesAndMultiple(type, costToVote, nextMultipler, setCharge, setPriceCurve);
+  }, [type, costToVote, multipler, setCharge, setPriceCurve, onError]);
 
   const handleMultiplierChange = (value: number) => {
     setPriceCurve(prev => ({
@@ -81,13 +140,12 @@ export const useMultiplierCalculations = (onError?: (hasError: boolean) => void)
       multipler: value,
     }));
 
-    const error = validateMultiplier(value);
+    const error = validateMultiplier(value, type);
     setErrorMessage(error);
     onError?.(!!error);
 
-    // Calculate regardless of error to show UI feedback
     if (costToVote > 0) {
-      calculatePricesAndMultiple(costToVote, value, setCharge, setPriceCurve);
+      calculatePricesAndMultiple(type, costToVote, value, setCharge, setPriceCurve);
     }
   };
 
