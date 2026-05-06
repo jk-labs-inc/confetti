@@ -108,6 +108,6 @@
     "zustand": "5.0.12"
   },
   "devDependencies": {
-    "react-scan": "0.5.3"
+    "react-scan": "0.5.6"
   }
 }
