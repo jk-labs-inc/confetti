@@ -31,6 +31,7 @@ const SubmissionPageMobileVoting: FC<SubmissionPageMobileVotingProps> = ({ isOpe
 
   const onVote = useCallback((amount: number) => castVotes(amount), [castVotes]);
   const onAddFunds = useCallback(() => setShowAddFunds(true), []);
+  const closeAddFunds = () => setShowAddFunds(false);
 
   const handleClose = () => {
     setShowAddFunds(false);
@@ -49,7 +50,8 @@ const SubmissionPageMobileVoting: FC<SubmissionPageMobileVotingProps> = ({ isOpe
           <AddFunds
             chain={contestConfig.chainName}
             asset={contestConfig.chainNativeCurrencySymbol}
-            onGoBack={() => setShowAddFunds(false)}
+            onGoBack={closeAddFunds}
+            onBridgeSuccess={closeAddFunds}
           />
         ) : (
           <VotingWidget

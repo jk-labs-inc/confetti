@@ -13,9 +13,18 @@ interface AddFundsProps {
   className?: string;
   onGoBack?: () => void;
   onCloseModal?: () => void;
+  onBridgeSuccess?: () => void;
 }
 
-const AddFunds: FC<AddFundsProps> = ({ chain, asset, onGoBack, showBackButton = true, className, onCloseModal }) => {
+const AddFunds: FC<AddFundsProps> = ({
+  chain,
+  asset,
+  onGoBack,
+  showBackButton = true,
+  className,
+  onCloseModal,
+  onBridgeSuccess,
+}) => {
   const chainLogo = getChainLogo(chain);
   const { providerType, setProviderType } = useAddFundsStore(
     useShallow(state => ({
@@ -42,7 +51,13 @@ const AddFunds: FC<AddFundsProps> = ({ chain, asset, onGoBack, showBackButton = 
         <div className="flex flex-col gap-4">
           <AddFundsToggle value={providerType} onChange={setProviderType} />
 
-          <AddFundsProviders chain={chain} asset={asset} type={providerType} onCloseModal={onCloseModal} />
+          <AddFundsProviders
+            chain={chain}
+            asset={asset}
+            type={providerType}
+            onCloseModal={onCloseModal}
+            onBridgeSuccess={onBridgeSuccess}
+          />
         </div>
       </div>
       {showBackButton && (

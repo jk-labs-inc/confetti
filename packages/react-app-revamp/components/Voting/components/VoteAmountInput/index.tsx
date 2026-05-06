@@ -98,7 +98,8 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
 
   return (
     <div
-      className={`flex w-full items-center px-6 py-2 text-[16px] ${styleConfig.background} font-bold ${textColor} border ${borderColor} rounded-[40px] transition-colors duration-300`}
+      className={`flex w-full items-center px-6 py-2 text-[16px] ${styleConfig.background} font-bold ${textColor} border ${borderColor} rounded-[40px] transition-colors duration-300 cursor-text`}
+      onClick={() => inputRef.current?.focus()}
     >
       <div className="flex min-w-0 flex-1 items-baseline overflow-hidden">
         {isLoading ? (
@@ -111,6 +112,7 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
             <input
               ref={inputRef}
               type="text"
+              inputMode="decimal"
               value={displayValue}
               onChange={e => handleDisplayChange(e.target.value)}
               onFocus={() => setIsFocused(true)}
@@ -132,7 +134,10 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
           <div className="flex items-center gap-1">
             {pushToFirstAmount && (
               <motion.button
-                onClick={handlePushToFirst}
+                onClick={e => {
+                  e.stopPropagation();
+                  handlePushToFirst();
+                }}
                 className="w-auto h-4 px-2 rounded-[40px] border border-[#84679B] text-positive-11 font-bold flex items-center justify-center hover:bg-positive-11/10 transition-colors duration-150"
                 style={{ willChange: "transform" }}
                 whileTap={{ scale: 0.95 }}
@@ -145,7 +150,10 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
               return (
                 <motion.button
                   key={percent}
-                  onClick={() => handlePreset(percent)}
+                  onClick={e => {
+                    e.stopPropagation();
+                    handlePreset(percent);
+                  }}
                   className={`w-8 h-4 px-2 rounded-[40px] border border-[#84679B] font-bold flex items-center justify-center hover:bg-positive-11/10 transition-colors duration-150 ${isMax ? "text-positive-11" : "text-neutral-9"}`}
                   style={{ willChange: "transform" }}
                   whileTap={{ scale: 0.95 }}

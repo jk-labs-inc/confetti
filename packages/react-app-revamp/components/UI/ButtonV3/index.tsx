@@ -19,6 +19,9 @@ export enum ButtonSize {
   EXTRA_LARGE = "extraLarge",
   EXTRA_LARGE_LONG = "extraLargeLong",
   EXTRA_LARGE_LONG_MOBILE = "extraLargeLongMobile",
+  SUBMIT_ENTRY = "submitEntry",
+  SUBMIT_ENTRY_MOBILE = "submitEntryMobile",
+  SUBMIT_ENTRY_FULL = "submitEntryFull",
   FULL = "full",
 }
 
@@ -30,6 +33,7 @@ interface ButtonProps {
   isDisabled?: boolean;
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
   children?: React.ReactNode;
+  id?: string;
 }
 
 const sizeClasses = {
@@ -43,6 +47,9 @@ const sizeClasses = {
   [ButtonSize.EXTRA_LARGE]: "w-[216px] h-[40px]",
   [ButtonSize.EXTRA_LARGE_LONG]: "w-[280px] h-[48px]",
   [ButtonSize.EXTRA_LARGE_LONG_MOBILE]: "w-[320px] h-[40px]",
+  [ButtonSize.SUBMIT_ENTRY]: "w-[200px] h-8",
+  [ButtonSize.SUBMIT_ENTRY_MOBILE]: "w-[120px] h-8",
+  [ButtonSize.SUBMIT_ENTRY_FULL]: "w-full h-8",
   [ButtonSize.FULL]: "w-full h-[40px]",
 };
 
@@ -54,6 +61,7 @@ const Button: React.FC<ButtonProps> = ({
   isDisabled,
   onClick,
   children,
+  id,
 }) => {
   const { isConnected } = useWallet();
   const { openModal } = useModal();
@@ -70,6 +78,7 @@ const Button: React.FC<ButtonProps> = ({
 
   return (
     <motion.button
+      id={id}
       className={`text-[16px] tracking-tighter rounded-[10px] font-bold ${disabledClasses} ${textColorClass} ${colorClass} ${sizeClasses[size]} `}
       style={{ willChange: "transform" }}
       whileTap={{ scale: 0.97 }}

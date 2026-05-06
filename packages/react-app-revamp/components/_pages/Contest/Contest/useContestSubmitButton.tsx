@@ -1,12 +1,16 @@
-import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
 import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
 import { useSubmitQualification } from "@hooks/useUserSubmitQualification";
 import { useWallet } from "@hooks/useWallet";
 import { useModal } from "@getpara/react-sdk-lite";
-import { useMediaQuery } from "react-responsive";
 import { useShallow } from "zustand/shallow";
+
+export type SubmitBarVariant =
+  | { kind: "counter-submit"; onClick: () => void }
+  | { kind: "connect"; onClick: () => void }
+  | { kind: "creator-only-message" }
+  | { kind: "hidden" };
 
 interface UseContestSubmitButtonProps {
   onOpenModal: () => void;
@@ -29,7 +33,6 @@ export const useContestSubmitButton = ({ onOpenModal }: UseContestSubmitButtonPr
     })),
   );
   const contestState = useContestStateStore(useShallow(state => state.contestState));
-  const isMobile = useMediaQuery({ maxWidth: 768 });
 
   const isContestCanceled = contestState === ContestStateEnum.Canceled;
 
@@ -38,50 +41,24 @@ export const useContestSubmitButton = ({ onOpenModal }: UseContestSubmitButtonPr
     onOpenModal();
   };
 
-  const renderSubmitButton = () => {
-    if (isContestCanceled) return null;
-    if (isLoading) return null;
+  const resolveVariant = (): SubmitBarVariant => {
+    if (isContestCanceled) return { kind: "hidden" };
+    if (isLoading) return { kind: "hidden" };
 
     if (anyoneCanSubmit) {
-      return (
-        <ButtonV3
-          colorClass="bg-gradient-purple rounded-[40px]"
-          textColorClass="text-[16px] md:text-[20px] font-bold text-true-black"
-          size={isMobile ? ButtonSize.EXTRA_LARGE_LONG_MOBILE : ButtonSize.EXTRA_LARGE_LONG}
-          onClick={handleEnterContest}
-        >
-          submit entry
-        </ButtonV3>
-      );
+      return { kind: "counter-submit", onClick: handleEnterContest };
     }
 
     if (!isConnected) {
-      return (
-        <ButtonV3
-          colorClass="bg-gradient-vote rounded-[40px]"
-          size={isMobile ? ButtonSize.EXTRA_LARGE_LONG_MOBILE : ButtonSize.EXTRA_LARGE_LONG}
-          onClick={() => openModal()}
-        >
-          connect wallet to submit entry
-        </ButtonV3>
-      );
+      return { kind: "connect", onClick: () => openModal() };
     }
 
     if (qualifies) {
-      return (
-        <ButtonV3
-          colorClass="bg-gradient-purple rounded-[40px]"
-          textColorClass="text-[16px] md:text-[20px] font-bold text-true-black"
-          size={isMobile ? ButtonSize.EXTRA_LARGE_LONG_MOBILE : ButtonSize.EXTRA_LARGE_LONG}
-          onClick={handleEnterContest}
-        >
-          submit entry
-        </ButtonV3>
-      );
+      return { kind: "counter-submit", onClick: handleEnterContest };
     }
 
-    return <p className="text-secondary-11 text-[16px]">only the contest creator can submit entries</p>;
+    return { kind: "creator-only-message" };
   };
 
-  return { renderSubmitButton };
+  return { variant: resolveVariant() };
 };

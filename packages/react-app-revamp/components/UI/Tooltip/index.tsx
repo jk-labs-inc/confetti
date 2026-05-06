@@ -10,7 +10,7 @@ const Tooltip: FC<TooltipProps> = ({ children, className = "", ...props }) => {
     <ReactTooltip
       clickable
       opacity={1}
-      className={`py-3 px-2 z-50 bg-neutral-9! border border-transparent rounded-lg focus:outline-none ${className}`}
+      className={`p-2! z-50 bg-neutral-9! border border-transparent rounded-lg focus:outline-none ${className}`}
       {...props}
     >
       {children}

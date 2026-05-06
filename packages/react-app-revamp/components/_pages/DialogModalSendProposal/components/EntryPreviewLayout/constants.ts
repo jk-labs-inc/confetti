@@ -1,1 +1,2 @@
-export const MAX_IMAGE_TITLE_LENGTH = 32;
+export const MAX_TITLE_LENGTH = 30;
+export const MAX_IMAGE_TITLE_LENGTH = MAX_TITLE_LENGTH;

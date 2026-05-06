@@ -17,7 +17,7 @@ interface CreateContestButtonProps {
 
 enum CreateButtonText {
   CREATE = "create contest",
-  CONNECT_WALLET = "connect wallet",
+  CONNECT_WALLET = "sign in",
   ADD_FUNDS = "add funds to create",
 }
 
@@ -80,11 +80,12 @@ const CreateContestButton: FC<CreateContestButtonProps> = ({ step, onClick, isDi
               back
             </p>
             <ButtonV3
+              id="create_flow_deploy"
               onClick={handleClick}
               colorClass="text-[20px] bg-gradient-create rounded-[15px] font-bold text-true-black hover:scale-105 transition-transform duration-200 ease-in-out"
             >
               {!isConnected
-                ? "connect wallet"
+                ? "sign in"
                 : insufficientBalance && !isUnsupportedWallet
                   ? "add funds to create"
                   : "create"}
@@ -104,6 +105,7 @@ const CreateContestButton: FC<CreateContestButtonProps> = ({ step, onClick, isDi
     <div className="flex gap-4 items-start pb-5 md:pb-0">
       <div className={`flex flex-col items-center gap-4`}>
         <ButtonV3
+          id="create_flow_deploy"
           isDisabled={isDisabled}
           colorClass={`bg-gradient-create text-[20px] rounded-[10px] font-bold ${
             shake ? "animate-shake-top" : ""

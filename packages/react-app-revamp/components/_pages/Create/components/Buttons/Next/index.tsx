@@ -8,9 +8,10 @@ interface CreateNextButtonProps {
   step: number;
   onClick?: MouseEventHandler<HTMLButtonElement>;
   isDisabled?: boolean;
+  id?: string;
 }
 
-const CreateNextButton: FC<CreateNextButtonProps> = ({ step, onClick, isDisabled }) => {
+const CreateNextButton: FC<CreateNextButtonProps> = ({ step, onClick, isDisabled, id }) => {
   const onPreviousStep = usePreviousStep();
   const isMobileOrTablet = useMediaQuery({ maxWidth: 1024 });
 
@@ -38,6 +39,7 @@ const CreateNextButton: FC<CreateNextButtonProps> = ({ step, onClick, isDisabled
             </p>
           )}
           <ButtonV3
+            id={id}
             isDisabled={isDisabled}
             onClick={handleClick}
             colorClass="text-[20px] bg-gradient-purple rounded-[15px] font-bold text-true-black hover:scale-105 transition-transform duration-200 ease-in-out"
@@ -52,6 +54,7 @@ const CreateNextButton: FC<CreateNextButtonProps> = ({ step, onClick, isDisabled
     <div className="flex gap-4 items-start mb-5">
       <div className={`flex flex-col gap-4 items-center`}>
         <ButtonV3
+          id={id}
           colorClass="text-[20px] bg-gradient-purple rounded-[10px] font-bold text-true-black hover:scale-105 transition-transform duration-200 ease-in-out"
           size={ButtonSize.LARGE}
           onClick={handleClick}
