@@ -197,6 +197,7 @@ const PriceCurveWrapper = ({
         startPriceValue={startPriceValue}
         endPriceValue={endPrice}
         updateIntervalSeconds={priceCurveUpdateInterval}
+        priceCurveType={priceCurveType}
         noPadding={noPadding}
         showAxisLabels={showAxisLabels}
         isExpanded={isExpanded}
