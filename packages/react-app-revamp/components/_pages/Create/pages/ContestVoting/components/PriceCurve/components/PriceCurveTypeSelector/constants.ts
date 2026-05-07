@@ -4,6 +4,7 @@ export interface CurveTypeOption {
   type: PriceCurveType;
   title: string;
   description: string;
+  descriptionMobile: string;
 }
 
 export const CURVE_TYPE_OPTIONS: CurveTypeOption[] = [
@@ -11,11 +12,13 @@ export const CURVE_TYPE_OPTIONS: CurveTypeOption[] = [
     type: PriceCurveType.Exponential,
     title: "exponential",
     description: "maximizes fun as drama accelerates",
+    descriptionMobile: "maximizes drama at end",
   },
   {
     type: PriceCurveType.Logarithmic,
     title: "logarithmic",
     description: "maximizes early conviction voting",
+    descriptionMobile: "maximizes early voting",
   },
 ];
 

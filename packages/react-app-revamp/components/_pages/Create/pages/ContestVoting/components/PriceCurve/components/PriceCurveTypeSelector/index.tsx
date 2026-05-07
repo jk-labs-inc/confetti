@@ -26,7 +26,7 @@ const PriceCurveTypeSelector: FC = () => {
   return (
     <div className="flex flex-col gap-8 pl-6">
       <p className="text-[20px] text-neutral-11">what kind of price curve would you like for your contest?</p>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-[560px]">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 max-w-[560px]">
         {CURVE_TYPE_OPTIONS.map(option => {
           const isSelected = option.type === selectedType;
           return (
@@ -35,15 +35,22 @@ const PriceCurveTypeSelector: FC = () => {
               type="button"
               onClick={() => handleSelect(option.type)}
               aria-pressed={isSelected}
-              className={`flex flex-col gap-3 rounded-2xl border p-4 text-center transition-colors duration-150 ${
-                isSelected ? "border-neutral-11 bg-true-black" : "border-neutral-2 bg-true-black hover:border-neutral-9"
+              className={`flex flex-col gap-3 rounded-2xl border bg-true-black p-4 text-center transition-colors duration-150 ${
+                isSelected ? "border-neutral-11" : "border-neutral-10"
               }`}
             >
               <div className="flex flex-col items-center gap-1">
-                <p className={`text-[18px] font-bold ${isSelected ? "text-neutral-11" : "text-neutral-9"}`}>
+                <p
+                  className={`text-[16px] md:text-[18px] font-bold transition-colors duration-150 ${
+                    isSelected ? "text-true-white" : "text-neutral-9"
+                  }`}
+                >
                   {option.title}
                 </p>
-                <p className="text-[14px] text-neutral-9">{option.description}</p>
+                <p className="text-[12px] md:text-[14px] text-neutral-9">
+                  <span className="md:hidden">{option.descriptionMobile}</span>
+                  <span className="hidden md:inline">{option.description}</span>
+                </p>
               </div>
               <CurveIcon type={option.type} />
             </button>

@@ -12,7 +12,7 @@ const CurveIcon: FC<CurveIconProps> = ({ type }) => {
   const gradientId = `curve-dot-gradient-${type}`;
 
   return (
-    <div className="w-full aspect-[2/1] rounded-lg border border-neutral-2 bg-true-black p-2">
+    <div className="w-full aspect-[2/1] rounded-lg border border-primary-5 bg-true-black p-2">
       <svg viewBox="0 0 100 60" className="w-full h-full" preserveAspectRatio="xMidYMid meet">
         <defs>
           <radialGradient id={gradientId} cx="50%" cy="50%" r="50%">
