@@ -2,14 +2,21 @@ import VotingQualifierError from "@components/_pages/Contest/components/StickyCa
 import VotingQualifierSkeleton from "@components/_pages/Contest/components/StickyCards/components/VotingQualifier/shared/Skeleton";
 import { useContestStore } from "@hooks/useContest/store";
 import useContestConfigStore from "@hooks/useContestConfig/store";
+import { PriceCurveType } from "@hooks/useDeployContest/types";
 import useDisplayPrice from "@hooks/useCurrency/useDisplayPrice";
 import usePriceCurveMultiple from "@hooks/usePriceCurveMultiple";
-import { calculateEndPrice } from "lib/priceCurve";
+import { calculateEndPriceForType } from "lib/priceCurve";
 import { FC } from "react";
 import { formatEther } from "viem";
 import { useShallow } from "zustand/shallow";
 
-const VotingQualifierAnyoneCanVoteExponentialEndPrice: FC = () => {
+interface VotingQualifierAnyoneCanVoteExponentialEndPriceProps {
+  priceCurveType?: PriceCurveType;
+}
+
+const VotingQualifierAnyoneCanVoteExponentialEndPrice: FC<VotingQualifierAnyoneCanVoteExponentialEndPriceProps> = ({
+  priceCurveType = PriceCurveType.Exponential,
+}) => {
   const { contestConfig } = useContestConfigStore(useShallow(state => state));
   const { costToVote } = useContestStore(
     useShallow(state => ({
@@ -23,7 +30,9 @@ const VotingQualifierAnyoneCanVoteExponentialEndPrice: FC = () => {
   });
 
   const startPriceRaw = formatEther(BigInt(costToVote ?? 0));
-  const endPriceRaw = formatEther(calculateEndPrice(costToVote ?? 0, Number(priceCurveMultiple)));
+  const endPriceRaw = formatEther(
+    calculateEndPriceForType(priceCurveType, costToVote ?? 0, Number(priceCurveMultiple)),
+  );
 
   const { displayValue: startDisplay, displaySymbol, isLoading: isPriceLoading } = useDisplayPrice(
     startPriceRaw,

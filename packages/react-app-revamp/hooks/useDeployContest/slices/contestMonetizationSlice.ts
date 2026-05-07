@@ -3,7 +3,18 @@ import { Charge, PriceCurve, PriceCurveType } from "../types";
 
 type ReactStyleStateSetter<T> = T | ((prev: T) => T);
 
-export const DEFAULT_MULTIPLER = 10;
+export const DEFAULT_MULTIPLER_EXPONENTIAL = 10;
+export const DEFAULT_MULTIPLER_LOGARITHMIC = 10;
+
+export const MULTIPLIER_RANGES: Record<PriceCurveType, { min: number; max: number }> = {
+  [PriceCurveType.Exponential]: { min: 8, max: 20 },
+  [PriceCurveType.Logarithmic]: { min: 8, max: 20 },
+};
+
+export const DEFAULT_MULTIPLIERS: Record<PriceCurveType, number> = {
+  [PriceCurveType.Exponential]: DEFAULT_MULTIPLER_EXPONENTIAL,
+  [PriceCurveType.Logarithmic]: DEFAULT_MULTIPLER_LOGARITHMIC,
+};
 
 export interface MonetizationSliceState {
   charge: Charge;
@@ -30,7 +41,7 @@ export const createMonetizationSlice = (set: any): MonetizationSlice => ({
   prevChainRefInCharge: "",
   priceCurve: {
     multiple: 1,
-    multipler: DEFAULT_MULTIPLER,
+    multipler: DEFAULT_MULTIPLER_EXPONENTIAL,
     type: PriceCurveType.Exponential,
   },
 

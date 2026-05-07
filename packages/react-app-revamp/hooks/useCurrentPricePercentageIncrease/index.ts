@@ -1,5 +1,6 @@
 import usePriceCurveMultiple from "@hooks/usePriceCurveMultiple";
-import { calculateStaticMinuteToMinutePercentage } from "lib/priceCurve";
+import { PriceCurveType } from "@hooks/useDeployContest/types";
+import { calculateDynamicLogPercentage, calculateStaticMinuteToMinutePercentage } from "lib/priceCurve";
 import { useMemo } from "react";
 import { Abi, formatEther } from "viem";
 
@@ -9,6 +10,8 @@ interface CurrentPricePercentageIncreaseParams {
   chainId: number;
   costToVote: bigint;
   totalVotingMinutes: number;
+  priceCurveType?: PriceCurveType;
+  votingTimeLeft?: number;
   enabled?: boolean;
 }
 
@@ -25,6 +28,8 @@ const useCurrentPricePercentageIncrease = ({
   enabled = true,
   costToVote,
   totalVotingMinutes,
+  priceCurveType = PriceCurveType.Exponential,
+  votingTimeLeft = 0,
 }: CurrentPricePercentageIncreaseParams): CurrentPricePercentageIncreaseResponse => {
   const {
     priceCurveMultiple,
@@ -37,6 +42,8 @@ const useCurrentPricePercentageIncrease = ({
     enabled,
   });
 
+  const minutesLeft = Math.max(0, Math.floor(votingTimeLeft / 60));
+
   const currentPricePercentageData = useMemo(() => {
     if (!costToVote || !priceCurveMultiple || isMultipleLoading || totalVotingMinutes <= 0) {
       return null;
@@ -45,6 +52,11 @@ const useCurrentPricePercentageIncrease = ({
     try {
       const multiple = Number(priceCurveMultiple);
       const costToVoteNumber = Number(formatEther(costToVote));
+
+      if (priceCurveType === PriceCurveType.Logarithmic) {
+        const elapsedMinutes = Math.max(0, totalVotingMinutes - minutesLeft);
+        return calculateDynamicLogPercentage(Number(costToVote), multiple, totalVotingMinutes, elapsedMinutes);
+      }
 
       const { percentageIncrease, isBelowThreshold } = calculateStaticMinuteToMinutePercentage(
         costToVoteNumber,
@@ -57,7 +69,7 @@ const useCurrentPricePercentageIncrease = ({
       console.error("error", error);
       return null;
     }
-  }, [costToVote, priceCurveMultiple, isMultipleLoading, totalVotingMinutes]);
+  }, [costToVote, priceCurveMultiple, isMultipleLoading, totalVotingMinutes, priceCurveType, minutesLeft]);
 
   const isLoading = isMultipleLoading;
   const isError = isMultipleError;

@@ -1,3 +1,4 @@
+import { PriceCurveType } from "@hooks/useDeployContest/types";
 import AnimatedDot from "./components/AnimatedDot";
 import AxisLabels from "./components/AxisLabels";
 import ConfettiParticles from "./components/ConfettiParticles";
@@ -39,6 +40,7 @@ interface PriceCurveProps {
   startPriceValue: number;
   endPriceValue: number;
   updateIntervalSeconds: number;
+  priceCurveType?: PriceCurveType;
   noPadding?: boolean;
   showAxisLabels?: boolean;
   isExpanded?: boolean;
@@ -59,6 +61,7 @@ const PriceCurve: FC<PriceCurveProps> = ({
   startPriceValue,
   endPriceValue,
   updateIntervalSeconds,
+  priceCurveType = PriceCurveType.Exponential,
   noPadding = false,
   showAxisLabels = false,
   isExpanded,
@@ -97,9 +100,12 @@ const PriceCurve: FC<PriceCurveProps> = ({
   const priceRangeText = `${formatPrice(startPriceValue)}-${formatPrice(endPriceValue)}`;
   const headerPrice = isDuring ? formatPrice(currentPrice) : priceRangeText;
   const tenseVerb = contestPhase === "after" ? "increased" : "increases";
+  const isLogarithmic = priceCurveType === PriceCurveType.Logarithmic;
   const intervalText = isDuring
     ? `${tenseVerb} ${isBelowThreshold ? "" : `${percentageIncrease}% `}in ${secondsUntilNextUpdate} seconds`
-    : `${tenseVerb} ${isBelowThreshold ? "" : `${percentageIncrease}% `}every ${updateIntervalSeconds} seconds`;
+    : isLogarithmic
+      ? ""
+      : `${tenseVerb} ${isBelowThreshold ? "" : `${percentageIncrease}% `}every ${updateIntervalSeconds} seconds`;
 
   return (
     <div
@@ -114,65 +120,65 @@ const PriceCurve: FC<PriceCurveProps> = ({
       />
 
       {collapsed ? null : (
-      <svg ref={svgRef} width={svgWidth} height={Math.max(svgHeight, 0)} style={SVG_OVERFLOW_STYLE}>
-        <Group left={chartPad.left} top={chartPad.top}>
-          <GridLines gridLines={gridLines} chartWidth={chartWidth} />
-          <ConfettiParticles chartWidth={chartWidth} chartHeight={chartHeight} seed={data.length} />
+        <svg ref={svgRef} width={svgWidth} height={Math.max(svgHeight, 0)} style={SVG_OVERFLOW_STYLE}>
+          <Group left={chartPad.left} top={chartPad.top}>
+            <GridLines gridLines={gridLines} chartWidth={chartWidth} />
+            <ConfettiParticles chartWidth={chartWidth} chartHeight={chartHeight} seed={data.length} />
 
-          <LinePath
-            data={data}
-            x={getX}
-            y={getY}
-            stroke={CHART_CONFIG.colors.mainLine}
-            strokeWidth={1.5}
-            curve={curveMonotoneX}
-            fill="none"
-          />
-
-          {!isHovering && currentPoint && <AnimatedDot x={currentDotX} y={currentDotY} isHovered={false} />}
-
-          {isHovering && hoveredPoint && (
-            <HoverOverlay
-              hoveredPoint={hoveredPoint}
-              hoveredDotX={getX(hoveredPoint)}
-              hoveredDotY={yScale(hoveredPoint.pv)}
-              chartWidth={chartWidth}
-              chartHeight={chartHeight}
-              chartPadTop={chartPad.top}
-              chartPadRight={chartPad.right}
-              svgHeight={svgHeight}
-              formatPrice={formatPrice}
+            <LinePath
+              data={data}
+              x={getX}
+              y={getY}
+              stroke={CHART_CONFIG.colors.mainLine}
+              strokeWidth={1.5}
+              curve={curveMonotoneX}
+              fill="none"
             />
-          )}
 
-          <rect
-            x={0}
-            y={0}
-            width={chartWidth}
-            height={chartHeight}
-            fill="transparent"
-            onMouseMove={handleMouseMove}
-            onMouseLeave={handleLeave}
-            onTouchStart={handleTouchMove}
-            onTouchMove={handleTouchMove}
-            onTouchEnd={handleLeave}
-            style={TOUCH_PAN_STYLE}
-          />
+            {!isHovering && currentPoint && <AnimatedDot x={currentDotX} y={currentDotY} isHovered={false} />}
 
-          {showAxisLabels && (
-            <AxisLabels
-              yTicks={yTicks}
-              xTicks={xTicks}
-              chartWidth={chartWidth}
-              chartHeight={chartHeight}
-              chartPadRight={chartPad.right}
-              yScale={yScale}
-              getX={getX}
-              formatPrice={formatPrice}
+            {isHovering && hoveredPoint && (
+              <HoverOverlay
+                hoveredPoint={hoveredPoint}
+                hoveredDotX={getX(hoveredPoint)}
+                hoveredDotY={yScale(hoveredPoint.pv)}
+                chartWidth={chartWidth}
+                chartHeight={chartHeight}
+                chartPadTop={chartPad.top}
+                chartPadRight={chartPad.right}
+                svgHeight={svgHeight}
+                formatPrice={formatPrice}
+              />
+            )}
+
+            <rect
+              x={0}
+              y={0}
+              width={chartWidth}
+              height={chartHeight}
+              fill="transparent"
+              onMouseMove={handleMouseMove}
+              onMouseLeave={handleLeave}
+              onTouchStart={handleTouchMove}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={handleLeave}
+              style={TOUCH_PAN_STYLE}
             />
-          )}
-        </Group>
-      </svg>
+
+            {showAxisLabels && (
+              <AxisLabels
+                yTicks={yTicks}
+                xTicks={xTicks}
+                chartWidth={chartWidth}
+                chartHeight={chartHeight}
+                chartPadRight={chartPad.right}
+                yScale={yScale}
+                getX={getX}
+                formatPrice={formatPrice}
+              />
+            )}
+          </Group>
+        </svg>
       )}
     </div>
   );
