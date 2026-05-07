@@ -11,7 +11,7 @@ interface CurrentPricePercentageIncreaseParams {
   costToVote: bigint;
   totalVotingMinutes: number;
   priceCurveType?: PriceCurveType;
-  votingTimeLeft?: number; // seconds remaining; required for logarithmic dynamic computation
+  votingTimeLeft?: number;
   enabled?: boolean;
 }
 
@@ -42,6 +42,8 @@ const useCurrentPricePercentageIncrease = ({
     enabled,
   });
 
+  const minutesLeft = Math.max(0, Math.floor(votingTimeLeft / 60));
+
   const currentPricePercentageData = useMemo(() => {
     if (!costToVote || !priceCurveMultiple || isMultipleLoading || totalVotingMinutes <= 0) {
       return null;
@@ -52,7 +54,6 @@ const useCurrentPricePercentageIncrease = ({
       const costToVoteNumber = Number(formatEther(costToVote));
 
       if (priceCurveType === PriceCurveType.Logarithmic) {
-        const minutesLeft = Math.max(0, Math.floor(votingTimeLeft / 60));
         const elapsedMinutes = Math.max(0, totalVotingMinutes - minutesLeft);
         return calculateDynamicLogPercentage(Number(costToVote), multiple, totalVotingMinutes, elapsedMinutes);
       }
@@ -68,7 +69,7 @@ const useCurrentPricePercentageIncrease = ({
       console.error("error", error);
       return null;
     }
-  }, [costToVote, priceCurveMultiple, isMultipleLoading, totalVotingMinutes, priceCurveType, votingTimeLeft]);
+  }, [costToVote, priceCurveMultiple, isMultipleLoading, totalVotingMinutes, priceCurveType, minutesLeft]);
 
   const isLoading = isMultipleLoading;
   const isError = isMultipleError;

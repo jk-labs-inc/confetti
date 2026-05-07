@@ -6,8 +6,9 @@ import { useMemo } from "react";
 interface UsePriceCurvePointsParams {
   startPrice: number;
   multiple: number;
-  startTime: Date;
-  endTime: Date;
+  // Timestamps in ms — taking primitives keeps the memo stable without forcing callers to memoize Dates.
+  startTimeMs: number;
+  endTimeMs: number;
   updateIntervalSeconds?: number;
   priceCurveType?: PriceCurveType;
   enabled?: boolean;
@@ -22,14 +23,14 @@ interface PriceCurvePointsResult {
 const usePriceCurvePoints = ({
   startPrice,
   multiple,
-  startTime,
-  endTime,
+  startTimeMs,
+  endTimeMs,
   updateIntervalSeconds = 60,
   priceCurveType = PriceCurveType.Exponential,
   enabled = true,
 }: UsePriceCurvePointsParams): PriceCurvePointsResult => {
   const pricePointsData = useMemo(() => {
-    if (!enabled || !startPrice || !multiple || !startTime || !endTime) {
+    if (!enabled || !startPrice || !multiple || !startTimeMs || !endTimeMs) {
       return {
         pricePoints: [],
         isLoading: false,
@@ -41,8 +42,8 @@ const usePriceCurvePoints = ({
       const pricePoints = generatePricePointsForType(priceCurveType, {
         startPrice,
         multiple,
-        startTime,
-        endTime,
+        startTime: new Date(startTimeMs),
+        endTime: new Date(endTimeMs),
         updateIntervalSeconds,
       });
 
@@ -59,7 +60,7 @@ const usePriceCurvePoints = ({
         isError: true,
       };
     }
-  }, [enabled, startPrice, multiple, startTime, endTime, updateIntervalSeconds, priceCurveType]);
+  }, [enabled, startPrice, multiple, startTimeMs, endTimeMs, updateIntervalSeconds, priceCurveType]);
 
   return pricePointsData;
 };

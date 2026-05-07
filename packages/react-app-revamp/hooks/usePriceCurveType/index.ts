@@ -1,5 +1,7 @@
 import { PriceCurveType } from "@hooks/useDeployContest/types";
 import { QueryObserverResult, RefetchOptions } from "@tanstack/react-query";
+import { compareVersions } from "compare-versions";
+import { LOG_CURVE_VERSION } from "constants/versions";
 import { Abi, ReadContractErrorType } from "viem";
 import { useReadContract } from "wagmi";
 
@@ -7,6 +9,7 @@ interface PriceCurveTypeParams {
   address: string;
   abi: Abi;
   chainId: number;
+  version?: string;
   enabled?: boolean;
 }
 
@@ -19,7 +22,16 @@ interface PriceCurveTypeResponse {
   ) => Promise<QueryObserverResult<PriceCurveType | undefined, ReadContractErrorType>>;
 }
 
-const usePriceCurveType = ({ address, abi, chainId, enabled = true }: PriceCurveTypeParams): PriceCurveTypeResponse => {
+const usePriceCurveType = ({
+  address,
+  abi,
+  chainId,
+  version,
+  enabled = true,
+}: PriceCurveTypeParams): PriceCurveTypeResponse => {
+  // Only contracts at LOG_CURVE_VERSION+ expose `priceCurveType`; older ones default to exponential.
+  const isVersionSupported = !!version && compareVersions(version, LOG_CURVE_VERSION) >= 0;
+
   const {
     data: contractPriceCurveType,
     refetch,
@@ -34,7 +46,7 @@ const usePriceCurveType = ({ address, abi, chainId, enabled = true }: PriceCurve
     query: {
       staleTime: Infinity,
       select: data => Number(data) as PriceCurveType,
-      enabled: !!address && !!abi && enabled,
+      enabled: !!address && !!abi && enabled && isVersionSupported,
     },
   });
 

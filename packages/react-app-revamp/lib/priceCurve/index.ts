@@ -61,8 +61,11 @@ export const calculateStaticMinuteToMinutePercentage = (
   };
 };
 
-export const generatePricePoints = (params: GeneratePricePointsParams): PricePoint[] => {
-  const { startPrice, multiple, startTime, endTime, updateIntervalSeconds = 60 } = params;
+const generatePoints = (
+  params: GeneratePricePointsParams,
+  priceAtPercent: (percentThrough: number) => number,
+): PricePoint[] => {
+  const { startPrice, startTime, endTime, updateIntervalSeconds = 60 } = params;
 
   if (startPrice <= 0) {
     throw new Error("Start price must be greater than 0");
@@ -76,50 +79,32 @@ export const generatePricePoints = (params: GeneratePricePointsParams): PricePoi
     throw new Error("Update interval must be greater than 0");
   }
 
-  const totalDurationMs = endTime.getTime() - startTime.getTime();
-  const totalDurationSeconds = Math.floor(totalDurationMs / 1000);
+  const totalDurationSeconds = Math.floor((endTime.getTime() - startTime.getTime()) / 1000);
 
   if (totalDurationSeconds <= 0) {
     throw new Error("Duration must be greater than 0 seconds");
   }
 
-  const pricePoints: PricePointInternal[] = [];
-  const startPriceBigInt = BigInt(Math.round(startPrice));
+  const pricePoints: PricePointInternal[] = [{ date: startTime, priceBigInt: BigInt(Math.round(startPrice)) }];
 
-  pricePoints.push({
-    date: startTime,
-    priceBigInt: startPriceBigInt,
-  });
-
-  // Plot the unrounded curve; contract floors prices on-chain (delta < 1e-6 ETH, not visible).
   for (let seconds = updateIntervalSeconds; seconds < totalDurationSeconds; seconds += updateIntervalSeconds) {
     const percentThrough = (seconds / totalDurationSeconds) * 100;
-    const priceFloat = startPrice * Math.pow(2, multiple * percentThrough);
-    const priceBigInt = BigInt(Math.round(priceFloat));
-
-    const pointDate = new Date(startTime.getTime() + seconds * 1000);
-
     pricePoints.push({
-      date: pointDate,
-      priceBigInt,
+      date: new Date(startTime.getTime() + seconds * 1000),
+      priceBigInt: BigInt(Math.round(priceAtPercent(percentThrough))),
     });
   }
 
-  const endPriceFloat = startPrice * Math.pow(2, multiple * 100);
-  const endPriceBigInt = BigInt(Math.round(endPriceFloat));
+  pricePoints.push({ date: endTime, priceBigInt: BigInt(Math.round(priceAtPercent(100))) });
 
-  pricePoints.push({
-    date: endTime,
-    priceBigInt: endPriceBigInt,
-  });
-
-  const formattedPricePoints: PricePoint[] = pricePoints.map(point => ({
+  return pricePoints.map(point => ({
     date: point.date.toISOString(),
     price: formatEther(point.priceBigInt),
   }));
-
-  return formattedPricePoints;
 };
+
+export const generatePricePoints = (params: GeneratePricePointsParams): PricePoint[] =>
+  generatePoints(params, percentThrough => params.startPrice * Math.pow(2, params.multiple * percentThrough));
 
 // Log curve y = log10(b*x + 1) + c with c = startPrice (ETH). Solves b so f(100) = c * multiplier.
 // b depends on BOTH startPrice and multiplier (unlike exponential).
@@ -150,61 +135,8 @@ export const calculateLogarithmicEndPrice = (startPrice: number, multiple: numbe
 };
 
 export const generateLogarithmicPricePoints = (params: GeneratePricePointsParams): PricePoint[] => {
-  const { startPrice, multiple, startTime, endTime, updateIntervalSeconds = 60 } = params;
-
-  if (startPrice <= 0) {
-    throw new Error("Start price must be greater than 0");
-  }
-
-  if (endTime <= startTime) {
-    throw new Error("End time must be after start time");
-  }
-
-  if (updateIntervalSeconds <= 0) {
-    throw new Error("Update interval must be greater than 0");
-  }
-
-  const totalDurationMs = endTime.getTime() - startTime.getTime();
-  const totalDurationSeconds = Math.floor(totalDurationMs / 1000);
-
-  if (totalDurationSeconds <= 0) {
-    throw new Error("Duration must be greater than 0 seconds");
-  }
-
-  const cInEth = startPrice / 1e18;
-
-  const pricePoints: PricePointInternal[] = [];
-
-  pricePoints.push({
-    date: startTime,
-    priceBigInt: BigInt(Math.round(startPrice)),
-  });
-
-  for (let seconds = updateIntervalSeconds; seconds < totalDurationSeconds; seconds += updateIntervalSeconds) {
-    const percentThrough = (seconds / totalDurationSeconds) * 100;
-    const priceInEth = Math.log10(multiple * percentThrough + 1) + cInEth;
-    const priceFloat = priceInEth * 1e18;
-
-    const pointDate = new Date(startTime.getTime() + seconds * 1000);
-
-    pricePoints.push({
-      date: pointDate,
-      priceBigInt: BigInt(Math.round(priceFloat)),
-    });
-  }
-
-  const endPriceInEth = Math.log10(multiple * 100 + 1) + cInEth;
-  const endPriceFloat = endPriceInEth * 1e18;
-
-  pricePoints.push({
-    date: endTime,
-    priceBigInt: BigInt(Math.round(endPriceFloat)),
-  });
-
-  return pricePoints.map(point => ({
-    date: point.date.toISOString(),
-    price: formatEther(point.priceBigInt),
-  }));
+  const cInEth = params.startPrice / 1e18;
+  return generatePoints(params, percentThrough => (Math.log10(params.multiple * percentThrough + 1) + cInEth) * 1e18);
 };
 
 // Log rate-of-change is non-constant (faster early, slower late), so recompute per tick.

@@ -6,7 +6,7 @@ import useDisplayPrice from "@hooks/useCurrency/useDisplayPrice";
 import usePriceCurveMultiple from "@hooks/usePriceCurveMultiple";
 import usePriceCurveType from "@hooks/usePriceCurveType";
 import { compareVersions } from "compare-versions";
-import { LOG_CURVE_VERSION, VOTING_PRICE_CURVES_VERSION } from "constants/versions";
+import { VOTING_PRICE_CURVES_VERSION } from "constants/versions";
 import { calculateEndPriceForType } from "lib/priceCurve";
 import { formatEther } from "viem";
 import { useShallow } from "zustand/shallow";
@@ -19,7 +19,6 @@ const ContestParametersVotingPrice = () => {
     })),
   );
   const isVotingPriceCurveEnabled = compareVersions(contestConfig.version, VOTING_PRICE_CURVES_VERSION) >= 0;
-  const isLogCurveVersion = compareVersions(contestConfig.version, LOG_CURVE_VERSION) >= 0;
 
   const {
     priceCurveMultiple,
@@ -37,7 +36,7 @@ const ContestParametersVotingPrice = () => {
     address: contestConfig.address,
     abi: contestConfig.abi,
     chainId: contestConfig.chainId,
-    enabled: isLogCurveVersion,
+    version: contestConfig.version,
   });
 
   const startPriceRaw = formatEther(BigInt(charge.costToVote));

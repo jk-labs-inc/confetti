@@ -27,19 +27,13 @@ export const calculateVotingRewardsProjection = ({
   if (!spendingAmount || spendingAmount <= 0 || currentPricePerVote <= 0n) return "0";
 
   const spendingAmountWei = parseEther(toFixedString(spendingAmount));
-
-  // Calculate number of votes user is buying at current price (in wei)
   const numberOfVotes = Math.floor(Number(spendingAmountWei) / Number(currentPricePerVote));
 
   if (numberOfVotes <= 0) return "0";
 
-  // Calculate final price per vote (end of curve) - returns bigint in wei
   const finalPricePerVoteWei = calculateEndPriceForType(priceCurveType, Number(costToVoteAtStart), multiple);
-
-  // Convert final price to ETH for calculation
   const finalPricePerVote = Number(formatEther(finalPricePerVoteWei));
 
-  // Formula: (1st place %) × (% to pool) × (final price per vote) × (votes) × (total entries)
   const percentToPool = percentageToRewards / 100;
   const firstPlaceShare = firstPlaceSharePercentage / 100;
 

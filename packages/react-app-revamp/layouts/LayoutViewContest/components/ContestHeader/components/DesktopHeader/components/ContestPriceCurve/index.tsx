@@ -10,8 +10,6 @@ import usePriceCurveMultiple from "@hooks/usePriceCurveMultiple";
 import usePriceCurveType from "@hooks/usePriceCurveType";
 import usePriceCurveUpdateInterval from "@hooks/usePriceCurveUpdateInterval";
 import { useCountdownTimer } from "@hooks/useTimer";
-import { compareVersions } from "compare-versions";
-import { LOG_CURVE_VERSION } from "constants/versions";
 import { calculateEndPriceForType } from "lib/priceCurve";
 import { formatEther } from "viem";
 import { useShallow } from "zustand/shallow";
@@ -44,14 +42,11 @@ const LivePriceDisplay = ({ compact = false }: { compact?: boolean }) => {
   );
   const votingTimeLeft = useCountdownTimer(votesClose);
 
-  const isLogCurveVersion =
-    !!contestConfig.version && compareVersions(contestConfig.version, LOG_CURVE_VERSION) >= 0;
-
   const { priceCurveType } = usePriceCurveType({
     address: contestConfig.address,
     abi: contestConfig.abi,
     chainId: contestConfig.chainId,
-    enabled: isLogCurveVersion,
+    version: contestConfig.version,
   });
 
   const { currentPricePerVote } = useCurrentPricePerVote({
@@ -107,14 +102,11 @@ const PriceRangeDisplay = ({ compact = false }: { compact?: boolean }) => {
     chainId: contestConfig.chainId,
   });
 
-  const isLogCurveVersion =
-    !!contestConfig.version && compareVersions(contestConfig.version, LOG_CURVE_VERSION) >= 0;
-
   const { priceCurveType } = usePriceCurveType({
     address: contestConfig.address,
     abi: contestConfig.abi,
     chainId: contestConfig.chainId,
-    enabled: isLogCurveVersion,
+    version: contestConfig.version,
   });
 
   const startPriceRaw = formatEther(BigInt(costToVote ?? 0));

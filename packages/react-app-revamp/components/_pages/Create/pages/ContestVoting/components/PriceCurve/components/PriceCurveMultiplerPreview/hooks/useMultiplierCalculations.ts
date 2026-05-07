@@ -1,14 +1,8 @@
-import { toFixedString } from "@helpers/formatBalance";
 import { DEFAULT_MULTIPLIERS, MULTIPLIER_RANGES } from "@hooks/useDeployContest/slices/contestMonetizationSlice";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { Charge, PriceCurve, PriceCurveType } from "@hooks/useDeployContest/types";
-import {
-  calculateExponentialMultiple,
-  calculateLogarithmicEndPrice,
-  calculateLogarithmicMultiple,
-} from "lib/priceCurve";
+import { calculateExponentialMultiple, calculateLogarithmicMultiple } from "lib/priceCurve";
 import { useEffect, useRef, useState } from "react";
-import { formatEther, parseEther } from "viem";
 import { useShallow } from "zustand/shallow";
 
 const validateMultiplier = (value: number, type: PriceCurveType): string => {
@@ -41,8 +35,7 @@ const calculatePricesAndMultiple = (
         multiplier: multipler,
       });
 
-      const endPriceWei = calculateLogarithmicEndPrice(Number(parseEther(toFixedString(startPrice))), multiple);
-      const endPrice = Number(formatEther(endPriceWei));
+      const endPrice = startPrice * multipler;
 
       setCharge((prev: Charge) => ({
         ...prev,
@@ -117,8 +110,7 @@ export const useMultiplierCalculations = (onError?: (hasError: boolean) => void)
     if (!costToVote || costToVote <= 0) return;
 
     const range = MULTIPLIER_RANGES[type];
-    const nextMultipler =
-      multipler < range.min || multipler > range.max ? DEFAULT_MULTIPLIERS[type] : multipler;
+    const nextMultipler = multipler < range.min || multipler > range.max ? DEFAULT_MULTIPLIERS[type] : multipler;
 
     if (nextMultipler !== multipler) {
       setPriceCurve(prev => ({

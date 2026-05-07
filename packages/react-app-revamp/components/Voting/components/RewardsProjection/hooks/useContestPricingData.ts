@@ -4,7 +4,6 @@ import { PriceCurveType } from "@hooks/useDeployContest/types";
 import usePriceCurveMultiple from "@hooks/usePriceCurveMultiple";
 import usePriceCurveType from "@hooks/usePriceCurveType";
 import { compareVersions } from "compare-versions";
-import { LOG_CURVE_VERSION } from "constants/versions";
 import { useReadContract } from "wagmi";
 
 interface ContestPricingData {
@@ -64,14 +63,12 @@ export const useContestPricingData = (): ContestPricingData => {
     enabled: Boolean(contestConfig.address && contestConfig.abi && contestConfig.chainId),
   });
 
-  const isLogCurveVersion =
-    !!contestConfig.version && compareVersions(contestConfig.version, LOG_CURVE_VERSION) >= 0;
-
   const { priceCurveType } = usePriceCurveType({
     address: contestConfig.address as `0x${string}`,
     abi: contestConfig.abi,
     chainId: contestConfig.chainId,
-    enabled: isLogCurveVersion && Boolean(contestConfig.address && contestConfig.abi && contestConfig.chainId),
+    version: contestConfig.version,
+    enabled: Boolean(contestConfig.address && contestConfig.abi && contestConfig.chainId),
   });
 
   return {
