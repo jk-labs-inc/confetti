@@ -31,9 +31,9 @@ const SubmissionPageMobileHeader = () => {
     if (navigator.share) {
       const text =
         entryTitle && contestName
-          ? `Vote on ${entryTitle} in ${contestName}`
+          ? `just bought votes for ${entryTitle} in the ${contestName} contest on @confetti_win. if you buy votes on it and it wins, we both can earn 🤞`
           : contestName
-            ? `Entry to ${contestName} contest`
+            ? `just bought votes for an entry in the ${contestName} contest on @confetti_win. if you buy votes on it and it wins, we both can earn 🤞`
             : undefined;
 
       navigator.share({
