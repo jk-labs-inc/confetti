@@ -1,5 +1,4 @@
 import GradientText from "@components/UI/GradientText";
-import { InformationCircleIcon } from "@heroicons/react/24/outline";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import useDisplayPrice from "@hooks/useCurrency/useDisplayPrice";
 import { FC } from "react";
@@ -14,8 +13,6 @@ interface VotingWidgetRewardsProjectionProps {
   inputValue: string;
   submissionsCount: number;
 }
-
-const TOOLTIP_ID = "rewards-projection-tooltip";
 
 const VotingWidgetRewardsProjection: FC<VotingWidgetRewardsProjectionProps> = ({
   currentPricePerVote,
@@ -43,13 +40,8 @@ const VotingWidgetRewardsProjection: FC<VotingWidgetRewardsProjectionProps> = ({
         <GradientText textSizeClassName="text-[16px]" isFontSabo={false}>
           win up to
         </GradientText>
-        <InformationCircleIcon
-          className="text-neutral-14 w-5 h-5"
-          data-tooltip-id={TOOLTIP_ID}
-          data-tooltip-place="right"
-        />
+        <VotingWidgetRewardsProjectionTooltip />
       </div>
-      <VotingWidgetRewardsProjectionTooltip tooltipId={TOOLTIP_ID} />
       <div className="ml-auto">
         {isLoading ? (
           <Skeleton width={100} height={24} baseColor="#706f78" highlightColor="#FFE25B" />
