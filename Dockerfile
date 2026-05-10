@@ -1,80 +1,40 @@
-FROM node:22-slim AS base
+FROM python:3.12-slim
 
-FROM base AS builder
+# Set environment variables
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PATH="/app/.venv/bin:${PATH}"
 
-WORKDIR /app
-COPY . .
+# Create a non‑root user and group
+RUN groupadd -r appgroup && useradd -r -g appgroup appuser
 
-RUN yarn --production 
-
-# Build
-# disable telemetry during the build
-ENV NEXT_TELEMETRY_DISABLED=1 
-
-ARG NEXT_PUBLIC_SUPABASE_URL
-ARG NEXT_PUBLIC_SUPABASE_ANON_KEY
-ARG NEXT_PUBLIC_R2_ACCOUNT_ID
-ARG NEXT_PUBLIC_R2_ACCESS_KEY_ID
-ARG NEXT_PUBLIC_R2_SECRET_ACCESS_KEY
-ARG NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID
-ARG NEXT_PUBLIC_MERKLE_TREES_BUCKET
-ARG NEXT_PUBLIC_IMAGE_UPLOAD_BUCKET
-ARG NEXT_PUBLIC_ETHERSCAN_KEY
-ARG NEXT_PUBLIC_QUICKNODE_SLUG
-ARG NEXT_PUBLIC_QUICKNODE_KEY
-ARG NEXT_PUBLIC_ALCHEMY_KEY
-ARG NEXT_PUBLIC_PARA_API_KEY
-ARG NEXT_PUBLIC_PARA_ENVIRONMENT
-ARG NEXT_PUBLIC_BREVO_API_KEY
-ARG NEXT_PUBLIC_CDP_PROJECT_ID
-ARG NEXT_PUBLIC_ENVIRONMENT
-
-ENV NEXT_PUBLIC_SUPABASE_URL=$NEXT_PUBLIC_SUPABASE_URL 
-ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=$NEXT_PUBLIC_SUPABASE_ANON_KEY
-ENV NEXT_PUBLIC_R2_ACCOUNT_ID=$NEXT_PUBLIC_R2_ACCOUNT_ID
-ENV NEXT_PUBLIC_R2_ACCESS_KEY_ID=$NEXT_PUBLIC_R2_ACCESS_KEY_ID
-ENV NEXT_PUBLIC_R2_SECRET_ACCESS_KEY=$NEXT_PUBLIC_R2_SECRET_ACCESS_KEY
-ENV NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID=$NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID
-ENV NEXT_PUBLIC_MERKLE_TREES_BUCKET=$NEXT_PUBLIC_MERKLE_TREES_BUCKET
-ENV NEXT_PUBLIC_IMAGE_UPLOAD_BUCKET=$NEXT_PUBLIC_IMAGE_UPLOAD_BUCKET
-ENV NEXT_PUBLIC_ETHERSCAN_KEY=$NEXT_PUBLIC_ETHERSCAN_KEY
-ENV NEXT_PUBLIC_QUICKNODE_SLUG=$NEXT_PUBLIC_QUICKNODE_SLUG
-ENV NEXT_PUBLIC_QUICKNODE_KEY=$NEXT_PUBLIC_QUICKNODE_KEY
-ENV NEXT_PUBLIC_ALCHEMY_KEY=$NEXT_PUBLIC_ALCHEMY_KEY
-ENV NEXT_PUBLIC_PARA_API_KEY=$NEXT_PUBLIC_PARA_API_KEY
-ENV NEXT_PUBLIC_PARA_ENVIRONMENT=$NEXT_PUBLIC_PARA_ENVIRONMENT
-ENV NEXT_PUBLIC_BREVO_API_KEY=$NEXT_PUBLIC_BREVO_API_KEY
-ENV NEXT_PUBLIC_CDP_PROJECT_ID=$NEXT_PUBLIC_CDP_PROJECT_ID
-ENV NEXT_PUBLIC_ENVIRONMENT=$NEXT_PUBLIC_ENVIRONMENT
-
-RUN yarn build
-
-FROM base AS runner
+# Set working directory
 WORKDIR /app
 
-ENV NODE_ENV=production
-# Uncomment the following line in case you want to disable telemetry during runtime.
-ENV NEXT_TELEMETRY_DISABLED=1
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends gcc && \
+    rm -rf /var/lib/apt/lists/*
 
-# Set the correct permission for prerender cache
-RUN addgroup nodejs
-RUN adduser nextjs
-RUN mkdir .next
-RUN chown nextjs:nodejs .next
+# Install Python dependencies in a virtual environment
+RUN python -m venv /app/.venv && \
+    pip install --upgrade pip && \
+    pip install --no-cache-dir fastapi>=0.110.0 uvicorn[standard]>=0.28.0 pydantic>=2.5.0 pytest>=8.0.0 httpx>=0.27.0 pytest-cov>=5.0.0
 
-# Automatically leverage output traces to reduce image size
-# https://nextjs.org/docs/advanced-features/output-file-tracing
-COPY --from=builder --chown=nextjs:nodejs /app/packages/react-app-revamp/.next/standalone/packages/react-app-revamp ./ 
-COPY --from=builder --chown=nextjs:nodejs /app/packages/react-app-revamp/.next/standalone/node_modules ./node_modules
-COPY --from=builder --chown=nextjs:nodejs /app/packages/react-app-revamp/.next/static ./.next/static 
-COPY --from=builder /app/packages/react-app-revamp/public ./public 
+# Copy application source code
+COPY . /app
 
-USER nextjs
+# Adjust permissions
+RUN chown -R appuser:appgroup /app
 
-# Exposed port (for orchestrators and dynamic reverse proxies)
-EXPOSE 3000
-ENV PORT=3000
-ENV HOSTNAME="0.0.0.0"
-HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 CMD [ "wget", "-q0", "http://localhost:3000/health" ]
+# Switch to non‑root user
+USER appuser
 
-CMD ["node", "server.js"]
+# Expose the default FastAPI port
+EXPOSE 8000
+
+# Define healthcheck
+HEALTHCHECK --interval=30s --timeout=5s --start-period=5s \
+  CMD curl -f http://localhost:8000/health || exit 1
+
+# Run the application
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]

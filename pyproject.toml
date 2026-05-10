@@ -1,0 +1,34 @@
+[project]
+name = "opinion-market-transformer"
+version = "0.1.0"
+description = "FastAPI microservice that converts input text into a format suitable for opinion‑market platforms."
+authors = [{ name = "Your Name", email = "you@example.com" }]
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+
+[project.urls]
+Homepage = "https://github.com/yourorg/opinion-market-transformer"
+Documentation = "https://github.com/yourorg/opinion-market-transformer#readme"
+
+[project.dependencies]
+fastapi = ">=0.110.0"
+uvicorn = { extras = ["standard"], version = ">=0.28.0" }
+pydantic = ">=2.5.0"
+
+[project.optional-dependencies]
+test = [
+    "pytest>=8.0.0",
+    "httpx>=0.27.0",
+    "pytest-cov>=5.0.0"
+]
+
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+addopts = "--cov=service --cov-report=term-missing"
+testpaths = ["tests"]
+```
