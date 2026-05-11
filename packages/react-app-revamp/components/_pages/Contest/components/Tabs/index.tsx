@@ -5,7 +5,6 @@ export enum Tab {
   Contest = "Contest",
   Rules = "Rules",
   Rewards = "my rewards",
-  Extensions = "Extensions",
 }
 
 interface ContestTabsProps {
