@@ -2,7 +2,6 @@ import ContestRewardsInfo from "@components/_pages/Contest/components/RewardsInf
 import ContestTiming from "../ContestHeader/components/DesktopHeader/components/ContestTiming";
 import ContestTab from "@components/_pages/Contest/Contest";
 import ContestDeployRewards from "@components/_pages/Contest/DeployRewards";
-import ContestExtensions from "@components/_pages/Contest/Extensions";
 import ContestParameters from "@components/_pages/Contest/Parameters";
 import ContestRewards from "@components/_pages/Contest/Rewards";
 import { Tab } from "@components/_pages/Contest/components/Tabs";
@@ -44,12 +43,6 @@ const ContestTabsContent: FC<ContestTabsContentProps> = ({ tab, version, rewards
         return (
           <div className="mt-6 md:mt-12">
             <ContestParameters />
-          </div>
-        );
-      case Tab.Extensions:
-        return (
-          <div className="mt-6 md:mt-12">
-            <ContestExtensions />
           </div>
         );
       default:
