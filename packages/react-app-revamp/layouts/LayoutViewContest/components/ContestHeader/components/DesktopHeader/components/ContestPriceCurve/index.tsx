@@ -1,14 +1,16 @@
 import { ArrowLongUpIcon } from "@heroicons/react/24/outline";
 import { useContestStore } from "@hooks/useContest/store";
 import useContestConfigStore from "@hooks/useContestConfig/store";
+import { PriceCurveType } from "@hooks/useDeployContest/types";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import useDisplayPrice from "@hooks/useCurrency/useDisplayPrice";
 import useCurrentPricePerVote from "@hooks/useCurrentPricePerVote";
 import useCurrentPricePercentageIncrease from "@hooks/useCurrentPricePercentageIncrease";
 import usePriceCurveMultiple from "@hooks/usePriceCurveMultiple";
+import usePriceCurveType from "@hooks/usePriceCurveType";
 import usePriceCurveUpdateInterval from "@hooks/usePriceCurveUpdateInterval";
 import { useCountdownTimer } from "@hooks/useTimer";
-import { calculateEndPrice } from "lib/priceCurve";
+import { calculateEndPriceForType } from "lib/priceCurve";
 import { formatEther } from "viem";
 import { useShallow } from "zustand/shallow";
 
@@ -40,6 +42,13 @@ const LivePriceDisplay = ({ compact = false }: { compact?: boolean }) => {
   );
   const votingTimeLeft = useCountdownTimer(votesClose);
 
+  const { priceCurveType } = usePriceCurveType({
+    address: contestConfig.address,
+    abi: contestConfig.abi,
+    chainId: contestConfig.chainId,
+    version: contestConfig.version,
+  });
+
   const { currentPricePerVote } = useCurrentPricePerVote({
     address: contestConfig.address,
     abi: contestConfig.abi,
@@ -61,6 +70,8 @@ const LivePriceDisplay = ({ compact = false }: { compact?: boolean }) => {
     chainId: contestConfig.chainId,
     costToVote: BigInt(charge.costToVote ?? 0),
     totalVotingMinutes: getTotalVotingMinutes(),
+    priceCurveType,
+    votingTimeLeft,
   });
 
   const secondsUntilNextUpdate = priceCurveUpdateInterval > 0 ? votingTimeLeft % priceCurveUpdateInterval : 0;
@@ -91,8 +102,17 @@ const PriceRangeDisplay = ({ compact = false }: { compact?: boolean }) => {
     chainId: contestConfig.chainId,
   });
 
+  const { priceCurveType } = usePriceCurveType({
+    address: contestConfig.address,
+    abi: contestConfig.abi,
+    chainId: contestConfig.chainId,
+    version: contestConfig.version,
+  });
+
   const startPriceRaw = formatEther(BigInt(costToVote ?? 0));
-  const endPriceRaw = formatEther(calculateEndPrice(costToVote ?? 0, Number(priceCurveMultiple)));
+  const endPriceRaw = formatEther(
+    calculateEndPriceForType(priceCurveType, costToVote ?? 0, Number(priceCurveMultiple)),
+  );
 
   const { displayValue: startDisplay, displaySymbol } = useDisplayPrice(
     startPriceRaw,

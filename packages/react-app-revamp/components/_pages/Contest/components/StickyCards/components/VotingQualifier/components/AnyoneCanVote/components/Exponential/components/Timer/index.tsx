@@ -1,6 +1,7 @@
 import { ArrowLongUpIcon } from "@heroicons/react/24/outline";
 import { useContestStore } from "@hooks/useContest/store";
 import useContestConfigStore from "@hooks/useContestConfig/store";
+import { PriceCurveType } from "@hooks/useDeployContest/types";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import useCurrentPricePercentageIncrease from "@hooks/useCurrentPricePercentageIncrease";
 import { FC } from "react";
@@ -10,11 +11,13 @@ import { useShallow } from "zustand/shallow";
 interface VotingQualifierAnyoneCanVoteExponentialTimerProps {
   votingTimeLeft: number;
   priceCurveUpdateInterval: number;
+  priceCurveType?: PriceCurveType;
 }
 
 const VotingQualifierAnyoneCanVoteExponentialTimer: FC<VotingQualifierAnyoneCanVoteExponentialTimerProps> = ({
   votingTimeLeft,
   priceCurveUpdateInterval,
+  priceCurveType = PriceCurveType.Exponential,
 }) => {
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const contestStatus = useContestStatusStore(useShallow(state => state.contestStatus));
@@ -33,6 +36,8 @@ const VotingQualifierAnyoneCanVoteExponentialTimer: FC<VotingQualifierAnyoneCanV
     chainId,
     costToVote: BigInt(costToVote ?? 0),
     totalVotingMinutes: getTotalVotingMinutes(),
+    priceCurveType,
+    votingTimeLeft,
   });
 
   if (!isVotingOpen) {

@@ -1,6 +1,7 @@
 import { DeployContestStore, useDeployContestStore } from "@hooks/useDeployContest/store";
 import { useCallback } from "react";
 import { useWallet } from "@hooks/useWallet";
+import { MULTIPLIER_RANGES } from "@hooks/useDeployContest/slices/contestMonetizationSlice";
 import { StepTitle, getStepNumber } from "../types";
 
 const stepValidations: Record<StepTitle, (state: DeployContestStore, isConnected: boolean) => boolean> = {
@@ -8,12 +9,13 @@ const stepValidations: Record<StepTitle, (state: DeployContestStore, isConnected
     return true;
   },
   [StepTitle.Voting]: (state, isConnected) => {
+    const range = MULTIPLIER_RANGES[state.priceCurve.type];
     return (
       isConnected &&
       !!state.charge.costToVote &&
       state.charge.costToVote > 0 &&
-      state.priceCurve.multipler >= 8.0 &&
-      state.priceCurve.multipler <= 20.0
+      state.priceCurve.multipler >= range.min &&
+      state.priceCurve.multipler <= range.max
     );
   },
 

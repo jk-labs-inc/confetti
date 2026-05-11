@@ -2,6 +2,7 @@ import { chains } from "@config/wagmi";
 import useChargeDetails from "@hooks/useChargeDetails";
 import { FC } from "react";
 import PriceCurveMultiplerPreview from "./components/PriceCurveMultiplerPreview";
+import PriceCurveTypeSelector from "./components/PriceCurveTypeSelector";
 import { useMediaQuery } from "react-responsive";
 import CreateTextContainer from "@components/_pages/Create/components/TextContainer";
 import CreateContestCreatorSplitToggle from "../CreatorSplitToggle";
@@ -45,6 +46,7 @@ const CreateContestPriceCurve: FC<CreateContestPriceCurveProps> = ({ chain, onEr
           conviction to earn more.
         </p>
       </CreateTextContainer>
+      <PriceCurveTypeSelector />
       <PriceCurveMultiplerPreview chainUnitLabel={chainUnitLabel} onError={onError} />
       <CreateContestCreatorSplitToggle />
     </div>

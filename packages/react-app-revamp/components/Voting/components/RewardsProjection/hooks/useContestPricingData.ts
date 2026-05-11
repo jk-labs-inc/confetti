@@ -1,6 +1,8 @@
 import { CREATOR_SPLIT_VERSION } from "@hooks/useContest/v3v4/contracts";
 import useContestConfigStore from "@hooks/useContestConfig/store";
+import { PriceCurveType } from "@hooks/useDeployContest/types";
 import usePriceCurveMultiple from "@hooks/usePriceCurveMultiple";
+import usePriceCurveType from "@hooks/usePriceCurveType";
 import { compareVersions } from "compare-versions";
 import { useReadContract } from "wagmi";
 
@@ -8,6 +10,7 @@ interface ContestPricingData {
   percentageToRewards: number;
   costToVote: bigint;
   multiple: number;
+  priceCurveType: PriceCurveType;
   isLoading: boolean;
   isError: boolean;
 }
@@ -60,10 +63,19 @@ export const useContestPricingData = (): ContestPricingData => {
     enabled: Boolean(contestConfig.address && contestConfig.abi && contestConfig.chainId),
   });
 
+  const { priceCurveType } = usePriceCurveType({
+    address: contestConfig.address as `0x${string}`,
+    abi: contestConfig.abi,
+    chainId: contestConfig.chainId,
+    version: contestConfig.version,
+    enabled: Boolean(contestConfig.address && contestConfig.abi && contestConfig.chainId),
+  });
+
   return {
     percentageToRewards: percentageToRewardsRaw ? Number(percentageToRewardsRaw) : 0,
     costToVote: (costToVoteRaw as bigint) || 0n,
     multiple: priceCurveMultiple ? Number(priceCurveMultiple) : 0,
+    priceCurveType,
     isLoading: isLoadingPercentage || isLoadingCost || isLoadingMultiple,
     isError: isErrorPercentage || isErrorCost || isErrorMultiple,
   };

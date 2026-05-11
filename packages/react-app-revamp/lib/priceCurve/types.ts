@@ -3,6 +3,11 @@ export interface ExponentialPricingInput {
   endPrice: number;
 }
 
+export interface LogarithmicPricingInput {
+  startPrice: number;
+  multiplier: number;
+}
+
 export interface PricePointInternal {
   date: Date;
   priceBigInt: bigint;
