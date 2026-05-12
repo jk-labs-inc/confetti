@@ -4,6 +4,8 @@ import { useVotingStore } from "@components/Voting/store";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import useContestConfigStore from "@hooks/useContestConfig/store";
+import useCreatorSplitEnabled from "@hooks/useCreatorSplitEnabled";
+import useNativeRates from "@hooks/useCurrency/useNativeRates";
 import useCurrentPricePerVote from "@hooks/useCurrentPricePerVote";
 import { Charge } from "@hooks/useDeployContest/types";
 import { useEmailSend } from "@hooks/useEmailSend";
@@ -27,6 +29,7 @@ import { useCastVotesStore } from "./store";
 import { CombinedAnalyticsParams, performAnalytics } from "./utils/analytics";
 import { createVotingEmailSender } from "./utils/email";
 import { calculateChargeAmount } from "./utils/helpers";
+import { computeJkLabsRevenueUsd } from "./utils/jkLabsRevenue";
 import { usePriceTracking } from "./utils/priceTracking";
 
 interface UseCastVotesProps {
@@ -84,6 +87,13 @@ export function useCastVotes({ charge, votesClose }: UseCastVotesProps) {
     })),
   );
   const { subscribeUser } = useEmailSignup();
+  const { data: nativeRates } = useNativeRates();
+  const { creatorSplitEnabled } = useCreatorSplitEnabled({
+    address: contestConfig.address,
+    abi: contestConfig.abi,
+    chainId: contestConfig.chainId,
+    version: contestConfig.version,
+  });
 
   async function castVotes(amountOfVotes: number) {
     toastLoading({
@@ -165,8 +175,23 @@ export function useCastVotes({ charge, votesClose }: UseCastVotesProps) {
 
       setIsLoading(false);
       setIsSuccess(true);
+
+      const jkLabsRevenueUsd = computeJkLabsRevenueUsd({
+        totalChargeWei: estimatedCost,
+        chainId: contestConfig.chainId,
+        chainNativeCurrencySymbol: contestConfig.chainNativeCurrencySymbol,
+        nativeRates,
+        charge,
+        isRewardsPoolSelfFunded: rewards?.isSelfFunded === true,
+        isCreatorSplitEnabled: creatorSplitEnabled === 1,
+      });
+
       toastSuccess({
         message: "your votes have been deployed successfully",
+        id: "vote_submitted",
+        dataAttributes: {
+          "data-vote_revenue_generated": jkLabsRevenueUsd.toFixed(6),
+        },
       });
 
       refetchTotalVotesCastOnContest();
