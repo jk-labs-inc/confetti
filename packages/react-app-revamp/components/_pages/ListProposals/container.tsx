@@ -25,13 +25,13 @@ const TitleContainer = ({ children }: { children: ReactNode }) => {
         >
           {isVotingActive ? (
             <>
-              <p className="text-[16px] text-neutral-11 font-bold normal-case">entry</p>
-              <p className="text-[16px] text-neutral-11 font-bold normal-case">votes</p>
-              <p className="hidden md:block text-[16px] text-neutral-11 font-bold normal-case">% of votes</p>
+              <p className="text-[16px] text-neutral-10 font-bold normal-case">entry</p>
+              <p className="text-[16px] text-neutral-10 font-bold normal-case">votes</p>
+              <p className="hidden md:block text-[16px] text-neutral-10 font-bold normal-case">% of votes</p>
               <div />
             </>
           ) : (
-            <p className="text-[16px] text-neutral-11 font-bold normal-case">entry</p>
+            <p className="text-[16px] text-neutral-10 font-bold normal-case">entry</p>
           )}
         </div>
       )}
