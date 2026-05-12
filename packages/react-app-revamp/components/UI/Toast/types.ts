@@ -16,6 +16,8 @@ export interface InfoToastConfig extends BaseToastConfig {
 
 export interface SuccessToastConfig extends BaseToastConfig {
   message: string;
+  id?: string;
+  dataAttributes?: Record<string, string | number>;
 }
 
 export interface ErrorToastConfig extends BaseToastConfig {

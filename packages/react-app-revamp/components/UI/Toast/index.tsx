@@ -33,7 +33,7 @@ export const toastInfo = (config: InfoToastConfig) => {
 };
 
 export const toastSuccess = (config: SuccessToastConfig) => {
-  createToast("success", <SuccessToast message={config.message} />);
+  createToast("success", <SuccessToast message={config.message} id={config.id} dataAttributes={config.dataAttributes} />);
 };
 
 export const toastWarning = (config: WarningToastConfig) => {
