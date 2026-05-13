@@ -9,7 +9,7 @@ const RewardsPlayerViewNotConnected = () => {
       title="my rewards"
       image="/rewards/wallet-not-connected.png"
       imageAlt="wallet not connected"
-      heading="let's connect a wallet"
+      heading="let's sign in"
       description={
         <p className="text-[16px] text-neutral-11">
           wallets let you track what you earn. <br />
@@ -17,7 +17,7 @@ const RewardsPlayerViewNotConnected = () => {
         </p>
       }
       actionButton={{
-        text: "connect wallet",
+        text: "sign in",
         onClick: () => openModal(),
       }}
     />

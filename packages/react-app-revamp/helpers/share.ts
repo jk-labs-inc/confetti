@@ -34,14 +34,13 @@ export const generateTwitterShareUrlForSubmission = (
 ) => {
   const text =
     entryTitle && contestName
-      ? `Vote on ${entryTitle} in ${contestName}\n`
+      ? `just bought votes for ${entryTitle} in the ${contestName} contest on @confetti_win. if you buy votes on it and it wins, we both can earn 🤞\n`
       : contestName
-        ? `Entry to ${contestName} contest\n`
+        ? `just bought votes for an entry in the ${contestName} contest on @confetti_win. if you buy votes on it and it wins, we both can earn 🤞\n`
         : undefined;
 
   const params: UrlParams = {
     url: `${BASE_JOKERACE_URL}${chain}/${contestAddress}/submission/${submissionId}`,
-    via: "confetti_win",
   };
 
   if (text) {

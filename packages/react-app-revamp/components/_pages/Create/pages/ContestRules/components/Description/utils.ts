@@ -17,6 +17,8 @@ const getPriceCurveLabel = (priceCurveType: PriceCurveType): string => {
   switch (priceCurveType) {
     case PriceCurveType.Exponential:
       return "exponential";
+    case PriceCurveType.Logarithmic:
+      return "logarithmic";
     default:
       return "price curve";
   }

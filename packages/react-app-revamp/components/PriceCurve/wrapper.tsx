@@ -4,13 +4,15 @@ import { useCurrencyStore } from "@hooks/useCurrency/store";
 import { convertToDisplayPrice } from "@hooks/useCurrency/useDisplayPrice";
 import useNativeRates from "@hooks/useCurrency/useNativeRates";
 import useCurrentPricePercentageIncrease from "@hooks/useCurrentPricePercentageIncrease";
+import { PriceCurveType } from "@hooks/useDeployContest/types";
 import usePriceCurveChartData from "@hooks/usePriceCurveChartData";
 import usePriceCurveMultiple from "@hooks/usePriceCurveMultiple";
 import usePriceCurvePoints from "@hooks/usePriceCurvePoints";
+import usePriceCurveType from "@hooks/usePriceCurveType";
 import usePriceCurveUpdateInterval from "@hooks/usePriceCurveUpdateInterval";
 import { useCountdownTimer } from "@hooks/useTimer";
 import { useParentSize } from "@visx/responsive";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { useReadContract } from "wagmi";
 import PriceCurve from "./index";
 import usePriceCurveChartStore from "./store";
@@ -23,6 +25,8 @@ interface PriceCurveWrapperProps {
   showPriceWarning?: boolean;
   noPadding?: boolean;
   showAxisLabels?: boolean;
+  isExpanded?: boolean;
+  onToggleExpand?: () => void;
 }
 
 const PriceCurveWrapper = ({
@@ -30,6 +34,8 @@ const PriceCurveWrapper = ({
   showPriceWarning = false,
   noPadding = false,
   showAxisLabels = false,
+  isExpanded,
+  onToggleExpand,
 }: PriceCurveWrapperProps) => {
   const { parentRef, width } = useParentSize({ debounceTime: 150 });
   const contestConfig = useContestConfigStore(useShallow(state => state.contestConfig));
@@ -57,14 +63,15 @@ const PriceCurveWrapper = ({
   });
 
   const startPrice = Number(costToVoteRaw ?? 0);
-  const startTime = voteTimings ? new Date(Number(voteTimings.voteStart) * 1000 + 1000) : new Date();
-  const endTime = voteTimings ? new Date(Number(voteTimings.contestDeadline) * 1000 + 1000) : new Date();
-  const totalVotingMinutes = voteTimings
-    ? Math.floor((Number(voteTimings.contestDeadline) - Number(voteTimings.voteStart)) / 60)
-    : 0;
+  const voteStartSec = voteTimings ? Number(voteTimings.voteStart) : 0;
+  const contestDeadlineSec = voteTimings ? Number(voteTimings.contestDeadline) : 0;
+  const startTimeMs = voteStartSec * 1000 + 1000;
+  const endTimeMs = contestDeadlineSec * 1000 + 1000;
+  const totalVotingMinutes = voteTimings ? Math.floor((contestDeadlineSec - voteStartSec) / 60) : 0;
 
   const displayCurrency = useCurrencyStore(state => state.displayCurrency);
   const { data: nativeRates } = useNativeRates();
+  const endTime = useMemo(() => new Date(endTimeMs), [endTimeMs]);
   const votingTimeLeft = useCountdownTimer(endTime);
 
   const {
@@ -87,6 +94,13 @@ const PriceCurveWrapper = ({
     chainId: contestConfig.chainId,
   });
 
+  const { priceCurveType } = usePriceCurveType({
+    address: contestConfig.address,
+    abi: contestConfig.abi,
+    chainId: contestConfig.chainId,
+    version: contestConfig.version,
+  });
+
   const {
     pricePoints,
     isLoading: isPointsLoading,
@@ -94,9 +108,10 @@ const PriceCurveWrapper = ({
   } = usePriceCurvePoints({
     startPrice,
     multiple: Number(priceCurveMultiple),
-    startTime,
-    endTime,
+    startTimeMs,
+    endTimeMs,
     updateIntervalSeconds: priceCurveUpdateInterval,
+    priceCurveType,
     enabled:
       !isTimingsLoading &&
       !isTimingsError &&
@@ -120,13 +135,15 @@ const PriceCurveWrapper = ({
     chainId: contestConfig.chainId,
     costToVote: BigInt(startPrice),
     totalVotingMinutes,
+    priceCurveType,
+    votingTimeLeft,
   });
 
   const secondsUntilNextUpdate = priceCurveUpdateInterval > 0 ? votingTimeLeft % priceCurveUpdateInterval : 0;
 
   const now = Date.now();
   const contestPhase: "before" | "during" | "after" =
-    now < startTime.getTime() ? "before" : votingTimeLeft > 0 ? "during" : "after";
+    now < startTimeMs ? "before" : votingTimeLeft > 0 ? "during" : "after";
 
   const endPrice = chartData.length > 0 ? chartData[chartData.length - 1].pv : 0;
   const startPriceValue = chartData.length > 0 ? chartData[0].pv : 0;
@@ -180,8 +197,11 @@ const PriceCurveWrapper = ({
         startPriceValue={startPriceValue}
         endPriceValue={endPrice}
         updateIntervalSeconds={priceCurveUpdateInterval}
+        priceCurveType={priceCurveType}
         noPadding={noPadding}
         showAxisLabels={showAxisLabels}
+        isExpanded={isExpanded}
+        onToggleExpand={onToggleExpand}
       />
     </div>
   );
