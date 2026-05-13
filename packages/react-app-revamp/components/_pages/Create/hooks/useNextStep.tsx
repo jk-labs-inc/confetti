@@ -3,6 +3,7 @@ import { useCallback } from "react";
 import { useWallet } from "@hooks/useWallet";
 import { MULTIPLIER_RANGES } from "@hooks/useDeployContest/slices/contestMonetizationSlice";
 import { StepTitle, getStepNumber } from "../types";
+import { useContestSteps } from "./useContestSteps";
 
 const stepValidations: Record<StepTitle, (state: DeployContestStore, isConnected: boolean) => boolean> = {
   [StepTitle.Entries]: state => {
@@ -65,21 +66,39 @@ const stepValidations: Record<StepTitle, (state: DeployContestStore, isConnected
 
 export const useNextStep = () => {
   const { isConnected } = useWallet();
-  const { step: currentStep, setStep } = useDeployContestStore(state => state);
+  const { steps } = useContestSteps();
+  const { step: currentStep, setStep, wantsToReturnToConfirm, setWantsToReturnToConfirm } = useDeployContestStore(
+    state => state,
+  );
 
   const onNextStep = useCallback(
     (targetStep?: number, availableSteps?: StepTitle[]) => {
       // if we're going backwards, allow without validation
       if (targetStep !== undefined && targetStep < currentStep) {
+        setWantsToReturnToConfirm(false);
         setStep(targetStep);
         return;
       }
 
       const state = useDeployContestStore.getState();
+      const stepTitles = availableSteps ?? steps.map(s => s.title);
+
+      // user edited a field from confirm and clicked "next" — validate just the
+      // current step and jump straight back to confirm
+      if (wantsToReturnToConfirm && targetStep === undefined) {
+        const stepToValidate = stepTitles[currentStep];
+        const validationFn = stepToValidate ? stepValidations[stepToValidate] : undefined;
+        if (validationFn && !validationFn(state, isConnected)) {
+          return;
+        }
+        setWantsToReturnToConfirm(false);
+        setStep(stepTitles.length - 1);
+        return;
+      }
 
       // only validate steps that are in our current flow
       for (let i = currentStep; i < (targetStep ?? currentStep + 1); i++) {
-        const stepToValidate = availableSteps?.[i];
+        const stepToValidate = stepTitles[i];
         if (!stepToValidate) continue;
 
         const validationFn = stepValidations[stepToValidate];
@@ -92,9 +111,12 @@ export const useNextStep = () => {
         }
       }
 
+      if (targetStep !== undefined) {
+        setWantsToReturnToConfirm(false);
+      }
       setStep(targetStep ?? currentStep + 1);
     },
-    [currentStep, setStep, isConnected],
+    [currentStep, setStep, isConnected, wantsToReturnToConfirm, setWantsToReturnToConfirm, steps],
   );
 
   return onNextStep;

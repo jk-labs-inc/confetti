@@ -16,6 +16,7 @@ export interface DeploymentSliceState {
   isSuccess: boolean;
   errors: ContestDeployError[];
   step: number;
+  wantsToReturnToConfirm: boolean;
 }
 
 export interface DeploymentSliceActions {
@@ -24,6 +25,7 @@ export interface DeploymentSliceActions {
   setIsSuccess: (isSuccess: boolean) => void;
   setError: (step: StepTitle | number, error: ContestDeployError) => void;
   setStep: (step: number) => void;
+  setWantsToReturnToConfirm: (wantsToReturnToConfirm: boolean) => void;
 }
 
 export type DeploymentSlice = DeploymentSliceState & DeploymentSliceActions;
@@ -40,6 +42,7 @@ export const createDeploymentSlice = (set: any, get: any): DeploymentSlice => {
     isSuccess: false,
     errors: [],
     step: 0,
+    wantsToReturnToConfirm: false,
   };
 
   return {
@@ -59,5 +62,6 @@ export const createDeploymentSlice = (set: any, get: any): DeploymentSlice => {
       set({ errors: errorsCopy });
     },
     setStep: (step: number) => set({ step }),
+    setWantsToReturnToConfirm: (wantsToReturnToConfirm: boolean) => set({ wantsToReturnToConfirm }),
   };
 };
