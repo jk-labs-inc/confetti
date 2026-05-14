@@ -14,7 +14,7 @@ const nextConfig = {
     // ignore optional wagmi connectors and para providers to suppress build warnings
     config.plugins.push(
       new webpack.IgnorePlugin({
-        resourceRegExp: /^(@metamask\/(sdk|connect-evm)|@safe-global\/safe-apps-(sdk|provider)|@gemini-wallet\/core|@base-org\/account|@getpara\/aa-(alchemy|biconomy|cdp|gelato|pimlico|porto|rhinestone|safe|thirdweb|zerodev))$/,
+        resourceRegExp: /^(accounts|@metamask\/(sdk|connect-evm)|@safe-global\/safe-apps-(sdk|provider)|@gemini-wallet\/core|@base-org\/account|@getpara\/aa-(alchemy|biconomy|cdp|gelato|pimlico|porto|rhinestone|safe|thirdweb|zerodev))$/,
       }),
     );
 
