@@ -10,6 +10,7 @@ import { useEnsAvatar, useEnsName, useBalance } from "wagmi";
 import AccountButton from "./components/AccountButton";
 import ProfileSection from "./components/ProfileSection";
 import NavigationLinks from "./components/NavigationLinks";
+import AdvancedOptions from "./components/AdvancedOptions";
 import DisconnectButton from "./components/DisconnectButton";
 
 interface AccountDropdownProps {
@@ -21,6 +22,7 @@ interface AccountDropdownProps {
 const AccountDropdown: FC<AccountDropdownProps> = ({ address, displayName, onDisconnect }) => {
   const [isAddFundsOpen, setIsAddFundsOpen] = useState(false);
   const [isSendFundsOpen, setIsSendFundsOpen] = useState(false);
+  const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
   const { chainName, asset } = useAddFundsChain();
   const { chain: currentChain, changeNetworks } = useWallet();
   const { data: ensName } = useEnsName({ address: address as `0x${string}`, chainId: mainnet.id });
@@ -45,10 +47,16 @@ const AccountDropdown: FC<AccountDropdownProps> = ({ address, displayName, onDis
               displayName={displayName}
               balance={balance}
               currentChain={currentChain}
-              availableChains={chains}
-              onChainSwitch={changeNetworks}
               onAddFundsClick={() => setIsAddFundsOpen(true)}
               onSendFundsClick={() => setIsSendFundsOpen(true)}
+              onAdvancedClick={() => setIsAdvancedOpen(prev => !prev)}
+              isAdvancedOpen={isAdvancedOpen}
+            />
+            <AdvancedOptions
+              isOpen={isAdvancedOpen}
+              currentChain={currentChain}
+              availableChains={chains}
+              onChainSwitch={changeNetworks}
             />
             <NavigationLinks address={address} />
             <DisconnectButton onDisconnect={onDisconnect} />
