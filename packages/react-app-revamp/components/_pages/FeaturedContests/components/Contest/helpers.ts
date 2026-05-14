@@ -1,3 +1,4 @@
+import { getTimeZoneAbbreviation } from "@helpers/dates";
 import { ProcessedContest } from "lib/contests/types";
 import moment from "moment";
 import { ContestStateType, ContestTimingData, ContestTitleStateType, TimeWindowResult } from "./types";
@@ -136,12 +137,14 @@ export const getContestTiming = (contest: ProcessedContest): ContestTimingData |
 
   // Use comma separator for same-day, space for multi-day spans
   const separator = timeWindow.spansMultipleDays ? " " : ", ";
+  const zoneAbbr = getTimeZoneAbbreviation(voteStart);
 
   if (isThisWeek) {
     const dayName = voteStart.format("ddd").toLowerCase();
     return {
       format: "weekday",
       display: `${dayName}${separator}${timeWindow.display}`,
+      timeZoneAbbr: zoneAbbr,
     };
   }
 
@@ -150,6 +153,7 @@ export const getContestTiming = (contest: ProcessedContest): ContestTimingData |
   return {
     format: "date",
     display: `${monthDay}${separator}${timeWindow.display}`,
+    timeZoneAbbr: zoneAbbr,
   };
 };
 

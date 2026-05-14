@@ -1,3 +1,4 @@
+import { getTimeZoneAbbreviation } from "@helpers/dates";
 import { useContestStore } from "@hooks/useContest/store";
 import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
 import { useCountdownTimer } from "@hooks/useTimer";
@@ -105,14 +106,29 @@ const ContestTiming: FC<ContestTimingProps> = ({ compact }) => {
     const isThisWeek = voteStart.isSame(now, "week");
     const timeWindow = formatTimeWindow(voteStart, end, isThisWeek);
     const separator = timeWindow.spansMultipleDays ? " " : ", ";
+    const zoneAbbr = getTimeZoneAbbreviation(voteStart);
 
     if (isThisWeek) {
       const dayName = voteStart.format("ddd").toLowerCase();
-      return { content: `${dayName}${separator}${timeWindow.display}`, dimmed: false };
+      return {
+        content: (
+          <>
+            {`${dayName}${separator}${timeWindow.display}`} <span className="uppercase">{zoneAbbr}</span>
+          </>
+        ),
+        dimmed: false,
+      };
     }
 
     const monthDay = voteStart.format("MMM D").toLowerCase();
-    return { content: `${monthDay}${separator}${timeWindow.display}`, dimmed: false };
+    return {
+      content: (
+        <>
+          {`${monthDay}${separator}${timeWindow.display}`} <span className="uppercase">{zoneAbbr}</span>
+        </>
+      ),
+      dimmed: false,
+    };
   }, [isCanceled, votesOpen, votesClose, votingTimeLeft, useCompact]);
 
   return (

@@ -1,4 +1,5 @@
 import { chains } from "@config/wagmi";
+import { getTimeZoneAbbreviation } from "@helpers/dates";
 import { extractPathSegments } from "@helpers/extractPath";
 import { useContestStore } from "@hooks/useContest/store";
 import moment from "moment";
@@ -20,9 +21,23 @@ const ContestParameters = () => {
   const { chainName } = extractPathSegments(asPath ?? "");
   const blockExplorerUrl = chains.find(chain => chain.name.toLowerCase() === chainName.toLowerCase())?.blockExplorers
     ?.default.url;
-  const formattedSubmissionsOpen = moment(submissionsOpen).format("MMMM Do, h:mm a");
-  const formattedVotesOpen = moment(votesOpen).format("MMMM Do, h:mm a");
-  const formattedVotesClosing = moment(votesClose).format("MMMM Do, h:mm a");
+  const formattedSubmissionsOpen = (
+    <>
+      {moment(submissionsOpen).format("MMMM Do, h:mm a")}{" "}
+      <span className="uppercase">{getTimeZoneAbbreviation(submissionsOpen)}</span>
+    </>
+  );
+  const formattedVotesOpen = (
+    <>
+      {moment(votesOpen).format("MMMM Do, h:mm a")} <span className="uppercase">{getTimeZoneAbbreviation(votesOpen)}</span>
+    </>
+  );
+  const formattedVotesClosing = (
+    <>
+      {moment(votesClose).format("MMMM Do, h:mm a")}{" "}
+      <span className="uppercase">{getTimeZoneAbbreviation(votesClose)}</span>
+    </>
+  );
 
   return (
     <div className="flex flex-col gap-12 animate-fade-in">

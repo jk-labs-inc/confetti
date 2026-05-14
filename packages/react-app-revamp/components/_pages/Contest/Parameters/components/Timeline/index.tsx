@@ -1,10 +1,10 @@
 import ContestTimeline from "@components/_pages/Contest/components/Timeline";
-import { FC } from "react";
+import { FC, ReactNode } from "react";
 
 interface ContestParametersTimelineProps {
-  submissionsOpen: string;
-  votesOpen: string;
-  votesClose: string;
+  submissionsOpen: ReactNode;
+  votesOpen: ReactNode;
+  votesClose: ReactNode;
 }
 
 const ContestParametersTimeline: FC<ContestParametersTimelineProps> = ({ submissionsOpen, votesOpen, votesClose }) => {
