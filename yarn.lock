@@ -6108,10 +6108,10 @@
   resolved "https://registry.yarnpkg.com/@wagmi/connectors/-/connectors-8.0.5.tgz#9997a6130ffe3bbb13c21d1d353e19581f13a388"
   integrity sha512-Xxysn4jalQS5W4b687LX0znp2eswonS/1fvRRVAlPD+LG15YRs8nHaC7xAjI9lVMWAx2TePw9Car6pQ5nzYVsA==
 
-"@wagmi/core@3.4.11":
-  version "3.4.11"
-  resolved "https://registry.yarnpkg.com/@wagmi/core/-/core-3.4.11.tgz#3e40b2cbb9cab3324c8d99a5ab19c0f7cd5010e0"
-  integrity sha512-dmrZr0fKxCmG3pyWO9//oYtE5cgWRrgaQjC0+jX6IiuufE4MSW7gSL2MKdK8bvT3jg4Ra8cdRIJpveHJSHKdNw==
+"@wagmi/core@3.4.12":
+  version "3.4.12"
+  resolved "https://registry.yarnpkg.com/@wagmi/core/-/core-3.4.12.tgz#84fec8dad442b97076ea43d9272932aeff264dbd"
+  integrity sha512-q/NYoq+Up6JNfWNE6G0iXj9cHBSYgOyC8toqJLBWTeUnY1Ha9Q4OyFUHnXfvGTudbC0Gxhh7uUkqW3/LGdsQfg==
   dependencies:
     eventemitter3 "5.0.1"
     mipd "0.0.7"
