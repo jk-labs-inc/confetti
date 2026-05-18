@@ -35,8 +35,7 @@ const CreateContestConfirm = () => {
   const [isTestnetDeploymentModalOpen, setIsTestnetDeploymentModalOpen] = useState(false);
 
   const handleChangeChain = useCallback(async () => {
-    // Switch to the first non-testnet, non-mainnet chain (polygon is default)
-    const defaultChain = chains.find(c => !c.testnet && c.id !== 1) ?? chains[0];
+    const defaultChain = chains[0];
     try {
       await switchChain(getWagmiConfig(), { chainId: defaultChain.id });
     } catch (error) {

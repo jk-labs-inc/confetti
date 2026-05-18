@@ -12,6 +12,7 @@ import AddFundsModal from "@components/AddFunds/components/Modal";
 import SendFunds from "@components/SendFunds";
 import Drawer from "../Drawer";
 import ProfileSection from "@components/Connect/components/AccountDropdown/components/ProfileSection";
+import AdvancedOptions from "@components/Connect/components/AccountDropdown/components/AdvancedOptions";
 import { useAddFundsChain } from "@hooks/useAddFundsChain";
 import { useWallet } from "@hooks/useWallet";
 import { chains } from "@config/wagmi";
@@ -47,6 +48,7 @@ const navLinks = [
 export const MobileProfileDrawer: React.FC<MobileProfileDrawerProps> = ({ isOpen, onClose, address, onDisconnect }) => {
   const [isAddFundsOpen, setIsAddFundsOpen] = useState(false);
   const [isSendFundsOpen, setIsSendFundsOpen] = useState(false);
+  const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
   const { chainName, asset } = useAddFundsChain();
   const { chain: currentChain, changeNetworks } = useWallet();
   const { data: ensName } = useEnsName({ address: address as `0x${string}`, chainId: mainnet.id });
@@ -66,8 +68,6 @@ export const MobileProfileDrawer: React.FC<MobileProfileDrawerProps> = ({ isOpen
             displayName={displayName}
             balance={balance}
             currentChain={currentChain}
-            availableChains={chains}
-            onChainSwitch={changeNetworks}
             onAddFundsClick={() => {
               onClose();
               setIsAddFundsOpen(true);
@@ -76,6 +76,14 @@ export const MobileProfileDrawer: React.FC<MobileProfileDrawerProps> = ({ isOpen
               onClose();
               setIsSendFundsOpen(true);
             }}
+            onAdvancedClick={() => setIsAdvancedOpen(prev => !prev)}
+            isAdvancedOpen={isAdvancedOpen}
+          />
+          <AdvancedOptions
+            isOpen={isAdvancedOpen}
+            currentChain={currentChain}
+            availableChains={chains}
+            onChainSwitch={changeNetworks}
           />
           <div className="flex flex-col p-2">
             {navLinks.map(link => (

@@ -35,7 +35,10 @@ const ContestTiming: FC<ContestTimingProps> = ({ contest }) => {
   return (
     <div className="flex items-baseline gap-1">
       ⏱️
-      <p className={`text-xs ${textColorClass}`}>{timing.display}</p>
+      <p className={`text-xs ${textColorClass}`}>
+        {timing.display}
+        {timing.timeZoneAbbr && <span className="uppercase"> {timing.timeZoneAbbr}</span>}
+      </p>
     </div>
   );
 };
