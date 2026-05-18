@@ -1,3 +1,4 @@
+import { getTimeZoneAbbreviation } from "@helpers/dates";
 import { PriceCurveType } from "@hooks/useDeployContest/types";
 import moment from "moment";
 
@@ -6,11 +7,7 @@ const SUMMARY_TEMPLATE =
 
 const formatDate = (date: Date) =>
   date
-    ? moment(date).format("h:mmA") +
-      " " +
-      moment.tz(moment.tz.guess()).zoneAbbr() +
-      " on " +
-      moment(date).format("MMMM D")
+    ? moment(date).format("h:mmA") + " " + getTimeZoneAbbreviation(date) + " on " + moment(date).format("MMMM D")
     : "";
 
 const getPriceCurveLabel = (priceCurveType: PriceCurveType): string => {
