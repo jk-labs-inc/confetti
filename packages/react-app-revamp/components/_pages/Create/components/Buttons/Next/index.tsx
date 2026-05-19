@@ -1,5 +1,6 @@
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import { usePreviousStep } from "@components/_pages/Create/hooks/usePreviousStep";
+import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { FC, MouseEventHandler } from "react";
 import { useMediaQuery } from "react-responsive";
 import MobileBottomButton from "../Mobile";
@@ -14,6 +15,8 @@ interface CreateNextButtonProps {
 const CreateNextButton: FC<CreateNextButtonProps> = ({ step, onClick, isDisabled, id }) => {
   const onPreviousStep = usePreviousStep();
   const isMobileOrTablet = useMediaQuery({ maxWidth: 1024 });
+  const wantsToReturnToConfirm = useDeployContestStore(state => state.wantsToReturnToConfirm);
+  const buttonText = wantsToReturnToConfirm ? "confirm" : "next";
 
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     if (onClick) {
@@ -44,7 +47,7 @@ const CreateNextButton: FC<CreateNextButtonProps> = ({ step, onClick, isDisabled
             onClick={handleClick}
             colorClass="text-[20px] bg-gradient-purple rounded-[15px] font-bold text-true-black hover:scale-105 transition-transform duration-200 ease-in-out"
           >
-            next
+            {buttonText}
           </ButtonV3>
         </div>
       </MobileBottomButton>
@@ -60,7 +63,7 @@ const CreateNextButton: FC<CreateNextButtonProps> = ({ step, onClick, isDisabled
           onClick={handleClick}
           isDisabled={isDisabled}
         >
-          next
+          {buttonText}
         </ButtonV3>
         {step !== 1 && (
           <button

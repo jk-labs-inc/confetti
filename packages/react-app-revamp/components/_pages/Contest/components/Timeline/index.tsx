@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import moment from "moment";
+import { getTimeZoneAbbreviation } from "@helpers/dates";
 import { useContestStore } from "@hooks/useContest/store";
 
 interface Stage {
@@ -46,7 +47,10 @@ const ContestTimeline = () => {
     <div className="hidden lg:grid grid-cols-3 lg:gap-0">
       {stages.map((stage, index) => (
         <div key={index} className={`opacity-${currentStageIndex === index ? "100" : "50"} text-neutral-11`}>
-          <div className="text-[16px] font-bold mb-1">{moment(stage.date).format("MMMM D, h:mm a")}</div>
+          <div className="text-[16px] font-bold mb-1">
+            {moment(stage.date).format("MMMM D, h:mm a")}{" "}
+            <span className="uppercase">{getTimeZoneAbbreviation(stage.date)}</span>
+          </div>
           <div className="h-px bg-neutral-11"></div>
           <div className="text-[16px] font-bold mt-1">
             {index === currentStageIndex

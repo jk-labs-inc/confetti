@@ -12,6 +12,7 @@ export type ContestTimingFormat = "countdown" | "weekday" | "date" | "ended" | "
 export interface ContestTimingData {
   format: ContestTimingFormat;
   display: string;
+  timeZoneAbbr?: string;
 }
 
 export interface RewardDisplayData {

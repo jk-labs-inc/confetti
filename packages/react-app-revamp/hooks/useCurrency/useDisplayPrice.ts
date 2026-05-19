@@ -1,4 +1,5 @@
-import { formatBalance, formatUsd } from "@helpers/formatBalance";
+import { formatBalance, formatUsd, formatUsdCeil } from "@helpers/formatBalance";
+import BigNumber from "bignumber.js";
 import { DisplayCurrency, useCurrencyStore } from "./store";
 import useErc20Rates from "./useErc20Rates";
 import useNativeRates from "./useNativeRates";
@@ -9,6 +10,10 @@ export type DisplayPriceResult = {
   secondaryValue: string | null;
   secondarySymbol: string | null;
   isLoading: boolean;
+};
+
+export type DisplayPriceOptions = {
+  ceilingPrecision?: boolean;
 };
 
 /**
@@ -42,15 +47,18 @@ export const convertToDisplayPrice = (
   nativeRates: Record<string, number>,
   erc20Rates: Record<string, number> = {},
   tokenAddress?: string,
+  options: DisplayPriceOptions = {},
 ): DisplayPriceResult => {
   const rate = resolveRate(nativeCurrencySymbol, nativeRates, erc20Rates, tokenAddress);
   const numericValue = parseFloat(nativeValue);
   const hasValidRate = rate !== undefined && !isNaN(numericValue);
-  const formattedNative = formatBalance(nativeValue);
+  const nativeRounding = options.ceilingPrecision ? BigNumber.ROUND_CEIL : BigNumber.ROUND_HALF_UP;
+  const formatUsdValue = options.ceilingPrecision ? formatUsdCeil : formatUsd;
+  const formattedNative = formatBalance(nativeValue, nativeRounding);
   const tickerSymbol = "$" + nativeCurrencySymbol.toUpperCase();
 
   if (displayCurrency === "native") {
-    const secondaryUsd = hasValidRate ? formatUsd(numericValue * rate) : null;
+    const secondaryUsd = hasValidRate ? formatUsdValue(numericValue * rate) : null;
 
     return {
       displayValue: formattedNative,
@@ -72,7 +80,7 @@ export const convertToDisplayPrice = (
   }
 
   const usdValue = numericValue * rate;
-  const formattedUsd = formatUsd(usdValue);
+  const formattedUsd = formatUsdValue(usdValue);
 
   return {
     displayValue: formattedUsd,
@@ -95,6 +103,7 @@ const useDisplayPrice = (
   nativeCurrencySymbol: string,
   tokenAddress?: string,
   chainName?: string,
+  options: DisplayPriceOptions = {},
 ): DisplayPriceResult => {
   const displayCurrency = useCurrencyStore(state => state.displayCurrency);
   const { data: nativeRates, isLoading: isNativeRatesLoading } = useNativeRates();
@@ -103,8 +112,7 @@ const useDisplayPrice = (
     chainName ?? "",
   );
 
-  const isLoading =
-    displayCurrency === "usd" && (tokenAddress ? isErc20RatesLoading : isNativeRatesLoading);
+  const isLoading = displayCurrency === "usd" && (tokenAddress ? isErc20RatesLoading : isNativeRatesLoading);
 
   const result = convertToDisplayPrice(
     nativeValue,
@@ -113,6 +121,7 @@ const useDisplayPrice = (
     nativeRates ?? {},
     erc20Rates ?? {},
     tokenAddress,
+    options,
   );
 
   return { ...result, isLoading };

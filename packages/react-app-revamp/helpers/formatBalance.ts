@@ -20,6 +20,11 @@ function formatNumberAbbreviated(num: number): string {
   return num.toString();
 }
 
+function ceilAtDecimals(value: number, decimals: number): number {
+  const multiplier = Math.pow(10, decimals);
+  return Math.ceil(value * multiplier) / multiplier;
+}
+
 /**
  * Converts a number to a fixed-point decimal string, never using scientific notation.
  * e.g. 5.038e-8 → "0.00000005038..." instead of "5.038e-8"
@@ -29,7 +34,10 @@ export const toFixedString = (num: number): string => {
   return new BigNumber(num).toFixed();
 };
 
-export function formatBalance(balance: string): string {
+export function formatBalance(
+  balance: string,
+  rounding: BigNumber.RoundingMode = BigNumber.ROUND_HALF_UP,
+): string {
   const num = new BigNumber(balance);
 
   // handle zero
@@ -40,18 +48,18 @@ export function formatBalance(balance: string): string {
   // handle small numbers (less than 0.001)
   if (num.abs().isLessThan(0.001)) {
     // For small numbers, use 6 decimal places
-    return num.decimalPlaces(6, BigNumber.ROUND_HALF_UP).toString();
+    return num.decimalPlaces(6, rounding).toString();
   }
 
   // handle numbers >= 0.001
-  const truncated = num.decimalPlaces(5, BigNumber.ROUND_HALF_UP);
+  const rounded = num.decimalPlaces(5, rounding);
 
   // use abbreviated format for numbers >= 1000
-  if (truncated.abs().isGreaterThanOrEqualTo(MIN_VALUE_FOR_ABBREVIATION)) {
-    return formatNumberAbbreviated(truncated.toNumber());
+  if (rounded.abs().isGreaterThanOrEqualTo(MIN_VALUE_FOR_ABBREVIATION)) {
+    return formatNumberAbbreviated(rounded.toNumber());
   }
 
-  return truncated.toString();
+  return rounded.toString();
 }
 
 /**
@@ -87,6 +95,43 @@ export function formatUsd(value: number): string {
   const decimalPlaces = Math.max(2, magnitude + 2);
 
   return value.toLocaleString("en-US", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: decimalPlaces,
+  });
+}
+
+/**
+ * Like `formatUsd`, but rounds UP at the chosen decimal precision instead
+ * of half-up. Use for the per-vote price (header + "minimum to buy a
+ * vote" label) so that a user who types the displayed value is
+ * guaranteed to satisfy `floor(input / actualCost) >= 1`. With half-up
+ * rounding, an actual cost of $0.025001 would display as `$0.025`, and
+ * typing `0.025` would `floor` to 0 votes; with ceiling, the same value
+ * displays as `$0.026`, which always satisfies the contract.
+ */
+export function formatUsdCeil(value: number): string {
+  if (value === 0) return "0";
+
+  if (value >= MIN_VALUE_FOR_ABBREVIATION) {
+    return formatNumberAbbreviated(value);
+  }
+
+  if (value >= 100) {
+    return Math.ceil(value).toLocaleString("en-US");
+  }
+
+  if (value >= 1) {
+    return ceilAtDecimals(value, 2).toLocaleString("en-US", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+  }
+
+  // sub-dollar: ceil at the same 2-significant-digit precision `formatUsd` uses
+  const magnitude = Math.floor(-Math.log10(Math.abs(value)));
+  const decimalPlaces = Math.max(2, magnitude + 2);
+
+  return ceilAtDecimals(value, decimalPlaces).toLocaleString("en-US", {
     minimumFractionDigits: 2,
     maximumFractionDigits: decimalPlaces,
   });
