@@ -49,7 +49,13 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
       maxBalance,
       isConnected,
     });
-  const { displayValue: pricePerVoteDisplay, displaySymbol: pricePerVoteSymbol } = useDisplayPrice(costToVote, symbol);
+  const { displayValue: pricePerVoteDisplay, displaySymbol: pricePerVoteSymbol } = useDisplayPrice(
+    costToVote,
+    symbol,
+    undefined,
+    undefined,
+    { ceilingPrecision: true },
+  );
   const formattedPricePerVote =
     pricePerVoteSymbol === "$" ? `$${pricePerVoteDisplay}` : `${pricePerVoteDisplay} ${pricePerVoteSymbol}`;
   const { inputValue, setSliderValue, setInputValue } = useVotingStore(

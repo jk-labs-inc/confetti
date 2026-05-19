@@ -1,12 +1,12 @@
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import { useCurrencyStore } from "@hooks/useCurrency/store";
-import { convertToDisplayPrice } from "@hooks/useCurrency/useDisplayPrice";
+import { convertToDisplayPrice, DisplayPriceOptions } from "@hooks/useCurrency/useDisplayPrice";
 import useNativeRates from "@hooks/useCurrency/useNativeRates";
 import useCurrentPricePercentageIncrease from "@hooks/useCurrentPricePercentageIncrease";
 import usePriceCurveData from "@hooks/usePriceCurveData";
 import { useCountdownTimer } from "@hooks/useTimer";
 import { useParentSize } from "@visx/responsive";
-import { useCallback, useEffect, useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { useShallow } from "zustand/shallow";
 import PriceCurve from "./index";
 import usePriceCurveChartStore from "./store";
@@ -71,18 +71,18 @@ const PriceCurveWrapper = ({
   const endPrice = chartData.length > 0 ? chartData[chartData.length - 1].pv : 0;
   const startPriceValue = chartData.length > 0 ? chartData[0].pv : 0;
 
-  const formatPrice = useCallback(
-    (nativePrice: number) => {
-      const { displayValue, displaySymbol } = convertToDisplayPrice(
-        nativePrice.toString(),
-        contestConfig.chainNativeCurrencySymbol,
-        displayCurrency,
-        nativeRates ?? {},
-      );
-      return displaySymbol === "$" ? `$${displayValue}` : `${displayValue} ${displaySymbol}`;
-    },
-    [contestConfig.chainNativeCurrencySymbol, displayCurrency, nativeRates],
-  );
+  const formatPrice = (nativePrice: number, options?: DisplayPriceOptions): string => {
+    const { displayValue, displaySymbol } = convertToDisplayPrice(
+      nativePrice.toString(),
+      contestConfig.chainNativeCurrencySymbol,
+      displayCurrency,
+      nativeRates ?? {},
+      {},
+      undefined,
+      options,
+    );
+    return displaySymbol === "$" ? `$${displayValue}` : `${displayValue} ${displaySymbol}`;
+  };
 
   const setShowPriceUpdateWarning = usePriceCurveChartStore(useShallow(state => state.setShowPriceUpdateWarning));
 
@@ -108,6 +108,7 @@ const PriceCurveWrapper = ({
         width={width}
         height={height}
         formatPrice={formatPrice}
+        formatHeaderPrice={nativePrice => formatPrice(nativePrice, { ceilingPrecision: true })}
         percentageIncrease={currentPricePercentageData?.percentageIncrease ?? null}
         isBelowThreshold={currentPricePercentageData?.isBelowThreshold ?? true}
         secondsUntilNextUpdate={secondsUntilNextUpdate}
