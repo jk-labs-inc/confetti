@@ -75,6 +75,7 @@ const CreateContestConfirm = () => {
   const onNavigateToStep = (stepIndex: number) => {
     const stepTitle = steps[stepIndex].title;
     const actualStepIndex = steps.findIndex(step => step.title === stepTitle);
+    state.setWantsToReturnToConfirm(true);
     state.setStep(actualStepIndex !== -1 ? actualStepIndex : stepIndex);
   };
 

@@ -65,17 +65,31 @@ const stepValidations: Record<StepTitle, (state: DeployContestStore, isConnected
 
 export const useNextStep = () => {
   const { isConnected } = useWallet();
-  const { step: currentStep, setStep } = useDeployContestStore(state => state);
+  const { step: currentStep, setStep, wantsToReturnToConfirm, setWantsToReturnToConfirm } = useDeployContestStore(
+    state => state,
+  );
 
   const onNextStep = useCallback(
     (targetStep?: number, availableSteps?: StepTitle[]) => {
       // if we're going backwards, allow without validation
       if (targetStep !== undefined && targetStep < currentStep) {
+        setWantsToReturnToConfirm(false);
         setStep(targetStep);
         return;
       }
 
       const state = useDeployContestStore.getState();
+
+      if (wantsToReturnToConfirm && targetStep === undefined) {
+        const stepToValidate = availableSteps?.[currentStep];
+        const validationFn = stepToValidate ? stepValidations[stepToValidate] : undefined;
+        if (validationFn && !validationFn(state, isConnected)) {
+          return;
+        }
+        setWantsToReturnToConfirm(false);
+        setStep(getStepNumber(StepTitle.Confirm));
+        return;
+      }
 
       // only validate steps that are in our current flow
       for (let i = currentStep; i < (targetStep ?? currentStep + 1); i++) {
@@ -92,9 +106,10 @@ export const useNextStep = () => {
         }
       }
 
+      setWantsToReturnToConfirm(false);
       setStep(targetStep ?? currentStep + 1);
     },
-    [currentStep, setStep, isConnected],
+    [currentStep, setStep, isConnected, wantsToReturnToConfirm, setWantsToReturnToConfirm],
   );
 
   return onNextStep;
