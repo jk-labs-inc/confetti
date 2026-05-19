@@ -1,4 +1,5 @@
 import useContestConfigStore from "@hooks/useContestConfig/store";
+import usePriceCurveData from "@hooks/usePriceCurveData";
 import { useVoteBalance } from "@hooks/useVoteBalance";
 import { useVotesFromInput } from "@hooks/useVotesFromInput";
 import { useWallet } from "@hooks/useWallet";
@@ -52,6 +53,11 @@ const VotingWidget: FC<VotingWidgetProps> = ({
       isInvalid: state.isInvalid,
     })),
   );
+  // Use the chart-interpolated price (same value shown in the chart header) so that the
+  // input/threshold/execution stay in sync with what the user sees. Falls back to the
+  // contract-reported `costToVote` prop until the curve data is ready.
+  const { currentPriceNative } = usePriceCurveData();
+  const effectiveCostToVote = parseFloat(currentPriceNative) > 0 ? currentPriceNative : costToVote;
   const {
     balance,
     insufficientBalance,
@@ -59,15 +65,15 @@ const VotingWidget: FC<VotingWidgetProps> = ({
     isError: isBalanceError,
   } = useVoteBalance({
     chainId: contestConfig.chainId,
-    costToVote,
+    costToVote: effectiveCostToVote,
     inputValue,
   });
   const { handleVote } = useVoteExecution({
-    costToVote,
+    costToVote: effectiveCostToVote,
     isVotingClosed,
     onVote,
   });
-  const pushToFirstAmount = usePushToFirst({ costToVote });
+  const pushToFirstAmount = usePushToFirst({ costToVote: effectiveCostToVote });
 
   useEffect(() => {
     if (isMobile) return;
@@ -78,7 +84,7 @@ const VotingWidget: FC<VotingWidgetProps> = ({
   }, [isMobile]);
 
   const hasBalance = parseFloat(balance?.formatted || "0") > 0;
-  const totalVotes = useVotesFromInput({ inputValue, costToVote });
+  const totalVotes = useVotesFromInput({ inputValue, costToVote: effectiveCostToVote });
   const isZeroValue = !inputValue || parseFloat(inputValue) === 0;
   const isBelowMinimum = isConnected && !isZeroValue && totalVotes === 0;
   const voteDisabled = isBalanceLoading || isLoading || isInvalid || isZeroValue || isBelowMinimum;
@@ -97,7 +103,7 @@ const VotingWidget: FC<VotingWidgetProps> = ({
         <VoteAmountInput
             maxBalance={balance?.formatted || "0"}
             symbol={contestConfig.chainNativeCurrencySymbol}
-            costToVote={costToVote}
+            costToVote={effectiveCostToVote}
             isConnected={isConnected}
             isBelowMinimum={isBelowMinimum}
             pushToFirstAmount={pushToFirstAmount}

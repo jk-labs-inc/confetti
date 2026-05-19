@@ -1,6 +1,7 @@
 import { VotingWidgetStyle } from "@components/Voting";
 import { useVotingStore } from "@components/Voting/store";
 import { formatNumberWithCommas } from "@helpers/formatNumber";
+import useDisplayPrice from "@hooks/useCurrency/useDisplayPrice";
 import { useVotesFromInput } from "@hooks/useVotesFromInput";
 import { FC, RefObject } from "react";
 import { motion } from "motion/react";
@@ -48,6 +49,15 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
       maxBalance,
       isConnected,
     });
+  const { displayValue: pricePerVoteDisplay, displaySymbol: pricePerVoteSymbol } = useDisplayPrice(
+    costToVote,
+    symbol,
+    undefined,
+    undefined,
+    { ceilingPrecision: true },
+  );
+  const formattedPricePerVote =
+    pricePerVoteSymbol === "$" ? `$${pricePerVoteDisplay}` : `${pricePerVoteDisplay} ${pricePerVoteSymbol}`;
   const { inputValue, setSliderValue, setInputValue } = useVotingStore(
     useShallow(state => ({
       inputValue: state.inputValue,
@@ -97,82 +107,93 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
           : "text-[16px]";
 
   return (
-    <div
-      className={`flex w-full items-center px-6 py-2 text-[16px] ${styleConfig.background} font-bold ${textColor} border ${borderColor} rounded-[40px] transition-colors duration-300 cursor-text`}
-      onClick={() => inputRef.current?.focus()}
-    >
-      <div className="flex min-w-0 flex-1 items-baseline overflow-hidden">
-        {isLoading ? (
-          <Skeleton width={120} height={40} baseColor="#706f78" highlightColor="#FFE25B" borderRadius={8} />
-        ) : (
-          <>
-            {displaySymbol === "$" && (
-              <span className={`${mobileTextSize} md:text-[40px] text-neutral-9 whitespace-nowrap mr-1 transition-[font-size] duration-150`}>{displaySymbol}</span>
-            )}
-            <input
-              ref={inputRef}
-              type="text"
-              inputMode="decimal"
-              value={displayValue}
-              onChange={e => handleDisplayChange(e.target.value)}
-              onFocus={() => setIsFocused(true)}
-              onBlur={() => setIsFocused(false)}
-              placeholder={placeholder}
-              onKeyDown={onKeyDown}
-              className={`${mobileTextSize} md:text-[40px] bg-transparent outline-none placeholder-neutral-9 min-w-0 transition-[font-size] duration-150`}
-              style={{ width: `${charCount || 1}ch`, maxWidth: "70%" }}
-            />
-            {displaySymbol !== "$" && (
-              <span className="text-[16px] text-neutral-9 whitespace-nowrap ml-2 uppercase">{displaySymbol}</span>
-            )}
-          </>
-        )}
-      </div>
+    <div className="flex flex-col gap-2">
+      <div
+        className={`flex w-full items-center px-6 py-2 text-[16px] ${styleConfig.background} font-bold ${textColor} border ${borderColor} rounded-[40px] transition-colors duration-300 cursor-text`}
+        onClick={() => inputRef.current?.focus()}
+      >
+        <div className="flex min-w-0 flex-1 items-baseline overflow-hidden">
+          {isLoading ? (
+            <Skeleton width={120} height={40} baseColor="#706f78" highlightColor="#FFE25B" borderRadius={8} />
+          ) : (
+            <>
+              {displaySymbol === "$" && (
+                <span
+                  className={`${mobileTextSize} md:text-[40px] text-neutral-9 whitespace-nowrap mr-1 transition-[font-size] duration-150`}
+                >
+                  {displaySymbol}
+                </span>
+              )}
+              <input
+                ref={inputRef}
+                type="text"
+                inputMode="decimal"
+                value={displayValue}
+                onChange={e => handleDisplayChange(e.target.value)}
+                onFocus={() => setIsFocused(true)}
+                onBlur={() => setIsFocused(false)}
+                placeholder={placeholder}
+                onKeyDown={onKeyDown}
+                className={`${mobileTextSize} md:text-[40px] bg-transparent outline-none placeholder-neutral-9 min-w-0 transition-[font-size] duration-150`}
+                style={{ width: `${charCount || 1}ch`, maxWidth: "70%" }}
+              />
+              {displaySymbol !== "$" && (
+                <span className="text-[16px] text-neutral-9 whitespace-nowrap ml-2 uppercase">{displaySymbol}</span>
+              )}
+            </>
+          )}
+        </div>
 
-      <div className="flex flex-col items-end gap-3 ml-auto shrink-0">
-        {showPresets && (
-          <div className="flex items-center gap-1">
-            {pushToFirstAmount && (
-              <motion.button
-                onClick={e => {
-                  e.stopPropagation();
-                  handlePushToFirst();
-                }}
-                className="w-auto h-4 px-2 rounded-[40px] border border-[#84679B] text-positive-11 font-bold flex items-center justify-center hover:bg-positive-11/10 transition-colors duration-150"
-                style={{ willChange: "transform" }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <span className="text-[12px] whitespace-nowrap">push to 1st</span>
-              </motion.button>
-            )}
-            {[25, 50, 75, 100].map(percent => {
-              const isMax = percent === 100;
-              return (
+        <div className="flex flex-col items-end gap-3 ml-auto shrink-0">
+          {showPresets && (
+            <div className="flex items-center gap-1">
+              {pushToFirstAmount && (
                 <motion.button
-                  key={percent}
                   onClick={e => {
                     e.stopPropagation();
-                    handlePreset(percent);
+                    handlePushToFirst();
                   }}
-                  className={`w-8 h-4 px-2 rounded-[40px] border border-[#84679B] font-bold flex items-center justify-center hover:bg-positive-11/10 transition-colors duration-150 ${isMax ? "text-positive-11" : "text-neutral-9"}`}
+                  className="w-auto h-4 px-2 rounded-[40px] border border-[#84679B] text-positive-11 font-bold flex items-center justify-center hover:bg-positive-11/10 transition-colors duration-150"
                   style={{ willChange: "transform" }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  {isMax ? (
-                    <span className="text-[12px]">max</span>
-                  ) : (
-                    <>
-                      <span className="text-[12px]">{percent}</span>
-                      <span className="text-[10px]">%</span>
-                    </>
-                  )}
+                  <span className="text-[12px] whitespace-nowrap">push to 1st</span>
                 </motion.button>
-              );
-            })}
-          </div>
-        )}
-        <span className="text-[16px] text-neutral-9 font-bold">{votesText}</span>
+              )}
+              {[25, 50, 75, 100].map(percent => {
+                const isMax = percent === 100;
+                return (
+                  <motion.button
+                    key={percent}
+                    onClick={e => {
+                      e.stopPropagation();
+                      handlePreset(percent);
+                    }}
+                    className={`w-8 h-4 px-2 rounded-[40px] border border-[#84679B] font-bold flex items-center justify-center hover:bg-positive-11/10 transition-colors duration-150 ${isMax ? "text-positive-11" : "text-neutral-9"}`}
+                    style={{ willChange: "transform" }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    {isMax ? (
+                      <span className="text-[12px]">max</span>
+                    ) : (
+                      <>
+                        <span className="text-[12px]">{percent}</span>
+                        <span className="text-[10px]">%</span>
+                      </>
+                    )}
+                  </motion.button>
+                );
+              })}
+            </div>
+          )}
+          <span className="text-[16px] text-neutral-9 font-bold">{votesText}</span>
+        </div>
       </div>
+      {isBelowMinimum && (
+        <p className="text-[14px] font-bold text-negative-11 px-6">
+          must be at least {formattedPricePerVote} to buy a vote
+        </p>
+      )}
     </div>
   );
 };

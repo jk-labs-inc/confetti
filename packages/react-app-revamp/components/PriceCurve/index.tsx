@@ -31,6 +31,7 @@ interface PriceCurveProps {
   width: number;
   height: number;
   formatPrice: (nativePrice: number) => string;
+  formatHeaderPrice?: (nativePrice: number) => string;
   percentageIncrease: number | null;
   isBelowThreshold: boolean;
   secondsUntilNextUpdate: number;
@@ -54,6 +55,7 @@ const PriceCurve: FC<PriceCurveProps> = ({
   width,
   height,
   formatPrice,
+  formatHeaderPrice,
   percentageIncrease,
   isBelowThreshold,
   secondsUntilNextUpdate,
@@ -97,8 +99,9 @@ const PriceCurve: FC<PriceCurveProps> = ({
   const isHovering = hoveredPoint !== null;
 
   const isDuring = contestPhase === "during";
-  const priceRangeText = `${formatPrice(startPriceValue)}-${formatPrice(endPriceValue)}`;
-  const headerPrice = isDuring ? formatPrice(currentPrice) : priceRangeText;
+  const formatPriceForHeader = formatHeaderPrice ?? formatPrice;
+  const priceRangeText = `${formatPriceForHeader(startPriceValue)}-${formatPriceForHeader(endPriceValue)}`;
+  const headerPrice = isDuring ? formatPriceForHeader(currentPrice) : priceRangeText;
   const tenseVerb = contestPhase === "after" ? "increased" : "increases";
   const isLogarithmic = priceCurveType === PriceCurveType.Logarithmic;
   const intervalText = isDuring
