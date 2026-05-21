@@ -1,3 +1,4 @@
+import ContestImage from "@components/_pages/Contest/components/ContestImage";
 import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
 import { useContestStore } from "@hooks/useContest/store";
 import useProfileData from "@hooks/useProfileData";
@@ -20,6 +21,18 @@ interface ContestNameProps {
   contestPrompt?: string;
   contestImageUrl?: string;
 }
+
+const TITLE_MAX_FONT_PX = 30;
+const TITLE_MIN_FONT_PX = 18;
+const TITLE_SHORT_LEN = 10;
+const TITLE_LONG_LEN = 30;
+
+const computeDesktopTitleSize = (length: number) => {
+  if (length <= TITLE_SHORT_LEN) return TITLE_MAX_FONT_PX;
+  if (length >= TITLE_LONG_LEN) return TITLE_MIN_FONT_PX;
+  const ratio = (length - TITLE_SHORT_LEN) / (TITLE_LONG_LEN - TITLE_SHORT_LEN);
+  return Math.round(TITLE_MAX_FONT_PX - ratio * (TITLE_MAX_FONT_PX - TITLE_MIN_FONT_PX));
+};
 
 const ContestName: FC<ContestNameProps> = ({
   contestName,
@@ -58,24 +71,26 @@ const ContestName: FC<ContestNameProps> = ({
   }
 
   return (
-    <div className="flex items-baseline relative w-full">
+    <div className="flex items-center relative w-full">
       <div className="absolute left-0 -translate-x-full -ml-4 flex items-center gap-2 top-1/2 -translate-y-1/2">
+        <CancelContest />
         <EditContestName
           contestName={contestName}
           canEditTitle={canEditTitle}
           contestPrompt={contestPrompt}
           contestImageUrl={contestImageUrl}
         />
-        <CancelContest />
       </div>
-      <div className="flex items-baseline gap-4 w-full">
+      <div className="flex items-baseline gap-3 w-full min-w-0">
+        {contestImageUrl && <ContestImage imageUrl={contestImageUrl} />}
         <p
-          className={`text-neutral-11 font-sabo-filled ${contestName.length > 20 ? "text-[20px] md:text-[24px]" : "text-[20px] md:text-[32px]"} ${isContestCanceled ? "line-through" : ""}`}
+          className={`text-neutral-11 font-sabo-filled truncate ${isContestCanceled ? "line-through" : ""}`}
+          style={{ fontSize: `${computeDesktopTitleSize(contestName.length)}px` }}
         >
           {contestName}
         </p>
         {contestAuthorEthereumAddress && (
-          <p className="text-[16px] whitespace-nowrap">
+          <p className="text-[14px] whitespace-nowrap shrink-0">
             <span className="text-neutral-11">by </span>
             <CustomLink
               className="text-positive-11 no-underline"
@@ -86,7 +101,7 @@ const ContestName: FC<ContestNameProps> = ({
             </CustomLink>
           </p>
         )}
-        <div className="ml-auto flex items-center gap-3">
+        <div className="ml-auto flex items-baseline gap-3 shrink-0">
           <ContestShareButton contestName={contestName} contestAddress={contestAddress} chainName={chainName} />
           <ContestNotifyButton
             contestName={contestName}

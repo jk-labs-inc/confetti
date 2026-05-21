@@ -1,5 +1,3 @@
-import ContestImage from "@components/_pages/Contest/components/ContestImage";
-import EditContestImage from "@components/_pages/Contest/components/ContestImage/components/EditContestImage";
 import ContestName from "@components/_pages/Contest/components/ContestName";
 import { FC } from "react";
 
@@ -25,16 +23,7 @@ const DesktopHeader: FC<DesktopHeaderProps> = ({
 }) => {
   return (
     <div className="animate-fade-in relative z-10">
-      <div className="flex flex-col mt-10 gap-6">
-        {contestImageUrl && (
-          <div className="relative">
-            <div className="absolute left-0 -translate-x-full -ml-4 bottom-0">
-              <EditContestImage contestPrompt={contestPrompt} canEditTitle={canEditTitle} />
-            </div>
-            <ContestImage imageUrl={contestImageUrl} />
-          </div>
-        )}
-
+      <div className="flex mt-10">
         <ContestName
           contestName={contestName}
           contestAddress={contestAddress}
