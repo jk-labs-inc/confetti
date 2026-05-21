@@ -2,7 +2,7 @@ import { toastError } from "@components/UI/Toast";
 import { getJkLabsSplitDestinationAddress } from "../database";
 import { prepareConstructorArgs } from "../helpers/constructorArgs";
 import { AdvancedOptions } from "../slices/contestAdvancedOptionsSlice";
-import { EntryPreviewConfig, MetadataField } from "../slices/contestMetadataSlice";
+import { EntryPreviewConfig } from "../slices/contestMetadataSlice";
 import { Charge, PriceCurve } from "../types";
 
 interface PrepareDeploymentDataParams {
@@ -17,7 +17,6 @@ interface PrepareDeploymentDataParams {
     advancedOptions: AdvancedOptions;
     charge: Charge;
     priceCurve: PriceCurve;
-    metadataFields: MetadataField[];
     entryPreviewConfig: EntryPreviewConfig;
   };
 }
@@ -63,7 +62,6 @@ export const prepareDeploymentData = async (params: PrepareDeploymentDataParams)
     advancedOptions: contestData.advancedOptions,
     charge: contestData.charge,
     priceCurve: contestData.priceCurve,
-    metadataFields: contestData.metadataFields,
     entryPreviewConfig: contestData.entryPreviewConfig,
     clientAccountAddress: address,
     jkLabsSplitDestination,

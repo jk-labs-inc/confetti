@@ -1,5 +1,4 @@
 import { ReactNode } from "react";
-import { metadataFields } from "@components/_pages/Create/pages/ContestParams/components/Metadata/components/Fields/utils";
 
 type ReactStyleStateSetter<T> = T | ((prev: T) => T);
 
@@ -34,33 +33,22 @@ export interface EntryPreviewConfig {
 }
 
 export interface MetadataSliceState {
-  metadataToggle: boolean;
-  metadataFields: MetadataField[];
   entryPreviewConfig: EntryPreviewConfig;
 }
 
 export interface MetadataSliceActions {
-  setMetadataToggle: (toggle: boolean) => void;
-  setMetadataFields: (data: ReactStyleStateSetter<MetadataField[]>) => void;
   setEntryPreviewConfig: (data: ReactStyleStateSetter<EntryPreviewConfig>) => void;
 }
 
 export type MetadataSlice = MetadataSliceState & MetadataSliceActions;
 
 export const createMetadataSlice = (set: any): MetadataSlice => ({
-  metadataToggle: false,
-  metadataFields: metadataFields.slice(0, 1),
   entryPreviewConfig: {
     preview: EntryPreview.TITLE,
     isTitleRequired: true,
     isAnyoneCanSubmit: EntryPermission.ANYONE_CAN_SUBMIT,
   },
 
-  setMetadataToggle: (toggle: boolean) => set({ metadataToggle: toggle }),
-  setMetadataFields: (data: ReactStyleStateSetter<MetadataField[]>) =>
-    set((state: any) => ({
-      metadataFields: typeof data === "function" ? data(state.metadataFields) : data,
-    })),
   setEntryPreviewConfig: (data: ReactStyleStateSetter<EntryPreviewConfig>) =>
     set((state: any) => ({
       entryPreviewConfig: typeof data === "function" ? data(state.entryPreviewConfig) : data,

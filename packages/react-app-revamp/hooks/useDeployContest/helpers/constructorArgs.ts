@@ -4,7 +4,7 @@ import { parseEther } from "viem";
 import { JK_LABS_SPLIT_DESTINATION_DEFAULT, MAX_SUBMISSIONS_LIMIT } from "../index";
 import { Charge, PriceCurve } from "../types";
 import { createMetadataFieldsSchema } from "./index";
-import { EntryPreviewConfig, MetadataField } from "../slices/contestMetadataSlice";
+import { EntryPreviewConfig } from "../slices/contestMetadataSlice";
 
 export interface ConstructorArgsParams {
   title: string;
@@ -17,7 +17,6 @@ export interface ConstructorArgsParams {
   };
   charge: Charge;
   priceCurve: PriceCurve;
-  metadataFields: MetadataField[];
   entryPreviewConfig: EntryPreviewConfig;
   clientAccountAddress?: string;
   jkLabsSplitDestination: string;
@@ -33,7 +32,6 @@ export const prepareConstructorArgs = (params: ConstructorArgsParams) => {
     advancedOptions,
     charge,
     priceCurve,
-    metadataFields,
     entryPreviewConfig,
     jkLabsSplitDestination,
   } = params;
@@ -58,7 +56,7 @@ export const prepareConstructorArgs = (params: ConstructorArgsParams) => {
     prompt: combinedPrompt,
     intConstructorArgs,
     jkLabsSplitDestination: jkLabsSplitDestination || JK_LABS_SPLIT_DESTINATION_DEFAULT,
-    metadataFieldsSchema: createMetadataFieldsSchema(metadataFields, entryPreviewConfig),
+    metadataFieldsSchema: createMetadataFieldsSchema(entryPreviewConfig),
   };
 
   return constructorArgs;

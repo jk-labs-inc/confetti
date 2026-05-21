@@ -101,7 +101,6 @@ const CreateContestConfirm = () => {
           <CreateContestConfirmPreview
             step={stepReferences.ContestEntries}
             entryPreviewConfig={state.entryPreviewConfig}
-            metadataFields={state.metadataFields}
             onClick={step => onNavigateToStep(step)}
           />
           <CreateContestConfirmTiming
