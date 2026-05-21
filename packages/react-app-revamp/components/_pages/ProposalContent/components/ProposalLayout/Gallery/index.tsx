@@ -1,5 +1,4 @@
 import { Proposal } from "@components/_pages/ProposalContent";
-import CustomLink from "@components/UI/Link";
 import { CheckIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { ContestStatus } from "@hooks/useContestStatus/store";
 import { EntryPreview } from "@hooks/useDeployContest/slices/contestMetadataSlice";
@@ -18,11 +17,8 @@ interface ProposalLayoutGalleryProps {
     isError: boolean;
   };
   isMobile: boolean;
-  chainName: string;
-  contestAddress: string;
   contestStatus: ContestStatus;
   formattedVotingOpen: moment.Moment;
-  commentLink: string;
   allowDelete: boolean;
   selectedProposalIds: string[];
   enabledPreview: EntryPreview | null;
@@ -33,9 +29,6 @@ interface ProposalLayoutGalleryProps {
 
 const ProposalLayoutGallery: FC<ProposalLayoutGalleryProps> = ({
   proposal,
-  proposalAuthorData,
-  chainName,
-  contestAddress,
   contestStatus,
   allowDelete,
   selectedProposalIds,
@@ -80,11 +73,9 @@ const ProposalLayoutGallery: FC<ProposalLayoutGalleryProps> = ({
   }, [enabledPreview, proposal.metadataFields.stringArray]);
 
   return (
-    <CustomLink
-      scroll={false}
-      href={`/contest/${chainName.toLowerCase()}/${contestAddress}/submission/${proposal.id}`}
+    <div
       className={`flex flex-col gap-2 p-2 bg-true-black rounded-2xl shadow-entry-card w-full max-h-[70vh] border transition-colors duration-300 ease-in-out ${
-        isHighlighted ? "border-secondary-14" : "border-transparent hover:border-primary-3"
+        isHighlighted ? "border-secondary-14" : "border-transparent"
       }`}
     >
       <div className="rounded-2xl overflow-hidden relative">
@@ -130,7 +121,7 @@ const ProposalLayoutGallery: FC<ProposalLayoutGalleryProps> = ({
           </div>
         ) : null}
       </div>
-    </CustomLink>
+    </div>
   );
 };
 

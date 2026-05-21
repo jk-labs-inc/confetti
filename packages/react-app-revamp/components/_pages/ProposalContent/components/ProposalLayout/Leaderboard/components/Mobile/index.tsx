@@ -1,7 +1,6 @@
 import { Proposal } from "@components/_pages/ProposalContent";
 import ProposalContentDeleteButton from "@components/_pages/ProposalContent/components/Buttons/Delete";
 import ProposalContentVotePrimary from "@components/_pages/ProposalContent/components/Buttons/Vote/Primary";
-import CustomLink from "@components/UI/Link";
 import { formatNumberWithCommas } from "@helpers/formatNumber";
 import { ContestStatus } from "@hooks/useContestStatus/store";
 import { FC } from "react";
@@ -15,11 +14,8 @@ interface ProposalLayoutLeaderboardMobileProps {
     isError: boolean;
   };
   contestStatus: ContestStatus;
-  commentLink: string;
   allowDelete: boolean;
   selectedProposalIds: string[];
-  chainName: string;
-  contestAddress: string;
   isHighlighted: boolean;
   toggleProposalSelection?: (proposalId: string) => void;
   handleVotingDrawerOpen?: () => void;
@@ -32,14 +28,11 @@ const ProposalLayoutLeaderboardMobile: FC<ProposalLayoutLeaderboardMobileProps> 
   selectedProposalIds,
   toggleProposalSelection,
   handleVotingDrawerOpen,
-  chainName,
-  contestAddress,
   isHighlighted,
 }) => {
   const entryTitle = proposal.metadataFields.stringArray[0];
   const isVotingActive =
     contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed;
-  const submissionUrl = `/contest/${chainName.toLowerCase()}/${contestAddress}/submission/${proposal.id}`;
 
   return (
     <div
@@ -49,12 +42,7 @@ const ProposalLayoutLeaderboardMobile: FC<ProposalLayoutLeaderboardMobileProps> 
         isHighlighted ? "border-secondary-14" : "border-neutral-4"
       }`}
     >
-      <CustomLink
-        href={submissionUrl}
-        className="min-w-0 text-[16px] text-neutral-11 normal-case truncate hover:text-positive-11 transition-colors duration-300 ease-in-out"
-      >
-        {entryTitle}
-      </CustomLink>
+      <p className="min-w-0 text-[16px] text-neutral-11 normal-case truncate">{entryTitle}</p>
       {isVotingActive ? (
         <>
           <p className="text-[16px] text-neutral-11 tabular-nums">

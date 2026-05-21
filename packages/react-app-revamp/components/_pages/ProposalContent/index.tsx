@@ -31,7 +31,6 @@ export interface Proposal {
   votes: number;
   rank: number;
   isTied: boolean;
-  commentsCount: number;
   metadataFields: RawMetadataFields;
 }
 
@@ -61,7 +60,7 @@ const ProposalContent: FC<ProposalContentProps> = ({
   );
   const isMobile = useMediaQuery({ maxWidth: 768 });
   const asPath = usePathname();
-  const { chainName, address: contestAddress } = extractPathSegments(asPath ?? "");
+  const { address: contestAddress } = extractPathSegments(asPath ?? "");
   const [isVotingDrawerOpen, setIsVotingDrawerOpen] = useState(false);
   const { votesOpen } = useContestStore(state => state);
   const { contestState } = useContestStateStore(state => state);
@@ -76,10 +75,6 @@ const ProposalContent: FC<ProposalContentProps> = ({
   const isAnyDrawerOpen = pickedProposal !== null;
   const isHighlighted = isAnyDrawerOpen && pickedProposal === proposal.id;
   const shouldReduceOpacity = isAnyDrawerOpen && !isHighlighted;
-  const commentLink = {
-    pathname: `/contest/${chainName}/${contestAddress}/submission/${proposal.id}`,
-    query: { comments: "comments" },
-  };
   const {
     profileAvatar,
     profileName,
@@ -120,7 +115,6 @@ const ProposalContent: FC<ProposalContentProps> = ({
       isError: isUserProfileError,
     },
     isMobile,
-    chainName,
     contestAddress,
     contestStatus,
     allowDelete,
@@ -129,7 +123,6 @@ const ProposalContent: FC<ProposalContentProps> = ({
     toggleProposalSelection,
     formattedVotingOpen,
     enabledPreview,
-    commentLink: commentLink.pathname,
     isHighlighted,
   };
 

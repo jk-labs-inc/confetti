@@ -1,10 +1,8 @@
 "use client";
 import Loader from "@components/UI/Loader";
 import ContestTabs, { Tab } from "@components/_pages/Contest/components/Tabs";
-import { ROUTE_CONTEST_PROPOSAL } from "@config/routes";
 import { populateBugReportLink } from "@helpers/githubIssue";
 import { useWallet } from "@hooks/useWallet";
-import { usePathname } from "next/navigation";
 import { useUrl } from "nextjs-current-url";
 import { useMemo, useState } from "react";
 import ContestHeader from "./components/ContestHeader";
@@ -15,7 +13,6 @@ import { getContestImageUrl } from "./helpers/getContestImageUrl";
 import { useLayoutViewContest } from "./hooks/useLayoutViewContest";
 
 const LayoutViewContest = () => {
-  const pathname = usePathname();
   const url = useUrl();
   const { userAddress } = useWallet();
   const [tab, setTab] = useState<Tab>(Tab.Contest);
@@ -51,11 +48,7 @@ const LayoutViewContest = () => {
 
   return (
     <div className={`w-full px-6 pt-6 md:px-12 md:pt-0 lg:w-[760px] lg:px-0 mx-auto`}>
-      <div
-        className={`md:pt-5 md:pb-20 flex flex-col ${
-          pathname === ROUTE_CONTEST_PROPOSAL ? "md:col-span-12" : "md:col-span-9"
-        }`}
-      >
+      <div className="md:pt-5 md:pb-20 flex flex-col md:col-span-9">
         <ReadOnlyBanner isReadOnly={isReadOnly} isLoading={isLoading} />
 
         <ContestHeader

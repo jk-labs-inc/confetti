@@ -1,10 +1,8 @@
 import { Proposal } from "@components/_pages/ProposalContent";
-import CustomLink from "@components/UI/Link";
-import { ChatBubbleLeftEllipsisIcon, CheckIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { CheckIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { ContestStatus } from "@hooks/useContestStatus/store";
 import { EntryPreview } from "@hooks/useDeployContest/slices/contestMetadataSlice";
 import { formatNumberWithCommas } from "@helpers/formatNumber";
-import { useRouter } from "next/navigation";
 import { FC, useEffect, useState } from "react";
 import ProposalContentVotePrimary from "../../Buttons/Vote/Primary";
 import { Tweet } from "./components/CustomTweet";
@@ -13,11 +11,8 @@ import ProposalLayoutTweetRankOrPlaceholder from "./components/RankOrPlacehoder"
 interface ProposalLayoutTweetProps {
   proposal: Proposal;
   isMobile: boolean;
-  chainName: string;
-  contestAddress: string;
   contestStatus: ContestStatus;
   formattedVotingOpen: moment.Moment;
-  commentLink: string;
   allowDelete: boolean;
   selectedProposalIds: string[];
   enabledPreview: EntryPreview | null;
@@ -33,12 +28,8 @@ const extractTweetId = (url: string): string => {
 
 const ProposalLayoutTweet: FC<ProposalLayoutTweetProps> = ({
   proposal,
-  isMobile,
-  chainName,
-  contestAddress,
   contestStatus,
   formattedVotingOpen,
-  commentLink,
   allowDelete,
   selectedProposalIds,
   enabledPreview,
@@ -48,7 +39,6 @@ const ProposalLayoutTweet: FC<ProposalLayoutTweetProps> = ({
 }) => {
   const [tweetUrl, setTweetUrl] = useState<string>("");
   const [tweetTitle, setTweetTitle] = useState<string>("");
-  const router = useRouter();
 
   const updateTweetData = () => {
     if (enabledPreview === EntryPreview.TWEET_AND_TITLE) {
@@ -77,13 +67,6 @@ const ProposalLayoutTweet: FC<ProposalLayoutTweetProps> = ({
     handleVotingDrawerOpen?.();
   };
 
-  const onCommentLinkClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-    e.nativeEvent.stopImmediatePropagation();
-    router.push(commentLink);
-  };
-
   const onDeleteClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
@@ -92,11 +75,9 @@ const ProposalLayoutTweet: FC<ProposalLayoutTweetProps> = ({
   };
 
   return (
-    <CustomLink
-      scroll={false}
-      href={`/contest/${chainName.toLowerCase()}/${contestAddress}/submission/${proposal.id}`}
+    <div
       className={`flex flex-col gap-4 p-2 bg-true-black rounded-2xl shadow-entry-card w-full border transition-colors duration-300 ease-in-out ${
-        isHighlighted ? "border-secondary-14" : "border-transparent hover:border-primary-3"
+        isHighlighted ? "border-secondary-14" : "border-transparent"
       }`}
     >
       <div className="pl-2 items-center flex w-full">
@@ -119,15 +100,6 @@ const ProposalLayoutTweet: FC<ProposalLayoutTweetProps> = ({
               voting opens {formattedVotingOpen.format("MMMM Do, h:mm a")}
             </p>
           )}
-          <div onClick={e => e.stopPropagation()}>
-            <button
-              onClick={onCommentLinkClick}
-              className="min-w-16 shrink-0 h-6 p-2 flex items-center justify-between gap-2 bg-true-black rounded-[16px] cursor-pointer text-neutral-9  border border-neutral-9 hover:bg-neutral-9 hover:text-true-black transition-colors duration-300 ease-in-out"
-            >
-              <ChatBubbleLeftEllipsisIcon className="w-4 h-4 shrink-0" />
-              <p className="text-[16px] font-bold grow text-center">{proposal.commentsCount}</p>
-            </button>
-          </div>
           <div className="ml-auto" onClick={e => e.stopPropagation()}>
             {allowDelete ? (
               <button className="relative w-4 h-4 cursor-pointer" onClick={onDeleteClick}>
@@ -147,7 +119,7 @@ const ProposalLayoutTweet: FC<ProposalLayoutTweetProps> = ({
           </div>
         </div>
       </div>
-    </CustomLink>
+    </div>
   );
 };
 

@@ -1,7 +1,7 @@
 import { supabase } from "@config/supabase";
 import getPagination from "@helpers/getPagination";
 import { getContestContractData } from "lib/contests/contracts";
-import { Comment, CommentsResult, Contest, Submission, SubmissionCriteria, SubmissionsResult } from "./types";
+import { Contest, Submission, SubmissionCriteria, SubmissionsResult } from "./types";
 
 function mergeSubmissionsWithContests(submissions: Submission[], contests: Contest[]): SubmissionsResult["data"] {
   const validsubmissions = submissions.filter(submission =>
@@ -12,22 +12,6 @@ function mergeSubmissionsWithContests(submissions: Submission[], contests: Conte
     const matchedContest = contests.find(contest => contest.address === submission.contest_address)!;
     return {
       ...submission,
-      contest: matchedContest,
-    };
-  });
-
-  return results;
-}
-
-function mergeCommentsWithContests(comments: Comment[], contests: Contest[]): CommentsResult["data"] {
-  const validComments = comments.filter(comment =>
-    contests.some(contest => contest.address === comment.contest_address),
-  );
-
-  const results = validComments.map(comment => {
-    const matchedContest = contests.find(contest => contest.address === comment.contest_address)!;
-    return {
-      ...comment,
       contest: matchedContest,
     };
   });
@@ -82,61 +66,6 @@ async function fetchSubmissions(
           supabase.from("analytics_contest_participants_v3").select("*", { count: "exact", head: true }),
         ).not("vote_amount", "is", null);
       }
-
-      const [dataResult, countResult] = await Promise.all([dataQuery, countQuery]);
-
-      return { dataResult, countResult };
-    };
-
-    // first attempt with eq
-    let { dataResult, countResult } = await executeQuery(false);
-
-    // if no results, it could be that address is lowercase, try with ilike
-    if (dataResult.data?.length === 0) {
-      ({ dataResult, countResult } = await executeQuery(true));
-    }
-
-    if (dataResult.error) throw dataResult.error;
-    if (countResult.error) throw countResult.error;
-
-    const data = dataResult.data || [];
-    const count = countResult.count ?? 0;
-
-    return { data, count };
-  } catch (error) {
-    throw error;
-  }
-}
-
-async function fetchComments(
-  userAddress: string,
-  range: { from: number; to: number },
-): Promise<{ data: any[]; count: number }> {
-  try {
-    const executeQuery = async (useIlike: boolean) => {
-      const baseQuery = (query: any) => {
-        if (useIlike) {
-          return query.ilike("user_address", userAddress);
-        } else {
-          return query.eq("user_address", userAddress);
-        }
-      };
-
-      const dataQuery = baseQuery(
-        supabase
-          .from("analytics_contest_participants_v3")
-          .select("network_name, contest_address, proposal_id, created_at, comment_id"),
-      )
-        .order("created_at", { ascending: false })
-        .not("comment_id", "is", null)
-        .not("deleted", "is", true)
-        .range(range.from, range.to);
-
-      const countQuery = baseQuery(
-        supabase.from("analytics_contest_participants_v3").select("*", { count: "exact", head: true }),
-      )
-        .not("comment_id", "is", null)
-        .not("deleted", "is", true);
 
       const [dataResult, countResult] = await Promise.all([dataQuery, countQuery]);
 
@@ -223,23 +152,4 @@ export async function getUserVotes(
   const mergedSubmissions = mergeSubmissionsWithContests(submissions, contests);
 
   return { data: mergedSubmissions, count };
-}
-
-export async function getUserComments(
-  userAddress: string,
-  currentPage: number,
-  itemsPerPage: number,
-): Promise<CommentsResult> {
-  const range = getPagination(currentPage, itemsPerPage);
-
-  const { data: comments, count } = await fetchComments(userAddress, range);
-  const contestsAddressesAndChains = comments.map(c => ({
-    address: c.contest_address,
-    network_name: c.network_name,
-  }));
-  const contests = await getContestDetailsByAddresses(contestsAddressesAndChains);
-
-  const mergedComments = mergeCommentsWithContests(comments, contests);
-
-  return { data: mergedComments, count };
 }

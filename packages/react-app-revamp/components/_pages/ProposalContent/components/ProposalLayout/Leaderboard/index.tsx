@@ -1,5 +1,4 @@
 import { Proposal } from "@components/_pages/ProposalContent";
-import CustomLink from "@components/UI/Link";
 import { formatNumberWithCommas } from "@helpers/formatNumber";
 import { ContestStatus } from "@hooks/useContestStatus/store";
 import { useProposalStore } from "@hooks/useProposal/store";
@@ -18,11 +17,8 @@ interface ProposalLayoutLeaderboardProps {
     isError: boolean;
   };
   isMobile: boolean;
-  chainName: string;
-  contestAddress: string;
   contestStatus: ContestStatus;
   formattedVotingOpen: moment.Moment;
-  commentLink: string;
   allowDelete: boolean;
   selectedProposalIds: string[];
   isHighlighted: boolean;
@@ -34,11 +30,7 @@ const ProposalLayoutLeaderboard: FC<ProposalLayoutLeaderboardProps> = ({
   proposal,
   proposalAuthorData,
   isMobile,
-  chainName,
-  contestAddress,
   contestStatus,
-  formattedVotingOpen,
-  commentLink,
   allowDelete,
   selectedProposalIds,
   isHighlighted,
@@ -48,7 +40,6 @@ const ProposalLayoutLeaderboard: FC<ProposalLayoutLeaderboardProps> = ({
   const entryTitle = proposal.metadataFields.stringArray[0];
   const isVotingActive =
     contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed;
-  const submissionUrl = `/contest/${chainName.toLowerCase()}/${contestAddress}/submission/${proposal.id}`;
   const initialMappedProposalIds = useProposalStore(state => state.initialMappedProposalIds);
   const totalVotes = initialMappedProposalIds.reduce((sum, p) => sum + p.votes, 0);
   const votePercentage = totalVotes > 0 ? Math.round((proposal.votes / totalVotes) * 100) : 0;
@@ -59,13 +50,10 @@ const ProposalLayoutLeaderboard: FC<ProposalLayoutLeaderboardProps> = ({
         proposal={proposal}
         proposalAuthorData={proposalAuthorData}
         contestStatus={contestStatus}
-        commentLink={commentLink}
         allowDelete={allowDelete}
         selectedProposalIds={selectedProposalIds}
         toggleProposalSelection={toggleProposalSelection}
         handleVotingDrawerOpen={handleVotingDrawerOpen}
-        chainName={chainName}
-        contestAddress={contestAddress}
         isHighlighted={isHighlighted}
       />
     );
@@ -89,13 +77,7 @@ const ProposalLayoutLeaderboard: FC<ProposalLayoutLeaderboardProps> = ({
           isHighlighted ? "border-secondary-14" : "border-neutral-4"
         }`}
       >
-        <CustomLink
-          scroll={false}
-          href={submissionUrl}
-          className="min-w-0 text-[16px] text-neutral-11 normal-case truncate hover:text-positive-11 transition-colors duration-300 ease-in-out"
-        >
-          {entryTitle}
-        </CustomLink>
+        <p className="min-w-0 text-[16px] text-neutral-11 normal-case truncate">{entryTitle}</p>
         {isVotingActive ? (
           <>
             <p className="text-[16px] text-neutral-11 tabular-nums">
