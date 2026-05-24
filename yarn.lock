@@ -4448,17 +4448,17 @@
   dependencies:
     postcss-selector-parser "6.0.10"
 
-"@tanstack/query-core@5.100.13":
-  version "5.100.13"
-  resolved "https://registry.yarnpkg.com/@tanstack/query-core/-/query-core-5.100.13.tgz#24a5a407cb70db306826e101b8560cba26e61a5e"
-  integrity sha512-mlKVKMTzZWGTKAC1CKOgt7axAjJ921emkEvYIp27I/PdP1yEYL/BteLY8iK35gn8hoYeKB4mgJ/ve3lrDI6/Fw==
+"@tanstack/query-core@5.100.14":
+  version "5.100.14"
+  resolved "https://registry.yarnpkg.com/@tanstack/query-core/-/query-core-5.100.14.tgz#6bf11c9a6a33dbbbba21f05d880b93930d80000c"
+  integrity sha512-5X41dGpxgeaHISCRW2oYwcSycZeULZzAunaudXT9ov1KOTj9xwt0CH6hbwqP1/z74ZWF7rYFnDpyYH07XFcZew==
 
-"@tanstack/react-query@5.100.13":
-  version "5.100.13"
-  resolved "https://registry.yarnpkg.com/@tanstack/react-query/-/react-query-5.100.13.tgz#58736d35c43e120f93a665254629509d5bc16d48"
-  integrity sha512-HSBr8CycQEAoXsJR7KNDawBnINJEJ96Eme8oE0hCXjyodE2I97vg3IDzDJBDu18LsbzpVVJcKo80eqLfVCykxw==
+"@tanstack/react-query@5.100.14":
+  version "5.100.14"
+  resolved "https://registry.yarnpkg.com/@tanstack/react-query/-/react-query-5.100.14.tgz#799fe305421fd84bf2f6df40930c859c945b42ab"
+  integrity sha512-oOr6aRdSFEwWhzxEkD/9ZcItM3+LjBSkeVmadWKwUssAHTsqd/7bOjWrX4AbvEkoEhgAxzN0Xk6H/aYzXiYBAw==
   dependencies:
-    "@tanstack/query-core" "5.100.13"
+    "@tanstack/query-core" "5.100.14"
 
 "@tanstack/react-virtual@^3.13.21", "@tanstack/react-virtual@^3.13.9":
   version "3.13.23"
