@@ -44,6 +44,8 @@ const ContestTab = () => {
 
   const isSubmissionOpen = contestStatus === ContestStatus.SubmissionOpen;
   const hasMobileFixedBar = isMobile && isSubmissionOpen && (variant.kind === "counter-submit" || variant.kind === "connect");
+  const willShowSidebar = contestStatus === ContestStatus.VotingOpen && !isContestCanceled;
+  const hideInlinePriceCurveOnDesktop = willShowSidebar ? "xl:hidden" : "";
 
   return (
     <div className="animate-fade-in">
@@ -63,8 +65,8 @@ const ContestTab = () => {
         <ContestPrompt prompt={contestPrompt} type="page" />
       </div>
 
-      <div className="mt-4 md:mt-6 border-t border-neutral-4" />
-      <div className="mt-3 md:mt-4">
+      <div className={`mt-4 md:mt-6 border-t border-neutral-4 ${hideInlinePriceCurveOnDesktop}`} />
+      <div className={`mt-3 md:mt-4 ${hideInlinePriceCurveOnDesktop}`}>
         <PriceCurveWrapper
           showPriceWarning
           noPadding
@@ -73,7 +75,7 @@ const ContestTab = () => {
           onToggleExpand={() => setIsPriceCurveExpanded(prev => !prev)}
         />
       </div>
-      <div className="mt-4 hidden md:block border-t border-neutral-4" />
+      <div className={`mt-4 hidden md:block border-t border-neutral-4 ${hideInlinePriceCurveOnDesktop}`} />
 
       {isMobile && <ContestStickyCards />}
 

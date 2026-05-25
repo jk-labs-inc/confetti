@@ -1,7 +1,10 @@
 "use client";
 import Loader from "@components/UI/Loader";
+import VotingSidebar from "@components/_pages/Contest/VotingSidebar";
 import ContestTabs, { Tab } from "@components/_pages/Contest/components/Tabs";
 import { populateBugReportLink } from "@helpers/githubIssue";
+import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
+import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import { useWallet } from "@hooks/useWallet";
 import { useUrl } from "nextjs-current-url";
 import { useMemo, useState } from "react";
@@ -29,6 +32,10 @@ const LayoutViewContest = () => {
   } = useLayoutViewContest();
   const bugReportLink = populateBugReportLink(url?.href ?? "", userAddress ?? "", error ?? "");
   const contestImageUrl = getContestImageUrl(contestPrompt);
+  const contestStatus = useContestStatusStore(state => state.contestStatus);
+  const contestState = useContestStateStore(state => state.contestState);
+  const showSidebar =
+    contestStatus === ContestStatus.VotingOpen && contestState !== ContestStateEnum.Canceled;
 
   const excludeTabs = useMemo(() => {
     const tabsToExclude: Tab[] = [];
@@ -47,27 +54,36 @@ const LayoutViewContest = () => {
   }
 
   return (
-    <div className={`w-full px-6 pt-6 md:px-12 md:pt-0 lg:w-[760px] lg:px-0 mx-auto`}>
-      <div className="md:pt-5 md:pb-20 flex flex-col md:col-span-9">
-        <ReadOnlyBanner isReadOnly={isReadOnly} isLoading={isLoading} />
+    <div
+      className={`w-full px-6 pt-6 md:px-12 md:pt-0 lg:w-[760px] lg:px-0 mx-auto ${showSidebar ? "xl:w-[1272px]" : ""}`}
+    >
+      <div className={`md:pt-5 md:pb-20 ${showSidebar ? "xl:flex xl:items-start xl:gap-8" : ""}`}>
+        <div className={`flex flex-col md:col-span-9 ${showSidebar ? "xl:w-[760px] xl:shrink-0" : ""}`}>
+          <ReadOnlyBanner isReadOnly={isReadOnly} isLoading={isLoading} />
 
-        <ContestHeader
-          contestImageUrl={contestImageUrl ?? ""}
-          contestName={contestName}
-          contestAddress={contestConfig.address}
-          chainName={contestConfig.chainName}
-          contestPrompt={contestPrompt}
-          canEditTitle={canEditTitleAndDescription}
-          contestAuthorEthereumAddress={contestAuthorEthereumAddress}
-          contestVersion={contestConfig.version}
-        />
-        <div>
-          <div className="mt-4 gap-3 flex flex-col">
-            <ContestTabs tab={tab} excludeTabs={excludeTabs} onChange={tab => setTab(tab)} />
+          <ContestHeader
+            contestImageUrl={contestImageUrl ?? ""}
+            contestName={contestName}
+            contestAddress={contestConfig.address}
+            chainName={contestConfig.chainName}
+            contestPrompt={contestPrompt}
+            canEditTitle={canEditTitleAndDescription}
+            contestAuthorEthereumAddress={contestAuthorEthereumAddress}
+            contestVersion={contestConfig.version}
+          />
+          <div>
+            <div className="mt-4 gap-3 flex flex-col">
+              <ContestTabs tab={tab} excludeTabs={excludeTabs} onChange={tab => setTab(tab)} />
+            </div>
+
+            <ContestTabsContent tab={tab} rewardsModule={rewardsModule} version={contestConfig.version} />
           </div>
-
-          <ContestTabsContent tab={tab} rewardsModule={rewardsModule} version={contestConfig.version} />
         </div>
+        {showSidebar && (
+          <aside className="hidden xl:block xl:w-[480px] xl:shrink-0 xl:mt-10 sticky top-4 self-start">
+            <VotingSidebar />
+          </aside>
+        )}
       </div>
     </div>
   );

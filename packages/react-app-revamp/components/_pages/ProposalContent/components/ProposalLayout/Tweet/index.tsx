@@ -94,7 +94,9 @@ const ProposalLayoutTweet: FC<ProposalLayoutTweetProps> = ({
       <div className="mt-auto pl-2">
         <div className="flex gap-2 items-center">
           {contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed ? (
-            <ProposalContentVotePrimary proposal={proposal} handleVotingModalOpen={onVotingDrawerOpen} size="large" />
+            <span className="xl:hidden">
+              <ProposalContentVotePrimary proposal={proposal} handleVotingModalOpen={onVotingDrawerOpen} size="large" />
+            </span>
           ) : (
             <p className="text-neutral-10 text-[14px] font-bold">
               voting opens {formattedVotingOpen.format("MMMM Do, h:mm a")}

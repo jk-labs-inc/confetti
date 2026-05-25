@@ -59,6 +59,7 @@ const ProposalContent: FC<ProposalContentProps> = ({
     contestStatus,
   );
   const isMobile = useMediaQuery({ maxWidth: 768 });
+  const isDesktop = useMediaQuery({ minWidth: 1280 });
   const asPath = usePathname();
   const { address: contestAddress } = extractPathSegments(asPath ?? "");
   const [isVotingDrawerOpen, setIsVotingDrawerOpen] = useState(false);
@@ -72,9 +73,9 @@ const ProposalContent: FC<ProposalContentProps> = ({
     })),
   );
   const formattedVotingOpen = moment(votesOpen);
-  const isAnyDrawerOpen = pickedProposal !== null;
-  const isHighlighted = isAnyDrawerOpen && pickedProposal === proposal.id;
-  const shouldReduceOpacity = isAnyDrawerOpen && !isHighlighted;
+  const isPicked = pickedProposal === proposal.id;
+  const isHighlighted = isPicked && (isDesktop || isVotingDrawerOpen);
+  const shouldReduceOpacity = isVotingDrawerOpen && !isPicked;
   const {
     profileAvatar,
     profileName,
@@ -141,16 +142,20 @@ const ProposalContent: FC<ProposalContentProps> = ({
     }
   };
 
+  const handleCardClick = () => {
+    if (!isDesktop) return;
+    if (isContestCanceled) return;
+    if (contestStatus !== ContestStatus.VotingOpen) return;
+    setPickedProposal(proposal.id);
+  };
+
   return (
     <>
       <div
-        className={`transition-all duration-300 ease-in-out ${
-          shouldReduceOpacity
-            ? "opacity-30 scale-[0.98]"
-            : isHighlighted
-              ? "opacity-100 scale-[1.02] -translate-y-1 z-45 relative"
-              : "opacity-100 scale-100"
-        }`}
+        onClick={handleCardClick}
+        className={`transition-opacity duration-300 ease-in-out ${
+          isDesktop && contestStatus === ContestStatus.VotingOpen && !isContestCanceled ? "xl:cursor-pointer" : ""
+        } ${shouldReduceOpacity ? "opacity-30" : "opacity-100"}`}
       >
         {renderLayout()}
       </div>

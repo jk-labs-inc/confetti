@@ -87,7 +87,7 @@ const ProposalLayoutClassic = ({
               {contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed ? (
                 <button
                   onClick={handleVotingDrawerOpen}
-                  className="min-w-36 shrink-0 h-10 p-2 flex items-center justify-between gap-2 bg-primary-1 rounded-[16px] cursor-pointer border border-transparent hover:border-positive-11 transition-colors duration-300 ease-in-out"
+                  className="xl:hidden min-w-36 shrink-0 h-10 p-2 flex items-center justify-between gap-2 bg-primary-1 rounded-[16px] cursor-pointer border border-transparent hover:border-positive-11 transition-colors duration-300 ease-in-out"
                 >
                   <img src="/contest/upvote.svg" width={21.56} height={20.44} alt="upvote" className="shrink-0" />
                   <p className="text-[16px] text-positive-11 font-bold grow text-center">

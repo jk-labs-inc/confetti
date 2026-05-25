@@ -116,7 +116,7 @@ const ProposalLayoutGallery: FC<ProposalLayoutGalleryProps> = ({
         ) : null}
 
         {contestStatus === ContestStatus.VotingOpen ? (
-          <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2">
+          <div className="xl:hidden absolute bottom-1 left-1/2 transform -translate-x-1/2">
             <ProposalContentVotePrimary proposal={proposal} handleVotingModalOpen={onVotingDrawerOpen} size="large" />
           </div>
         ) : null}

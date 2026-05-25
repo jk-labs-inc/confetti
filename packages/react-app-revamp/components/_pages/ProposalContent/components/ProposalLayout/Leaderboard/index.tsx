@@ -69,7 +69,7 @@ const ProposalLayoutLeaderboard: FC<ProposalLayoutLeaderboardProps> = ({
       <div
         className={`min-w-0 grid ${
           isVotingActive
-            ? "grid-cols-[1fr_120px_80px_80px]"
+            ? "grid-cols-[1fr_120px_80px_80px] xl:grid-cols-[1fr_120px_80px]"
             : allowDelete
               ? "grid-cols-[1fr_auto]"
               : "grid-cols-[1fr]"
@@ -84,7 +84,7 @@ const ProposalLayoutLeaderboard: FC<ProposalLayoutLeaderboardProps> = ({
               {formatNumberWithCommas(proposal.votes)}
             </p>
             <p className="text-[16px] text-neutral-11 tabular-nums">{votePercentage}%</p>
-            <div className="flex justify-end">
+            <div className="xl:hidden flex justify-end">
               <ProposalContentVotePrimary proposal={proposal} handleVotingModalOpen={handleVotingDrawerOpen} />
             </div>
           </>
