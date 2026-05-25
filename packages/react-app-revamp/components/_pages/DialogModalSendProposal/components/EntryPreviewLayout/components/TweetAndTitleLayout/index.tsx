@@ -3,7 +3,6 @@ import { twitterRegex } from "@helpers/regex";
 import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/24/outline";
 import { debounce } from "lodash";
 import { FC, useCallback, useState } from "react";
-import { useMediaQuery } from "react-responsive";
 import { MAX_TITLE_LENGTH } from "../../constants";
 
 interface DialogModalSendProposalEntryPreviewTweetAndTitleLayoutProps {
@@ -13,7 +12,6 @@ interface DialogModalSendProposalEntryPreviewTweetAndTitleLayoutProps {
 const DialogModalSendProposalEntryPreviewTweetAndTitleLayout: FC<
   DialogModalSendProposalEntryPreviewTweetAndTitleLayoutProps
 > = ({ onChange }) => {
-  const isMobile = useMediaQuery({ maxWidth: 768 });
   const [isValid, setIsValid] = useState<boolean | null>(null);
   const [tweetUrl, setTweetUrl] = useState("");
   const [title, setTitle] = useState("");
@@ -73,30 +71,24 @@ const DialogModalSendProposalEntryPreviewTweetAndTitleLayout: FC<
   return (
     <div className="flex flex-col gap-4">
       <CreateGradientTitle textSize="small">title</CreateGradientTitle>
-      <div className={`bg-true-black rounded-[16px] border-true-black ${isMobile ? "" : "shadow-file-upload p-2"} `}>
-        <input
-          type="text"
-          value={title}
-          onChange={handleTitleChange}
-          className="text-[16px] bg-secondary-1 outline-none rounded-[16px] placeholder-neutral-10 w-full h-12 indent-4 focus:outline-none"
-          placeholder="this is my entry..."
-          maxLength={MAX_TITLE_LENGTH}
-        />
-        <p className="text-[16px] text-[#6A6A6A] ml-4">
-          {title.length}/{MAX_TITLE_LENGTH} characters
-        </p>
-      </div>
+      <input
+        type="text"
+        value={title}
+        onChange={handleTitleChange}
+        className="w-full text-[16px] bg-secondary-1 outline-none rounded-[10px] border border-neutral-17 placeholder-neutral-10 h-12 indent-4 focus:outline-none"
+        placeholder="this is my entry..."
+        maxLength={MAX_TITLE_LENGTH}
+      />
+      <p className="text-[16px] text-[#6A6A6A] ml-4">
+        {title.length}/{MAX_TITLE_LENGTH} characters
+      </p>
       <CreateGradientTitle textSize="small">tweet</CreateGradientTitle>
-      <div
-        className={`bg-true-black rounded-[16px] border-true-black ${
-          isMobile ? "" : "shadow-file-upload p-2"
-        } relative`}
-      >
+      <div className="relative">
         <input
           type="text"
           value={tweetUrl}
           onChange={handleTweetChange}
-          className="text-[16px] bg-secondary-1 outline-none rounded-[16px] placeholder-neutral-10 w-full h-12 indent-4 focus:outline-none pr-10"
+          className="w-full text-[16px] bg-secondary-1 outline-none rounded-[10px] border border-neutral-17 placeholder-neutral-10 h-12 indent-4 focus:outline-none pr-10"
           placeholder="www.x.com/me/status/18431..."
         />
         <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
