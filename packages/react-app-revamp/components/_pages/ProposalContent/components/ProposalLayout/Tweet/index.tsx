@@ -74,6 +74,12 @@ const ProposalLayoutTweet: FC<ProposalLayoutTweetProps> = ({
     toggleProposalSelection?.(proposal.id);
   };
 
+  const isVotingActive =
+    contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed;
+  const showVotes = isVotingActive && proposal.votes > 0;
+  const showDesktopOverlay = !!tweetTitle || showVotes;
+  const showFooter = isVotingActive || allowDelete;
+
   return (
     <div
       className={`flex flex-col gap-4 p-2 bg-true-black rounded-2xl shadow-entry-card w-full border-2 transition duration-150 ease-out active:scale-[0.98] ${
@@ -82,45 +88,76 @@ const ProposalLayoutTweet: FC<ProposalLayoutTweetProps> = ({
     >
       <div className="pl-2 items-center flex w-full">
         <ProposalLayoutTweetRankOrPlaceholder proposal={proposal} />
-        <div className="flex flex-col gap-1 items-end ml-auto">
+        <div className="xl:hidden flex flex-col gap-1 items-end ml-auto">
           {tweetTitle ? <p className="text-[12px] font-bold text-neutral-11">{tweetTitle}</p> : null}
-          {(contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed) &&
-          proposal.votes > 0 ? (
+          {showVotes ? (
             <p className="text-[12px] text-neutral-11">{formatNumberWithCommas(proposal.votes)} votes</p>
           ) : null}
         </div>
       </div>
       <Tweet id={tweetId} apiUrl={`/api/tweet/${tweetId}`} />
-      <div className="mt-auto pl-2">
-        <div className="flex gap-2 items-center">
-          {contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed ? (
-            <span className="xl:hidden">
-              <ProposalContentVotePrimary proposal={proposal} handleVotingModalOpen={onVotingDrawerOpen} size="large" />
-            </span>
-          ) : (
-            <p className="text-neutral-10 text-[14px] font-bold">
-              voting opens {formattedVotingOpen.format("MMMM Do, h:mm a")}
-            </p>
-          )}
-          <div className="ml-auto" onClick={e => e.stopPropagation()}>
+      {showDesktopOverlay || allowDelete ? (
+        <div className="hidden xl:grid grid-cols-3 items-center gap-2 px-2">
+          <div className="justify-self-start" onClick={e => e.stopPropagation()}>
             {allowDelete ? (
               <button className="relative w-4 h-4 cursor-pointer" onClick={onDeleteClick}>
                 <CheckIcon
-                  className={`absolute inset-0 transform transition-all ease-in-out duration-300 
+                  className={`absolute inset-0 transform transition-all ease-in-out duration-300
             ${selectedProposalIds.includes(proposal.id) ? "opacity-100" : "opacity-0"}
-            text-positive-11 bg-transparent border border-positive-11 hover:text-positive-10 
+            text-positive-11 bg-transparent border border-positive-11 hover:text-positive-10
             shadow-md hover:shadow-lg rounded-md`}
                 />
                 <TrashIcon
-                  className={`absolute inset-0 transition-opacity duration-300 
+                  className={`absolute inset-0 transition-opacity duration-300
             ${selectedProposalIds.includes(proposal.id) ? "opacity-0" : "opacity-100"}
             text-negative-11 bg-transparent hover:text-negative-10 transition-colors duration-300 ease-in-out`}
                 />
               </button>
             ) : null}
           </div>
+          <div className="flex flex-col items-center gap-1">
+            {tweetTitle ? (
+              <p className="text-[16px] font-bold text-neutral-11 text-center leading-normal">{tweetTitle}</p>
+            ) : null}
+            {showVotes ? (
+              <p className="text-[24px] font-bold text-neutral-11 text-center leading-normal">
+                {formatNumberWithCommas(proposal.votes)} votes
+              </p>
+            ) : null}
+          </div>
+          <div />
         </div>
-      </div>
+      ) : null}
+      {showFooter ? (
+        <div className="xl:hidden mt-auto pl-2">
+          <div className="flex gap-2 items-center">
+            {isVotingActive ? (
+              <ProposalContentVotePrimary
+                proposal={proposal}
+                handleVotingModalOpen={onVotingDrawerOpen}
+                size="large"
+              />
+            ) : null}
+            <div className="ml-auto" onClick={e => e.stopPropagation()}>
+              {allowDelete ? (
+                <button className="relative w-4 h-4 cursor-pointer" onClick={onDeleteClick}>
+                  <CheckIcon
+                    className={`absolute inset-0 transform transition-all ease-in-out duration-300
+            ${selectedProposalIds.includes(proposal.id) ? "opacity-100" : "opacity-0"}
+            text-positive-11 bg-transparent border border-positive-11 hover:text-positive-10
+            shadow-md hover:shadow-lg rounded-md`}
+                  />
+                  <TrashIcon
+                    className={`absolute inset-0 transition-opacity duration-300
+            ${selectedProposalIds.includes(proposal.id) ? "opacity-0" : "opacity-100"}
+            text-negative-11 bg-transparent hover:text-negative-10 transition-colors duration-300 ease-in-out`}
+                  />
+                </button>
+              ) : null}
+            </div>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 };

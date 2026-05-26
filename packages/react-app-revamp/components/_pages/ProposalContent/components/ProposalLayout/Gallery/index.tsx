@@ -109,40 +109,63 @@ const ProposalLayoutGallery: FC<ProposalLayoutGalleryProps> = ({
 
         {imgTitle ||
         ((contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed) &&
-          proposal.votes > 0) ? (
+          proposal.votes > 0) ||
+        allowDelete ? (
           <div
-            className="hidden xl:flex absolute bottom-0 left-0 right-0 flex-col items-center gap-1 pt-12 pb-2 px-4 pointer-events-none"
+            className="hidden xl:grid absolute bottom-0 left-0 right-0 grid-cols-3 items-center gap-2 pt-12 pb-2 px-2 pointer-events-none"
             style={{
               background:
                 "linear-gradient(0deg, rgba(0, 0, 0, 0.60) 0%, rgba(0, 0, 0, 0.40) 49.99%, rgba(0, 0, 0, 0.00) 100%)",
             }}
           >
-            {imgTitle ? (
-              <p className="text-[16px] font-bold text-center leading-normal" style={galleryOverlayTextStyle}>
-                {imgTitle}
-              </p>
-            ) : null}
-            {(contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed) &&
-            proposal.votes > 0 ? (
-              <p className="text-[24px] font-bold text-center leading-normal" style={galleryOverlayTextStyle}>
-                {formatNumberWithCommas(proposal.votes)} votes
-              </p>
-            ) : null}
+            <div className="justify-self-start pointer-events-auto" onClick={e => e.stopPropagation()}>
+              {allowDelete ? (
+                <div className="bg-true-black/75 w-8 h-6 rounded-full flex items-center justify-center">
+                  <button className="relative w-4 h-4 cursor-pointer" onClick={onDeleteClick}>
+                    <CheckIcon
+                      className={`absolute inset-0 transform transition-all ease-in-out duration-300
+            ${selectedProposalIds.includes(proposal.id) ? "opacity-100" : "opacity-0"}
+            text-positive-11 bg-transparent border border-positive-11 hover:text-positive-10
+            shadow-md hover:shadow-lg rounded-md`}
+                    />
+                    <TrashIcon
+                      className={`absolute inset-0 transition-opacity duration-300
+            ${selectedProposalIds.includes(proposal.id) ? "opacity-0" : "opacity-100"}
+            text-negative-11 bg-transparent hover:text-negative-10 transition-colors duration-300 ease-in-out`}
+                    />
+                  </button>
+                </div>
+              ) : null}
+            </div>
+            <div className="flex flex-col items-center gap-1">
+              {imgTitle ? (
+                <p className="text-[16px] font-bold text-center leading-normal" style={galleryOverlayTextStyle}>
+                  {imgTitle}
+                </p>
+              ) : null}
+              {(contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed) &&
+              proposal.votes > 0 ? (
+                <p className="text-[24px] font-bold text-center leading-normal" style={galleryOverlayTextStyle}>
+                  {formatNumberWithCommas(proposal.votes)} votes
+                </p>
+              ) : null}
+            </div>
+            <div />
           </div>
         ) : null}
 
         {allowDelete ? (
-          <div className="absolute bottom-1 left-2" onClick={e => e.stopPropagation()}>
+          <div className="xl:hidden absolute bottom-1 left-2" onClick={e => e.stopPropagation()}>
             <div className="bg-true-black/75 w-8 h-6 rounded-full flex items-center justify-center">
               <button className="relative w-4 h-4 cursor-pointer" onClick={onDeleteClick}>
                 <CheckIcon
-                  className={`absolute inset-0 transform transition-all ease-in-out duration-300 
+                  className={`absolute inset-0 transform transition-all ease-in-out duration-300
             ${selectedProposalIds.includes(proposal.id) ? "opacity-100" : "opacity-0"}
-            text-positive-11 bg-transparent border border-positive-11 hover:text-positive-10 
+            text-positive-11 bg-transparent border border-positive-11 hover:text-positive-10
             shadow-md hover:shadow-lg rounded-md`}
                 />
                 <TrashIcon
-                  className={`absolute inset-0 transition-opacity duration-300 
+                  className={`absolute inset-0 transition-opacity duration-300
             ${selectedProposalIds.includes(proposal.id) ? "opacity-0" : "opacity-100"}
             text-negative-11 bg-transparent hover:text-negative-10 transition-colors duration-300 ease-in-out`}
                 />
