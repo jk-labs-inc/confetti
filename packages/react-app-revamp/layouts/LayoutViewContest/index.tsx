@@ -1,13 +1,17 @@
 "use client";
 import Loader from "@components/UI/Loader";
 import VotingSidebar from "@components/_pages/Contest/VotingSidebar";
+import ContestNotifyButton from "@components/_pages/Contest/components/ContestNotifyButton";
+import ContestShareButton from "@components/_pages/Contest/components/ContestShareButton";
 import ContestTabs, { Tab } from "@components/_pages/Contest/components/Tabs";
 import { populateBugReportLink } from "@helpers/githubIssue";
+import { useContestStore } from "@hooks/useContest/store";
 import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import { useWallet } from "@hooks/useWallet";
 import { useUrl } from "nextjs-current-url";
 import { useMemo, useState } from "react";
+import { useShallow } from "zustand/shallow";
 import ContestHeader from "./components/ContestHeader";
 import ContestTabsContent from "./components/ContestTabsContent";
 import LayoutViewContestError from "./components/Error";
@@ -34,6 +38,9 @@ const LayoutViewContest = () => {
   const contestImageUrl = getContestImageUrl(contestPrompt);
   const contestStatus = useContestStatusStore(state => state.contestStatus);
   const contestState = useContestStateStore(state => state.contestState);
+  const { votesOpen, votesClose } = useContestStore(
+    useShallow(state => ({ votesOpen: state.votesOpen, votesClose: state.votesClose })),
+  );
   const showSidebar =
     contestStatus === ContestStatus.VotingOpen && contestState !== ContestStateEnum.Canceled;
 
@@ -73,7 +80,27 @@ const LayoutViewContest = () => {
           />
           <div>
             <div className="mt-4 gap-3 flex flex-col">
-              <ContestTabs tab={tab} excludeTabs={excludeTabs} onChange={tab => setTab(tab)} />
+              <ContestTabs
+                tab={tab}
+                excludeTabs={excludeTabs}
+                onChange={tab => setTab(tab)}
+                rightContent={
+                  <div className="hidden md:flex items-center gap-3">
+                    <ContestShareButton
+                      contestName={contestName}
+                      contestAddress={contestConfig.address}
+                      chainName={contestConfig.chainName}
+                    />
+                    <ContestNotifyButton
+                      contestName={contestName}
+                      contestAddress={contestConfig.address}
+                      chainName={contestConfig.chainName}
+                      votesOpen={votesOpen}
+                      votesClose={votesClose}
+                    />
+                  </div>
+                }
+              />
             </div>
 
             <ContestTabsContent tab={tab} rewardsModule={rewardsModule} version={contestConfig.version} />

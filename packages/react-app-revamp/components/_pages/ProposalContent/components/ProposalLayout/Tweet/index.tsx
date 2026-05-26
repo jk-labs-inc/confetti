@@ -76,7 +76,7 @@ const ProposalLayoutTweet: FC<ProposalLayoutTweetProps> = ({
 
   return (
     <div
-      className={`flex flex-col gap-4 p-2 bg-true-black rounded-2xl shadow-entry-card w-full border transition-colors duration-300 ease-in-out ${
+      className={`flex flex-col gap-4 p-2 bg-true-black rounded-2xl shadow-entry-card w-full border-2 transition duration-150 ease-out active:scale-[0.98] ${
         isHighlighted ? "border-secondary-14" : "border-transparent"
       }`}
     >

@@ -1,20 +1,14 @@
 import ContestImage from "@components/_pages/Contest/components/ContestImage";
 import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
-import { useContestStore } from "@hooks/useContest/store";
 import useProfileData from "@hooks/useProfileData";
 import { ROUTE_VIEW_USER } from "@config/routes";
 import { FC } from "react";
 import { useMediaQuery } from "react-responsive";
-import { useShallow } from "zustand/shallow";
 import CancelContest from "../CancelContest";
-import ContestNotifyButton from "../ContestNotifyButton";
-import ContestShareButton from "../ContestShareButton";
 import EditContestName from "./components/EditContestName";
 import CustomLink from "@components/UI/Link";
 
 interface ContestNameProps {
-  contestAddress: string;
-  chainName: string;
   contestName: string;
   canEditTitle: boolean;
   contestAuthorEthereumAddress?: string;
@@ -22,10 +16,10 @@ interface ContestNameProps {
   contestImageUrl?: string;
 }
 
-const TITLE_MAX_FONT_PX = 30;
+const TITLE_MAX_FONT_PX = 32;
 const TITLE_MIN_FONT_PX = 18;
-const TITLE_SHORT_LEN = 10;
-const TITLE_LONG_LEN = 30;
+const TITLE_SHORT_LEN = 20;
+const TITLE_LONG_LEN = 40;
 
 const computeDesktopTitleSize = (length: number) => {
   if (length <= TITLE_SHORT_LEN) return TITLE_MAX_FONT_PX;
@@ -36,15 +30,12 @@ const computeDesktopTitleSize = (length: number) => {
 
 const ContestName: FC<ContestNameProps> = ({
   contestName,
-  contestAddress,
-  chainName,
   canEditTitle,
   contestAuthorEthereumAddress,
   contestPrompt,
   contestImageUrl,
 }) => {
   const { contestState } = useContestStateStore(state => state);
-  const { votesOpen, votesClose } = useContestStore(useShallow(state => ({ votesOpen: state.votesOpen, votesClose: state.votesClose })));
   const isContestCanceled = contestState === ContestStateEnum.Canceled;
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const { profileName: contestAuthorProfileName } = useProfileData(contestAuthorEthereumAddress ?? "", true);
@@ -101,16 +92,6 @@ const ContestName: FC<ContestNameProps> = ({
             </CustomLink>
           </p>
         )}
-        <div className="ml-auto flex items-baseline gap-3 shrink-0">
-          <ContestShareButton contestName={contestName} contestAddress={contestAddress} chainName={chainName} />
-          <ContestNotifyButton
-            contestName={contestName}
-            contestAddress={contestAddress}
-            chainName={chainName}
-            votesOpen={votesOpen}
-            votesClose={votesClose}
-          />
-        </div>
       </div>
     </div>
   );

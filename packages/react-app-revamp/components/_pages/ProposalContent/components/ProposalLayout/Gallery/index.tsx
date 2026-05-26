@@ -8,6 +8,12 @@ import ProposalContentVotePrimary from "../../Buttons/Vote/Primary";
 import ImageWithFallback from "../../ImageWithFallback";
 import ProposalLayoutGalleryRankOrPlaceholder from "./components/RankOrPlaceholder";
 
+const galleryOverlayTextStyle: React.CSSProperties = {
+  color: "#E5E5E5",
+  textShadow: "1px 1px 0 #000",
+  WebkitTextStroke: "0.3px #000",
+};
+
 interface ProposalLayoutGalleryProps {
   proposal: Proposal;
   proposalAuthorData: {
@@ -74,14 +80,14 @@ const ProposalLayoutGallery: FC<ProposalLayoutGalleryProps> = ({
 
   return (
     <div
-      className={`flex flex-col gap-2 p-2 bg-true-black rounded-2xl shadow-entry-card w-full max-h-[70vh] border transition-colors duration-300 ease-in-out ${
+      className={`flex flex-col gap-2 p-2 bg-true-black rounded-2xl shadow-entry-card w-full max-h-[70vh] border-2 transition duration-150 ease-out active:scale-[0.98] ${
         isHighlighted ? "border-secondary-14" : "border-transparent"
       }`}
     >
       <div className="rounded-2xl overflow-hidden relative">
         <ImageWithFallback fullSrc={imgUrl} alt="entry image" />
 
-        <div className="absolute top-1 left-2 right-2 flex items-center justify-between">
+        <div className="xl:hidden absolute top-1 left-2 right-2 flex items-center justify-between">
           <div>{proposal.rank ? <ProposalLayoutGalleryRankOrPlaceholder rank={proposal.rank} /> : null}</div>
           <div
             className="flex flex-col items-end gap-0.5"
@@ -94,6 +100,36 @@ const ProposalLayoutGallery: FC<ProposalLayoutGalleryProps> = ({
             ) : null}
           </div>
         </div>
+
+        {proposal.rank ? (
+          <div className="hidden xl:block absolute top-1 left-2">
+            <ProposalLayoutGalleryRankOrPlaceholder rank={proposal.rank} />
+          </div>
+        ) : null}
+
+        {imgTitle ||
+        ((contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed) &&
+          proposal.votes > 0) ? (
+          <div
+            className="hidden xl:flex absolute bottom-0 left-0 right-0 flex-col items-center gap-1 pt-12 pb-2 px-4 pointer-events-none"
+            style={{
+              background:
+                "linear-gradient(0deg, rgba(0, 0, 0, 0.60) 0%, rgba(0, 0, 0, 0.40) 49.99%, rgba(0, 0, 0, 0.00) 100%)",
+            }}
+          >
+            {imgTitle ? (
+              <p className="text-[16px] font-bold text-center leading-normal" style={galleryOverlayTextStyle}>
+                {imgTitle}
+              </p>
+            ) : null}
+            {(contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed) &&
+            proposal.votes > 0 ? (
+              <p className="text-[24px] font-bold text-center leading-normal" style={galleryOverlayTextStyle}>
+                {formatNumberWithCommas(proposal.votes)} votes
+              </p>
+            ) : null}
+          </div>
+        ) : null}
 
         {allowDelete ? (
           <div className="absolute bottom-1 left-2" onClick={e => e.stopPropagation()}>

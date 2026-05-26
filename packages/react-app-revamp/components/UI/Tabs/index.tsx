@@ -1,14 +1,15 @@
 import { animate, motion, useMotionValue } from "motion/react";
-import { FC, useEffect, useRef, useState } from "react";
+import { FC, ReactNode, useEffect, useRef, useState } from "react";
 
 interface TabsProps {
   tabs: string[];
   activeTab: string;
   onChange?: (tab: string) => void;
   optionalInfo?: Record<string, number>;
+  rightContent?: ReactNode;
 }
 
-const Tabs: FC<TabsProps> = ({ tabs, activeTab, onChange, optionalInfo }) => {
+const Tabs: FC<TabsProps> = ({ tabs, activeTab, onChange, optionalInfo, rightContent }) => {
   const [currentTab, setCurrentTab] = useState<string>(activeTab);
   const tabRefs = useRef<(HTMLDivElement | null)[]>([]);
   const indicatorX = useMotionValue(0);
@@ -52,7 +53,7 @@ const Tabs: FC<TabsProps> = ({ tabs, activeTab, onChange, optionalInfo }) => {
 
   return (
     <div className="relative flex flex-col gap-2">
-      <div className="flex gap-6 md:gap-8 mb-4" role="tablist">
+      <div className="flex items-center gap-6 md:gap-8 mb-4" role="tablist">
         {tabs.map((tab, index) => (
           <motion.div
             key={tab}
@@ -97,6 +98,7 @@ const Tabs: FC<TabsProps> = ({ tabs, activeTab, onChange, optionalInfo }) => {
             </motion.span>
           </motion.div>
         ))}
+        {rightContent && <div className="ml-auto flex items-center gap-3">{rightContent}</div>}
       </div>
       <div className="absolute left-0 w-full h-px bottom-0 bg-neutral-0" />
       <motion.div

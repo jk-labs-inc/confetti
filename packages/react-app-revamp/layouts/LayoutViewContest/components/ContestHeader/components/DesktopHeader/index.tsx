@@ -4,8 +4,6 @@ import { FC } from "react";
 interface DesktopHeaderProps {
   contestImageUrl: string;
   contestName: string;
-  contestAddress: string;
-  chainName: string;
   contestPrompt: string;
   canEditTitle: boolean;
   contestAuthorEthereumAddress: string;
@@ -15,8 +13,6 @@ interface DesktopHeaderProps {
 const DesktopHeader: FC<DesktopHeaderProps> = ({
   contestImageUrl,
   contestName,
-  contestAddress,
-  chainName,
   contestPrompt,
   canEditTitle,
   contestAuthorEthereumAddress,
@@ -26,8 +22,6 @@ const DesktopHeader: FC<DesktopHeaderProps> = ({
       <div className="flex mt-10">
         <ContestName
           contestName={contestName}
-          contestAddress={contestAddress}
-          chainName={chainName}
           canEditTitle={canEditTitle}
           contestAuthorEthereumAddress={contestAuthorEthereumAddress}
           contestPrompt={contestPrompt}
