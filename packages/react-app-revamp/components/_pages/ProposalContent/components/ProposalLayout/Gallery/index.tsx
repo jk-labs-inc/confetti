@@ -145,7 +145,10 @@ const ProposalLayoutGallery: FC<ProposalLayoutGalleryProps> = ({
               ) : null}
               {(contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed) &&
               proposal.votes > 0 ? (
-                <p className="text-[24px] font-bold text-center leading-normal" style={galleryOverlayTextStyle}>
+                <p
+                  className="text-[24px] font-bold text-center leading-normal whitespace-nowrap"
+                  style={galleryOverlayTextStyle}
+                >
                   {formatNumberWithCommas(proposal.votes)} votes
                 </p>
               ) : null}

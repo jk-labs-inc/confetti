@@ -1,5 +1,4 @@
 import AddFunds from "@components/AddFunds";
-import PriceCurveWrapper from "@components/PriceCurve/wrapper";
 import VotingWidget, { VotingWidgetStyle } from "@components/Voting";
 import ContestImage from "@components/_pages/Contest/components/ContestImage";
 import { verifyEntryPreviewPrompt } from "@components/_pages/DialogModalSendProposal/utils";
@@ -98,7 +97,6 @@ const VotingSidebar: FC = () => {
           </div>
         ) : (
           <>
-            <PriceCurveWrapper showPriceWarning noPadding showAxisLabels />
             <VotingWidget
               key={pickedProposal}
               costToVote={currentPricePerVote}
