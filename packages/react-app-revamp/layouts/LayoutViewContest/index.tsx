@@ -3,14 +3,17 @@ import Loader from "@components/UI/Loader";
 import VotingSidebar from "@components/_pages/Contest/VotingSidebar";
 import ContestNotifyButton from "@components/_pages/Contest/components/ContestNotifyButton";
 import ContestShareButton from "@components/_pages/Contest/components/ContestShareButton";
+import ContestStickyTrigger from "@components/_pages/Contest/components/ContestStickyTrigger";
 import ContestTabs, { Tab } from "@components/_pages/Contest/components/Tabs";
 import { populateBugReportLink } from "@helpers/githubIssue";
 import { useContestStore } from "@hooks/useContest/store";
 import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
+import { useContestStickyScroll } from "@hooks/useContestStickyScroll";
+import { useContestStickyStore } from "@hooks/useContestStickyStore";
 import { useWallet } from "@hooks/useWallet";
 import { useUrl } from "nextjs-current-url";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useShallow } from "zustand/shallow";
 import ContestHeader from "./components/ContestHeader";
 import ContestTabsContent from "./components/ContestTabsContent";
@@ -41,8 +44,11 @@ const LayoutViewContest = () => {
   const { votesOpen, votesClose } = useContestStore(
     useShallow(state => ({ votesOpen: state.votesOpen, votesClose: state.votesClose })),
   );
-  const showSidebar =
-    contestStatus === ContestStatus.VotingOpen && contestState !== ContestStateEnum.Canceled;
+  const showSidebar = contestStatus === ContestStatus.VotingOpen && contestState !== ContestStateEnum.Canceled;
+
+  const resetStickyStore = useContestStickyStore(state => state.reset);
+  useEffect(() => () => resetStickyStore(), [resetStickyStore]);
+  useContestStickyScroll();
 
   const excludeTabs = useMemo(() => {
     const tabsToExclude: Tab[] = [];
@@ -68,6 +74,7 @@ const LayoutViewContest = () => {
         <div className={`flex flex-col md:col-span-9 ${showSidebar ? "xl:w-[760px] xl:shrink-0" : ""}`}>
           <ReadOnlyBanner isReadOnly={isReadOnly} isLoading={isLoading} />
 
+          <ContestStickyTrigger trigger="compact" />
           <ContestHeader
             contestImageUrl={contestImageUrl ?? ""}
             contestName={contestName}
@@ -79,7 +86,7 @@ const LayoutViewContest = () => {
             contestVersion={contestConfig.version}
           />
           <div>
-            <div className="mt-4 gap-3 flex flex-col">
+            <div className="mt-2 gap-3 flex flex-col">
               <ContestTabs
                 tab={tab}
                 excludeTabs={excludeTabs}
