@@ -19,7 +19,6 @@ interface ProposalLayoutClassicProps {
   isMobile: boolean;
   contestAddress: string;
   contestStatus: ContestStatus;
-  formattedVotingOpen: moment.Moment;
   allowDelete: boolean;
   selectedProposalIds: string[];
   isHighlighted: boolean;
@@ -32,7 +31,6 @@ const ProposalLayoutClassic = ({
   isMobile,
   contestAddress,
   contestStatus,
-  formattedVotingOpen,
   allowDelete,
   selectedProposalIds,
   isHighlighted,
@@ -94,11 +92,7 @@ const ProposalLayoutClassic = ({
                     {formatNumberWithCommas(proposal.votes)} vote{proposal.votes !== 1 ? "s" : ""}
                   </p>
                 </button>
-              ) : (
-                <p className="text-neutral-10 text-[16px] font-bold">
-                  voting opens {formattedVotingOpen.format("MMMM Do, h:mm a")}
-                </p>
-              )}
+              ) : null}
             </div>
             {allowDelete && (
               <ProposalContentDeleteButton

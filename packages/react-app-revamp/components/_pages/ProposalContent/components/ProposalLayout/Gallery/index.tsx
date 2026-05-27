@@ -24,7 +24,6 @@ interface ProposalLayoutGalleryProps {
   };
   isMobile: boolean;
   contestStatus: ContestStatus;
-  formattedVotingOpen: moment.Moment;
   allowDelete: boolean;
   selectedProposalIds: string[];
   enabledPreview: EntryPreview | null;
@@ -112,14 +111,14 @@ const ProposalLayoutGallery: FC<ProposalLayoutGalleryProps> = ({
           proposal.votes > 0) ||
         allowDelete ? (
           <div
-            className="hidden xl:grid absolute bottom-0 left-0 right-0 grid-cols-3 items-center gap-2 pt-12 pb-2 px-2 pointer-events-none"
+            className="hidden xl:block absolute bottom-0 left-0 right-0 pt-12 pb-2 px-2 pointer-events-none"
             style={{
               background:
                 "linear-gradient(0deg, rgba(0, 0, 0, 0.60) 0%, rgba(0, 0, 0, 0.40) 49.99%, rgba(0, 0, 0, 0.00) 100%)",
             }}
           >
-            <div className="justify-self-start pointer-events-auto" onClick={e => e.stopPropagation()}>
-              {allowDelete ? (
+            {allowDelete ? (
+              <div className="absolute bottom-2 left-2 pointer-events-auto" onClick={e => e.stopPropagation()}>
                 <div className="bg-true-black/75 w-8 h-6 rounded-full flex items-center justify-center">
                   <button className="relative w-4 h-4 cursor-pointer" onClick={onDeleteClick}>
                     <CheckIcon
@@ -135,9 +134,9 @@ const ProposalLayoutGallery: FC<ProposalLayoutGalleryProps> = ({
                     />
                   </button>
                 </div>
-              ) : null}
-            </div>
-            <div className="flex flex-col items-center gap-1">
+              </div>
+            ) : null}
+            <div className="flex flex-col items-center">
               {imgTitle ? (
                 <p className="text-[16px] font-bold text-center leading-normal" style={galleryOverlayTextStyle}>
                   {imgTitle}
@@ -153,7 +152,6 @@ const ProposalLayoutGallery: FC<ProposalLayoutGalleryProps> = ({
                 </p>
               ) : null}
             </div>
-            <div />
           </div>
         ) : null}
 

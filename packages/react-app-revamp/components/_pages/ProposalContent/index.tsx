@@ -2,7 +2,6 @@ import { toastInfo } from "@components/UI/Toast";
 import { extractPathSegments } from "@helpers/extractPath";
 import { Tweet as TweetType } from "@helpers/isContentTweet";
 import { useCastVotesStore } from "@hooks/useCastVotes/store";
-import { useContestStore } from "@hooks/useContest/store";
 import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import useDeleteProposal from "@hooks/useDeleteProposal";
@@ -10,7 +9,6 @@ import { EntryPreview } from "@hooks/useDeployContest/slices/contestMetadataSlic
 import useProfileData from "@hooks/useProfileData";
 import { RawMetadataFields } from "@hooks/useProposal/utils";
 import { useWallet } from "@hooks/useWallet";
-import moment from "moment";
 import { usePathname } from "next/navigation";
 import { FC, useState } from "react";
 import { useMediaQuery } from "react-responsive";
@@ -63,7 +61,6 @@ const ProposalContent: FC<ProposalContentProps> = ({
   const asPath = usePathname();
   const { address: contestAddress } = extractPathSegments(asPath ?? "");
   const [isVotingDrawerOpen, setIsVotingDrawerOpen] = useState(false);
-  const { votesOpen } = useContestStore(state => state);
   const { contestState } = useContestStateStore(state => state);
   const isContestCanceled = contestState === ContestStateEnum.Canceled;
   const { setPickedProposal, pickedProposal } = useCastVotesStore(
@@ -72,7 +69,6 @@ const ProposalContent: FC<ProposalContentProps> = ({
       pickedProposal: state.pickedProposal,
     })),
   );
-  const formattedVotingOpen = moment(votesOpen);
   const isPicked = pickedProposal === proposal.id;
   const isHighlighted = isPicked && (isDesktop || isVotingDrawerOpen);
   const shouldReduceOpacity = isVotingDrawerOpen && !isPicked;
@@ -122,7 +118,6 @@ const ProposalContent: FC<ProposalContentProps> = ({
     selectedProposalIds,
     handleVotingDrawerOpen,
     toggleProposalSelection,
-    formattedVotingOpen,
     enabledPreview,
     isHighlighted,
   };

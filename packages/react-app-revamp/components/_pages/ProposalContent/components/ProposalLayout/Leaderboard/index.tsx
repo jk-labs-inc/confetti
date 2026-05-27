@@ -18,7 +18,6 @@ interface ProposalLayoutLeaderboardProps {
   };
   isMobile: boolean;
   contestStatus: ContestStatus;
-  formattedVotingOpen: moment.Moment;
   allowDelete: boolean;
   selectedProposalIds: string[];
   isHighlighted: boolean;
@@ -40,6 +39,7 @@ const ProposalLayoutLeaderboard: FC<ProposalLayoutLeaderboardProps> = ({
   const entryTitle = proposal.metadataFields.stringArray[0];
   const isVotingActive =
     contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed;
+  const hasRank = Boolean(proposal.rank);
   const initialMappedProposalIds = useProposalStore(state => state.initialMappedProposalIds);
   const totalVotes = initialMappedProposalIds.reduce((sum, p) => sum + p.votes, 0);
   const votePercentage = totalVotes > 0 ? Math.round((proposal.votes / totalVotes) * 100) : 0;
@@ -64,7 +64,7 @@ const ProposalLayoutLeaderboard: FC<ProposalLayoutLeaderboardProps> = ({
       <div
         aria-hidden
         className={`pointer-events-none absolute inset-y-0 ${
-          isVotingActive ? "-left-20" : "-left-3"
+          isVotingActive && hasRank ? "-left-20" : "-left-3"
         } -right-4 rounded-lg border transition-opacity duration-200 ease-out ${
           isHighlighted ? "border-neutral-10 bg-primary-1 opacity-100" : "border-transparent opacity-0"
         }`}

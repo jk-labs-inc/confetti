@@ -8,6 +8,7 @@ export const fetchCache = "only-cache";
 
 const normalizeEntities = (t: any) => {
   if (!t) return;
+
   t.entities = t.entities ?? {};
   t.entities.hashtags = t.entities.hashtags ?? [];
   t.entities.urls = t.entities.urls ?? [];
