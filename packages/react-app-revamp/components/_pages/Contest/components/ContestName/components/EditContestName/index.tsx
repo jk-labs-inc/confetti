@@ -41,7 +41,6 @@ const EditContestName: FC<EditContestNameProps> = ({ contestName, canEditTitle, 
     contestAbi: contestConfig.abi,
     contestAddress: contestConfig.address,
   });
-  const showImageUpload = !contestImageUrl;
 
   if (!shouldRender) return null;
 
@@ -60,6 +59,7 @@ const EditContestName: FC<EditContestNameProps> = ({ contestName, canEditTitle, 
 
   const handleImageSave = async (newImageUrl: string) => {
     if (!contestConfig.chainId || !contestPrompt) return;
+    if (newImageUrl === contestImageUrl) return;
 
     if (!isOnCorrectChain) {
       await switchChain(getWagmiConfig(), { chainId: contestConfig.chainId });
@@ -85,10 +85,10 @@ const EditContestName: FC<EditContestNameProps> = ({ contestName, canEditTitle, 
 
       <EditContestNameModal
         contestName={contestName}
+        contestImageUrl={contestImageUrl}
         isOpen={isEditContestNameModalOpen}
         setIsCloseModal={setIsEditContestNameModalOpen}
         handleEditContestName={handleEditContestName}
-        showImageUpload={showImageUpload}
         onImageSave={handleImageSave}
       />
     </>

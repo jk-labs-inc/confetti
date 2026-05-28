@@ -18,6 +18,7 @@ interface VoteAmountInputProps {
   isBelowMinimum?: boolean;
   pushToFirstAmount?: string | null;
   style?: VotingWidgetStyle;
+  autoFocus?: boolean;
   onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 }
 
@@ -40,6 +41,7 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
   isBelowMinimum = false,
   pushToFirstAmount,
   style = VotingWidgetStyle.classic,
+  autoFocus = false,
   inputRef,
   onKeyDown,
 }) => {
@@ -128,6 +130,7 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
                 ref={inputRef}
                 type="text"
                 inputMode="decimal"
+                autoFocus={autoFocus}
                 value={displayValue}
                 onChange={e => handleDisplayChange(e.target.value)}
                 onFocus={() => setIsFocused(true)}

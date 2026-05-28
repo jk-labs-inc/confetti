@@ -2,7 +2,6 @@ import { toastInfo } from "@components/UI/Toast";
 import { extractPathSegments } from "@helpers/extractPath";
 import { Tweet as TweetType } from "@helpers/isContentTweet";
 import { useCastVotesStore } from "@hooks/useCastVotes/store";
-import { useContestStore } from "@hooks/useContest/store";
 import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import useDeleteProposal from "@hooks/useDeleteProposal";
@@ -10,7 +9,6 @@ import { EntryPreview } from "@hooks/useDeployContest/slices/contestMetadataSlic
 import useProfileData from "@hooks/useProfileData";
 import { RawMetadataFields } from "@hooks/useProposal/utils";
 import { useWallet } from "@hooks/useWallet";
-import moment from "moment";
 import { usePathname } from "next/navigation";
 import { FC, useState } from "react";
 import { useMediaQuery } from "react-responsive";
@@ -31,7 +29,6 @@ export interface Proposal {
   votes: number;
   rank: number;
   isTied: boolean;
-  commentsCount: number;
   metadataFields: RawMetadataFields;
 }
 
@@ -60,10 +57,10 @@ const ProposalContent: FC<ProposalContentProps> = ({
     contestStatus,
   );
   const isMobile = useMediaQuery({ maxWidth: 768 });
+  const isDesktop = useMediaQuery({ minWidth: 1280 });
   const asPath = usePathname();
-  const { chainName, address: contestAddress } = extractPathSegments(asPath ?? "");
+  const { address: contestAddress } = extractPathSegments(asPath ?? "");
   const [isVotingDrawerOpen, setIsVotingDrawerOpen] = useState(false);
-  const { votesOpen } = useContestStore(state => state);
   const { contestState } = useContestStateStore(state => state);
   const isContestCanceled = contestState === ContestStateEnum.Canceled;
   const { setPickedProposal, pickedProposal } = useCastVotesStore(
@@ -72,14 +69,9 @@ const ProposalContent: FC<ProposalContentProps> = ({
       pickedProposal: state.pickedProposal,
     })),
   );
-  const formattedVotingOpen = moment(votesOpen);
-  const isAnyDrawerOpen = pickedProposal !== null;
-  const isHighlighted = isAnyDrawerOpen && pickedProposal === proposal.id;
-  const shouldReduceOpacity = isAnyDrawerOpen && !isHighlighted;
-  const commentLink = {
-    pathname: `/contest/${chainName}/${contestAddress}/submission/${proposal.id}`,
-    query: { comments: "comments" },
-  };
+  const isPicked = pickedProposal === proposal.id;
+  const isHighlighted = isPicked && (isDesktop || isVotingDrawerOpen);
+  const shouldReduceOpacity = isVotingDrawerOpen && !isPicked;
   const {
     profileAvatar,
     profileName,
@@ -120,16 +112,13 @@ const ProposalContent: FC<ProposalContentProps> = ({
       isError: isUserProfileError,
     },
     isMobile,
-    chainName,
     contestAddress,
     contestStatus,
     allowDelete,
     selectedProposalIds,
     handleVotingDrawerOpen,
     toggleProposalSelection,
-    formattedVotingOpen,
     enabledPreview,
-    commentLink: commentLink.pathname,
     isHighlighted,
   };
 
@@ -148,16 +137,20 @@ const ProposalContent: FC<ProposalContentProps> = ({
     }
   };
 
+  const handleCardClick = () => {
+    if (!isDesktop) return;
+    if (isContestCanceled) return;
+    if (contestStatus !== ContestStatus.VotingOpen) return;
+    setPickedProposal(proposal.id);
+  };
+
   return (
     <>
       <div
-        className={`transition-all duration-300 ease-in-out ${
-          shouldReduceOpacity
-            ? "opacity-30 scale-[0.98]"
-            : isHighlighted
-              ? "opacity-100 scale-[1.02] -translate-y-1 z-45 relative"
-              : "opacity-100 scale-100"
-        }`}
+        onClick={handleCardClick}
+        className={`transition-opacity duration-300 ease-in-out ${
+          isDesktop && contestStatus === ContestStatus.VotingOpen && !isContestCanceled ? "xl:cursor-pointer" : ""
+        } ${shouldReduceOpacity ? "opacity-30" : "opacity-100"}`}
       >
         {renderLayout()}
       </div>

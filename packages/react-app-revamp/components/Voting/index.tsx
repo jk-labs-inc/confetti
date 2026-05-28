@@ -108,6 +108,7 @@ const VotingWidget: FC<VotingWidgetProps> = ({
             isBelowMinimum={isBelowMinimum}
             pushToFirstAmount={pushToFirstAmount}
             style={style}
+            autoFocus={!isMobile}
             inputRef={inputRef as RefObject<HTMLInputElement>}
             onKeyDown={handleKeyDownInputWithVote}
           />

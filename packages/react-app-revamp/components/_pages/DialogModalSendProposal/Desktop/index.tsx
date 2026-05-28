@@ -21,7 +21,6 @@ import { FC, ReactNode, useEffect, useState } from "react";
 import { useShallow } from "zustand/shallow";
 import DialogModalSendProposalEditor from "../components/Editor";
 import DialogModalSendProposalEntryPreviewLayout from "../components/EntryPreviewLayout";
-import DialogModalSendProposalMetadataFields from "../components/MetadataFields";
 import { isAnyMetadataFieldEmpty, isEntryPreviewPrompt } from "../utils";
 
 interface DialogModalSendProposalDesktopLayoutProps {
@@ -156,14 +155,7 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
               </div>
               <div className="flex flex-col gap-5 rounded-md md:w-[650px]">
                 {hasEntryPreview ? (
-                  <DialogModalSendProposalEntryPreviewLayout
-                    entryPreviewLayout={metadataFields[0].prompt}
-                    editorProposal={editorProposal}
-                    isDragging={isDragging}
-                    handleDrop={handleDrop}
-                    handleDragOver={handleDragOver}
-                    handleDragLeave={handleDragLeave}
-                  />
+                  <DialogModalSendProposalEntryPreviewLayout entryPreviewLayout={metadataFields[0].prompt} />
                 ) : (
                   <DialogModalSendProposalEditor
                     editorProposal={editorProposal}
@@ -178,8 +170,6 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
                   <p className="loadingDots font-sabo-filled text-[16px] text-neutral-14">loading metadata fields</p>
                 ) : isMetadataFieldsError ? (
                   <p className="text-negative-11">Error while loading metadata fields. Please reload the page.</p>
-                ) : metadataFields.length > 0 ? (
-                  <DialogModalSendProposalMetadataFields />
                 ) : null}
                 <div className="flex flex-col gap-4 -mt-2">
                   <CreateGradientTitle textSize="small" additionalInfo="optional">

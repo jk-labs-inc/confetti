@@ -31,7 +31,6 @@ export function useDeployContest() {
     getVotingCloseDate,
     advancedOptions,
     setDeployContestData,
-    metadataFields,
     entryPreviewConfig,
     emailSubscriptionAddress,
     charge,
@@ -56,7 +55,6 @@ export function useDeployContest() {
       getVotingCloseDate: state.getVotingCloseDate,
       advancedOptions: state.advancedOptions,
       setDeployContestData: state.setDeployContestData,
-      metadataFields: state.metadataFields,
       entryPreviewConfig: state.entryPreviewConfig,
       emailSubscriptionAddress: state.emailSubscriptionAddress,
       charge: state.charge,
@@ -105,7 +103,6 @@ export function useDeployContest() {
           advancedOptions,
           charge,
           priceCurve,
-          metadataFields,
           entryPreviewConfig,
         },
       });

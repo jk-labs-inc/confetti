@@ -1,9 +1,4 @@
-import {
-  ROUTE_VIEW_USER,
-  ROUTE_VIEW_USER_COMMENTS,
-  ROUTE_VIEW_USER_SUBMISSIONS,
-  ROUTE_VIEW_USER_VOTING,
-} from "@config/routes";
+import { ROUTE_VIEW_USER, ROUTE_VIEW_USER_SUBMISSIONS, ROUTE_VIEW_USER_VOTING } from "@config/routes";
 import { ChevronRightIcon, PowerIcon } from "@heroicons/react/24/outline";
 
 import React, { useState } from "react";
@@ -38,10 +33,6 @@ const navLinks = [
   {
     href: ROUTE_VIEW_USER_VOTING,
     label: "Votes",
-  },
-  {
-    href: ROUTE_VIEW_USER_COMMENTS,
-    label: "Comments",
   },
 ];
 

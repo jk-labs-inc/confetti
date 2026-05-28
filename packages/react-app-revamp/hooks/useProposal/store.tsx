@@ -13,7 +13,6 @@ export interface ProposalCore {
   netVotes: number;
   isContentImage: boolean;
   tweet: Tweet;
-  commentsCount: number;
   fieldsMetadata: RawMetadataFields;
 }
 

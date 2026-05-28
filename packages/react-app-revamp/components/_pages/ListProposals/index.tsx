@@ -133,7 +133,6 @@ export const ListProposals = () => {
                     votes: proposal.netVotes,
                     rank: proposal.rank,
                     isTied: proposal.isTied,
-                    commentsCount: proposal.commentsCount,
                     // TODO: check if this is correct (it is, but we need to fix the type, we can do this afterwards)
                     // @ts-ignore
                     metadataFields: proposal.metadataFields ?? [],

@@ -1,24 +1,21 @@
 import { FC } from "react";
 
+export type ContestImageSize = "default" | "small";
+
 interface ContestImageProps {
   imageUrl: string;
+  size?: ContestImageSize;
 }
 
-const ContestImage: FC<ContestImageProps> = ({ imageUrl }) => {
-  return (
-    <div className="w-full md:min-w-[760px] min-h-[294px] rounded-2xl shadow-file-upload relative overflow-hidden">
-      {/* background blurred layer */}
-      <div
-        className="absolute inset-[-20px] bg-cover bg-center opacity-80 blur-[30px]"
-        style={{
-          backgroundImage: `url(${imageUrl})`,
-        }}
-      />
+const sizeClasses: Record<ContestImageSize, string> = {
+  default: "w-16 h-10 rounded-[16px]",
+  small: "w-10 h-[30px] rounded-[8px]",
+};
 
-      {/* centered main image container using absolute positioning */}
-      <div className="absolute inset-0 flex items-center justify-center">
-        <img src={imageUrl} alt="contest" className="max-w-[760px] max-h-[294px] w-auto h-auto object-contain" />
-      </div>
+const ContestImage: FC<ContestImageProps> = ({ imageUrl, size = "default" }) => {
+  return (
+    <div className={`${sizeClasses[size]} relative overflow-hidden shrink-0`}>
+      <img src={imageUrl} alt="contest" className="w-full h-full object-cover" />
     </div>
   );
 };
