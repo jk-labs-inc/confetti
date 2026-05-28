@@ -6,28 +6,32 @@ import EditContestNameTextInput from "../TextInput";
 
 interface EditContestNameModalProps {
   contestName: string;
+  contestImageUrl?: string;
   isOpen: boolean;
   setIsCloseModal: (isOpen: boolean) => void;
   handleEditContestName?: (value: string) => void;
-  showImageUpload?: boolean;
   onImageSave?: (imageUrl: string) => void;
 }
 
 const EditContestNameModal: FC<EditContestNameModalProps> = ({
   contestName,
+  contestImageUrl,
   isOpen,
   setIsCloseModal,
   handleEditContestName,
-  showImageUpload,
   onImageSave,
 }) => {
   const [inputValue, setInputValue] = useState(contestName);
-  const [imageValue, setImageValue] = useState("");
+  const [imageValue, setImageValue] = useState(contestImageUrl ?? "");
   const [error, setError] = useState<string>("");
 
   useEffect(() => {
     setInputValue(contestName);
   }, [contestName]);
+
+  useEffect(() => {
+    setImageValue(contestImageUrl ?? "");
+  }, [contestImageUrl]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -60,15 +64,15 @@ const EditContestNameModal: FC<EditContestNameModalProps> = ({
       return;
     }
 
-    handleEditContestName?.(value);
+    if (value !== contestName) {
+      handleEditContestName?.(value);
+    }
 
-    if (imageValue && onImageSave) {
+    if (imageValue && imageValue !== contestImageUrl && onImageSave) {
       onImageSave(imageValue);
     }
 
     setIsCloseModal(false);
-    setInputValue("");
-    setImageValue("");
   };
 
   const onModalClose = () => {
@@ -76,20 +80,28 @@ const EditContestNameModal: FC<EditContestNameModalProps> = ({
   };
 
   return (
-    <DialogModalV4 isOpen={isOpen} onClose={onModalClose}>
-      <div className="flex flex-col gap-14 py-6 md:py-16 pl-8 md:pl-32 pr-4 md:pr-16">
-        <div className="flex justify-between items-center">
-          <p className="text-[24px] text-neutral-11 font-bold">edit title</p>
+    <DialogModalV4 isOpen={isOpen} onClose={onModalClose} lgWidth="lg:max-w-[600px]">
+      <div className="flex flex-col gap-8 py-6 md:py-8 px-6 md:px-10">
+        <div className="flex justify-end items-center">
           <img
             src="/modal/modal_close.svg"
-            width={39}
-            height={33}
+            width={28}
+            height={24}
             alt="close"
             className="hidden md:block cursor-pointer"
             onClick={() => setIsCloseModal(false)}
           />
         </div>
-        <div className="bg-true-black w-full md:w-[700px] rounded-[16px] border-true-black md:shadow-file-upload md:p-4">
+
+        <div className="flex flex-col gap-3">
+          <p className="text-[20px] text-neutral-11 font-bold">
+            {contestImageUrl ? "edit preview image" : "add preview image"}
+          </p>
+          <ImageUpload initialImageUrl={contestImageUrl} onImageLoad={setImageValue} />
+        </div>
+
+        <div className="flex flex-col gap-3">
+          <p className="text-[20px] text-neutral-11 font-bold">edit title</p>
           <div className="bg-secondary-1 w-full rounded-[16px] outline-none p-4">
             <EditContestNameTextInput
               value={inputValue}
@@ -99,17 +111,10 @@ const EditContestNameModal: FC<EditContestNameModalProps> = ({
           </div>
         </div>
 
-        {showImageUpload && (
-          <div className="flex flex-col gap-4">
-            <p className="text-[24px] text-neutral-11 font-bold">add preview image</p>
-            <ImageUpload onImageLoad={setImageValue} />
-          </div>
-        )}
-
-        <div className="flex flex-col gap-4">
-          {error && <p className="text-[16px] text-negative-11 font-bold">{error}</p>}
+        <div className="flex flex-col gap-3">
+          {error && <p className="text-[14px] text-negative-11 font-bold">{error}</p>}
           <button
-            className="bg-gradient-purple self-center md:self-start rounded-[40px] w-80 h-10 text-center text-true-black text-[16px] font-bold hover:opacity-80 transition-opacity duration-300 ease-in-out"
+            className="bg-gradient-purple self-center md:self-start rounded-[40px] w-64 h-10 text-center text-true-black text-[16px] font-bold hover:opacity-80 transition-opacity duration-300 ease-in-out"
             onClick={() => handleSaveClick(inputValue)}
           >
             save

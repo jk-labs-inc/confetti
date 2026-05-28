@@ -3,7 +3,7 @@ import { LoadingToastMessageType } from "@components/UI/Toast/components/Loading
 import { TransactionResponse } from "@ethersproject/abstract-provider";
 import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import { getProposalId } from "@helpers/getProposalId";
-import { generateEntryPreviewHTML, generateFieldInputsHTML, processFieldInputs } from "@helpers/metadata";
+import { generateEntryPreviewHTML, processFieldInputs } from "@helpers/metadata";
 import { useContestStore } from "@hooks/useContest/store";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import { Charge } from "@hooks/useDeployContest/types";
@@ -18,7 +18,6 @@ import { simulateContract, waitForTransactionReceipt, writeContract } from "@wag
 import { compareVersions } from "compare-versions";
 import { addUserActionForAnalytics } from "lib/analytics/participants";
 import { updateRewardAnalytics } from "lib/analytics/rewards";
-import { useRouter } from "next/navigation";
 import { useMediaQuery } from "react-responsive";
 import { useShallow } from "zustand/shallow";
 import { useSubmitProposalStore } from "./store";
@@ -45,7 +44,6 @@ interface RewardsAnalyticsParams {
 interface CombinedAnalyticsParams extends UserAnalyticsParams, RewardsAnalyticsParams {}
 
 export function useSubmitProposal() {
-  const router = useRouter();
   const { userAddress, chain } = useWallet();
   const { contestConfig } = useContestConfigStore(state => state);
   const isMobile = useMediaQuery({ maxWidth: "768px" });
@@ -83,14 +81,9 @@ export function useSubmitProposal() {
     setError("");
     setTransactionData(null);
 
-    // generate the entry preview HTML
     const entryPreviewHTML = generateEntryPreviewHTML(metadataFields);
 
-    // generate the HTML for field inputs
-    const fieldInputsHTML = generateFieldInputsHTML(proposalContent, metadataFields);
-
-    // combine the original proposalContent with the generated HTML
-    const fullProposalContent = `${entryPreviewHTML}\n\n${proposalContent}\n\n${fieldInputsHTML}`;
+    const fullProposalContent = `${entryPreviewHTML}\n\n${proposalContent}`;
 
     return new Promise<{ tx: TransactionResponse; proposalId: string }>(async (resolve, reject) => {
       try {
@@ -164,9 +157,6 @@ export function useSubmitProposal() {
           }));
           setMetadataFields(clearedFields);
         }
-
-        const submissionPath = `/contest/${contestConfig.chainName.toLowerCase()}/${contestConfig.address}/submission/${proposalId}`;
-        router.push(submissionPath);
 
         resolve({ tx: txSendProposal, proposalId });
       } catch (e) {

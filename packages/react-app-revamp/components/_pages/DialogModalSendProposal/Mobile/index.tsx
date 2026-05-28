@@ -12,7 +12,6 @@ import { FC, useEffect, useState } from "react";
 import { useShallow } from "zustand/shallow";
 import DialogModalSendProposalEditor from "../components/Editor";
 import DialogModalSendProposalEntryPreviewLayout from "../components/EntryPreviewLayout";
-import DialogModalSendProposalMetadataFields from "../components/MetadataFields";
 import { isAnyMetadataFieldEmpty, isEntryPreviewPrompt } from "../utils";
 import DialogModalSendProposalMobileLayoutConfirm from "./components/ConfirmDialog";
 
@@ -85,10 +84,7 @@ const DialogModalSendProposalMobileLayout: FC<DialogModalSendProposalMobileLayou
       <div className="flex flex-col gap-4 px-6">
         <div className="flex flex-col gap-4">
           {hasEntryPreview ? (
-            <DialogModalSendProposalEntryPreviewLayout
-              entryPreviewLayout={metadataFields[0].prompt}
-              editorProposal={editorProposal}
-            />
+            <DialogModalSendProposalEntryPreviewLayout entryPreviewLayout={metadataFields[0].prompt} />
           ) : (
             <DialogModalSendProposalEditor editorProposal={editorProposal} />
           )}
@@ -98,8 +94,6 @@ const DialogModalSendProposalMobileLayout: FC<DialogModalSendProposalMobileLayou
               <p className="loadingDots font-sabo-filled text-[16px] text-neutral-14">loading metadata fields</p>
             ) : isMetadataFieldsError ? (
               <p className="text-negative-11">Error while loading metadata fields. Please reload the page.</p>
-            ) : metadataFields.length > 0 ? (
-              <DialogModalSendProposalMetadataFields />
             ) : null}
           </div>
         </div>

@@ -10,8 +10,6 @@ import { getProposalIdsRaw, rankProposals, transformProposalData } from "./utils
 
 export const PROPOSALS_PER_PAGE = 4;
 
-export const COMMENTS_VERSION = "4.13";
-
 export function useProposal() {
   const {
     setCurrentPagePaginationProposals,
@@ -46,8 +44,6 @@ export function useProposal() {
     setIsPageProposalsError("");
 
     try {
-      const commentsAllowed = compareVersions(version, COMMENTS_VERSION) >= 0;
-
       const contracts: any[] = [];
 
       for (const id of slice) {
@@ -63,22 +59,6 @@ export function useProposal() {
             args: [id],
           },
         );
-
-        if (commentsAllowed) {
-          contracts.push({
-            ...contractConfig,
-            functionName: "getProposalComments",
-            args: [id],
-          });
-        }
-      }
-
-      if (commentsAllowed) {
-        contracts.push({
-          ...contractConfig,
-          functionName: "getAllDeletedCommentIds",
-          args: [],
-        });
       }
 
       const results = await readContracts(getWagmiConfig(), { contracts });
@@ -216,25 +196,12 @@ export function useProposal() {
     version: string,
     resetData?: boolean,
   ) {
-    const hasCommentsData = proposalsResults.length > proposalIds.length * 2;
-    let deletedCommentIds: bigint[] = [];
-
-    if (hasCommentsData) {
-      deletedCommentIds = proposalsResults[proposalsResults.length - 1].result;
-    }
-
     const transformedProposals = proposalIds.map((id, index) => {
-      const baseIndex = hasCommentsData ? index * 3 : index * 2;
-
+      const baseIndex = index * 2;
       const proposalData = proposalsResults[baseIndex].result;
       const proposalVotes = proposalsResults[baseIndex + 1];
-      let proposalComments: bigint[] = [];
 
-      if (hasCommentsData) {
-        proposalComments = proposalsResults[baseIndex + 2].result;
-      }
-
-      return transformProposalData(id, proposalVotes, proposalData, proposalComments, deletedCommentIds, version);
+      return transformProposalData(id, proposalVotes, proposalData, version);
     });
 
     const combinedProposals = resetData ? transformedProposals : listProposalsData.concat(transformedProposals);

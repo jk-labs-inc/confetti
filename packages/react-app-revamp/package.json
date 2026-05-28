@@ -9,8 +9,8 @@
     "start": "next start"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "3.1053.0",
-    "@aws-sdk/s3-request-presigner": "3.1053.0",
+    "@aws-sdk/client-s3": "3.1054.0",
+    "@aws-sdk/s3-request-presigner": "3.1054.0",
     "@babel/core": "7.29.7",
     "@babel/preset-env": "7.29.7",
     "@bigmi/react": "0.8.0",
@@ -43,7 +43,7 @@
     "@types/react-virtualized": "9.22.3",
     "@types/underscore": "1.13.0",
     "@typescript-eslint/parser": "8.60.0",
-    "@vercel/node": "5.8.4",
+    "@vercel/node": "5.8.6",
     "@visx/axis": "3.12.0",
     "@visx/curve": "3.12.0",
     "@visx/event": "3.12.0",
@@ -90,7 +90,7 @@
     "react-loading-skeleton": "3.5.0",
     "react-responsive": "10.0.1",
     "react-toastify": "11.1.0",
-    "react-tooltip": "6.0.4",
+    "react-tooltip": "6.0.5",
     "react-tweet": "3.3.0",
     "react-use": "17.6.0",
     "safe-json-utils": "1.1.1",
@@ -102,7 +102,7 @@
     "uuid": "14.0.0",
     "vaul": "1.1.2",
     "wagmi": "3.6.5",
-    "viem": "2.48.11",
+    "viem": "2.51.3",
     "webpack": "5.107.2",
     "zod": "4.4.3",
     "zustand": "5.0.13"

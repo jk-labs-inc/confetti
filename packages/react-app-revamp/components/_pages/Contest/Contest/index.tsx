@@ -1,4 +1,6 @@
+import { HEADER_HEIGHT as PRICE_CURVE_HEADER_HEIGHT } from "@components/PriceCurve/constants";
 import PriceCurveWrapper from "@components/PriceCurve/wrapper";
+import ContestStickyTrigger from "@components/_pages/Contest/components/ContestStickyTrigger";
 import DialogModalSendProposal from "@components/_pages/DialogModalSendProposal";
 import ListProposals from "@components/_pages/ListProposals";
 import useContest from "@hooks/useContest";
@@ -64,14 +66,21 @@ const ContestTab = () => {
       </div>
 
       <div className="mt-4 md:mt-6 border-t border-neutral-4" />
-      <div className="mt-3 md:mt-4">
+      <div className="mt-3 md:mt-4 relative">
         <PriceCurveWrapper
+          height={250}
           showPriceWarning
           noPadding
           showAxisLabels
           isExpanded={isPriceCurveExpanded}
           onToggleExpand={() => setIsPriceCurveExpanded(prev => !prev)}
         />
+        <div
+          className="absolute left-0 right-0 pointer-events-none"
+          style={{ top: PRICE_CURVE_HEADER_HEIGHT }}
+        >
+          <ContestStickyTrigger trigger="chart" />
+        </div>
       </div>
       <div className="mt-4 hidden md:block border-t border-neutral-4" />
 

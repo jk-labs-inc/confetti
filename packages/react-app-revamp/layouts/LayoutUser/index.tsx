@@ -1,12 +1,7 @@
 "use client";
 import CustomLink from "@components/UI/Link";
 import UserProfileDisplay from "@components/UI/UserProfileDisplay";
-import {
-  ROUTE_VIEW_USER,
-  ROUTE_VIEW_USER_COMMENTS,
-  ROUTE_VIEW_USER_SUBMISSIONS,
-  ROUTE_VIEW_USER_VOTING,
-} from "@config/routes";
+import { ROUTE_VIEW_USER, ROUTE_VIEW_USER_SUBMISSIONS, ROUTE_VIEW_USER_VOTING } from "@config/routes";
 import { usePathname } from "next/navigation";
 import { ReactNode, useEffect, useRef, useState } from "react";
 import { ErrorBoundary, getErrorMessage } from "react-error-boundary";
@@ -30,10 +25,6 @@ const navLinks = [
   {
     href: ROUTE_VIEW_USER_VOTING,
     label: "Votes",
-  },
-  {
-    href: ROUTE_VIEW_USER_COMMENTS,
-    label: "Comments",
   },
 ];
 

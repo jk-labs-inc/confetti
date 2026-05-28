@@ -7,7 +7,7 @@ import { FC } from "react";
 
 const MainHeaderDesktopLayout: FC = () => {
   return (
-    <header className="grid grid-cols-[1fr_auto_1fr] items-center px-12 mt-8">
+    <header className="grid grid-cols-[1fr_auto_1fr] items-center px-12 mt-8 xl:px-0 xl:w-[1272px] xl:mx-auto">
       <CustomLink href="/">
         <Logo />
       </CustomLink>

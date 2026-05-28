@@ -75,14 +75,7 @@ export function rankProposals(
  * @param proposalData - The detailed data of the proposal.
  * @returns An object representing the transformed proposal data.
  */
-export function transformProposalData(
-  id: any,
-  voteData: any,
-  proposalData: any,
-  proposalCommentsIds: bigint[] = [],
-  deletedCommentIds: bigint[] = [],
-  version: string,
-) {
+export function transformProposalData(id: any, voteData: any, proposalData: any, version: string) {
   let netVotes: number;
 
   const hasDownvotes = version ? compareVersions(version, "5.1") < 0 : false;
@@ -97,8 +90,6 @@ export function transformProposalData(
 
   const isContentImage = isUrlToImage(proposalData.description);
   const tweet = isContentTweet(proposalData.description);
-  const deletedCommentIdsSet = new Set(deletedCommentIds.map(id => id.toString()));
-  const allCommentsIds = proposalCommentsIds.map(id => id.toString()).filter(id => !deletedCommentIdsSet.has(id));
 
   const { fieldsMetadata, ...restProposalData } = proposalData;
   const metadataFields: RawMetadataFields = fieldsMetadata
@@ -116,7 +107,6 @@ export function transformProposalData(
     isContentImage,
     tweet,
     netVotes,
-    commentsCount: allCommentsIds.length,
   };
 }
 

@@ -70,17 +70,12 @@ const formatTimeWindow = (
   return { display: `${startHour}${startPeriod}-${endHour}${endPeriod}`, spansMultipleDays: false };
 };
 
-interface ContestTimingProps {
-  compact?: boolean;
-}
-
-const ContestTiming: FC<ContestTimingProps> = ({ compact }) => {
+const ContestTiming: FC = () => {
   const { votesOpen, votesClose } = useContestStore(state => state);
   const { contestState } = useContestStateStore(state => state);
   const isCanceled = contestState === ContestStateEnum.Canceled;
   const votingTimeLeft = useCountdownTimer(votesClose);
   const isMobile = useMediaQuery({ maxWidth: 768 });
-  const useCompact = compact ?? isMobile;
 
   const display = useMemo<{ content: ReactNode; dimmed: boolean }>(() => {
     if (isCanceled) return { content: "canceled", dimmed: true };
@@ -92,7 +87,7 @@ const ContestTiming: FC<ContestTimingProps> = ({ compact }) => {
     if (now.isSameOrAfter(end)) return { content: "ended", dimmed: true };
 
     if (now.isSameOrAfter(voteStart) && now.isBefore(end)) {
-      const segments = getCountdownSegments(votingTimeLeft, useCompact);
+      const segments = getCountdownSegments(votingTimeLeft, isMobile);
       const content = segments.map((seg, i) => (
         <span key={i}>
           <span className="text-[20px] md:text-[24px] font-bold">{seg.value}</span>{" "}
@@ -129,7 +124,7 @@ const ContestTiming: FC<ContestTimingProps> = ({ compact }) => {
       ),
       dimmed: false,
     };
-  }, [isCanceled, votesOpen, votesClose, votingTimeLeft, useCompact]);
+  }, [isCanceled, votesOpen, votesClose, votingTimeLeft, isMobile]);
 
   return (
     <div className={`flex items-baseline gap-1 whitespace-nowrap ${display.dimmed ? "text-neutral-9" : "text-neutral-11"}`}>
