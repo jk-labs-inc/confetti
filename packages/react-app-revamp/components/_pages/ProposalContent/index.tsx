@@ -138,9 +138,14 @@ const ProposalContent: FC<ProposalContentProps> = ({
   };
 
   const handleCardClick = () => {
-    if (!isDesktop) return;
     if (isContestCanceled) return;
     if (contestStatus !== ContestStatus.VotingOpen) return;
+
+    if (!isDesktop) {
+      handleVotingDrawerOpen();
+      return;
+    }
+
     setPickedProposal(proposal.id);
   };
 
