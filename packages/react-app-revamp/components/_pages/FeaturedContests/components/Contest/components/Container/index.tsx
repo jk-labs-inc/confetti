@@ -1,4 +1,6 @@
 import { getContestImageUrl } from "@layouts/LayoutViewContest/helpers/getContestImageUrl";
+import { CONTEST_IMAGE_PRESETS } from "lib/image/cloudflare";
+import { useCloudflareBackgroundImage } from "lib/image/useCloudflareImage";
 import { motion } from "motion/react";
 import { FC, ReactNode, useState, useEffect } from "react";
 
@@ -13,19 +15,24 @@ export const contestImageGradient = {
 
 const ContestCardContainer: FC<ContestCardContainerProps> = ({ prompt, children }) => {
   const contestImageUrl = getContestImageUrl(prompt);
+  const { url: optimizedImageUrl, backgroundImage } = useCloudflareBackgroundImage(
+    contestImageUrl,
+    CONTEST_IMAGE_PRESETS.landingCard,
+  );
   const [isImageLoaded, setIsImageLoaded] = useState(false);
 
-  // TODO: i'm just experimenting with this, i'm using this on submission page where i blur the image until it's loaded. i might not use it here but just wanna check how it feels
+  // Blur-up: preload the SAME optimized asset used for the background so the blur
+  // clears without ever fetching the multi-MB original.
   useEffect(() => {
-    if (!contestImageUrl) return;
+    if (!optimizedImageUrl) return;
 
     setIsImageLoaded(false);
     const img = new Image();
-    img.src = contestImageUrl;
+    img.src = optimizedImageUrl;
     img.onload = () => {
       setIsImageLoaded(true);
     };
-  }, [contestImageUrl]);
+  }, [optimizedImageUrl]);
 
   return (
     <motion.div
@@ -36,11 +43,9 @@ const ContestCardContainer: FC<ContestCardContainerProps> = ({ prompt, children 
       <motion.div
         className="absolute inset-0 bg-cover bg-center"
         style={{
-          backgroundImage: contestImageUrl
-            ? `url(${contestImageUrl})`
-            : "linear-gradient(155deg, #381D4C -2.14%, #000 33.85%)",
+          backgroundImage: backgroundImage ?? "linear-gradient(155deg, #381D4C -2.14%, #000 33.85%)",
           willChange: "transform",
-          ...(contestImageUrl && {
+          ...(optimizedImageUrl && {
             filter: isImageLoaded ? "blur(0px)" : "blur(10px)",
             transition: isImageLoaded ? "filter 0.5s linear" : "none",
           }),
@@ -51,7 +56,7 @@ const ContestCardContainer: FC<ContestCardContainerProps> = ({ prompt, children 
         }}
         transition={{ duration: 0.4, ease: "easeOut" }}
       />
-      {contestImageUrl && (
+      {optimizedImageUrl && (
         <div
           className="absolute inset-0"
           style={{
