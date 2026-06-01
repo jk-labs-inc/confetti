@@ -50,10 +50,7 @@ contract VoterRewardsModuleTest is Test {
     );
 
     Governor.ConstructorArgs public payPerVoteExpCurveParams = Governor.ConstructorArgs(
-        CONTEST_NAME,
-        CONTEST_PROMPT,
-        payPerVoteExpCurveIntConstructorArgs,
-        JK_LABS_SPLIT_DESTINATION
+        CONTEST_NAME, CONTEST_PROMPT, payPerVoteExpCurveIntConstructorArgs, JK_LABS_SPLIT_DESTINATION
     );
 
     Governor.IntConstructorArgs public payPerVoteExpCurveRankLimitOneIntConstructorArgs = Governor.IntConstructorArgs(
@@ -72,10 +69,7 @@ contract VoterRewardsModuleTest is Test {
     );
 
     Governor.ConstructorArgs public payPerVoteExpCurveRankLimitOneParams = Governor.ConstructorArgs(
-        CONTEST_NAME,
-        CONTEST_PROMPT,
-        payPerVoteExpCurveRankLimitOneIntConstructorArgs,
-        JK_LABS_SPLIT_DESTINATION
+        CONTEST_NAME, CONTEST_PROMPT, payPerVoteExpCurveRankLimitOneIntConstructorArgs, JK_LABS_SPLIT_DESTINATION
     );
 
     address public constant JK_LABS_ADDRESS = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738;
@@ -86,29 +80,17 @@ contract VoterRewardsModuleTest is Test {
     // PROPOSAL PARAMS
     uint256[] public proposalsToDelete;
 
-    Governor.ProposalCore public testAddress1AuthorProposal1 = Governor.ProposalCore({
-        author: TEST_ADDRESS_1,
-        description: "testAddress1AuthorProposal1",
-        exists: true
-    });
+    Governor.ProposalCore public testAddress1AuthorProposal1 =
+        Governor.ProposalCore({author: TEST_ADDRESS_1, description: "testAddress1AuthorProposal1", exists: true});
 
-    Governor.ProposalCore public testAddress1AuthorProposal2 = Governor.ProposalCore({
-        author: TEST_ADDRESS_1,
-        description: "testAddress1AuthorProposal2",
-        exists: true
-    });
+    Governor.ProposalCore public testAddress1AuthorProposal2 =
+        Governor.ProposalCore({author: TEST_ADDRESS_1, description: "testAddress1AuthorProposal2", exists: true});
 
-    Governor.ProposalCore public testAddress1AuthorProposal3 = Governor.ProposalCore({
-        author: TEST_ADDRESS_1,
-        description: "testAddress1AuthorProposal3",
-        exists: true
-    });
+    Governor.ProposalCore public testAddress1AuthorProposal3 =
+        Governor.ProposalCore({author: TEST_ADDRESS_1, description: "testAddress1AuthorProposal3", exists: true});
 
-    Governor.ProposalCore public testAddress1AuthorProposal4 = Governor.ProposalCore({
-        author: TEST_ADDRESS_1,
-        description: "testAddress1AuthorProposal4",
-        exists: true
-    });
+    Governor.ProposalCore public testAddress1AuthorProposal4 =
+        Governor.ProposalCore({author: TEST_ADDRESS_1, description: "testAddress1AuthorProposal4", exists: true});
 
     // REWARDS MODULE VARS
     VoterRewardsModule public voterRewardsModule;

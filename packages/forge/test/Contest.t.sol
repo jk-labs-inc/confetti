@@ -65,17 +65,11 @@ contract ContestTest is Test {
     );
 
     Governor.ConstructorArgs public payPerVoteExpCurveParams = Governor.ConstructorArgs(
-        CONTEST_NAME,
-        CONTEST_PROMPT,
-        payPerVoteExpCurveIntConstructorArgs,
-        JK_LABS_SPLIT_DESTINATION
+        CONTEST_NAME, CONTEST_PROMPT, payPerVoteExpCurveIntConstructorArgs, JK_LABS_SPLIT_DESTINATION
     );
 
     Governor.ConstructorArgs public payPerVoteLogCurveParams = Governor.ConstructorArgs(
-        CONTEST_NAME,
-        CONTEST_PROMPT,
-        payPerVoteLogCurveIntConstructorArgs,
-        JK_LABS_SPLIT_DESTINATION
+        CONTEST_NAME, CONTEST_PROMPT, payPerVoteLogCurveIntConstructorArgs, JK_LABS_SPLIT_DESTINATION
     );
 
     address public constant JK_LABS_ADDRESS = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738;
@@ -86,11 +80,8 @@ contract ContestTest is Test {
     // PROPOSAL PARAMS
     uint256[] public proposalsToDelete;
 
-    Governor.ProposalCore public testAddress1AuthorProposal = Governor.ProposalCore({
-        author: TEST_ADDRESS_1,
-        description: "testAddress1AuthorProposal",
-        exists: true
-    });
+    Governor.ProposalCore public testAddress1AuthorProposal =
+        Governor.ProposalCore({author: TEST_ADDRESS_1, description: "testAddress1AuthorProposal", exists: true});
 
     // REWARDS MODULE VARS
     VoterRewardsModule public voterRewardsModule;
