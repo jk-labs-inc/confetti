@@ -18,7 +18,13 @@ const saveToAnalyticsContestParticipantsV3 = async (options: SaveToAnalyticsCont
       const config = await import("@config/supabase");
       const supabase = config.supabase;
 
-      const { error } = await supabase.from("analytics_contest_participants_v3").insert(options);
+      const normalizedOptions = {
+        ...options,
+        contest_address: options.contest_address.toLowerCase(),
+        user_address: options.user_address?.toLowerCase(),
+      };
+
+      const { error } = await supabase.from("analytics_contest_participants_v3").insert(normalizedOptions);
       if (error) {
         console.error("Error in saveToAnalyticsContestParticipantsV3:", error.message);
       }
@@ -46,7 +52,7 @@ export const saveUpdatedProposalsStatusToAnalyticsV3 = async (
       for (let proposal_id of proposal_ids) {
         const { error } = await supabase.from("analytics_contest_participants_v3").insert([
           {
-            user_address: userAddress,
+            user_address: userAddress?.toLowerCase(),
             contest_address: contestAddress.toLowerCase(),
             network_name: chainName,
             proposal_id: proposal_id,
@@ -63,4 +69,3 @@ export const saveUpdatedProposalsStatusToAnalyticsV3 = async (
     }
   }
 };
-

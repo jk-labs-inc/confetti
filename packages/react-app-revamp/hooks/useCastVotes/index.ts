@@ -143,7 +143,7 @@ export function useCastVotes({ charge, votesClose }: UseCastVotesProps) {
         operation: "deposit",
         token_address: null,
       };
-      await performAnalytics(analyticsParams, refetchTotalRewards);
+      void performAnalytics(analyticsParams, refetchTotalRewards);
 
       setTransactionData({
         hash: receipt.transactionHash,

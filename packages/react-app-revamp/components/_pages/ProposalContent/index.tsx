@@ -14,6 +14,7 @@ import { FC, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useShallow } from "zustand/shallow";
 import DrawerVoteForProposal from "../DrawerVoteForProposal";
+import VoteParticleOverlay from "./components/VoteFeedback/VoteParticleOverlay";
 import ProposalLayoutClassic from "./components/ProposalLayout/Classic";
 import ProposalLayoutGallery from "./components/ProposalLayout/Gallery";
 import ProposalLayoutLeaderboard from "./components/ProposalLayout/Leaderboard";
@@ -153,11 +154,12 @@ const ProposalContent: FC<ProposalContentProps> = ({
     <>
       <div
         onClick={handleCardClick}
-        className={`transition-opacity duration-300 ease-in-out ${
+        className={`relative transition-opacity duration-300 ease-in-out ${
           isDesktop && contestStatus === ContestStatus.VotingOpen && !isContestCanceled ? "xl:cursor-pointer" : ""
         } ${shouldReduceOpacity ? "opacity-30" : "opacity-100"}`}
       >
         {renderLayout()}
+        <VoteParticleOverlay votes={proposal.votes} />
       </div>
       <DrawerVoteForProposal isOpen={isVotingDrawerOpen} setIsOpen={handleVotingDrawerClose} />
     </>

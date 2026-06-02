@@ -1,4 +1,5 @@
 import { Proposal } from "@components/_pages/ProposalContent";
+import VoteCountPulse from "@components/_pages/ProposalContent/components/VoteFeedback";
 import { CheckIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { ContestStatus } from "@hooks/useContestStatus/store";
 import { EntryPreview } from "@hooks/useDeployContest/slices/contestMetadataSlice";
@@ -95,7 +96,9 @@ const ProposalLayoutGallery: FC<ProposalLayoutGalleryProps> = ({
             {imgTitle ? <p className="text-[12px] font-bold text-neutral-11">{imgTitle}</p> : null}
             {(contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed) &&
             proposal.votes > 0 ? (
-              <p className="text-[12px] text-neutral-11">{formatNumberWithCommas(proposal.votes)} votes</p>
+              <p className="text-[12px] text-neutral-11">
+                <VoteCountPulse votes={proposal.votes}>{formatNumberWithCommas(proposal.votes)}</VoteCountPulse> votes
+              </p>
             ) : null}
           </div>
         </div>
@@ -148,7 +151,7 @@ const ProposalLayoutGallery: FC<ProposalLayoutGalleryProps> = ({
                   className="text-[24px] font-bold text-center leading-normal whitespace-nowrap"
                   style={galleryOverlayTextStyle}
                 >
-                  {formatNumberWithCommas(proposal.votes)} votes
+                  <VoteCountPulse votes={proposal.votes}>{formatNumberWithCommas(proposal.votes)}</VoteCountPulse> votes
                 </p>
               ) : null}
             </div>
