@@ -44,6 +44,7 @@ const ProposalLayoutGallery: FC<ProposalLayoutGalleryProps> = ({
 }) => {
   const [imgUrl, setImgUrl] = useState<string>("");
   const [imgTitle, setImgTitle] = useState<string>("");
+  const isVotingNotOpenYet = contestStatus !== ContestStatus.VotingOpen && contestStatus !== ContestStatus.VotingClosed;
 
   const updateImgUrl = () => {
     if (enabledPreview === EntryPreview.IMAGE_AND_TITLE) {
@@ -138,7 +139,12 @@ const ProposalLayoutGallery: FC<ProposalLayoutGalleryProps> = ({
             ) : null}
             <div className="flex flex-col items-center">
               {imgTitle ? (
-                <p className="text-[16px] font-bold text-center leading-normal" style={galleryOverlayTextStyle}>
+                <p
+                  className={`${
+                    isVotingNotOpenYet ? "text-[24px]" : "text-[16px]"
+                  } font-bold text-center leading-normal`}
+                  style={galleryOverlayTextStyle}
+                >
                   {imgTitle}
                 </p>
               ) : null}
