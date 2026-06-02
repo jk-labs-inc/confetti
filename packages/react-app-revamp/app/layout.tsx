@@ -79,7 +79,6 @@ export const viewport: Viewport = {
 };
 
 const DynamicPortal = dynamic(() => import("./portal"), { ssr: !!false });
-const DynamicReactScan = dynamic(() => import("./react-scan"), { ssr: !!false });
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   return (
