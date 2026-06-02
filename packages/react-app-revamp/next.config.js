@@ -17,6 +17,8 @@ const nextConfig = {
         resourceRegExp: /^(accounts|@metamask\/(sdk|connect-evm)|@safe-global\/safe-apps-(sdk|provider)|@gemini-wallet\/core|@base-org\/account|@getpara\/aa-(alchemy|biconomy|cdp|gelato|pimlico|porto|rhinestone|safe|thirdweb|zerodev))$/,
       }),
     );
+    // ignore tempo chain warning
+    config.ignoreWarnings = [...(config.ignoreWarnings || []), { module: /ox[\\/]_esm[\\/]tempo[\\/]/ }];
 
     return config;
   },

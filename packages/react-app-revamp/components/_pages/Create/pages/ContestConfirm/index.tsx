@@ -91,6 +91,7 @@ const CreateContestConfirm = () => {
             step={stepReferences.ContestRules}
             title={state.title}
             onClick={step => onNavigateToStep(step)}
+            onTitleChange={state.setTitle}
           />
           <CreateContestConfirmDescription
             step={stepReferences.ContestRules}
