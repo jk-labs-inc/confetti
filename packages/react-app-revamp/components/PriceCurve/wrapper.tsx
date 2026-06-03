@@ -87,7 +87,7 @@ const PriceCurveWrapper = ({
   const setShowPriceUpdateWarning = usePriceCurveChartStore(useShallow(state => state.setShowPriceUpdateWarning));
 
   useEffect(() => {
-    const shouldWarn = showPriceWarning && secondsUntilNextUpdate < 15 && votingTimeLeft > 60;
+    const shouldWarn = showPriceWarning && secondsUntilNextUpdate < 10 && votingTimeLeft > 60;
     setShowPriceUpdateWarning(shouldWarn);
   }, [showPriceWarning, secondsUntilNextUpdate, votingTimeLeft, setShowPriceUpdateWarning]);
 
