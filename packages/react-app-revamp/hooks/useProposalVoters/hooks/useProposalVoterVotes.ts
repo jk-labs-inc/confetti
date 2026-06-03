@@ -31,7 +31,7 @@ export const useProposalVoterVotes = ({
   hasDownvotes,
 }: UseProposalVoterVotesProps) => {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } = useInfiniteQuery({
-    queryKey: [...proposalVoterVotesQueryKey(contractAddress, chainId, proposalId), hasDownvotes],
+    queryKey: [...proposalVoterVotesQueryKey(contractAddress, chainId, proposalId), hasDownvotes, addresses],
     initialPageParam: 0,
     queryFn: async ({ pageParam }): Promise<VoterWithVotes[]> => {
       const start = pageParam * pageSize;

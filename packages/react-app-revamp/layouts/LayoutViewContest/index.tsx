@@ -11,6 +11,7 @@ import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/s
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import { useContestStickyScroll } from "@hooks/useContestStickyScroll";
 import { useContestStickyStore } from "@hooks/useContestStickyStore";
+import useTotalVotesCastOnContest from "@hooks/useTotalVotesCastOnContest";
 import { useWallet } from "@hooks/useWallet";
 import { useUrl } from "nextjs-current-url";
 import { useEffect, useMemo, useState } from "react";
@@ -44,7 +45,14 @@ const LayoutViewContest = () => {
   const { votesOpen, votesClose } = useContestStore(
     useShallow(state => ({ votesOpen: state.votesOpen, votesClose: state.votesClose })),
   );
-  const showSidebar = contestStatus === ContestStatus.VotingOpen && contestState !== ContestStateEnum.Canceled;
+  const isVotingOpen = contestStatus === ContestStatus.VotingOpen;
+  const isVotingClosed = contestStatus === ContestStatus.VotingClosed;
+  const { totalVotesCast } = useTotalVotesCastOnContest(contestConfig.address, contestConfig.chainId, {
+    enabled: isVotingClosed,
+  });
+  const contestHasVotes = !!totalVotesCast && Number(totalVotesCast) > 0;
+  const showSidebar =
+    contestState !== ContestStateEnum.Canceled && (isVotingOpen || (isVotingClosed && contestHasVotes));
 
   const resetStickyStore = useContestStickyStore(state => state.reset);
   useEffect(() => () => resetStickyStore(), [resetStickyStore]);

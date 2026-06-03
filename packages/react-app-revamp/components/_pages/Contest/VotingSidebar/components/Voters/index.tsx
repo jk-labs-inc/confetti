@@ -5,16 +5,24 @@ import { VOTES_PER_PAGE } from "@hooks/useProposalVoters";
 import { useProposalVoterAddresses } from "@hooks/useProposalVoters/hooks/useProposalVoterAddresses";
 import { invalidateProposalVoters } from "@hooks/useProposalVoters/invalidate";
 import useContestConfigStore from "@hooks/useContestConfig/store";
+import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import { useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
 import { FC } from "react";
 import { useShallow } from "zustand/shallow";
+import EntryPreviewHeader from "../EntryPreviewHeader";
+import VotingSidebarEmailSignup from "../EmailSignup";
+import NoVotesPlaceholder from "./components/NoVotesPlaceholder";
 
 interface VotingSidebarVotersProps {
   proposalId: string;
+  image?: string;
+  title?: string;
+  contestName?: string;
 }
 
-const VotingSidebarVoters: FC<VotingSidebarVotersProps> = ({ proposalId }) => {
+const VotingSidebarVoters: FC<VotingSidebarVotersProps> = ({ proposalId, image, title, contestName }) => {
+  const isVotingOpen = useContestStatusStore(state => state.contestStatus) === ContestStatus.VotingOpen;
   const contestConfig = useContestConfigStore(useShallow(state => state.contestConfig));
   const queryClient = useQueryClient();
   const { addresses, totalCount, isLoading, error } = useProposalVoterAddresses({
@@ -38,6 +46,11 @@ const VotingSidebarVoters: FC<VotingSidebarVotersProps> = ({ proposalId }) => {
 
   return (
     <div className="bg-gradient-voting-area-purple rounded-4xl px-6 py-4 flex flex-col gap-4">
+      {!isVotingOpen && (image || title || contestName) && (
+        <div className="pb-4 border-b border-primary-3">
+          <EntryPreviewHeader image={image} title={title} contestName={contestName} />
+        </div>
+      )}
       <div className="flex items-center justify-between gap-2 pr-6">
         <div className="flex items-baseline gap-2">
           <Image src="/entry/vote-ballot.svg" alt="voters" width={24} height={24} className="self-center" />
@@ -46,7 +59,7 @@ const VotingSidebarVoters: FC<VotingSidebarVotersProps> = ({ proposalId }) => {
           </GradientText>
           {totalCount > 0 && <p className="text-[16px] text-neutral-11 font-bold">{`(${totalCount})`}</p>}
         </div>
-        <RefreshButton onRefresh={handleRefresh} size="md" />
+        {isVotingOpen && <RefreshButton onRefresh={handleRefresh} size="md" />}
       </div>
 
       {error ? (
@@ -54,15 +67,22 @@ const VotingSidebarVoters: FC<VotingSidebarVotersProps> = ({ proposalId }) => {
           ruh-roh! we were unable to fetch the voters, please reload the page.
         </p>
       ) : hasNoVoters ? (
-        <p className="text-[16px] text-neutral-11">this entry doesn’t have any votes. yet.</p>
+        <NoVotesPlaceholder isVotingOpen={isVotingOpen} />
       ) : (
-        <div className={`flex flex-col ${isScrollable ? "h-[256px]" : ""}`}>
-          <ListProposalVotes
-            proposalId={proposalId}
-            votedAddresses={addresses}
-            className="text-neutral-11 text-[12px]"
-          />
-        </div>
+        <>
+          <div className={`flex flex-col ${isScrollable ? "h-[256px]" : ""}`}>
+            <ListProposalVotes
+              proposalId={proposalId}
+              votedAddresses={addresses}
+              className="text-neutral-11 text-[12px]"
+            />
+          </div>
+          {!isVotingOpen && (
+            <div className="mt-4">
+              <VotingSidebarEmailSignup />
+            </div>
+          )}
+        </>
       )}
     </div>
   );
