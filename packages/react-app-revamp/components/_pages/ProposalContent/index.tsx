@@ -63,6 +63,10 @@ const ProposalContent: FC<ProposalContentProps> = ({
   const [isVotingDrawerOpen, setIsVotingDrawerOpen] = useState(false);
   const { contestState } = useContestStateStore(state => state);
   const isContestCanceled = contestState === ContestStateEnum.Canceled;
+  const isVotingOpenStatus = contestStatus === ContestStatus.VotingOpen;
+  const isVotingClosedStatus = contestStatus === ContestStatus.VotingClosed;
+  const canSelectForSidebar =
+    !isContestCanceled && (isVotingOpenStatus || (isVotingClosedStatus && proposal.votes > 0));
   const { setPickedProposal, pickedProposal } = useCastVotesStore(
     useShallow(state => ({
       setPickedProposal: state.setPickedProposal,
@@ -139,14 +143,13 @@ const ProposalContent: FC<ProposalContentProps> = ({
 
   const handleCardClick = () => {
     if (isContestCanceled) return;
-    if (contestStatus !== ContestStatus.VotingOpen) return;
 
     if (!isDesktop) {
-      handleVotingDrawerOpen();
+      if (isVotingOpenStatus) handleVotingDrawerOpen();
       return;
     }
 
-    setPickedProposal(proposal.id);
+    if (canSelectForSidebar) setPickedProposal(proposal.id);
   };
 
   return (
@@ -154,7 +157,7 @@ const ProposalContent: FC<ProposalContentProps> = ({
       <div
         onClick={handleCardClick}
         className={`transition-opacity duration-300 ease-in-out ${
-          isDesktop && contestStatus === ContestStatus.VotingOpen && !isContestCanceled ? "xl:cursor-pointer" : ""
+          isDesktop && canSelectForSidebar ? "xl:cursor-pointer" : ""
         } ${shouldReduceOpacity ? "opacity-30" : "opacity-100"}`}
       >
         {renderLayout()}

@@ -1,11 +1,12 @@
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import { compareVersions } from "compare-versions";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useShallow } from "zustand/shallow";
+import { VOTES_PER_PAGE } from "./constants";
 import { useProposalVoterAddresses } from "./hooks/useProposalVoterAddresses";
 import { useProposalVoterVotes } from "./hooks/useProposalVoterVotes";
 
-export const VOTES_PER_PAGE = 4;
+export { VOTES_PER_PAGE };
 
 export const useProposalVoters = (
   contractAddress: string,
@@ -13,15 +14,6 @@ export const useProposalVoters = (
   chainId: number,
   pageSize: number = VOTES_PER_PAGE,
 ) => {
-  const [currentPage, setCurrentPage] = useState(0);
-  const [allLoadedVoters, setAllLoadedVoters] = useState<Record<string, number>>({});
-
-  // Reset accumulated voters when proposalId changes
-  useEffect(() => {
-    setAllLoadedVoters({});
-    setCurrentPage(0);
-  }, [proposalId]);
-
   const { abi, version } = useContestConfigStore(
     useShallow(state => ({
       abi: state.contestConfig.abi,
@@ -31,97 +23,41 @@ export const useProposalVoters = (
 
   const hasDownvotes = version ? compareVersions(version, "5.1") < 0 : false;
 
-  const {
-    addresses,
-    totalCount,
-    isLoading: isLoadingAddresses,
-    error: addressesError,
-    refetch: refetchAddresses,
-  } = useProposalVoterAddresses({
+  const { addresses, isLoading: isLoadingAddresses } = useProposalVoterAddresses({
     contractAddress,
     proposalId,
     chainId,
     abi,
   });
 
-  const {
-    voters,
-    isLoading: isLoadingVotes,
-    error: votesError,
-    refetch: refetchVotes,
-  } = useProposalVoterVotes({
+  const { voters, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading: isLoadingVotes } = useProposalVoterVotes({
     contractAddress,
     proposalId,
     chainId,
     abi,
     addresses,
-    page: currentPage,
     pageSize,
     hasDownvotes,
   });
 
-  const totalPages = useMemo(() => {
-    return Math.ceil(totalCount / pageSize);
-  }, [totalCount, pageSize]);
-
-  const hasNextPage = currentPage < totalPages - 1;
-  const hasPreviousPage = currentPage > 0;
-
-  const goToNextPage = () => {
-    if (hasNextPage) {
-      setCurrentPage(prev => prev + 1);
-    }
-  };
-
-  const goToPreviousPage = () => {
-    if (hasPreviousPage) {
-      setCurrentPage(prev => prev - 1);
-    }
-  };
-
-  const goToPage = (page: number) => {
-    if (page >= 0 && page < totalPages) {
-      setCurrentPage(page);
-    }
-  };
-
-  useEffect(() => {
-    if (voters.length > 0) {
-      const newVoters = voters.reduce((acc, { address, formattedVotes }) => {
-        acc[address] = formattedVotes;
-        return acc;
-      }, {} as Record<string, number>);
-
-      setAllLoadedVoters(prev => ({ ...prev, ...newVoters }));
-    }
-  }, [voters]);
-
-  const accumulatedVotesData = allLoadedVoters;
-
-  const refetch = async () => {
-    await refetchAddresses();
-    await refetchVotes();
-  };
-
-  const isLoading = isLoadingAddresses || isLoadingVotes;
-  const error = addressesError || votesError;
+  // Flatten the cached pages into an address -> votes map (preserves voter order).
+  const accumulatedVotesData = useMemo(
+    () =>
+      voters.reduce(
+        (acc, { address, formattedVotes }) => {
+          acc[address] = formattedVotes;
+          return acc;
+        },
+        {} as Record<string, number>,
+      ),
+    [voters],
+  );
 
   return {
-    voters,
-    addressesVoted: addresses,
     accumulatedVotesData,
-    totalCount,
-    currentPage,
-    totalPages,
     hasNextPage,
-    hasPreviousPage,
-    goToNextPage,
-    goToPreviousPage,
-    goToPage,
-    fetchNextPage: goToNextPage,
-    isFetchingNextPage: isLoadingVotes,
-    isLoading,
-    error: error?.message || null,
-    refetch,
+    fetchNextPage,
+    isFetchingNextPage,
+    isLoading: isLoadingAddresses || isLoadingVotes,
   };
 };
