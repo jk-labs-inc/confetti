@@ -1,6 +1,7 @@
 import AddFunds from "@components/AddFunds";
 import VotingWidget, { VotingWidgetStyle } from "@components/Voting";
 import ContestImage from "@components/_pages/Contest/components/ContestImage";
+import VotingSidebarVoters from "./components/Voters";
 import { verifyEntryPreviewPrompt } from "@components/_pages/DialogModalSendProposal/utils";
 import useCastVotes from "@hooks/useCastVotes";
 import { useCastVotesStore } from "@hooks/useCastVotes/store";
@@ -70,7 +71,7 @@ const VotingSidebar: FC = () => {
   const { image, title } = getEntryPreview(pickedProposalData, enabledPreview);
 
   return (
-    <div className="bg-primary-1 rounded-4xl p-4">
+    <div className="bg-primary-1 rounded-4xl p-4 flex flex-col gap-4">
       <div
         className={`px-6 py-4 rounded-4xl flex flex-col gap-4 ${showAddFunds ? "bg-primary-13" : "bg-gradient-voting-area-purple"}`}
       >
@@ -112,6 +113,8 @@ const VotingSidebar: FC = () => {
           </>
         )}
       </div>
+
+      {!showAddFunds && <VotingSidebarVoters key={pickedProposal} proposalId={pickedProposal} />}
     </div>
   );
 };

@@ -1,7 +1,9 @@
 import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { readContracts } from "@wagmi/core";
+import { useMemo } from "react";
 import { formatEther } from "viem";
+import { VOTERS_GC_TIME, VOTERS_STALE_TIME, proposalVoterVotesQueryKey } from "../constants";
 
 interface VoterWithVotes {
   address: string;
@@ -15,7 +17,6 @@ interface UseProposalVoterVotesProps {
   chainId: number;
   abi: any;
   addresses: string[];
-  page: number;
   pageSize: number;
   hasDownvotes: boolean;
 }
@@ -26,18 +27,18 @@ export const useProposalVoterVotes = ({
   chainId,
   abi,
   addresses,
-  page,
   pageSize,
   hasDownvotes,
 }: UseProposalVoterVotesProps) => {
-  const { data, isLoading, error, refetch } = useQuery({
-    queryKey: ["proposalVoterVotes", contractAddress, proposalId, chainId, page, addresses.length],
-    queryFn: async (): Promise<VoterWithVotes[]> => {
-      if (!addresses.length) return [];
-
-      const start = page * pageSize;
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } = useInfiniteQuery({
+    queryKey: [...proposalVoterVotesQueryKey(contractAddress, chainId, proposalId), hasDownvotes],
+    initialPageParam: 0,
+    queryFn: async ({ pageParam }): Promise<VoterWithVotes[]> => {
+      const start = pageParam * pageSize;
       const end = Math.min(start + pageSize, addresses.length);
       const addressesPage = addresses.slice(start, end);
+
+      if (!addressesPage.length) return [];
 
       const contracts = addressesPage.map(address => ({
         address: contractAddress as `0x${string}`,
@@ -50,8 +51,7 @@ export const useProposalVoterVotes = ({
       const results = await readContracts(getWagmiConfig(), { contracts });
 
       return addressesPage.map((address, index) => {
-        const result = results[index];
-        const voteData = result?.result as bigint | [bigint, bigint] | undefined;
+        const voteData = results[index]?.result as bigint | [bigint, bigint] | undefined;
 
         if (!voteData) {
           return {
@@ -62,12 +62,7 @@ export const useProposalVoterVotes = ({
         }
 
         // Calculate net votes
-        let netVotes: bigint;
-        if (hasDownvotes && Array.isArray(voteData)) {
-          netVotes = voteData[0] - voteData[1];
-        } else {
-          netVotes = voteData as bigint;
-        }
+        const netVotes = hasDownvotes && Array.isArray(voteData) ? voteData[0] - voteData[1] : (voteData as bigint);
 
         return {
           address,
@@ -76,14 +71,22 @@ export const useProposalVoterVotes = ({
         };
       });
     },
+    getNextPageParam: (_lastPage, allPages, lastPageParam) => {
+      const loadedCount = allPages.reduce((count, page) => count + page.length, 0);
+      return loadedCount < addresses.length ? lastPageParam + 1 : undefined;
+    },
     enabled: !!contractAddress && !!proposalId && !!abi && addresses.length > 0,
-    gcTime: 0,
+    staleTime: VOTERS_STALE_TIME,
+    gcTime: VOTERS_GC_TIME,
   });
 
+  const voters = useMemo<VoterWithVotes[]>(() => data?.pages.flat() ?? [], [data]);
+
   return {
-    voters: data || [],
+    voters,
+    fetchNextPage,
+    hasNextPage: !!hasNextPage,
+    isFetchingNextPage,
     isLoading,
-    error,
-    refetch,
   };
 };
