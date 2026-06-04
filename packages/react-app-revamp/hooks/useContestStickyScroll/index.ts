@@ -1,5 +1,4 @@
-import { useMotionValueEvent, useScroll } from "motion/react";
-import { useCallback, useEffect, useRef } from "react";
+import { RefObject, useCallback, useEffect, useRef } from "react";
 import { useContestStickyStore } from "../useContestStickyStore";
 
 const STICKY_TITLE_HEIGHT = 96;
@@ -19,21 +18,10 @@ const POSITION_INFINITY: MarkerPositions = {
   chart: Number.POSITIVE_INFINITY,
 };
 
-const measureMarker = (kind: "compact" | "rewards" | "chart"): number => {
-  if (typeof document === "undefined") return Number.POSITIVE_INFINITY;
-  const el = document.querySelector(`[data-sticky-marker="${kind}"]`) as HTMLElement | null;
-  if (!el) return Number.POSITIVE_INFINITY;
-  return el.getBoundingClientRect().top + window.scrollY;
-};
-
-const measureAll = (): MarkerPositions => ({
-  compact: measureMarker("compact"),
-  rewards: measureMarker("rewards"),
-  chart: measureMarker("chart"),
-});
-
-export const useContestStickyScroll = () => {
-  const { scrollY } = useScroll();
+export const useContestStickyScroll = (
+  scrollContainerRef?: RefObject<HTMLElement | null>,
+  useContainerScroll = false,
+) => {
   const positionsRef = useRef<MarkerPositions>(POSITION_INFINITY);
   const isTallViewportRef = useRef(false);
 
@@ -75,33 +63,63 @@ export const useContestStickyScroll = () => {
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    const remeasure = () => {
-      positionsRef.current = measureAll();
-      evaluate(scrollY.get());
+    const container = useContainerScroll ? (scrollContainerRef?.current ?? null) : null;
+
+    const getScroll = (): number => (container ? container.scrollTop : window.scrollY);
+
+    const measureMarker = (kind: "compact" | "rewards" | "chart"): number => {
+      if (typeof document === "undefined") return Number.POSITIVE_INFINITY;
+      const el = document.querySelector(`[data-sticky-marker="${kind}"]`) as HTMLElement | null;
+      if (!el) return Number.POSITIVE_INFINITY;
+      if (container) {
+        return el.getBoundingClientRect().top - container.getBoundingClientRect().top + container.scrollTop;
+      }
+      return el.getBoundingClientRect().top + window.scrollY;
     };
+
+    const remeasure = () => {
+      positionsRef.current = {
+        compact: measureMarker("compact"),
+        rewards: measureMarker("rewards"),
+        chart: measureMarker("chart"),
+      };
+      evaluate(getScroll());
+    };
+
+    const onScroll = () => evaluate(getScroll());
 
     const raf = requestAnimationFrame(remeasure);
 
+    if (container) {
+      container.addEventListener("scroll", onScroll, { passive: true });
+    } else {
+      window.addEventListener("scroll", onScroll, { passive: true });
+    }
+
     const ro = typeof ResizeObserver !== "undefined" ? new ResizeObserver(remeasure) : null;
     ro?.observe(document.body);
+    if (container) ro?.observe(container);
 
     window.addEventListener("resize", remeasure);
 
     const mq = window.matchMedia(`(min-height: ${TALL_VIEWPORT_MIN_HEIGHT_PX}px)`);
     const updateTall = () => {
       isTallViewportRef.current = mq.matches;
-      evaluate(scrollY.get());
+      evaluate(getScroll());
     };
     updateTall();
     mq.addEventListener("change", updateTall);
 
     return () => {
       cancelAnimationFrame(raf);
+      if (container) {
+        container.removeEventListener("scroll", onScroll);
+      } else {
+        window.removeEventListener("scroll", onScroll);
+      }
       ro?.disconnect();
       window.removeEventListener("resize", remeasure);
       mq.removeEventListener("change", updateTall);
     };
-  }, [evaluate, scrollY]);
-
-  useMotionValueEvent(scrollY, "change", evaluate);
+  }, [evaluate, scrollContainerRef, useContainerScroll]);
 };
