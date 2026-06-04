@@ -11414,10 +11414,10 @@ react-transition-group@^4.4.5:
     loose-envify "^1.4.0"
     prop-types "^15.6.2"
 
-react-tweet@3.3.0:
-  version "3.3.0"
-  resolved "https://registry.yarnpkg.com/react-tweet/-/react-tweet-3.3.0.tgz#e1bfabe65f5860f1fa67918fe44b6c006799b4c3"
-  integrity sha512-gSIG2169ZK7UH6rBzuU+j1xnQbH3IlOTLEkuGrRiJJTMgETik+h+26yHyyVKrLkzwrOaYPk4K3OtEKycqKgNLw==
+react-tweet@3.3.1:
+  version "3.3.1"
+  resolved "https://registry.yarnpkg.com/react-tweet/-/react-tweet-3.3.1.tgz#7df57786018459d5016f8160aef8227f2355c855"
+  integrity sha512-0Gj1YgBTe1K85NBMoWBlUc17Rdc67gIJLlacrVgj+3jWIoXpFfxPdZ1U5OnWkkF9zxhphqs2pY1i//JBfP3Qog==
   dependencies:
     "@swc/helpers" "^0.5.3"
     clsx "^2.0.0"
