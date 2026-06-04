@@ -122,7 +122,7 @@ const LayoutViewContest = () => {
           </div>
         </div>
         {showSidebar && (
-          <aside className="hidden xl:block xl:w-[480px] xl:shrink-0 xl:mt-4 sticky top-4 self-start max-h-[calc(100vh-2rem)] overflow-y-auto sidebar-scroll">
+          <aside className="hidden xl:block xl:w-[480px] xl:shrink-0 xl:mt-4 sticky top-4 self-start max-h-[calc(100vh-2rem)] overflow-y-auto no-scrollbar">
             <VotingSidebar />
           </aside>
         )}
