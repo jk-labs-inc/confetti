@@ -15,12 +15,11 @@ export interface ParticipantsHandlerDeps {
 export interface RefreshProposalVotesArgs {
   contestConfig: ContestConfig;
   proposalId: string;
-  listProposalsData: ProposalCore[];
-  updateProposal: (updated: ProposalCore, existing: ProposalCore[]) => void;
+  updateProposal: (updated: ProposalCore) => void;
 }
 
 export interface ReconcileProposalVotesArgs {
   contestConfig: ContestConfig;
   listProposalsData: ProposalCore[];
-  updateProposal: (updated: ProposalCore, existing: ProposalCore[]) => void;
+  updateProposal: (updated: ProposalCore) => void;
 }

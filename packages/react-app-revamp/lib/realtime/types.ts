@@ -16,6 +16,7 @@ export interface RealtimeTableConfig<TRow, TEvent> {
   // append-only tables should use ["INSERT"] and model deletions as soft-delete rows.
   events: RealtimeChangeEventType[];
   filterColumn: keyof TRow & string;
+  normalizeFilterValue?: (value: string) => string;
   parse: (payload: RealtimeChangePayload<TRow>) => TEvent | null;
 }
 

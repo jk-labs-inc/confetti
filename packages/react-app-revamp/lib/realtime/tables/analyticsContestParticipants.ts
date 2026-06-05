@@ -11,6 +11,7 @@ export const analyticsContestParticipantsConfig: RealtimeTableConfig<
   schema: "public",
   events: ["INSERT"],
   filterColumn: "contest_address",
+  normalizeFilterValue: value => value.toLowerCase(),
   parse: payload => {
     const row = payload.new;
     if (!row || !row.proposal_id || !row.contest_address) return null;

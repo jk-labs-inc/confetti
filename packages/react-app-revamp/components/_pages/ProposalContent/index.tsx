@@ -157,7 +157,7 @@ const ProposalContent: FC<ProposalContentProps> = ({
     <>
       <div
         onClick={handleCardClick}
-        className={`transition-opacity duration-300 ease-in-out ${
+        className={`relative transition-opacity duration-300 ease-in-out ${
           isDesktop && canSelectForSidebar ? "xl:cursor-pointer" : ""
         } ${shouldReduceOpacity ? "opacity-30" : "opacity-100"}`}
       >

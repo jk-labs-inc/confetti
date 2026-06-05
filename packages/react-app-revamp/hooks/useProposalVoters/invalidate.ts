@@ -9,7 +9,7 @@ interface InvalidateProposalVotersParams {
 
 /**
  * Refetch a single proposal's voters (its address list + per-voter votes). Used after the user casts a
- * vote and behind the manual refresh button.
+ * vote (useCastVotes) and when a realtime vote.cast event arrives for that proposal (useContestRealtime).
  */
 export const invalidateProposalVoters = (
   queryClient: QueryClient,
@@ -29,3 +29,18 @@ export const invalidateProposalVoters = (
     }),
   ]);
 };
+
+/**
+ Refetch all proposal voters (all entries' address lists + per-voter votes). Used after the user
+ casts a vote (useCastVotes) and when a realtime vote.cast event arrives for that proposal (useContestRealtime).
+ */
+export const invalidateAllProposalVoters = (queryClient: QueryClient) =>
+  Promise.all([
+    queryClient.invalidateQueries({ queryKey: ["proposalVoterVotes"] }),
+    queryClient.invalidateQueries({
+      predicate: query => {
+        const params = query.queryKey[1] as { functionName?: string } | undefined;
+        return query.queryKey[0] === "readContract" && params?.functionName === "proposalAddressesHaveVoted";
+      },
+    }),
+  ]);

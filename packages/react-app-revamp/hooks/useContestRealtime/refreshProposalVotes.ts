@@ -17,7 +17,6 @@ function toNetVotes(raw: unknown, hasDownvotes: boolean): number {
 export async function refreshProposalVotes({
   contestConfig,
   proposalId,
-  listProposalsData,
   updateProposal,
 }: RefreshProposalVotesArgs): Promise<void> {
   const hasDownvotes = contestConfig.version ? compareVersions(contestConfig.version, "5.1") < 0 : false;
@@ -32,15 +31,7 @@ export async function refreshProposalVotes({
 
   const netVotes = toNetVotes(raw, hasDownvotes);
 
-  const existing = listProposalsData.find(proposal => proposal.id === proposalId);
-
-  // For a proposal not on a loaded page, a minimal object still refreshes the ranking map
-  // (updateProposal reads only id + netVotes for non-listed ids); it isn't injected into the list.
-  const updated: ProposalCore = existing
-    ? { ...existing, netVotes }
-    : ({ id: proposalId, netVotes } as ProposalCore);
-
-  updateProposal(updated, listProposalsData);
+  updateProposal({ id: proposalId, netVotes } as ProposalCore);
 }
 
 // After a reconnect, re-sync every loaded proposal from chain in ONE batched read (postgres_changes
@@ -64,8 +55,6 @@ export async function reconcileProposalVotes({
     })),
   });
 
-  // Thread an evolving snapshot so each updateProposal re-ranks against the prior entry's change.
-  let current = listProposalsData;
   results.forEach((result, index) => {
     if (result.status !== "success" || result.result == null) return;
 
@@ -73,8 +62,6 @@ export async function reconcileProposalVotes({
     const netVotes = toNetVotes(result.result, hasDownvotes);
     if (proposal.netVotes === netVotes) return;
 
-    const updated: ProposalCore = { ...proposal, netVotes };
-    updateProposal(updated, current);
-    current = current.map(p => (p.id === updated.id ? updated : p));
+    updateProposal({ ...proposal, netVotes });
   });
 }

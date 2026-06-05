@@ -32,7 +32,8 @@ function buildChannel<TKey extends RealtimeTableKey>(params: SubscribeParams<TKe
   const { channelKey, tableKey, filterValue } = params;
   const config = getTableConfig(tableKey);
   const schema = config.schema ?? "public";
-  const filter = `${config.filterColumn}=eq.${filterValue}`;
+  const normalizedValue = config.normalizeFilterValue ? config.normalizeFilterValue(filterValue) : filterValue;
+  const filter = `${config.filterColumn}=eq.${normalizedValue}`;
 
   let channel = supabase.channel(channelKey);
 
@@ -132,8 +133,3 @@ export function release(channelKey: string, token: symbol): void {
   });
 }
 
-export function teardownAll(): void {
-  channels.clear();
-  if (!isSupabaseConfigured) return;
-  void supabase.removeAllChannels();
-}

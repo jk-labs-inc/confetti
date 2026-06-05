@@ -1,12 +1,9 @@
 import ListProposalVotes from "@components/_pages/ListProposalVotes";
 import GradientText from "@components/UI/GradientText";
-import RefreshButton from "@components/UI/RefreshButton";
 import { VOTES_PER_PAGE } from "@hooks/useProposalVoters";
 import { useProposalVoterAddresses } from "@hooks/useProposalVoters/hooks/useProposalVoterAddresses";
-import { invalidateProposalVoters } from "@hooks/useProposalVoters/invalidate";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
-import { useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
 import { FC } from "react";
 import { useShallow } from "zustand/shallow";
@@ -24,21 +21,12 @@ interface VotingSidebarVotersProps {
 const VotingSidebarVoters: FC<VotingSidebarVotersProps> = ({ proposalId, image, title, contestName }) => {
   const isVotingOpen = useContestStatusStore(state => state.contestStatus) === ContestStatus.VotingOpen;
   const contestConfig = useContestConfigStore(useShallow(state => state.contestConfig));
-  const queryClient = useQueryClient();
   const { addresses, totalCount, isLoading, error } = useProposalVoterAddresses({
     contractAddress: contestConfig.address,
     proposalId,
     chainId: contestConfig.chainId,
     abi: contestConfig.abi,
   });
-
-  const handleRefresh = () => {
-    invalidateProposalVoters(queryClient, {
-      contractAddress: contestConfig.address,
-      chainId: contestConfig.chainId,
-      proposalId,
-    });
-  };
 
   const hasNoVoters = !isLoading && !error && totalCount === 0;
 
@@ -51,7 +39,7 @@ const VotingSidebarVoters: FC<VotingSidebarVotersProps> = ({ proposalId, image, 
           <EntryPreviewHeader image={image} title={title} contestName={contestName} />
         </div>
       )}
-      <div className="flex items-center justify-between gap-2 pr-6">
+      <div className="flex items-center gap-2 pr-6">
         <div className="flex items-baseline gap-2">
           <Image src="/entry/vote-ballot.svg" alt="voters" width={24} height={24} className="self-center" />
           <GradientText isFontSabo={false} textSizeClassName="text-[24px] font-bold">
@@ -59,7 +47,6 @@ const VotingSidebarVoters: FC<VotingSidebarVotersProps> = ({ proposalId, image, 
           </GradientText>
           {totalCount > 0 && <p className="text-[16px] text-neutral-11 font-bold">{`(${totalCount})`}</p>}
         </div>
-        {isVotingOpen && <RefreshButton onRefresh={handleRefresh} size="md" />}
       </div>
 
       {error ? (

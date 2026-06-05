@@ -1,4 +1,4 @@
-export { subscribe, release, teardownAll } from "./manager";
+export { subscribe, release } from "./manager";
 export type { SubscribeParams, RealtimeSubscription } from "./manager";
 export { getTableConfig, realtimeRegistry } from "./registry";
 export type { RealtimeTableKey, TableRow, TableEvent } from "./registry";
