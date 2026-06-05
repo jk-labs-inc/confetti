@@ -3,7 +3,7 @@ import { formatEther } from "viem";
 import { useReadContract } from "wagmi";
 import { useShallow } from "zustand/shallow";
 
-const useTotalVotesCastOnContest = (address: string, chainId?: number) => {
+const useTotalVotesCastOnContest = (address: string, chainId?: number, options?: { enabled?: boolean }) => {
   const abi = useContestConfigStore(useShallow(state => state.contestConfig.abi));
 
   const { data, refetch, isLoading, isError } = useReadContract({
@@ -17,7 +17,7 @@ const useTotalVotesCastOnContest = (address: string, chainId?: number) => {
 
         return totalVotesCast;
       },
-      enabled: !!abi || !!address || !!chainId,
+      enabled: (!!abi || !!address || !!chainId) && (options?.enabled ?? true),
     },
   });
 

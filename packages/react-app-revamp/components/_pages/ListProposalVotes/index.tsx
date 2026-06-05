@@ -1,6 +1,6 @@
 import { chains } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
-import { ChevronUpIcon } from "@heroicons/react/24/outline";
+import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import { VOTES_PER_PAGE, useProposalVoters } from "@hooks/useProposalVoters";
 import { usePathname } from "next/navigation";
 import { FC, useEffect, useRef } from "react";
@@ -36,8 +36,11 @@ export const ListProposalVotes: FC<ListProposalVotesProps> = ({ proposalId, vote
     (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName,
   )?.[0]?.id;
 
-  const { accumulatedVotesData, currentPage, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } =
-    useProposalVoters(address, proposalId, chainId);
+  const { accumulatedVotesData, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } = useProposalVoters(
+    address,
+    proposalId,
+    chainId,
+  );
 
   const onLoadMoreCalledRef = useRef(false);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -68,7 +71,7 @@ export const ListProposalVotes: FC<ListProposalVotesProps> = ({ proposalId, vote
             ) : (
               <div
                 ref={scrollContainerRef}
-                className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden"
+                className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden no-scrollbar"
                 style={
                   shouldApplyFade
                     ? {
@@ -91,7 +94,7 @@ export const ListProposalVotes: FC<ListProposalVotesProps> = ({ proposalId, vote
                   {hasNextPage && (
                     <button className="flex gap-2 items-center" onClick={onLoadMore}>
                       <p className="text-[16px] text-positive-11 font-bold uppercase">load more</p>
-                      <ChevronUpIcon height={20} className="text-positive-11" />
+                      <ChevronDownIcon height={20} className="text-positive-11" />
                     </button>
                   )}
                   {isFetchingNextPage && onLoadMoreCalledRef.current && (
