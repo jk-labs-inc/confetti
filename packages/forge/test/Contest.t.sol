@@ -34,6 +34,9 @@ contract ContestTest is Test {
     // SORTING INT PARAMS
     uint256 public constant RANK_LIMIT_250 = 250;
 
+    // ENTRY PARAMS
+    string public CONTEST_ENTRY_TYPE = "TEXT";
+
     Governor.IntConstructorArgs public payPerVoteExpCurveIntConstructorArgs = Governor.IntConstructorArgs(
         ANYONE_CAN_SUBMIT,
         CONTEST_START,
@@ -65,11 +68,19 @@ contract ContestTest is Test {
     );
 
     Governor.ConstructorArgs public payPerVoteExpCurveParams = Governor.ConstructorArgs(
-        CONTEST_NAME, CONTEST_PROMPT, payPerVoteExpCurveIntConstructorArgs, JK_LABS_SPLIT_DESTINATION
+        CONTEST_NAME,
+        CONTEST_PROMPT,
+        payPerVoteExpCurveIntConstructorArgs,
+        JK_LABS_SPLIT_DESTINATION,
+        CONTEST_ENTRY_TYPE
     );
 
     Governor.ConstructorArgs public payPerVoteLogCurveParams = Governor.ConstructorArgs(
-        CONTEST_NAME, CONTEST_PROMPT, payPerVoteLogCurveIntConstructorArgs, JK_LABS_SPLIT_DESTINATION
+        CONTEST_NAME,
+        CONTEST_PROMPT,
+        payPerVoteLogCurveIntConstructorArgs,
+        JK_LABS_SPLIT_DESTINATION,
+        CONTEST_ENTRY_TYPE
     );
 
     address public constant JK_LABS_ADDRESS = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738;

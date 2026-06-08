@@ -52,6 +52,7 @@ abstract contract Governor is GovernorSorting, GovernorAnalytics {
         string prompt;
         IntConstructorArgs intConstructorArgs;
         address jkLabsSplitDestination;
+        string contestEntryType;
     }
 
     struct ProposalCore {
@@ -98,6 +99,7 @@ abstract contract Governor is GovernorSorting, GovernorAnalytics {
     uint256 public multiple; // Multiple for price curves.
     uint256 public creatorSplitEnabled; // If 1, half of the jk labs split is sent to the creator; if 0, none of it is.
     address public jkLabsSplitDestination; // Where the jk labs split of revenue goes.
+    string public contestEntryType; // What type of entries the contest has (tweet, text, or image).
 
     uint256[] public proposalIds;
     uint256[] public deletedProposalIds;
@@ -157,6 +159,7 @@ abstract contract Governor is GovernorSorting, GovernorAnalytics {
         multiple = constructorArgs_.intConstructorArgs.multiple;
         creatorSplitEnabled = constructorArgs_.intConstructorArgs.creatorSplitEnabled;
         jkLabsSplitDestination = constructorArgs_.jkLabsSplitDestination;
+        contestEntryType = constructorArgs_.contestEntryType;
 
         emit JokeraceCreated(VERSION, name, prompt, creator, contestStart, votingDelay, votingPeriod); // emit upon creation to be able to easily find jokeraces on a chain
     }
