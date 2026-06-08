@@ -1,7 +1,6 @@
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import useProposal from "@hooks/useProposal";
 import { useProposalStore } from "@hooks/useProposal/store";
-import { useWallet } from "@hooks/useWallet";
 import { useQueryClient } from "@tanstack/react-query";
 import { subscribe } from "lib/realtime";
 import { useEffect, useRef, useState } from "react";
@@ -23,7 +22,6 @@ export function useContestRealtime(): { isConnected: boolean } {
   const { updateProposal } = useProposal();
   const listProposalsData = useProposalStore(useShallow(state => state.listProposalsData));
   const queryClient = useQueryClient();
-  const { userAddress } = useWallet();
   const [isConnected, setIsConnected] = useState(false);
 
   const contestConfigRef = useRef(contestConfig);
@@ -32,8 +30,6 @@ export function useContestRealtime(): { isConnected: boolean } {
   listRef.current = listProposalsData;
   const updateProposalRef = useRef(updateProposal);
   updateProposalRef.current = updateProposal;
-  const userAddressRef = useRef(userAddress);
-  userAddressRef.current = userAddress;
 
   const { address, chainId, chainName } = contestConfig;
 
@@ -73,13 +69,7 @@ export function useContestRealtime(): { isConnected: boolean } {
 
     const handle = makeParticipantsHandler({
       onVote: event => {
-        // Our own cast already updated the UI (useCastVotes), so skip the on-chain re-read for our
-        // own echo — but still refresh rewards.
-        const isOwnEcho =
-          !!userAddressRef.current && event.userAddress?.toLowerCase() === userAddressRef.current.toLowerCase();
-
         invalidateRewards();
-        if (isOwnEcho) return;
 
         const { proposalId } = event;
         const pending = voteTimers.get(proposalId);
