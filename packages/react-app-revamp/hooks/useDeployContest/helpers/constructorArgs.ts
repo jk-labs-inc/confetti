@@ -3,7 +3,7 @@ import { differenceInSeconds, getUnixTime } from "date-fns";
 import { parseEther } from "viem";
 import { JK_LABS_SPLIT_DESTINATION_DEFAULT, MAX_SUBMISSIONS_LIMIT } from "../index";
 import { Charge, PriceCurve } from "../types";
-import { createMetadataFieldsSchema } from "./index";
+import { getContestEntryType } from "./index";
 import { EntryPreviewConfig } from "../slices/contestMetadataSlice";
 
 export interface ConstructorArgsParams {
@@ -56,7 +56,7 @@ export const prepareConstructorArgs = (params: ConstructorArgsParams) => {
     prompt: combinedPrompt,
     intConstructorArgs,
     jkLabsSplitDestination: jkLabsSplitDestination || JK_LABS_SPLIT_DESTINATION_DEFAULT,
-    metadataFieldsSchema: createMetadataFieldsSchema(entryPreviewConfig),
+    contestEntryType: getContestEntryType(entryPreviewConfig),
   };
 
   return constructorArgs;

@@ -146,7 +146,7 @@ export function useCastVotes({ charge, votesClose }: UseCastVotesProps) {
         operation: "deposit",
         token_address: null,
       };
-      await performAnalytics(analyticsParams, refetchTotalRewards);
+      void performAnalytics(analyticsParams, refetchTotalRewards);
 
       setTransactionData({
         hash: receipt.transactionHash,
@@ -164,13 +164,10 @@ export function useCastVotes({ charge, votesClose }: UseCastVotesProps) {
         const existingProposal = listProposalsData.find(proposal => proposal.id === pickedProposal);
 
         if (existingProposal) {
-          updateProposal(
-            {
-              ...existingProposal,
-              netVotes: votes,
-            },
-            listProposalsData,
-          );
+          updateProposal({
+            ...existingProposal,
+            netVotes: votes,
+          });
         }
       } catch (voteUpdateError) {
         console.error("Error updating proposal votes after casting:", voteUpdateError);

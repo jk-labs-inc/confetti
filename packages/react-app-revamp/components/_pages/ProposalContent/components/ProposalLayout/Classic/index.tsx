@@ -1,4 +1,5 @@
 import { Proposal } from "@components/_pages/ProposalContent";
+import VoteCountPulse from "@components/_pages/ProposalContent/components/VoteFeedback";
 import {
   clearStorageIfNeeded,
   ContestVisibilities,
@@ -89,7 +90,8 @@ const ProposalLayoutClassic = ({
                 >
                   <img src="/contest/upvote.svg" width={21.56} height={20.44} alt="upvote" className="shrink-0" />
                   <p className="text-[16px] text-positive-11 font-bold grow text-center">
-                    {formatNumberWithCommas(proposal.votes)} vote{proposal.votes !== 1 ? "s" : ""}
+                    <VoteCountPulse votes={proposal.votes}>{formatNumberWithCommas(proposal.votes)}</VoteCountPulse> vote
+                    {proposal.votes !== 1 ? "s" : ""}
                   </p>
                 </button>
               ) : null}
