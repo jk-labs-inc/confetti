@@ -28,7 +28,6 @@ export enum EntryPreview {
 
 export interface EntryPreviewConfig {
   preview: EntryPreview;
-  isTitleRequired: boolean;
   isAnyoneCanSubmit: EntryPermission;
 }
 
@@ -45,7 +44,6 @@ export type MetadataSlice = MetadataSliceState & MetadataSliceActions;
 export const createMetadataSlice = (set: any): MetadataSlice => ({
   entryPreviewConfig: {
     preview: EntryPreview.TITLE,
-    isTitleRequired: true,
     isAnyoneCanSubmit: EntryPermission.ANYONE_CAN_SUBMIT,
   },
 

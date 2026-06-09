@@ -1,6 +1,7 @@
 import AddFunds from "@components/AddFunds";
 import VotingWidget, { VotingWidgetStyle } from "@components/Voting";
-import ContestImage from "@components/_pages/Contest/components/ContestImage";
+import EntryPreviewHeader from "./components/EntryPreviewHeader";
+import VotingSidebarVoters from "./components/Voters";
 import { verifyEntryPreviewPrompt } from "@components/_pages/DialogModalSendProposal/utils";
 import useCastVotes from "@hooks/useCastVotes";
 import { useCastVotesStore } from "@hooks/useCastVotes/store";
@@ -35,6 +36,9 @@ const VotingSidebar: FC = () => {
   const metadataFieldsConfig = useMetadataStore(state => state.fields);
   const contestStatus = useContestStatusStore(useShallow(state => state.contestStatus));
   const contestState = useContestStateStore(useShallow(state => state.contestState));
+  const isContestCanceled = contestState === ContestStateEnum.Canceled;
+  const isVotingOpen = contestStatus === ContestStatus.VotingOpen;
+  const isVotingClosed = contestStatus === ContestStatus.VotingClosed;
   const pickedProposal = useCastVotesStore(state => state.pickedProposal);
   const { castVotes, isLoading } = useCastVotes({ charge: contestCharge, votesClose: votingClose });
   const [showAddFunds, setShowAddFunds] = useState(false);
@@ -47,6 +51,7 @@ const VotingSidebar: FC = () => {
     abi: contestConfig.abi,
     chainId: contestConfig.chainId,
     votingClose,
+    enabled: isVotingOpen,
   });
 
   const onVote = async (amount: number) => {
@@ -57,10 +62,7 @@ const VotingSidebar: FC = () => {
     }
   };
 
-  const isContestCanceled = contestState === ContestStateEnum.Canceled;
-  const isVotingOpen = contestStatus === ContestStatus.VotingOpen;
-
-  if (isContestCanceled || !isVotingOpen || !pickedProposal) return null;
+  if (isContestCanceled || (!isVotingOpen && !isVotingClosed) || !pickedProposal) return null;
 
   const pickedProposalData = listProposalsData.find(p => p.id === pickedProposal);
   const { enabledPreview } =
@@ -70,33 +72,23 @@ const VotingSidebar: FC = () => {
   const { image, title } = getEntryPreview(pickedProposalData, enabledPreview);
 
   return (
-    <div className="bg-primary-1 rounded-4xl p-4">
-      <div
-        className={`px-6 py-4 rounded-4xl flex flex-col gap-4 ${showAddFunds ? "bg-primary-13" : "bg-gradient-voting-area-purple"}`}
-      >
-        {!showAddFunds && (image || title || contestName) && (
-          <div className="flex items-center gap-3">
-            {image && <ContestImage imageUrl={image} size="small" />}
-            {(contestName || title) && (
-              <div className="min-w-0 flex flex-col">
-                {contestName && <p className="truncate text-[14px] text-neutral-9">{contestName}</p>}
-                {title && <p className="truncate text-[16px] text-neutral-11 font-bold">{title}</p>}
-              </div>
-            )}
-          </div>
-        )}
+    <div className="bg-primary-1 rounded-4xl p-4 flex flex-col gap-4">
+      {isVotingOpen && (
+        <div
+          className={`px-6 py-4 rounded-4xl flex flex-col gap-4 ${showAddFunds ? "bg-primary-13" : "bg-gradient-voting-area-purple"}`}
+        >
+          {!showAddFunds && <EntryPreviewHeader image={image} title={title} contestName={contestName} />}
 
-        {showAddFunds ? (
-          <div className="animate-appear">
-            <AddFunds
-              chain={contestConfig.chainName}
-              asset={contestConfig.chainNativeCurrencySymbol ?? ""}
-              onGoBack={() => setShowAddFunds(false)}
-              onBridgeSuccess={() => setShowAddFunds(false)}
-            />
-          </div>
-        ) : (
-          <>
+          {showAddFunds ? (
+            <div className="animate-appear">
+              <AddFunds
+                chain={contestConfig.chainName}
+                asset={contestConfig.chainNativeCurrencySymbol ?? ""}
+                onGoBack={() => setShowAddFunds(false)}
+                onBridgeSuccess={() => setShowAddFunds(false)}
+              />
+            </div>
+          ) : (
             <VotingWidget
               key={pickedProposal}
               costToVote={currentPricePerVote}
@@ -109,9 +101,19 @@ const VotingSidebar: FC = () => {
               onAddFunds={() => setShowAddFunds(true)}
               submissionsCount={submissionsCount}
             />
-          </>
-        )}
-      </div>
+          )}
+        </div>
+      )}
+
+      {!showAddFunds && (
+        <VotingSidebarVoters
+          key={pickedProposal}
+          proposalId={pickedProposal}
+          image={image}
+          title={title}
+          contestName={contestName}
+        />
+      )}
     </div>
   );
 };

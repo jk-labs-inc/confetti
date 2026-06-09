@@ -5,7 +5,7 @@ import { useError } from "@hooks/useError";
 import { readContracts } from "@wagmi/core";
 import { compareVersions } from "compare-versions";
 import { formatEther } from "viem";
-import { MappedProposalIds, ProposalCore, useProposalStore } from "./store";
+import { MappedProposalIds, ProposalCore, useProposalStore, useProposalStoreApi } from "./store";
 import { getProposalIdsRaw, rankProposals, transformProposalData } from "./utils";
 
 export const PROPOSALS_PER_PAGE = 4;
@@ -28,6 +28,7 @@ export function useProposal() {
     setInitialMappedProposalIds,
     initialMappedProposalIds,
   } = useProposalStore(state => state);
+  const proposalStore = useProposalStoreApi();
   const { error, handleError } = useError();
 
   async function fetchProposalsPage(
@@ -115,9 +116,7 @@ export function useProposal() {
         setInitialMappedProposalIds(mappedProposals);
 
         if (currentDate >= contestDates.votesOpen) {
-          proposalsIds = [...mappedProposals]
-            .sort((a, b) => b.votes - a.votes)
-            .map(proposal => proposal.id);
+          proposalsIds = [...mappedProposals].sort((a, b) => b.votes - a.votes).map(proposal => proposal.id);
         } else {
           // Before voting opens: natural contract order (oldest → newest)
           proposalsIds = mappedProposals.map(proposal => proposal.id);
@@ -209,17 +208,20 @@ export function useProposal() {
     setProposalData(rankProposals(combinedProposals, pageMappedProposals));
   }
 
-  function updateProposal(updatedProposal: ProposalCore, existingProposalsData: ProposalCore[]) {
-    const updatedProposals = existingProposalsData.map(proposal =>
-      proposal.id === updatedProposal.id ? updatedProposal : proposal,
-    );
+  function updateProposal(updatedProposal: ProposalCore) {
+    const { listProposalsData: liveProposals, initialMappedProposalIds: liveIds } = proposalStore.getState();
 
-    const updatedIds = initialMappedProposalIds.map(idMap =>
+    const updatedIds = liveIds.map(idMap =>
       idMap.id === updatedProposal.id ? { ...idMap, votes: updatedProposal.netVotes } : idMap,
     );
+    const updatedProposals = liveProposals.map(proposal =>
+      proposal.id === updatedProposal.id ? { ...proposal, netVotes: updatedProposal.netVotes } : proposal,
+    );
 
-    setProposalData(rankProposals(updatedProposals, updatedIds));
-    setInitialMappedProposalIds(updatedIds);
+    proposalStore.setState({
+      listProposalsData: rankProposals(updatedProposals, updatedIds),
+      initialMappedProposalIds: updatedIds,
+    });
   }
 
   function removeProposal(idsToDelete: string[]) {

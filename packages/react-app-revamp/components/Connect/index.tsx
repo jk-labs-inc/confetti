@@ -10,6 +10,7 @@ export const ConnectButtonCustom: FC = () => {
   if (!isConnected || !userAddress) {
     return (
       <button
+        id="sign_in_button_click"
         onClick={() => openModal()}
         type="button"
         className="w-36 h-8 bg-secondary-1 border border-primary-3 text-base font-bold text-neutral-9 rounded-[40px]"

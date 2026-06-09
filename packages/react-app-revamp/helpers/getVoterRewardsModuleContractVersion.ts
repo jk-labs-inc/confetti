@@ -27,6 +27,7 @@ import AddAnalyticsVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRew
 import CompleteCostToEnterDepVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.6.17.completeCostToEnterDep.sol/VoterRewardsModule.json";
 import UpdateVotingPeriodLimitVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.6.18.updateVotingPeriodLimit.sol/VoterRewardsModule.json";
 import AddLogCurveVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.6.19.addLogCurve.sol/VoterRewardsModule.json";
+import RmMetadataFieldsVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.6.20.rmMetadataFields.sol/VoterRewardsModule.json";
 import DeployedVoterRewardsContract from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.sol/VoterRewardsModule.json";
 import { createPublicClient, getContract, http } from "viem";
 import { getChainFromId } from "./getChainFromId";
@@ -38,6 +39,7 @@ type ContractData = {
 };
 
 const VERSION_TO_CONTRACT: Record<string, ContractData> = {
+  "6.20": RmMetadataFieldsVoterRewards,
   "6.19": AddLogCurveVoterRewards,
   "6.18": UpdateVotingPeriodLimitVoterRewards,
   "6.17": CompleteCostToEnterDepVoterRewards,
