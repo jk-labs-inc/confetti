@@ -6,6 +6,7 @@ import { FC, useRef, useState } from "react";
 interface MobileSelectorOption {
   label: string;
   value: string;
+  description?: string;
 }
 
 interface MobileSelectorProps {
@@ -20,6 +21,7 @@ const MobileSelector: FC<MobileSelectorProps> = ({ label, value, options, onChan
   const [isOpen, setIsOpen] = useState(false);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const { maskImageStyle } = useScrollFade(scrollContainerRef, options.length, [options, isOpen]);
+  const selectedDescription = options.find(option => option.label === value)?.description;
 
   const handleSelect = (selectedValue: string) => {
     onChange(selectedValue);
@@ -31,9 +33,12 @@ const MobileSelector: FC<MobileSelectorProps> = ({ label, value, options, onChan
       <button
         type="button"
         onClick={() => setIsOpen(true)}
-        className={`${width} flex items-center justify-between rounded-lg bg-secondary-1 p-4 h-10 text-[20px] text-neutral-11 font-bold border border-neutral-17`}
+        className={`${width} flex items-center justify-between gap-2 whitespace-nowrap rounded-lg bg-secondary-1 p-4 h-10 text-[20px] text-neutral-11 font-bold border border-neutral-17`}
       >
-        {value}
+        <span className="flex items-baseline gap-1.5">
+          <span>{value}</span>
+          {selectedDescription && <span className="text-sm font-normal text-neutral-9">{selectedDescription}</span>}
+        </span>
         <ChevronDownIcon className="text-neutral-11 w-6 h-5 mt-1" />
       </button>
 
@@ -58,7 +63,12 @@ const MobileSelector: FC<MobileSelectorProps> = ({ label, value, options, onChan
                     : "text-neutral-11 hover:bg-neutral-2 bg-true-black"
                 }`}
               >
-                {option.label}
+                <span className="flex items-baseline gap-1.5">
+                  <span>{option.label}</span>
+                  {option.description && (
+                    <span className="text-sm font-normal text-neutral-9">{option.description}</span>
+                  )}
+                </span>
               </button>
             ))}
           </div>

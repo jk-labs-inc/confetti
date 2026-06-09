@@ -11,14 +11,27 @@ interface CountdownSegment {
   unit: string;
 }
 
+const pluralize = (count: number, singular: string, plural: string) => (count === 1 ? singular : plural);
+
 const getCountdownSegments = (totalSeconds: number, compact = false): CountdownSegment[] => {
-  const hours = Math.floor(totalSeconds / 3600);
+  const days = Math.floor(totalSeconds / 86400);
+  const hours = Math.floor((totalSeconds % 86400) / 3600);
   const minutes = Math.floor((totalSeconds % 3600) / 60);
   const seconds = totalSeconds % 60;
 
-  const h = "hr";
-  const m = compact ? "m" : "min";
-  const s = compact ? "s" : "sec";
+  const d = compact ? "d" : pluralize(days, "day", "days");
+  const h = compact ? "h" : pluralize(hours, "hr", "hrs");
+  const m = compact ? "m" : pluralize(minutes, "min", "mins");
+  const s = compact ? "s" : pluralize(seconds, "sec", "secs");
+
+  if (days > 0) {
+    return [
+      { value: days, unit: d },
+      { value: hours, unit: h },
+      { value: minutes, unit: m },
+      { value: seconds, unit: s },
+    ];
+  }
 
   if (hours > 0) {
     return [
@@ -38,36 +51,33 @@ const getCountdownSegments = (totalSeconds: number, compact = false): CountdownS
   return [{ value: seconds, unit: s }];
 };
 
-const formatTimeWindow = (
-  voteStart: moment.Moment,
-  end: moment.Moment,
-  useWeekdayFormat: boolean,
-): { display: string; spansMultipleDays: boolean } => {
+const formatScheduleWindow = (voteStart: moment.Moment, end: moment.Moment, useWeekdayFormat: boolean): string => {
   const isSameDay = voteStart.isSame(end, "day");
 
-  if (!isSameDay) {
-    const startTime = `${voteStart.format("h")}${voteStart.format("a")}`;
-    const endTime = `${end.format("h")}${end.format("a")}`;
+  if (isSameDay) {
+    const dayLabel = useWeekdayFormat ? voteStart.format("ddd").toLowerCase() : voteStart.format("MMM D").toLowerCase();
+    const startHour = voteStart.format("h");
+    const startPeriod = voteStart.format("a");
+    const endHour = end.format("h");
+    const endPeriod = end.format("a");
+    const range =
+      startPeriod === endPeriod
+        ? `${startHour}-${endHour}${endPeriod}`
+        : `${startHour}${startPeriod}-${endHour}${endPeriod}`;
 
-    if (useWeekdayFormat) {
-      const endDay = end.format("ddd").toLowerCase();
-      return { display: `${startTime} - ${endDay} ${endTime}`, spansMultipleDays: true };
-    }
-
-    const endDate = end.format("MMM D").toLowerCase();
-    return { display: `${startTime} - ${endDate} ${endTime}`, spansMultipleDays: true };
+    return `${dayLabel}, ${range}`;
   }
 
-  const startHour = voteStart.format("h");
-  const startPeriod = voteStart.format("a");
-  const endHour = end.format("h");
-  const endPeriod = end.format("a");
+  const startDate = voteStart.format("MMM D").toLowerCase();
+  const endDate = end.format("MMM D").toLowerCase();
+  const startTime = `${voteStart.format("h")}${voteStart.format("a")}`;
+  const endTime = `${end.format("h")}${end.format("a")}`;
 
-  if (startPeriod === endPeriod) {
-    return { display: `${startHour}-${endHour}${endPeriod}`, spansMultipleDays: false };
+  if (startTime === endTime) {
+    return `${startDate} - ${endDate}, ${startTime}`;
   }
 
-  return { display: `${startHour}${startPeriod}-${endHour}${endPeriod}`, spansMultipleDays: false };
+  return `${startDate}, ${startTime} - ${endDate}, ${endTime}`;
 };
 
 const ContestTiming: FC = () => {
@@ -99,27 +109,12 @@ const ContestTiming: FC = () => {
     }
 
     const isThisWeek = voteStart.isSame(now, "week");
-    const timeWindow = formatTimeWindow(voteStart, end, isThisWeek);
-    const separator = timeWindow.spansMultipleDays ? " " : ", ";
     const zoneAbbr = getTimeZoneAbbreviation(voteStart);
 
-    if (isThisWeek) {
-      const dayName = voteStart.format("ddd").toLowerCase();
-      return {
-        content: (
-          <>
-            {`${dayName}${separator}${timeWindow.display}`} <span className="uppercase">{zoneAbbr}</span>
-          </>
-        ),
-        dimmed: false,
-      };
-    }
-
-    const monthDay = voteStart.format("MMM D").toLowerCase();
     return {
       content: (
         <>
-          {`${monthDay}${separator}${timeWindow.display}`} <span className="uppercase">{zoneAbbr}</span>
+          {formatScheduleWindow(voteStart, end, isThisWeek)} <span className="uppercase">{zoneAbbr}</span>
         </>
       ),
       dimmed: false,
@@ -127,7 +122,9 @@ const ContestTiming: FC = () => {
   }, [isCanceled, votesOpen, votesClose, votingTimeLeft, isMobile]);
 
   return (
-    <div className={`flex items-baseline gap-1 whitespace-nowrap ${display.dimmed ? "text-neutral-9" : "text-neutral-11"}`}>
+    <div
+      className={`flex items-baseline gap-1 whitespace-nowrap ${display.dimmed ? "text-neutral-9" : "text-neutral-11"}`}
+    >
       <span className="text-2xl">⏱️</span>
       <p className="text-[16px] md:text-[24px] font-bold md:font-normal">{display.content}</p>
     </div>
