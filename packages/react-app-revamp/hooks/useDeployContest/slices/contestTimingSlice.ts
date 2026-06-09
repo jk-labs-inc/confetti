@@ -15,6 +15,7 @@ export enum Period {
 export interface TimingOption {
   label: string;
   value: string;
+  description?: string;
 }
 
 export interface ContestTimingSliceState {

@@ -52,13 +52,17 @@ const ContestCountdown: FC<ContestCountdownProps> = ({ votingTimeLeft }) => {
     const minuteLabel = isMobile ? "m " : pluralizeLabel(duration.minutes, " min ", " mins ");
     const secondLabel = isMobile ? "s " : pluralizeLabel(duration.seconds, " sec ", " secs ");
 
-    if (duration.days > 0)
+    const showDays = duration.days > 0;
+    const showHours = showDays || duration.hours > 0;
+    const showMinutes = showHours || duration.minutes > 0;
+
+    if (showDays)
       elements.push(<ContestCountdownTimeUnit key={`${duration.days}-days`} value={duration.days} label={dayLabel} />);
-    if (duration.hours > 0)
+    if (showHours)
       elements.push(
         <ContestCountdownTimeUnit key={`${duration.hours}-hours`} value={duration.hours} label={hourLabel} />,
       );
-    if (duration.minutes > 0)
+    if (showMinutes)
       elements.push(
         <ContestCountdownTimeUnit key={`${duration.minutes}-minutes`} value={duration.minutes} label={minuteLabel} />,
       );
