@@ -81,7 +81,11 @@ export const useProposalStaticData = ({
               stringArray: proposalData.fieldsMetadata.stringArray ?? defaultMetadataFields.stringArray,
               uintArray: proposalData.fieldsMetadata.uintArray ?? defaultMetadataFields.uintArray,
             }
-          : defaultMetadataFields;
+          : {
+              addressArray: defaultMetadataFields.addressArray,
+              uintArray: defaultMetadataFields.uintArray,
+              stringArray: proposalData.description ? [proposalData.description] : [],
+            };
 
         return {
           description: proposalData.description,

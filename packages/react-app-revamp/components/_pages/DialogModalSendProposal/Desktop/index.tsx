@@ -10,7 +10,7 @@ import { emailRegex } from "@helpers/regex";
 import { useContestStore } from "@hooks/useContest/store";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import { Charge } from "@hooks/useDeployContest/types";
-import useMetadataFields from "@hooks/useMetadataFields";
+import useContestEntryType from "@hooks/useContestEntryType";
 import { useMetadataStore } from "@hooks/useMetadataFields/store";
 import useSubmitProposal from "@hooks/useSubmitProposal";
 import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
@@ -78,7 +78,7 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
   const { isLoading } = useSubmitProposal();
   const [emailError, setEmailError] = useState<string | null>(null);
   const tosHref = FOOTER_LINKS.find(link => link.label === "Terms")?.href;
-  const { isLoading: isMetadataFieldsLoading, isError: isMetadataFieldsError } = useMetadataFields({
+  const { isLoading: isEntryTypeLoading, isError: isEntryTypeError } = useContestEntryType({
     address: contestConfig.address,
     chainId: contestConfig.chainId,
     abi: contestConfig.abi,
@@ -166,10 +166,10 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
                   />
                 )}
 
-                {isMetadataFieldsLoading ? (
-                  <p className="loadingDots font-sabo-filled text-[16px] text-neutral-14">loading metadata fields</p>
-                ) : isMetadataFieldsError ? (
-                  <p className="text-negative-11">Error while loading metadata fields. Please reload the page.</p>
+                {isEntryTypeLoading ? (
+                  <p className="loadingDots font-sabo-filled text-[16px] text-neutral-14">loading entry format</p>
+                ) : isEntryTypeError ? (
+                  <p className="text-negative-11">Error while loading entry format. Please reload the page.</p>
                 ) : null}
                 <div className="flex flex-col gap-4 -mt-2">
                   <CreateGradientTitle textSize="small" additionalInfo="optional">

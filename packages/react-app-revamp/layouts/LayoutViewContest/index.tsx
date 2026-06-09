@@ -7,6 +7,7 @@ import ContestStickyTrigger from "@components/_pages/Contest/components/ContestS
 import ContestTabs, { Tab } from "@components/_pages/Contest/components/Tabs";
 import { populateBugReportLink } from "@helpers/githubIssue";
 import { useContestStore } from "@hooks/useContest/store";
+import useContestEntryType from "@hooks/useContestEntryType";
 import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import { useContestStickyScroll } from "@hooks/useContestStickyScroll";
@@ -37,6 +38,13 @@ const LayoutViewContest = () => {
     contestPrompt,
     canEditTitleAndDescription,
   } = useLayoutViewContest();
+
+  useContestEntryType({
+    address: contestConfig.address,
+    chainId: contestConfig.chainId,
+    abi: contestConfig.abi,
+    version: contestConfig.version,
+  });
   const bugReportLink = populateBugReportLink(url?.href ?? "", userAddress ?? "", error ?? "");
   const contestImageUrl = getContestImageUrl(contestPrompt);
   const contestStatus = useContestStatusStore(state => state.contestStatus);
