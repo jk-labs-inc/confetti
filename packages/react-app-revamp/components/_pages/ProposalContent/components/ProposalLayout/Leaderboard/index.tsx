@@ -1,4 +1,5 @@
 import { Proposal } from "@components/_pages/ProposalContent";
+import VoteCountPulse from "@components/_pages/ProposalContent/components/VoteFeedback";
 import { formatNumberWithCommas } from "@helpers/formatNumber";
 import { ContestStatus } from "@hooks/useContestStatus/store";
 import { useProposalStore } from "@hooks/useProposal/store";
@@ -89,7 +90,7 @@ const ProposalLayoutLeaderboard: FC<ProposalLayoutLeaderboardProps> = ({
         {isVotingActive ? (
           <>
             <p className="text-[16px] text-neutral-11 tabular-nums">
-              {formatNumberWithCommas(proposal.votes)}
+              <VoteCountPulse votes={proposal.votes}>{formatNumberWithCommas(proposal.votes)}</VoteCountPulse>
             </p>
             <p className="text-[24px] text-neutral-11 tabular-nums">{votePercentage}%</p>
             <div className="xl:hidden flex justify-end">
