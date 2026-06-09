@@ -54,7 +54,18 @@ export const HOUR_OPTIONS: TimingOption[] = Array.from({ length: 24 }, (_, i) =>
   value: i.toString(),
 }));
 
-export const DURATION_OPTIONS: TimingOption[] = Array.from({ length: 6 }, (_, i) => ({
+const HOUR_DURATION_OPTIONS: TimingOption[] = Array.from({ length: 6 }, (_, i) => ({
   label: i === 0 ? "1 hour" : `${i + 1} hours`,
   value: (i + 1).toString(),
 }));
+
+const SEVEN_DAYS_IN_HOURS = 7 * 24;
+
+export const DURATION_OPTIONS: TimingOption[] = [
+  ...HOUR_DURATION_OPTIONS,
+  {
+    label: "7 days",
+    description: "(not recommended)",
+    value: SEVEN_DAYS_IN_HOURS.toString(),
+  },
+];
