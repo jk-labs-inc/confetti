@@ -30,10 +30,7 @@ export function mapResultToStringArray(result: any): string[] {
 /**
  * Assign ranks to proposals based on votes from the complete proposals list.
  */
-export function rankProposals(
-  proposals: ProposalCore[],
-  allProposalsIdsAndVotes: MappedProposalIds[],
-): ProposalCore[] {
+export function rankProposals(proposals: ProposalCore[], allProposalsIdsAndVotes: MappedProposalIds[]): ProposalCore[] {
   const sortedAll = [...allProposalsIdsAndVotes].sort((a, b) => b.votes - a.votes);
 
   const rankMap = new Map<string, number>();
@@ -98,7 +95,11 @@ export function transformProposalData(id: any, voteData: any, proposalData: any,
         stringArray: fieldsMetadata.stringArray ?? defaultMetadataFields.stringArray,
         uintArray: fieldsMetadata.uintArray ?? defaultMetadataFields.uintArray,
       }
-    : defaultMetadataFields;
+    : {
+        addressArray: defaultMetadataFields.addressArray,
+        uintArray: defaultMetadataFields.uintArray,
+        stringArray: proposalData.description ? [proposalData.description] : [],
+      };
 
   return {
     id: id.toString(),
