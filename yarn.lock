@@ -5939,19 +5939,19 @@
   resolved "https://registry.yarnpkg.com/@wagmi/connectors/-/connectors-8.0.5.tgz#9997a6130ffe3bbb13c21d1d353e19581f13a388"
   integrity sha512-Xxysn4jalQS5W4b687LX0znp2eswonS/1fvRRVAlPD+LG15YRs8nHaC7xAjI9lVMWAx2TePw9Car6pQ5nzYVsA==
 
-"@wagmi/core@3.4.12":
-  version "3.4.12"
-  resolved "https://registry.yarnpkg.com/@wagmi/core/-/core-3.4.12.tgz#84fec8dad442b97076ea43d9272932aeff264dbd"
-  integrity sha512-q/NYoq+Up6JNfWNE6G0iXj9cHBSYgOyC8toqJLBWTeUnY1Ha9Q4OyFUHnXfvGTudbC0Gxhh7uUkqW3/LGdsQfg==
+"@wagmi/core@3.4.6":
+  version "3.4.6"
+  resolved "https://registry.yarnpkg.com/@wagmi/core/-/core-3.4.6.tgz#1b6bdfb9d912db14fcabc536c642049383c97480"
+  integrity sha512-wDZpRfzQo6NJj770mt23HdeU9O0MDO3cnxVP7tP/1HL7DLqOGMN3hADIc0wEF51ejrpnJlGLf8hS1qb2ZAzqJA==
   dependencies:
     eventemitter3 "5.0.1"
     mipd "0.0.7"
     zustand "5.0.0"
 
-"@wagmi/core@3.4.6":
-  version "3.4.6"
-  resolved "https://registry.yarnpkg.com/@wagmi/core/-/core-3.4.6.tgz#1b6bdfb9d912db14fcabc536c642049383c97480"
-  integrity sha512-wDZpRfzQo6NJj770mt23HdeU9O0MDO3cnxVP7tP/1HL7DLqOGMN3hADIc0wEF51ejrpnJlGLf8hS1qb2ZAzqJA==
+"@wagmi/core@3.5.0":
+  version "3.5.0"
+  resolved "https://registry.yarnpkg.com/@wagmi/core/-/core-3.5.0.tgz#02e81ee27c47ee066755812abdaa70d1de87299d"
+  integrity sha512-OcbdnZA6XPyDOHtY6GR8MFzRa89/EkMFCxdrWV4cgKjfsLi02NzEbMG6LQEO7VJ9ltwmLwpRQgcWnn6pBJPo7Q==
   dependencies:
     eventemitter3 "5.0.1"
     mipd "0.0.7"
