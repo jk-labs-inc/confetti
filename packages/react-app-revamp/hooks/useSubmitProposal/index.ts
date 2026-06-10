@@ -16,6 +16,8 @@ import { useTotalRewards } from "@hooks/useTotalRewards";
 import { useWallet } from "@hooks/useWallet";
 import { simulateContract, waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { compareVersions } from "compare-versions";
+import { safeCompareVersions } from "@helpers/versions";
+import { CONTEST_ENTRY_TYPE_VERSION } from "constants/versions";
 import { addUserActionForAnalytics } from "lib/analytics/participants";
 import { updateRewardAnalytics } from "lib/analytics/rewards";
 import { useMediaQuery } from "react-responsive";
@@ -81,24 +83,26 @@ export function useSubmitProposal() {
     setError("");
     setTransactionData(null);
 
-    const entryPreviewHTML = generateEntryPreviewHTML(metadataFields);
-
-    const fullProposalContent = `${entryPreviewHTML}\n\n${proposalContent}`;
+    const isEntryTypeVersion = (safeCompareVersions(contestConfig.version, CONTEST_ENTRY_TYPE_VERSION) ?? -1) >= 0;
 
     return new Promise<{ tx: TransactionResponse; proposalId: string }>(async (resolve, reject) => {
       try {
         const contractConfig = getContractConfig();
-        const fieldsMetadata = processFieldInputs(metadataFields);
-        const isVersionBelowMetadataRemoval = compareVersions(contestConfig.version, "6.14") < 0;
+        const isVersionBelowMetadataRemoval = !isEntryTypeVersion && compareVersions(contestConfig.version, "6.14") < 0;
+        const description = isEntryTypeVersion
+          ? metadataFields.length > 0
+            ? metadataFields[0].inputValue
+            : proposalContent
+          : `${generateEntryPreviewHTML(metadataFields)}\n\n${proposalContent}`;
         const proposalCore = {
           author: userAddress,
           exists: true,
-          description: fullProposalContent,
+          description,
           ...(isVersionBelowMetadataRemoval && {
             targetMetadata: targetMetadata,
             safeMetadata: safeMetadata,
           }),
-          fieldsMetadata: fieldsMetadata,
+          ...(!isEntryTypeVersion && { fieldsMetadata: processFieldInputs(metadataFields) }),
         };
 
         let hash: `0x${string}`;

@@ -7,6 +7,7 @@ export interface Option {
   label: string;
   value: string;
   image?: string;
+  description?: string;
 }
 
 interface DropdownProps {
@@ -29,6 +30,9 @@ const Dropdown: FC<DropdownProps> = ({
   const [selectedOption, setSelectedOption] = useState<string>(defaultValue);
   const [selectedImage, setSelectedImage] = useState<string | undefined>(
     options.find(opt => opt.label === defaultValue)?.image,
+  );
+  const [selectedDescription, setSelectedDescription] = useState<string | undefined>(
+    options.find(opt => opt.label === defaultValue)?.description,
   );
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -54,11 +58,13 @@ const Dropdown: FC<DropdownProps> = ({
     setSelectedOption(defaultValue);
     const option = options.find(opt => opt.label === defaultValue);
     setSelectedImage(option?.image);
+    setSelectedDescription(option?.description);
   }, [defaultValue, options]);
 
-  const handleOptionChange = (value: string, label: string, image?: string) => {
+  const handleOptionChange = (value: string, label: string, image?: string, description?: string) => {
     setSelectedOption(label);
     setSelectedImage(image);
+    setSelectedDescription(description);
     onChange?.(value);
   };
 
@@ -78,7 +84,12 @@ const Dropdown: FC<DropdownProps> = ({
                 {selectedImage && (
                   <img src={selectedImage} alt={selectedOption} width={20} height={20} className="rounded-full mt-1" />
                 )}
-                <span>{selectedOption}</span>
+                <span className="flex items-baseline gap-1.5 whitespace-nowrap">
+                  <span>{selectedOption}</span>
+                  {selectedDescription && (
+                    <span className="text-sm font-normal text-neutral-9">{selectedDescription}</span>
+                  )}
+                </span>
               </div>
               <ChevronDownIcon
                 className={`text-neutral-11 w-6 h-5 mt-1 transition-transform duration-200 ease-out ${
@@ -104,7 +115,7 @@ const Dropdown: FC<DropdownProps> = ({
                   <MenuItem key={option.value}>
                     <button
                       className="group flex w-full items-center gap-4 rounded-lg px-4 py-1.5 data-focus:bg-white/10"
-                      onClick={() => handleOptionChange(option.value, option.label, option.image)}
+                      onClick={() => handleOptionChange(option.value, option.label, option.image, option.description)}
                     >
                       {option.image && (
                         <img
@@ -115,7 +126,12 @@ const Dropdown: FC<DropdownProps> = ({
                           className="rounded-full mt-1"
                         />
                       )}
-                      <span>{option.label}</span>
+                      <span className="flex items-baseline gap-1.5">
+                        <span>{option.label}</span>
+                        {option.description && (
+                          <span className="text-sm font-normal text-neutral-9">{option.description}</span>
+                        )}
+                      </span>
                     </button>
                   </MenuItem>
                 ))}

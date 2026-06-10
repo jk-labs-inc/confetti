@@ -15,7 +15,11 @@ const CreateContestTimingDuration = () => {
 
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const durationOptions = getDurationOptions();
-  const durationLabel = votingDuration === 1 ? "1 hour" : `${votingDuration} hours`;
+  const durationLabel =
+    durationOptions.find(option => option.value === votingDuration.toString())?.label ??
+    (votingDuration % 24 === 0
+      ? `${votingDuration / 24} ${votingDuration / 24 === 1 ? "day" : "days"}`
+      : `${votingDuration} ${votingDuration === 1 ? "hour" : "hours"}`);
 
   const handleDurationChange = (value: string) => {
     setVotingDuration(parseInt(value));
@@ -31,13 +35,13 @@ const CreateContestTimingDuration = () => {
             value={durationLabel}
             options={durationOptions}
             onChange={handleDurationChange}
-            width="w-[160px]"
+            width="w-fit min-w-[160px]"
           />
         ) : (
           <Dropdown
             options={durationOptions}
-            menuButtonWidth="w-[160px]"
-            menuItemsWidth="w-[160px]"
+            menuButtonWidth="w-fit min-w-[160px]"
+            menuItemsWidth="w-max"
             onChange={handleDurationChange}
             defaultValue={durationLabel}
           />
