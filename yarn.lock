@@ -5983,15 +5983,6 @@
   resolved "https://registry.yarnpkg.com/@wagmi/connectors/-/connectors-8.0.15.tgz#cca3cf0413c8b9cad2ad5820713a9827f9cbef90"
   integrity sha512-LNr73YNs2KY6y6GXUWRXsDG0xSB5YpkO/9BSp3/2IAcM5XDPWcS4V1HfstXnP/ms9LARKLe2BAOCG44LajTWjw==
 
-"@wagmi/core@3.4.12":
-  version "3.4.12"
-  resolved "https://registry.yarnpkg.com/@wagmi/core/-/core-3.4.12.tgz#84fec8dad442b97076ea43d9272932aeff264dbd"
-  integrity sha512-q/NYoq+Up6JNfWNE6G0iXj9cHBSYgOyC8toqJLBWTeUnY1Ha9Q4OyFUHnXfvGTudbC0Gxhh7uUkqW3/LGdsQfg==
-  dependencies:
-    eventemitter3 "5.0.1"
-    mipd "0.0.7"
-    zustand "5.0.0"
-
 "@wagmi/core@3.5.0":
   version "3.5.0"
   resolved "https://registry.yarnpkg.com/@wagmi/core/-/core-3.5.0.tgz#02e81ee27c47ee066755812abdaa70d1de87299d"
