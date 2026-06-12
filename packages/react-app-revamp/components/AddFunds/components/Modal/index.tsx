@@ -11,18 +11,16 @@ interface AddFundsModalProps {
 
 const AddFundsModal: FC<AddFundsModalProps> = ({ chain, asset, isOpen, onClose }) => {
   return (
-    <DialogModalV4 isOpen={isOpen} onClose={onClose}>
-      <div className="flex flex-col bg-true-black z-40 gap-4 py-6 md:py-16 px-6 md:pl-32 md:pr-16">
-        <div className="hidden md:flex justify-between items-start">
-          <img
-            src="/modal/modal_close.svg"
-            width={33}
-            height={33}
-            alt="close"
-            className="hidden md:block cursor-pointer ml-auto"
-            onClick={onClose}
-          />
-        </div>
+    <DialogModalV4 isOpen={isOpen} onClose={onClose} lgWidth="lg:max-w-[528px]">
+      <div className="flex flex-col bg-true-black z-40 gap-4 py-6 md:py-10 px-6 md:px-10">
+        <img
+          src="/modal/modal_close.svg"
+          width={24}
+          height={24}
+          alt="close"
+          className="hidden md:block absolute top-6 right-6 cursor-pointer"
+          onClick={onClose}
+        />
         <AddFunds className="md:w-[400px]" chain={chain} asset={asset} showBackButton={false} onCloseModal={onClose} />
       </div>
     </DialogModalV4>
