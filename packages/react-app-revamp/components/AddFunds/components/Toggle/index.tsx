@@ -1,3 +1,4 @@
+import { CurrencyDollarIcon } from "@heroicons/react/24/outline";
 import { animate, motion, useMotionValue } from "motion/react";
 import { FC, useEffect, useRef } from "react";
 import { AddFundsProviderType } from "../../types";
@@ -7,15 +8,23 @@ interface AddFundsToggleProps {
   onChange: (value: AddFundsProviderType) => void;
 }
 
+const EtherIcon: FC<{ className?: string }> = ({ className }) => (
+  <svg viewBox="0 0 24 24" fill="none" strokeWidth={1.5} stroke="currentColor" className={className} aria-hidden="true">
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M8.25 8.6h7.5M9.4 12h5.2M8.25 15.4h7.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+    />
+  </svg>
+);
+
 const TOGGLE_OPTIONS = [
-  { id: AddFundsProviderType.ONRAMP, label: "add from scratch" },
-  { id: AddFundsProviderType.BRIDGE, label: "bridge funds" },
+  { id: AddFundsProviderType.BRIDGE, label: "use crypto", Icon: EtherIcon },
+  { id: AddFundsProviderType.ONRAMP, label: "use cash", Icon: CurrencyDollarIcon },
 ];
 
 const AddFundsToggle: FC<AddFundsToggleProps> = ({ value, onChange }) => {
-  const toggleOptions = TOGGLE_OPTIONS;
-
-  const selectedIndex = toggleOptions.findIndex(option => option.id === value);
+  const selectedIndex = TOGGLE_OPTIONS.findIndex(option => option.id === value);
   const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const indicatorX = useMotionValue(0);
   const indicatorWidth = useMotionValue(0);
@@ -38,7 +47,7 @@ const AddFundsToggle: FC<AddFundsToggleProps> = ({ value, onChange }) => {
   }, [selectedIndex, indicatorX, indicatorWidth]);
 
   const handleClick = (index: number) => {
-    onChange(toggleOptions[index].id);
+    onChange(TOGGLE_OPTIONS[index].id);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent, index: number) => {
@@ -62,7 +71,7 @@ const AddFundsToggle: FC<AddFundsToggleProps> = ({ value, onChange }) => {
           background: "var(--background-image-gradient-add-funds-toggle)",
         }}
       />
-      {toggleOptions.map((option, index) => (
+      {TOGGLE_OPTIONS.map((option, index) => (
         <button
           key={option.id}
           ref={el => {
@@ -70,7 +79,7 @@ const AddFundsToggle: FC<AddFundsToggleProps> = ({ value, onChange }) => {
           }}
           onClick={() => handleClick(index)}
           onKeyDown={e => handleKeyDown(e, index)}
-          className={`relative z-10 h-6 flex-1 text-base font-semibold rounded-full transition-colors duration-200 focus:outline-none cursor-pointer flex items-center justify-center ${
+          className={`relative z-10 h-6 flex-1 text-base font-semibold rounded-full transition-colors duration-200 focus:outline-none cursor-pointer flex items-center justify-center gap-1.5 ${
             selectedIndex === index ? "text-true-black" : "text-neutral-14"
           }`}
           role="tab"
@@ -78,6 +87,7 @@ const AddFundsToggle: FC<AddFundsToggleProps> = ({ value, onChange }) => {
           aria-label={option.label}
           tabIndex={0}
         >
+          <option.Icon className="h-4 w-4 shrink-0 translate-y-0.5" />
           {option.label}
         </button>
       ))}
