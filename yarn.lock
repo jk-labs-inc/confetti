@@ -5818,18 +5818,6 @@
     json-schema-to-ts "1.6.4"
     ts-morph "12.0.0"
 
-"@visx/axis@4.0.0":
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/@visx/axis/-/axis-4.0.0.tgz#7abab30fb929ed4eebbdafdc52beada6203bfc6b"
-  integrity sha512-cSPNO9Aic2UX49AmIeJJ9TQrrAkvUHpHOGqimUAXhbg07VI3HoHDKcXZdrjvQz+g0LhubrUkjj8Gwju2WZ3dtg==
-  dependencies:
-    "@visx/group" "4.0.0"
-    "@visx/point" "4.0.0"
-    "@visx/scale" "4.0.0"
-    "@visx/shape" "4.0.0"
-    "@visx/text" "4.0.0"
-    classnames "^2.3.1"
-
 "@visx/curve@4.0.0":
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/@visx/curve/-/curve-4.0.0.tgz#fd752d9a6311a23ea129632026a5309afa03d327"
@@ -5837,24 +5825,12 @@
   dependencies:
     "@visx/vendor" "4.0.0"
 
-"@visx/event@4.0.0":
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/@visx/event/-/event-4.0.0.tgz#c5c379cf877010e1b17e28aaec5783dc155f8eea"
-  integrity sha512-sOcVVzOUxOefF8mQenRFtutoEO7P9icpTcSJM36Sv13sepQbPBuYLknX7RV+EzqyNLOze5cO5GmLIUNH82FOoA==
-  dependencies:
-    "@visx/point" "4.0.0"
-
 "@visx/group@4.0.0":
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/@visx/group/-/group-4.0.0.tgz#88803065e9b4e69c765a3e8ec4aa534d269cf670"
   integrity sha512-HGAq8BCqn5x0t94CJOLJeKtWss9LFpF3HY69HbuO1PlR+B9c4aVT9xbjfudmU8wGQZLT6JNt+PJvxbO2aJ+1aA==
   dependencies:
     classnames "^2.3.1"
-
-"@visx/point@4.0.0":
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/@visx/point/-/point-4.0.0.tgz#5badc47d9f5848441bca617f674893cbb42bbd15"
-  integrity sha512-hwJ9UlIjg3iV4iiJ3RN5SNTXama+zGaNe57sXSrSvPiqhkDXypsYBdDSlAnHmKbMzHP0zFmgB1UJciB/QUyigw==
 
 "@visx/responsive@4.0.0":
   version "4.0.0"
@@ -5878,14 +5854,6 @@
     "@visx/scale" "4.0.0"
     "@visx/vendor" "4.0.0"
     classnames "^2.3.1"
-
-"@visx/text@4.0.0":
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/@visx/text/-/text-4.0.0.tgz#6c21687bf94bac0cf17618aa38ffcf6e6087c589"
-  integrity sha512-39f2goSaKy5Mqn89lRDGSJ1IMr49wplkbIFHsFI8cPnAPbguiJxYZ+ulizd7Vcsq2z/hytuGv3Lmk165zUiUYQ==
-  dependencies:
-    classnames "^2.3.1"
-    reduce-css-calc "^1.3.0"
 
 "@visx/vendor@4.0.0":
   version "4.0.0"
@@ -6831,11 +6799,6 @@ babel-plugin-polyfill-regenerator@^0.6.6:
   integrity sha512-M762rNHfSF1EV3SLtnCJXFoQbbIIz0OyRwnCmV0KPC7qosSfCO0QLTSuJX3ayAebubhE6oYBAYPrBA5ljowaZg==
   dependencies:
     "@babel/helper-define-polyfill-provider" "^0.6.8"
-
-balanced-match@^0.4.2:
-  version "0.4.2"
-  resolved "https://registry.yarnpkg.com/balanced-match/-/balanced-match-0.4.2.tgz#cb3f3e3c732dc0f01ee70b403f302e61d7709838"
-  integrity sha512-STw03mQKnGUYtoNjmowo4F2cRmIIxYEGiMsjjwla/u5P1lxadj/05WkNaFjNiKTgJkj8KiXbgAiRTmcQRwQNtg==
 
 balanced-match@^1.0.0:
   version "1.0.2"
@@ -9954,11 +9917,6 @@ matchmediaquery@^0.4.2:
   dependencies:
     css-mediaquery "^0.1.2"
 
-math-expression-evaluator@^1.2.14:
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/math-expression-evaluator/-/math-expression-evaluator-1.4.0.tgz#3d66031117fbb7b9715ea6c9c68c2cd2eebd37e2"
-  integrity sha512-4vRUvPyxdO8cWULGTh9dZWL2tZK6LDBvj+OGHBER7poH9Qdt7kXEoj20wiz4lQUbUXQZFjPbe5mVDo9nutizCw==
-
 math-intrinsics@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/math-intrinsics/-/math-intrinsics-1.1.0.tgz#a0dd74be81e2aa5c2f27e65ce283605ee4e2b7f9"
@@ -11434,22 +11392,6 @@ real-require@^0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/real-require/-/real-require-0.2.0.tgz#209632dea1810be2ae063a6ac084fee7e33fba78"
   integrity sha512-57frrGM/OCTLqLOAh0mhVA9VBMHd+9U7Zb2THMGdBUoZVOtGbJzjxsYGDJ3A9AYYCP4hn6y1TVbaOfzWtm5GFg==
-
-reduce-css-calc@^1.3.0:
-  version "1.3.0"
-  resolved "https://registry.yarnpkg.com/reduce-css-calc/-/reduce-css-calc-1.3.0.tgz#747c914e049614a4c9cfbba629871ad1d2927716"
-  integrity sha512-0dVfwYVOlf/LBA2ec4OwQ6p3X9mYxn/wOl2xTcLwjnPYrkgEfPx3VI4eGCH3rQLlPISG5v9I9bkZosKsNRTRKA==
-  dependencies:
-    balanced-match "^0.4.2"
-    math-expression-evaluator "^1.2.14"
-    reduce-function-call "^1.0.1"
-
-reduce-function-call@^1.0.1:
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/reduce-function-call/-/reduce-function-call-1.0.3.tgz#60350f7fb252c0a67eb10fd4694d16909971300f"
-  integrity sha512-Hl/tuV2VDgWgCSEeWMLwxLZqX7OK59eU1guxXsRKTAyeYimivsKdtcV4fu3r710tpG5GmDKDhQ0HSZLExnNmyQ==
-  dependencies:
-    balanced-match "^1.0.0"
 
 reflect.getprototypeof@^1.0.6, reflect.getprototypeof@^1.0.9:
   version "1.0.10"
