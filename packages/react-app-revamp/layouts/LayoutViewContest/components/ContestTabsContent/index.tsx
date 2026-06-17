@@ -1,5 +1,4 @@
 import ContestRewardsInfo from "@components/_pages/Contest/components/RewardsInfo";
-import ContestStickyTrigger from "@components/_pages/Contest/components/ContestStickyTrigger";
 import ContestTiming from "../ContestHeader/components/DesktopHeader/components/ContestTiming";
 import ContestTab from "@components/_pages/Contest/Contest";
 import ContestDeployRewards from "@components/_pages/Contest/DeployRewards";
@@ -28,7 +27,6 @@ const ContestTabsContent: FC<ContestTabsContentProps> = ({ tab, version, rewards
                 <ContestRewardsInfo version={version} />
                 <ContestTiming />
               </div>
-              <ContestStickyTrigger trigger="rewards" />
               <ContestTab />
             </>
           );
