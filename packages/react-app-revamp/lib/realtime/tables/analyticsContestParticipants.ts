@@ -29,7 +29,14 @@ export const analyticsContestParticipantsConfig: RealtimeTableConfig<
       return null;
     }
     if (row.vote_amount != null) {
-      return { type: "vote.cast", ...base, voteAmount: row.vote_amount, createdAt: row.created_at };
+      return {
+        type: "vote.cast",
+        uuid: row.uuid,
+        ...base,
+        voteAmount: row.vote_amount,
+        amountSent: row.amount_sent,
+        createdAt: row.created_at,
+      };
     }
     return { type: "entry.submitted", ...base };
   },

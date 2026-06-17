@@ -1,3 +1,4 @@
+import { DEFAULT_AVATAR_URL } from "@components/UI/Avatar/constants";
 import { Clusters, getImageUrl, getProfileUrl } from "@clustersxyz/sdk";
 import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
@@ -5,8 +6,6 @@ import { useQuery } from "@tanstack/react-query";
 import { getEnsAvatar, getEnsName } from "@wagmi/core";
 import { normalize } from "viem/ens";
 import { mainnet } from "wagmi/chains";
-
-const DEFAULT_AVATAR_URL = "/contest/user.svg";
 const ETHERSCAN_BASE_URL = mainnet.blockExplorers?.default?.url;
 
 interface ProfileData {

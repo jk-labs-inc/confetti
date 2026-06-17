@@ -71,6 +71,7 @@ const UserProfileDisplay = ({
     return (
       <Avatar
         src={profileAvatar}
+        address={ethereumAddress}
         size={size}
         asLink={true}
         href={`${ROUTE_VIEW_USER.replace("[address]", ethereumAddress)}`}
@@ -84,7 +85,7 @@ const UserProfileDisplay = ({
         textColor || "text-neutral-11"
       } font-bold`}
     >
-      {!hideAvatar && <Avatar src={profileAvatar} size={size} />}
+      {!hideAvatar && <Avatar src={profileAvatar} address={ethereumAddress} size={size} />}
 
       {isLoading ? (
         <p className={`${textSizeClass} animate-flicker-infinite`}>Loading profile data</p>

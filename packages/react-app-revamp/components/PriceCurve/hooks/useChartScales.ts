@@ -3,7 +3,14 @@ import { useMemo } from "react";
 import { ChartDataPoint } from "../types";
 import { GRID_LINE_COUNT } from "../constants";
 
-export const useChartScales = (data: ChartDataPoint[], chartWidth: number, chartHeight: number) => {
+export const useChartScales = (
+  data: ChartDataPoint[],
+  chartWidth: number,
+  chartHeight: number,
+  bottomInset: number = 0,
+) => {
+  const lineHeight = chartHeight - bottomInset > 10 ? chartHeight - bottomInset : chartHeight;
+
   const { yScale, getX, getY } = useMemo(() => {
     if (chartWidth <= 0 || chartHeight <= 0) {
       return {
@@ -24,7 +31,7 @@ export const useChartScales = (data: ChartDataPoint[], chartWidth: number, chart
     const span = max - min || 1;
 
     const ys = scaleLinear({
-      range: [chartHeight, 0],
+      range: [lineHeight, 0],
       domain: [min - span * 0.02, max + span * 0.02],
     });
 
@@ -33,13 +40,13 @@ export const useChartScales = (data: ChartDataPoint[], chartWidth: number, chart
       getX: (d: ChartDataPoint) => xs(d.id) ?? 0,
       getY: (d: ChartDataPoint) => ys(d.pv) ?? 0,
     };
-  }, [data, chartWidth, chartHeight]);
+  }, [data, chartWidth, chartHeight, lineHeight]);
 
   const gridLines = useMemo(() => {
     return Array.from({ length: GRID_LINE_COUNT }, (_, i) => {
-      return (i / (GRID_LINE_COUNT - 1)) * chartHeight;
+      return (i / (GRID_LINE_COUNT - 1)) * lineHeight;
     });
-  }, [chartHeight]);
+  }, [lineHeight]);
 
   const yTicks = useMemo(() => {
     if (chartHeight <= 0 || data.length === 0) return [];

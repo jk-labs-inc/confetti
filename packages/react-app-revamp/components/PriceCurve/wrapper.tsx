@@ -3,6 +3,8 @@ import { useCurrencyStore } from "@hooks/useCurrency/store";
 import { convertToDisplayPrice, DisplayPriceOptions } from "@hooks/useCurrency/useDisplayPrice";
 import useNativeRates from "@hooks/useCurrency/useNativeRates";
 import useCurrentPricePercentageIncrease from "@hooks/useCurrentPricePercentageIncrease";
+import useContestEntryTitles from "@hooks/useContestEntryTitles";
+import useContestVoteMarkers from "@hooks/useContestVoteMarkers";
 import usePriceCurveData from "@hooks/usePriceCurveData";
 import { useCountdownTimer } from "@hooks/useTimer";
 import { useParentSize } from "@visx/responsive";
@@ -48,6 +50,19 @@ const PriceCurveWrapper = ({
     isLoading,
     isError,
   } = usePriceCurveData();
+
+  const { voteEvents } = useContestVoteMarkers({
+    contestAddress: contestConfig.address,
+    chainName: contestConfig.chainName,
+    enabled: !!contestConfig.address,
+  });
+
+  const votedProposalIds = useMemo(() => voteEvents.map(event => event.proposalId), [voteEvents]);
+  const entryTitlesById = useContestEntryTitles({
+    contestConfig,
+    proposalIds: votedProposalIds,
+    enabled: !!contestConfig.address && voteEvents.length > 0,
+  });
 
   const endTime = useMemo(() => new Date(endTimeMs), [endTimeMs]);
   const votingTimeLeft = useCountdownTimer(endTime);
@@ -123,6 +138,8 @@ const PriceCurveWrapper = ({
         showAxisLabels={showAxisLabels}
         isExpanded={isExpanded}
         onToggleExpand={onToggleExpand}
+        voteEvents={voteEvents}
+        entryTitlesById={entryTitlesById}
       />
     </div>
   );

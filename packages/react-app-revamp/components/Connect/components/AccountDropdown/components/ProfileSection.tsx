@@ -64,7 +64,7 @@ const ProfileSection: FC<ProfileSectionProps> = ({
     <div className="p-4 border-b border-neutral-17">
       <div className="flex items-start gap-4">
         <div className="relative shrink-0">
-          <Avatar src={(ensAvatar as string) || ""} size="medium" />
+          <Avatar src={(ensAvatar as string) || ""} address={address} size="medium" />
           {currentChain?.iconUrl && (
             <Image
               src={currentChain.iconUrl}

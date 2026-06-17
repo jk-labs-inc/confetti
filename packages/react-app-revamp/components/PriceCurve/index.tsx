@@ -1,10 +1,15 @@
 import { PriceCurveType } from "@hooks/useDeployContest/types";
+import { ContestVoteEvent } from "@hooks/useContestVoteMarkers";
 import AnimatedDot from "./components/AnimatedDot";
 import AxisLabels from "./components/AxisLabels";
 import ConfettiParticles from "./components/ConfettiParticles";
 import GridLines from "./components/GridLines";
 import PriceCurveHeader from "./components/Header";
 import HoverOverlay from "./components/HoverOverlay";
+import VoterAvatarStrip from "./components/VoterMarkers";
+import VoterAvatarTooltip from "./components/VoterMarkers/VoterAvatarTooltip";
+import { buildAvatarClusters } from "./components/VoterMarkers/buildAvatarClusters";
+import { AVATAR_LANE_HEIGHT, AVATAR_LANE_TOP_GAP, AVATAR_RADIUS } from "./components/VoterMarkers/constants";
 import {
   CARD_PADDING,
   CARD_PADDING_STYLE,
@@ -22,7 +27,7 @@ import { ChartDataPoint } from "./types";
 import { curveMonotoneX } from "@visx/curve";
 import { Group } from "@visx/group";
 import { LinePath } from "@visx/shape";
-import { FC, useRef } from "react";
+import { FC, useMemo, useRef } from "react";
 
 interface PriceCurveProps {
   data: ChartDataPoint[];
@@ -46,7 +51,11 @@ interface PriceCurveProps {
   showAxisLabels?: boolean;
   isExpanded?: boolean;
   onToggleExpand?: () => void;
+  voteEvents?: ContestVoteEvent[];
+  entryTitlesById?: Map<string, string>;
 }
+
+const EMPTY_ENTRY_TITLES: Map<string, string> = new Map();
 
 const PriceCurve: FC<PriceCurveProps> = ({
   data,
@@ -68,6 +77,8 @@ const PriceCurve: FC<PriceCurveProps> = ({
   showAxisLabels = false,
   isExpanded,
   onToggleExpand,
+  voteEvents = [],
+  entryTitlesById = EMPTY_ENTRY_TITLES,
 }) => {
   const svgRef = useRef<SVGSVGElement>(null);
 
@@ -78,13 +89,25 @@ const PriceCurve: FC<PriceCurveProps> = ({
   const chartWidth = svgWidth - chartPad.left - chartPad.right;
   const chartHeight = svgHeight - chartPad.top - chartPad.bottom;
 
-  const { yScale, getX, getY, gridLines, yTicks, xTicks } = useChartScales(data, chartWidth, chartHeight);
+  // The main (axis-labelled) chart reserves a lane below the line for the voter-avatar strip — but
+  // only once there are votes to show, so an empty contest doesn't render a blank gap.
+  const showVoterLane = showAxisLabels && voteEvents.length > 0;
+  const bottomInset = showVoterLane ? AVATAR_LANE_HEIGHT : 0;
+
+  const { yScale, getX, getY, gridLines, yTicks, xTicks } = useChartScales(data, chartWidth, chartHeight, bottomInset);
   const { hoveredIndex, handleMouseMove, handleTouchMove, handleLeave } = useChartInteraction(
     svgRef,
     data,
     getX,
     chartPad.left,
   );
+
+  // Group nearby votes into avatar clusters positioned along the time axis (see buildAvatarClusters).
+  const voterClusters = useMemo(() => buildAvatarClusters(voteEvents, data, getX), [voteEvents, data, getX]);
+  // Seat the avatars toward the bottom of their lane (not centered): the price line is squeezed to end
+  // at chartHeight - AVATAR_LANE_HEIGHT, then we drop AVATAR_LANE_TOP_GAP + a radius below that so the
+  // avatars clear the bottom gridline — keeping the breathing room above them generous.
+  const laneCenterY = chartHeight - AVATAR_LANE_HEIGHT + AVATAR_LANE_TOP_GAP + AVATAR_RADIUS;
 
   const collapsed = isExpanded === false;
 
@@ -168,6 +191,9 @@ const PriceCurve: FC<PriceCurveProps> = ({
               style={TOUCH_PAN_STYLE}
             />
 
+            {/* Rendered after the capture rect so the avatars receive hover, not the rect. */}
+            {showVoterLane && <VoterAvatarStrip clusters={voterClusters} centerY={laneCenterY} />}
+
             {showAxisLabels && (
               <AxisLabels
                 yTicks={yTicks}
@@ -182,6 +208,10 @@ const PriceCurve: FC<PriceCurveProps> = ({
             )}
           </Group>
         </svg>
+      )}
+
+      {!collapsed && showVoterLane && (
+        <VoterAvatarTooltip clusters={voterClusters} formatPrice={formatPrice} entryTitlesById={entryTitlesById} />
       )}
     </div>
   );
