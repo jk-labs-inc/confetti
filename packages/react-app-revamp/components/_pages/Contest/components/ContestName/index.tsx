@@ -1,6 +1,7 @@
 import ContestImage from "@components/_pages/Contest/components/ContestImage";
 import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
 import useProfileData from "@hooks/useProfileData";
+import { useContestStickyStore } from "@hooks/useContestStickyStore";
 import { ROUTE_VIEW_USER } from "@config/routes";
 import { FC } from "react";
 import { useMediaQuery } from "react-responsive";
@@ -20,6 +21,9 @@ const TITLE_MAX_FONT_PX = 32;
 const TITLE_MIN_FONT_PX = 18;
 const TITLE_SHORT_LEN = 20;
 const TITLE_LONG_LEN = 40;
+const TITLE_COMPACT_SCALE = 0.75;
+const AUTHOR_FONT_PX = 14;
+const AUTHOR_COMPACT_FONT_PX = 12;
 
 const computeDesktopTitleSize = (length: number) => {
   if (length <= TITLE_SHORT_LEN) return TITLE_MAX_FONT_PX;
@@ -39,6 +43,7 @@ const ContestName: FC<ContestNameProps> = ({
   const isContestCanceled = contestState === ContestStateEnum.Canceled;
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const { profileName: contestAuthorProfileName } = useProfileData(contestAuthorEthereumAddress ?? "", true);
+  const isCompact = useContestStickyStore(state => state.isCompact);
 
   if (isMobile) {
     return (
@@ -61,6 +66,10 @@ const ContestName: FC<ContestNameProps> = ({
     );
   }
 
+  const baseTitleSize = computeDesktopTitleSize(contestName.length);
+  const desktopTitleSize = isCompact ? Math.round(baseTitleSize * TITLE_COMPACT_SCALE) : baseTitleSize;
+  const authorFontSize = isCompact ? AUTHOR_COMPACT_FONT_PX : AUTHOR_FONT_PX;
+
   return (
     <div className="flex items-center relative w-full">
       <div className="absolute left-0 -translate-x-full -ml-4 flex items-center gap-2 top-1/2 -translate-y-1/2">
@@ -76,12 +85,15 @@ const ContestName: FC<ContestNameProps> = ({
         {contestImageUrl && <ContestImage imageUrl={contestImageUrl} />}
         <p
           className={`text-neutral-11 font-sabo-filled truncate ${isContestCanceled ? "line-through" : ""}`}
-          style={{ fontSize: `${computeDesktopTitleSize(contestName.length)}px` }}
+          style={{ fontSize: `${desktopTitleSize}px`, transition: "font-size 200ms ease-out" }}
         >
           {contestName}
         </p>
         {contestAuthorEthereumAddress && (
-          <p className="text-[14px] whitespace-nowrap shrink-0">
+          <p
+            className="whitespace-nowrap shrink-0"
+            style={{ fontSize: `${authorFontSize}px`, transition: "font-size 200ms ease-out" }}
+          >
             <span className="text-neutral-11">by </span>
             <CustomLink
               className="text-positive-11 no-underline"
