@@ -78,7 +78,7 @@
     "postcss": "8.5.15",
     "postcss-100vh-fix": "2.0.0",
     "react": "19.2.7",
-    "react-aria": "3.49.0",
+    "react-aria": "3.50.0",
     "react-device-detect": "2.2.3",
     "react-dom": "19.2.7",
     "react-error-boundary": "6.1.2",
