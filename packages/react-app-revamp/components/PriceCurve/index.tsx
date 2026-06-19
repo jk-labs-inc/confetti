@@ -102,9 +102,7 @@ const PriceCurve: FC<PriceCurveProps> = ({
   const chartWidth = svgWidth - chartPad.left - chartPad.right;
   const chartHeight = svgHeight - chartPad.top - chartPad.bottom;
 
-  // The main (axis-labelled) chart reserves a lane below the line for the voter-avatar strip — but
-  // only once there are votes to show, so an empty contest doesn't render a blank gap.
-  const showVoterLane = showAxisLabels && voteEvents.length > 0;
+  const showVoterLane = showAxisLabels && contestPhase !== "before" && voteEvents.length > 0;
   const bottomInset = showVoterLane ? AVATAR_LANE_HEIGHT : 0;
 
   const { yScale, getX, getY, gridLines, yTicks, xTicks } = useChartScales(data, chartWidth, chartHeight, bottomInset);
