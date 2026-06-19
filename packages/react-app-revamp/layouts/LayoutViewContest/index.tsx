@@ -3,7 +3,6 @@ import Loader from "@components/UI/Loader";
 import VotingSidebar from "@components/_pages/Contest/VotingSidebar";
 import ContestNotifyButton from "@components/_pages/Contest/components/ContestNotifyButton";
 import ContestShareButton from "@components/_pages/Contest/components/ContestShareButton";
-import ContestStickyTrigger from "@components/_pages/Contest/components/ContestStickyTrigger";
 import ContestTabs, { Tab } from "@components/_pages/Contest/components/Tabs";
 import { populateBugReportLink } from "@helpers/githubIssue";
 import { useContestStore } from "@hooks/useContest/store";
@@ -66,6 +65,7 @@ const LayoutViewContest = () => {
   const isXl = useMediaQuery({ minWidth: 1280 });
   const isDualPane = showSidebar && isXl;
   const leftPaneRef = useRef<HTMLDivElement>(null);
+  const compactSentinelRef = useRef<HTMLDivElement>(null);
   const [paneHeight, setPaneHeight] = useState<number | null>(null);
 
   useEffect(() => {
@@ -102,7 +102,7 @@ const LayoutViewContest = () => {
 
   const resetStickyStore = useContestStickyStore(state => state.reset);
   useEffect(() => () => resetStickyStore(), [resetStickyStore]);
-  useContestStickyScroll(leftPaneRef, isDualPane);
+  useContestStickyScroll(compactSentinelRef, leftPaneRef, isDualPane);
 
   const excludeTabs = useMemo(() => {
     const tabsToExclude: Tab[] = [];
@@ -140,7 +140,7 @@ const LayoutViewContest = () => {
         >
           <ReadOnlyBanner isReadOnly={isReadOnly} isLoading={isLoading} />
 
-          <ContestStickyTrigger trigger="compact" />
+          <div ref={compactSentinelRef} aria-hidden className="h-px w-full" />
           <ContestHeader
             contestImageUrl={contestImageUrl ?? ""}
             contestName={contestName}
