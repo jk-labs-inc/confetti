@@ -7,7 +7,6 @@ import dynamic from "next/dynamic";
 import localFont from "next/font/local";
 import NextTopLoader from "nextjs-toploader";
 import "react-loading-skeleton/dist/skeleton.css";
-import "react-tooltip/dist/react-tooltip.css";
 import "simplebar-react/dist/simplebar.min.css";
 import "./globals.css";
 import Providers from "./providers";

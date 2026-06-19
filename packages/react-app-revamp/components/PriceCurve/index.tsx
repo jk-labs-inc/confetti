@@ -7,9 +7,14 @@ import GridLines from "./components/GridLines";
 import PriceCurveHeader from "./components/Header";
 import HoverOverlay from "./components/HoverOverlay";
 import VoterAvatarStrip from "./components/VoterMarkers";
-import VoterAvatarTooltip from "./components/VoterMarkers/VoterAvatarTooltip";
+import VoterClusterDrawer from "./components/VoterMarkers/VoterClusterDrawer";
 import { buildAvatarClusters } from "./components/VoterMarkers/buildAvatarClusters";
-import { AVATAR_LANE_HEIGHT, AVATAR_LANE_TOP_GAP, AVATAR_RADIUS } from "./components/VoterMarkers/constants";
+import {
+  AVATAR_LABEL_GAP,
+  AVATAR_LANE_HEIGHT,
+  AVATAR_LANE_TOP_GAP,
+  AVATAR_RADIUS,
+} from "./components/VoterMarkers/constants";
 import {
   CARD_PADDING,
   CARD_PADDING_STYLE,
@@ -27,7 +32,8 @@ import { ChartDataPoint } from "./types";
 import { curveMonotoneX } from "@visx/curve";
 import { Group } from "@visx/group";
 import { LinePath } from "@visx/shape";
-import { FC, useMemo, useRef } from "react";
+import { FC, useEffect, useMemo, useRef, useState } from "react";
+import { useMediaQuery } from "react-responsive";
 
 interface PriceCurveProps {
   data: ChartDataPoint[];
@@ -82,6 +88,13 @@ const PriceCurve: FC<PriceCurveProps> = ({
 }) => {
   const svgRef = useRef<SVGSVGElement>(null);
 
+  const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
+  const [selectedClusterKey, setSelectedClusterKey] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!isMobile) setSelectedClusterKey(null);
+  }, [isMobile]);
+
   const pad = noPadding ? NO_PADDING : CARD_PADDING;
   const chartPad = showAxisLabels ? CHART_PADDING_WITH_LABELS : CHART_PADDING;
   const svgWidth = width - pad.left - pad.right;
@@ -104,10 +117,9 @@ const PriceCurve: FC<PriceCurveProps> = ({
 
   // Group nearby votes into avatar clusters positioned along the time axis (see buildAvatarClusters).
   const voterClusters = useMemo(() => buildAvatarClusters(voteEvents, data, getX), [voteEvents, data, getX]);
-  // Seat the avatars toward the bottom of their lane (not centered): the price line is squeezed to end
-  // at chartHeight - AVATAR_LANE_HEIGHT, then we drop AVATAR_LANE_TOP_GAP + a radius below that so the
-  // avatars clear the bottom gridline — keeping the breathing room above them generous.
-  const laneCenterY = chartHeight - AVATAR_LANE_HEIGHT + AVATAR_LANE_TOP_GAP + AVATAR_RADIUS;
+  const laneLabelY = chartHeight - AVATAR_LANE_HEIGHT + AVATAR_LANE_TOP_GAP;
+  const laneCenterY = laneLabelY + AVATAR_LABEL_GAP + AVATAR_RADIUS;
+  const axisLabelXTickY = showVoterLane ? laneLabelY : undefined;
 
   const collapsed = isExpanded === false;
 
@@ -192,7 +204,15 @@ const PriceCurve: FC<PriceCurveProps> = ({
             />
 
             {/* Rendered after the capture rect so the avatars receive hover, not the rect. */}
-            {showVoterLane && <VoterAvatarStrip clusters={voterClusters} centerY={laneCenterY} />}
+            {showVoterLane && (
+              <VoterAvatarStrip
+                clusters={voterClusters}
+                centerY={laneCenterY}
+                formatPrice={formatPrice}
+                entryTitlesById={entryTitlesById}
+                onClusterSelect={isMobile ? setSelectedClusterKey : undefined}
+              />
+            )}
 
             {showAxisLabels && (
               <AxisLabels
@@ -204,14 +224,21 @@ const PriceCurve: FC<PriceCurveProps> = ({
                 yScale={yScale}
                 getX={getX}
                 formatPrice={formatPrice}
+                xTickY={axisLabelXTickY}
               />
             )}
           </Group>
         </svg>
       )}
 
-      {!collapsed && showVoterLane && (
-        <VoterAvatarTooltip clusters={voterClusters} formatPrice={formatPrice} entryTitlesById={entryTitlesById} />
+      {!collapsed && showVoterLane && isMobile && (
+        <VoterClusterDrawer
+          clusters={voterClusters}
+          selectedKey={selectedClusterKey}
+          onClose={() => setSelectedClusterKey(null)}
+          formatPrice={formatPrice}
+          entryTitlesById={entryTitlesById}
+        />
       )}
     </div>
   );

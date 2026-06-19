@@ -8,14 +8,18 @@ import {
   HOVER_SCALE,
   MAX_VISIBLE_AVATARS,
   STACK_STEP,
-  VOTER_AVATARS_TOOLTIP_ID,
 } from "./constants";
+import { buildEntryColors } from "./entryColors";
 import { AvatarCluster } from "./types";
 import VoterAvatar from "./VoterAvatar";
+import VoterClusterMarker from "./VoterClusterMarker";
 
 interface VoterAvatarStripProps {
   clusters: AvatarCluster[];
   centerY: number;
+  formatPrice: (nativePrice: number) => string;
+  entryTitlesById: Map<string, string>;
+  onClusterSelect?: (key: string) => void;
 }
 
 interface ClusterGeometry {
@@ -33,7 +37,6 @@ const computeGeometry = (cluster: AvatarCluster): ClusterGeometry => {
   const r = AVATAR_RADIUS;
   const count = cluster.voters.length;
   const visible = Math.min(count, MAX_VISIBLE_AVATARS);
-  // Show the most recent faces (a freshly cast vote shows its avatar), newest painted on top.
   const visibleVoters = cluster.voters.slice(-visible);
   const xs = visibleVoters.map((_, i) => cluster.x + (i - (visible - 1) / 2) * STACK_STEP);
   const avatarRight = xs[xs.length - 1] + r;
@@ -44,16 +47,29 @@ const computeGeometry = (cluster: AvatarCluster): ClusterGeometry => {
   return { cluster, key: clusterKey(cluster), xs, visibleVoters, overflow, badgeCx, left, right };
 };
 
-const VoterAvatarStrip: FC<VoterAvatarStripProps> = ({ clusters, centerY }) => {
-  const [hoveredKey, setHoveredKey] = useState<string | null>(null);
+const VoterAvatarStrip: FC<VoterAvatarStripProps> = ({
+  clusters,
+  centerY,
+  formatPrice,
+  entryTitlesById,
+  onClusterSelect,
+}) => {
+  const [openKey, setOpenKey] = useState<string | null>(null);
 
   const geometries = useMemo(() => clusters.map(computeGeometry), [clusters]);
+  const entryColorsById = useMemo(
+    () => buildEntryColors(clusters.flatMap(cluster => cluster.voters.map(voter => voter.proposalId))),
+    [clusters],
+  );
 
   if (geometries.length === 0) return null;
 
+  const makeOpenHandler = (key: string) => (open: boolean) =>
+    setOpenKey(prev => (open ? key : prev === key ? null : prev));
+
   const renderVisual = (geo: ClusterGeometry) => {
-    const hovered = geo.key === hoveredKey;
-    const transform = hovered
+    const open = geo.key === openKey;
+    const transform = open
       ? `translate(${geo.cluster.x} ${centerY}) scale(${HOVER_SCALE}) translate(${-geo.cluster.x} ${-centerY})`
       : undefined;
 
@@ -90,31 +106,46 @@ const VoterAvatarStrip: FC<VoterAvatarStripProps> = ({ clusters, centerY }) => {
   };
 
   const renderHit = (geo: ClusterGeometry) => {
-    const halfWidth = (geo.right - geo.left) / 2;
-    const extraX = halfWidth * (HOVER_SCALE - 1) + 2;
-    const halfHeight = AVATAR_RADIUS * HOVER_SCALE + 3;
+    if (onClusterSelect) {
+      // Mobile: a plain tap target that opens the bottom drawer (no hover card).
+      const halfWidth = (geo.right - geo.left) / 2;
+      const extraX = halfWidth * (HOVER_SCALE - 1) + 2;
+      const halfHeight = AVATAR_RADIUS * HOVER_SCALE + 3;
+      return (
+        <rect
+          key={geo.key}
+          x={geo.left - extraX}
+          y={centerY - halfHeight}
+          width={geo.right - geo.left + extraX * 2}
+          height={halfHeight * 2}
+          fill="transparent"
+          style={{ pointerEvents: "all", cursor: "pointer" }}
+          onClick={() => onClusterSelect(geo.key)}
+        />
+      );
+    }
 
+    // Desktop: a Floating UI hover card anchored to this cluster's hit rect.
     return (
-      <rect
+      <VoterClusterMarker
         key={geo.key}
-        x={geo.left - extraX}
-        y={centerY - halfHeight}
-        width={geo.right - geo.left + extraX * 2}
-        height={halfHeight * 2}
-        fill="transparent"
-        data-tooltip-id={VOTER_AVATARS_TOOLTIP_ID}
-        data-cluster-key={geo.key}
-        style={{ pointerEvents: "all", cursor: "pointer" }}
-        onMouseEnter={() => setHoveredKey(geo.key)}
-        onMouseLeave={() => setHoveredKey(null)}
+        cluster={geo.cluster}
+        centerY={centerY}
+        left={geo.left}
+        right={geo.right}
+        open={openKey === geo.key}
+        onOpenChange={makeOpenHandler(geo.key)}
+        formatPrice={formatPrice}
+        entryTitlesById={entryTitlesById}
+        entryColorsById={entryColorsById}
       />
     );
   };
 
   const orderedVisuals =
-    hoveredKey == null
+    openKey == null
       ? geometries
-      : [...geometries.filter(geo => geo.key !== hoveredKey), ...geometries.filter(geo => geo.key === hoveredKey)];
+      : [...geometries.filter(geo => geo.key !== openKey), ...geometries.filter(geo => geo.key === openKey)];
 
   return (
     <>

@@ -1,34 +1,50 @@
-import { FC, ReactNode } from "react";
-import { Tooltip as ReactTooltip, type ITooltip } from "react-tooltip";
+import { type Placement } from "@floating-ui/react";
+import { CSSProperties, ElementType, FC, ReactNode } from "react";
+import FloatingSurface from "./FloatingSurface";
+import { TooltipSurface, useTooltip } from "./useTooltip";
 
-interface TooltipProps extends Omit<ITooltip, "children"> {
-  children?: ReactNode;
-  // Panel variant: a flat dark surface that matches the contest "full description" panel
-  // (bg-primary-1 + soft neutral-11 text + 16px radius). Off by default so existing tooltips keep
-  // their plain look.
-  panel?: boolean;
+interface TooltipProps {
+  content: ReactNode;
+  children: ReactNode;
+  place?: Placement;
+  surface?: TooltipSurface;
+  offset?: number;
+  arrow?: boolean;
+  disabled?: boolean;
+  as?: ElementType;
+  className?: string;
+  style?: CSSProperties;
+  openDelay?: number;
+  closeDelay?: number;
 }
 
-const BASE = "z-50 focus:outline-none";
-const DEFAULT_SURFACE = "p-2! bg-neutral-9! rounded-lg border border-transparent";
-const PANEL_SURFACE = "p-3! bg-primary-1! rounded-[16px] border border-neutral-4 text-neutral-11";
+const Tooltip: FC<TooltipProps> = ({
+  content,
+  children,
+  place = "top",
+  surface = "default",
+  offset = 8,
+  arrow = true,
+  disabled = false,
+  as: As = "span",
+  className,
+  style,
+  openDelay,
+  closeDelay,
+}) => {
+  const tooltip = useTooltip({ placement: place, offsetPx: offset, openDelay, closeDelay });
 
-// Single source of truth for tooltips. `clickable` + a hide delay keep the tooltip open while the
-// pointer travels from the anchor onto the tooltip itself, so hovering its content never dismisses it
-// (override `delayHide` if a given tooltip needs to snap shut). Pass `panel` for the flat dark
-// surface used by the price-curve voter list.
-const Tooltip: FC<TooltipProps> = ({ children, render, className = "", panel = false, delayHide, ...props }) => {
+  if (disabled) return <>{children}</>;
+
   return (
-    <ReactTooltip
-      clickable
-      opacity={1}
-      delayHide={delayHide ?? 150}
-      render={render}
-      className={`${BASE} ${panel ? PANEL_SURFACE : DEFAULT_SURFACE} ${className}`}
-      {...props}
-    >
-      {render ? null : children}
-    </ReactTooltip>
+    <>
+      <As ref={tooltip.refs.setReference} {...tooltip.getReferenceProps()}>
+        {children}
+      </As>
+      <FloatingSurface tooltip={tooltip} surface={surface} arrow={arrow} className={className} style={style}>
+        {content}
+      </FloatingSurface>
+    </>
   );
 };
 
