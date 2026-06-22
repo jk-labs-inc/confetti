@@ -15,7 +15,6 @@ import useTotalVotesCastOnContest from "@hooks/useTotalVotesCastOnContest";
 import { useWallet } from "@hooks/useWallet";
 import { useUrl } from "nextjs-current-url";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useMediaQuery } from "react-responsive";
 import { useShallow } from "zustand/shallow";
 import ContestHeader from "./components/ContestHeader";
 import ContestTabsContent from "./components/ContestTabsContent";
@@ -62,47 +61,11 @@ const LayoutViewContest = () => {
   const showSidebar =
     contestState !== ContestStateEnum.Canceled && (isVotingOpen || (isVotingClosed && contestHasVotes));
 
-  const isXl = useMediaQuery({ minWidth: 1280 });
-  const isDualPane = showSidebar && isXl;
-  const leftPaneRef = useRef<HTMLDivElement>(null);
   const compactSentinelRef = useRef<HTMLDivElement>(null);
-  const [paneHeight, setPaneHeight] = useState<number | null>(null);
-
-  useEffect(() => {
-    const root = document.documentElement;
-
-    if (!isDualPane) {
-      root.classList.remove("contest-dualpane");
-      setPaneHeight(null);
-      return;
-    }
-
-    root.classList.add("contest-dualpane");
-
-    const measure = () => {
-      const el = leftPaneRef.current;
-      if (!el) return;
-      const footer = document.querySelector("footer");
-      const footerHeight = footer ? footer.getBoundingClientRect().height : 0;
-      const top = el.getBoundingClientRect().top;
-      setPaneHeight(Math.max(0, window.innerHeight - top - footerHeight));
-    };
-    measure();
-
-    const ro = typeof ResizeObserver !== "undefined" ? new ResizeObserver(measure) : null;
-    ro?.observe(document.body);
-    window.addEventListener("resize", measure);
-
-    return () => {
-      root.classList.remove("contest-dualpane");
-      ro?.disconnect();
-      window.removeEventListener("resize", measure);
-    };
-  }, [isDualPane]);
 
   const resetStickyStore = useContestStickyStore(state => state.reset);
   useEffect(() => () => resetStickyStore(), [resetStickyStore]);
-  useContestStickyScroll(compactSentinelRef, leftPaneRef, isDualPane);
+  useContestStickyScroll(compactSentinelRef);
 
   const excludeTabs = useMemo(() => {
     const tabsToExclude: Tab[] = [];
@@ -124,20 +87,8 @@ const LayoutViewContest = () => {
     <div
       className={`w-full px-6 pt-6 md:px-12 md:pt-0 lg:w-[760px] lg:px-0 mx-auto ${showSidebar ? "xl:w-[1272px]" : ""}`}
     >
-      <div
-        className={`md:pt-5 md:pb-20 ${
-          showSidebar ? "xl:flex xl:gap-8 xl:pt-0 xl:pb-0 xl:h-[calc(100dvh_-_7rem)]" : ""
-        }`}
-        style={isDualPane && paneHeight != null ? { height: paneHeight } : undefined}
-      >
-        <div
-          ref={leftPaneRef}
-          className={`flex flex-col md:col-span-9 ${
-            showSidebar
-              ? "xl:w-[760px] xl:shrink-0 xl:h-full xl:min-h-0 xl:overflow-y-auto xl:overflow-x-hidden xl:overscroll-contain xl:px-4 no-scrollbar"
-              : ""
-          }`}
-        >
+      <div className={`md:pt-5 md:pb-20 ${showSidebar ? "xl:flex xl:items-start xl:gap-8 xl:pt-0 xl:pb-0" : ""}`}>
+        <div className={`flex flex-col md:col-span-9 ${showSidebar ? "xl:w-[760px] xl:shrink-0 xl:px-4" : ""}`}>
           <ReadOnlyBanner isReadOnly={isReadOnly} isLoading={isLoading} />
 
           <div ref={compactSentinelRef} aria-hidden className="h-px w-full" />
@@ -180,7 +131,7 @@ const LayoutViewContest = () => {
           </div>
         </div>
         {showSidebar && (
-          <aside className="hidden xl:block xl:w-[480px] xl:shrink-0 xl:h-full xl:min-h-0 xl:overflow-y-auto xl:overflow-x-hidden xl:overscroll-contain no-scrollbar xl:pt-4">
+          <aside className="hidden xl:block xl:w-[480px] xl:shrink-0 xl:sticky xl:top-4 xl:max-h-[calc(100dvh_-_2rem)] xl:overflow-y-auto xl:overflow-x-hidden xl:overscroll-contain no-scrollbar xl:pt-4">
             <VotingSidebar />
           </aside>
         )}

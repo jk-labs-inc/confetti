@@ -650,20 +650,6 @@ li {
     flex-direction: column;
   }
 
-  /* Contest dual-pane (xl+): lock the page scroll so the content column and the voting
-     sidebar each scroll independently. Toggled via `.contest-dualpane` on <html> by
-     LayoutViewContest, and only engaged at the xl breakpoint where the sidebar is shown. */
-  @media (min-width: 1280px) {
-    html.contest-dualpane,
-    html.contest-dualpane body {
-      overflow: hidden;
-    }
-    /* Reserve the page scrollbar gutter so locking the page doesn't shift content sideways. */
-    html.contest-dualpane {
-      scrollbar-gutter: stable;
-    }
-  }
-
   .navLink-desktop {
     padding: 0.5rem 0.75rem;
     border-radius: 9999px;
