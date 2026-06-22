@@ -69,6 +69,11 @@ const PriceCurveWrapper = ({
     enabled: !!contestConfig.address && voteEvents.length > 0,
   });
 
+  const resolvedVoteEvents = useMemo(
+    () => voteEvents.filter(event => entryTitlesById.has(event.proposalId)),
+    [voteEvents, entryTitlesById],
+  );
+
   const endTime = useMemo(() => new Date(endTimeMs), [endTimeMs]);
   const votingTimeLeft = useCountdownTimer(endTime);
 
@@ -143,7 +148,7 @@ const PriceCurveWrapper = ({
         showAxisLabels={showAxisLabels}
         isExpanded={isExpanded}
         onToggleExpand={onToggleExpand}
-        voteEvents={voteEvents}
+        voteEvents={resolvedVoteEvents}
         entryTitlesById={entryTitlesById}
         leadingProposalId={leadingProposalId}
       />

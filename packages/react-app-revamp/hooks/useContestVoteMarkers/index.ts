@@ -30,17 +30,18 @@ export function useContestVoteMarkers({
     isError,
     refetch,
   } = useQuery({
-    queryKey: ["contestVoteEvents", contestAddress?.toLowerCase()],
-    queryFn: () => getContestVoteEvents(contestAddress),
-    enabled: enabled && !!contestAddress,
+    queryKey: ["contestVoteEvents", contestAddress?.toLowerCase(), chainName?.toLowerCase()],
+    queryFn: () => getContestVoteEvents(contestAddress, chainName),
+    enabled: enabled && !!contestAddress && !!chainName,
     staleTime: Infinity,
   });
 
   const [liveEvents, setLiveEvents] = useState<Map<string, ContestVoteEvent>>(() => new Map());
 
-  const prevContestAddress = useRef(contestAddress);
-  if (prevContestAddress.current !== contestAddress) {
-    prevContestAddress.current = contestAddress;
+  const liveKey = `${contestAddress?.toLowerCase()}:${chainName?.toLowerCase()}`;
+  const prevLiveKey = useRef(liveKey);
+  if (prevLiveKey.current !== liveKey) {
+    prevLiveKey.current = liveKey;
     setLiveEvents(new Map());
   }
 
@@ -51,9 +52,11 @@ export function useContestVoteMarkers({
     if (!contestAddress || !chainName) return;
 
     const normalizedAddress = contestAddress.toLowerCase();
+    const normalizedChainName = chainName.toLowerCase();
 
     const onEvent = (event: ContestParticipantEvent) => {
       if (event.type !== "vote.cast") return;
+      if (event.networkName?.toLowerCase() !== normalizedChainName) return;
       if (event.voteAmount == null || event.createdAt == null || !event.uuid) return;
       const voteEvent: ContestVoteEvent = {
         uuid: event.uuid,

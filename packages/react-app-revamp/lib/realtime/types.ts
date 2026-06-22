@@ -41,6 +41,7 @@ export type ContestParticipantEvent =
       contestAddress: string;
       proposalId: string;
       userAddress: string;
+      networkName: string | null;
       voteAmount: number | null;
       amountSent: number | null;
       createdAt: number | null;

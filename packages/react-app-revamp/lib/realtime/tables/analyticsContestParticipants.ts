@@ -33,6 +33,7 @@ export const analyticsContestParticipantsConfig: RealtimeTableConfig<
         type: "vote.cast",
         uuid: row.uuid,
         ...base,
+        networkName: row.network_name,
         voteAmount: row.vote_amount,
         amountSent: row.amount_sent,
         createdAt: row.created_at,

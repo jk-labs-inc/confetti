@@ -22,12 +22,13 @@ interface ParticipantVoteRow {
   created_at: number | null;
 }
 
-export async function getContestVoteEvents(contestAddress: string): Promise<ContestVoteEvent[]> {
-  if (!isSupabaseConfigured || !contestAddress) return [];
+export async function getContestVoteEvents(contestAddress: string, chainName: string): Promise<ContestVoteEvent[]> {
+  if (!isSupabaseConfigured || !contestAddress || !chainName) return [];
 
   try {
     const { supabase } = await import("@config/supabase");
     const normalizedAddress = contestAddress.toLowerCase();
+    const normalizedChainName = chainName.toLowerCase();
 
     const events: ContestVoteEvent[] = [];
 
@@ -37,6 +38,9 @@ export async function getContestVoteEvents(contestAddress: string): Promise<Cont
         .from("analytics_contest_participants_v3")
         .select("uuid, user_address, proposal_id, vote_amount, amount_sent, created_at")
         .eq("contest_address", normalizedAddress)
+        // Same contract address recurs across chains (same deployer + nonce), so a contest is only
+        // unique per (contest_address, network_name) — without this, another chain's votes leak in.
+        .eq("network_name", normalizedChainName)
         .not("vote_amount", "is", null)
         .is("comment_id", null)
         .order("created_at", { ascending: true })
