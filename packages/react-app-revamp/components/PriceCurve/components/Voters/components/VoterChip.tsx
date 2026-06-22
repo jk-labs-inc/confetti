@@ -14,6 +14,7 @@ interface VoterChipProps {
   formatPrice: (nativePrice: number) => string;
   width: string;
   isActive: boolean;
+  isNew?: boolean;
   onClick?: () => void;
   onMouseEnter?: () => void;
 }
@@ -36,6 +37,7 @@ const VoterChip: FC<VoterChipProps> = ({
   formatPrice,
   width,
   isActive,
+  isNew,
   onClick,
   onMouseEnter,
 }) => {
@@ -67,7 +69,7 @@ const VoterChip: FC<VoterChipProps> = ({
       }`}
       className={`box-border flex shrink-0 cursor-pointer flex-col gap-[9px] overflow-hidden rounded-[15px] border bg-neutral-2 p-[11px] text-left transition-[border-color,box-shadow,transform] duration-150 ${
         isActive ? "-translate-y-0.5" : "border-neutral-4"
-      }`}
+      } ${isNew ? "voter-chip-enter" : ""}`}
       style={style}
     >
       <div className="flex min-w-0 items-center gap-2">

@@ -1,33 +1,26 @@
-import { FC, useCallback, useMemo, useRef, useState } from "react";
+import { FC, useCallback, useRef, useState } from "react";
 import VoterChip from "../components/VoterChip";
 import VoterDrawer from "../components/VoterDrawer";
 import VoterRibbonHeader from "../components/VoterRibbonHeader";
 import { colorOf } from "@helpers/entryColors";
 import { CHIP_GAP, CHIP_W_CSS_MOBILE, RIBBON_FADE } from "../constants";
+import { useScrollEdges } from "../hooks/useScrollEdges";
 import { useVoterRibbon } from "../hooks/useVoterRibbon";
 import { PositionedVote, VoterRibbonProps } from "../types";
 
 /**
- * Mobile: scroll-snap ribbon with a peek of the next chip. The centered chip
- * drives the on-curve marker; tapping a chip opens the detail drawer.
+ * Mobile: scroll-snap ribbon with a peek of the next chip. The snapped chip drives
+ * the on-curve marker; tapping a chip selects it directly (works for every chip,
+ * including the last ones that can't be snapped to the start). The drawer is reserved
+ * for "view all".
  */
 const VoterRibbonMobile: FC<VoterRibbonProps> = ({ votes, entryColors, formatPrice, entryTitlesById, isLive }) => {
-  const { ordered, activeVoteUuid, setActiveVoteUuid } = useVoterRibbon(votes);
+  const { ordered, newIds, activeVoteUuid, setActiveVoteUuid } = useVoterRibbon(votes);
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const ticking = useRef(false);
   const [drawerVoters, setDrawerVoters] = useState<PositionedVote[] | null>(null);
-
-  const castsByAddress = useMemo(() => {
-    const map = new Map<string, PositionedVote[]>();
-    for (const vote of votes) {
-      const key = vote.userAddress.toLowerCase();
-      const list = map.get(key);
-      if (list) list.push(vote);
-      else map.set(key, [vote]);
-    }
-    return map;
-  }, [votes]);
+  const edges = useScrollEdges(scrollRef);
 
   const onScroll = useCallback(() => {
     if (ticking.current) return;
@@ -44,9 +37,6 @@ const VoterRibbonMobile: FC<VoterRibbonProps> = ({ votes, entryColors, formatPri
     });
   }, [ordered, setActiveVoteUuid]);
 
-  const openVoter = (vote: PositionedVote) =>
-    setDrawerVoters(castsByAddress.get(vote.userAddress.toLowerCase()) ?? [vote]);
-
   return (
     <div className="mt-2 flex flex-col">
       <VoterRibbonHeader isLive={isLive} onViewAll={() => setDrawerVoters(votes)} />
@@ -58,8 +48,8 @@ const VoterRibbonMobile: FC<VoterRibbonProps> = ({ votes, entryColors, formatPri
         style={{
           scrollSnapType: "x mandatory",
           WebkitOverflowScrolling: "touch",
-          maskImage: RIBBON_FADE,
-          WebkitMaskImage: RIBBON_FADE,
+          maskImage: edges.atEnd ? undefined : RIBBON_FADE,
+          WebkitMaskImage: edges.atEnd ? undefined : RIBBON_FADE,
         }}
       >
         {ordered.map(vote => (
@@ -71,7 +61,8 @@ const VoterRibbonMobile: FC<VoterRibbonProps> = ({ votes, entryColors, formatPri
             formatPrice={formatPrice}
             width={CHIP_W_CSS_MOBILE}
             isActive={vote.uuid === activeVoteUuid}
-            onClick={() => openVoter(vote)}
+            isNew={newIds.has(vote.uuid)}
+            onClick={() => setActiveVoteUuid(vote.uuid)}
           />
         ))}
       </div>

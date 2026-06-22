@@ -3,6 +3,7 @@ import VoterChip from "../components/VoterChip";
 import VoterRibbonHeader from "../components/VoterRibbonHeader";
 import { colorOf } from "@helpers/entryColors";
 import { CHIP_W_CSS_DESKTOP, RIBBON_FADE } from "../constants";
+import { useScrollEdges } from "../hooks/useScrollEdges";
 import { useVoterRibbon } from "../hooks/useVoterRibbon";
 import { VoterRibbonProps } from "../types";
 
@@ -13,11 +14,12 @@ const DRAG_THRESHOLD = 4;
  * a chip previews it on the curve; clicking pins it. No drawer.
  */
 const VoterRibbonDesktop: FC<VoterRibbonProps> = ({ votes, entryColors, formatPrice, entryTitlesById, isLive }) => {
-  const { ordered, activeVoteUuid, setActiveVoteUuid } = useVoterRibbon(votes);
+  const { ordered, newIds, activeVoteUuid, setActiveVoteUuid } = useVoterRibbon(votes);
 
   const [pinnedUuid, setPinnedUuid] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const drag = useRef({ pointerX: 0, startLeft: 0, active: false, moved: 0 });
+  const edges = useScrollEdges(scrollRef);
 
   const onWheel = (e: ReactWheelEvent<HTMLDivElement>) => {
     const el = scrollRef.current;
@@ -64,7 +66,11 @@ const VoterRibbonDesktop: FC<VoterRibbonProps> = ({ votes, entryColors, formatPr
           revertMarker();
         }}
         className="no-scrollbar flex gap-2.5 overflow-x-auto overflow-y-hidden pb-1 pt-0.5"
-        style={{ maskImage: RIBBON_FADE, WebkitMaskImage: RIBBON_FADE, touchAction: "pan-y" }}
+        style={{
+          maskImage: edges.atEnd ? undefined : RIBBON_FADE,
+          WebkitMaskImage: edges.atEnd ? undefined : RIBBON_FADE,
+          touchAction: "pan-y",
+        }}
       >
         {ordered.map(vote => (
           <VoterChip
@@ -75,6 +81,7 @@ const VoterRibbonDesktop: FC<VoterRibbonProps> = ({ votes, entryColors, formatPr
             formatPrice={formatPrice}
             width={CHIP_W_CSS_DESKTOP}
             isActive={vote.uuid === activeVoteUuid}
+            isNew={newIds.has(vote.uuid)}
             onMouseEnter={() => setActiveVoteUuid(vote.uuid)}
             onClick={() => selectChip(vote.uuid)}
           />

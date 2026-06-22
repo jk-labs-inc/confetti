@@ -194,7 +194,7 @@
   --background-image-gradient-voting-area-purple: linear-gradient(161.8deg, #000000 44.44%, #381d4c 88.89%);
   --background-image-gradient-comments-area-purple: linear-gradient(215.62deg, #000000 25.09%, #381d4c 128.94%);
   --background-image-gradient-voting-area: linear-gradient(190.68deg, #060e0e 8.06%, #000000 40%);
-  --background-image-gradient-voting-area-teal: linear-gradient(190.68deg, #2B8B8B 8.06%, #000000 57.27%);
+  --background-image-gradient-voting-area-teal: linear-gradient(190.68deg, #2b8b8b 8.06%, #000000 57.27%);
   --background-image-gradient-voting-area-not-open: linear-gradient(174.18deg, #66deff 1.65%, #000000 15.6%);
   --background-image-gradient-add-funds-toggle: linear-gradient(90deg, #9747ff 0%, #c1abdd 100%);
   --background-image-gradient-timer: radial-gradient(
@@ -798,6 +798,19 @@ li {
 
 .animate-scroll {
   animation: scroll 10s linear infinite;
+}
+
+@keyframes voterChipIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.voter-chip-enter {
+  animation: voterChipIn 360ms ease-out both;
 }
 
 @keyframes ellipsis {
