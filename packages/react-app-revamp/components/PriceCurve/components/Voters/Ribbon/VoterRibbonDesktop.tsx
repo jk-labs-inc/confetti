@@ -12,7 +12,7 @@ const DRAG_THRESHOLD = 4;
  * Desktop: free horizontal scroll (wheel + drag) with fixed-width chips. Hovering
  * a chip previews it on the curve; clicking pins it. No drawer.
  */
-const VoterRibbonDesktop: FC<VoterRibbonProps> = ({ votes, entryColors, formatPrice, entryTitlesById }) => {
+const VoterRibbonDesktop: FC<VoterRibbonProps> = ({ votes, entryColors, formatPrice, entryTitlesById, isLive }) => {
   const { ordered, activeVoteUuid, setActiveVoteUuid } = useVoterRibbon(votes);
 
   const [pinnedUuid, setPinnedUuid] = useState<string | null>(null);
@@ -51,7 +51,7 @@ const VoterRibbonDesktop: FC<VoterRibbonProps> = ({ votes, entryColors, formatPr
 
   return (
     <div className="mt-2 flex flex-col">
-      <VoterRibbonHeader />
+      <VoterRibbonHeader isLive={isLive} />
 
       <div
         ref={scrollRef}

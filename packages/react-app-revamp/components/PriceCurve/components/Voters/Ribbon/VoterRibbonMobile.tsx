@@ -11,7 +11,7 @@ import { PositionedVote, VoterRibbonProps } from "../types";
  * Mobile: scroll-snap ribbon with a peek of the next chip. The centered chip
  * drives the on-curve marker; tapping a chip opens the detail drawer.
  */
-const VoterRibbonMobile: FC<VoterRibbonProps> = ({ votes, entryColors, formatPrice, entryTitlesById }) => {
+const VoterRibbonMobile: FC<VoterRibbonProps> = ({ votes, entryColors, formatPrice, entryTitlesById, isLive }) => {
   const { ordered, activeVoteUuid, setActiveVoteUuid } = useVoterRibbon(votes);
 
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -49,7 +49,7 @@ const VoterRibbonMobile: FC<VoterRibbonProps> = ({ votes, entryColors, formatPri
 
   return (
     <div className="mt-2 flex flex-col">
-      <VoterRibbonHeader onViewAll={() => setDrawerVoters(votes)} />
+      <VoterRibbonHeader isLive={isLive} onViewAll={() => setDrawerVoters(votes)} />
 
       <div
         ref={scrollRef}

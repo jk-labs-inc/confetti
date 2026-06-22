@@ -226,6 +226,7 @@ const PriceCurve: FC<PriceCurveProps> = ({
           entryColors={entryColors}
           formatPrice={formatPrice}
           entryTitlesById={entryTitlesById}
+          isLive={isDuring}
         />
       )}
     </div>

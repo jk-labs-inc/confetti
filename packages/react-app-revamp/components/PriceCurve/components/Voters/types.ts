@@ -15,4 +15,5 @@ export interface VoterRibbonProps {
   entryColors: Map<string, string>;
   formatPrice: (nativePrice: number) => string;
   entryTitlesById: Map<string, string>;
+  isLive: boolean;
 }
