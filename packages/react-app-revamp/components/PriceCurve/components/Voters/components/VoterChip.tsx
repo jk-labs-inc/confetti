@@ -4,7 +4,8 @@ import { ROUTE_VIEW_USER } from "@config/routes";
 import { withAlpha } from "@helpers/entryColors";
 import { formatNumber } from "@helpers/formatNumber";
 import useProfileData from "@hooks/useProfileData";
-import { CSSProperties, FC } from "react";
+import { CSSProperties, FC, useRef } from "react";
+import { useFitText } from "../hooks/useFitText";
 import { PositionedVote } from "../types";
 
 interface VoterChipProps {
@@ -30,6 +31,8 @@ const timeAgo = (sec: number): string => {
 const compactVotes = (n: number): string =>
   n >= 10000 ? `${Math.round(n / 1000)}k` : n >= 1000 ? `${(n / 1000).toFixed(1)}k` : formatNumber(n);
 
+const PRICE_FONT_SIZES = [16, 14, 12];
+
 const VoterChip: FC<VoterChipProps> = ({
   vote,
   color,
@@ -42,6 +45,9 @@ const VoterChip: FC<VoterChipProps> = ({
   onMouseEnter,
 }) => {
   const { profileName, profileAvatar } = useProfileData(vote.userAddress, true);
+  const priceText = formatPrice(vote.totalCost);
+  const priceRef = useRef<HTMLSpanElement>(null);
+  const priceFontSize = useFitText(priceRef, priceText, PRICE_FONT_SIZES);
 
   const style: CSSProperties = {
     flex: `0 0 ${width}`,
@@ -88,7 +94,13 @@ const VoterChip: FC<VoterChipProps> = ({
       </div>
 
       <div className="flex min-w-0 items-baseline gap-1">
-        <span className="truncate text-[17px] font-extrabold text-neutral-11">{formatPrice(vote.totalCost)}</span>
+        <span
+          ref={priceRef}
+          className="truncate font-extrabold text-neutral-11"
+          style={{ fontSize: priceFontSize }}
+        >
+          {priceText}
+        </span>
         <span className="ml-auto flex-none whitespace-nowrap text-[10.5px] text-neutral-9">
           {compactVotes(vote.voteAmount)} votes
         </span>
