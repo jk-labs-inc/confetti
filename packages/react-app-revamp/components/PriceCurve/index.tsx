@@ -6,15 +6,10 @@ import ConfettiParticles from "./components/ConfettiParticles";
 import GridLines from "./components/GridLines";
 import PriceCurveHeader from "./components/Header";
 import HoverOverlay from "./components/HoverOverlay";
-import VoterAvatarStrip from "./components/VoterMarkers";
-import VoterClusterDrawer from "./components/VoterMarkers/VoterClusterDrawer";
-import { buildAvatarClusters } from "./components/VoterMarkers/buildAvatarClusters";
-import {
-  AVATAR_LABEL_GAP,
-  AVATAR_LANE_HEIGHT,
-  AVATAR_LANE_TOP_GAP,
-  AVATAR_RADIUS,
-} from "./components/VoterMarkers/constants";
+import CurveMarker from "./components/Voters/components/CurveMarker";
+import VoterRibbon from "./components/Voters/Ribbon";
+import { buildPositionedVotes } from "./components/Voters/buildPositionedVotes";
+import { buildEntryColors } from "@helpers/entryColors";
 import {
   CARD_PADDING,
   CARD_PADDING_STYLE,
@@ -32,8 +27,7 @@ import { ChartDataPoint } from "./types";
 import { curveMonotoneX } from "@visx/curve";
 import { Group } from "@visx/group";
 import { LinePath } from "@visx/shape";
-import { FC, useEffect, useMemo, useRef, useState } from "react";
-import { useMediaQuery } from "react-responsive";
+import { FC, useMemo, useRef } from "react";
 
 interface PriceCurveProps {
   data: ChartDataPoint[];
@@ -59,6 +53,7 @@ interface PriceCurveProps {
   onToggleExpand?: () => void;
   voteEvents?: ContestVoteEvent[];
   entryTitlesById?: Map<string, string>;
+  leadingProposalId?: string | null;
 }
 
 const EMPTY_ENTRY_TITLES: Map<string, string> = new Map();
@@ -85,15 +80,9 @@ const PriceCurve: FC<PriceCurveProps> = ({
   onToggleExpand,
   voteEvents = [],
   entryTitlesById = EMPTY_ENTRY_TITLES,
+  leadingProposalId = null,
 }) => {
   const svgRef = useRef<SVGSVGElement>(null);
-
-  const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
-  const [selectedClusterKey, setSelectedClusterKey] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (!isMobile) setSelectedClusterKey(null);
-  }, [isMobile]);
 
   const pad = noPadding ? NO_PADDING : CARD_PADDING;
   const chartPad = showAxisLabels ? CHART_PADDING_WITH_LABELS : CHART_PADDING;
@@ -102,10 +91,8 @@ const PriceCurve: FC<PriceCurveProps> = ({
   const chartWidth = svgWidth - chartPad.left - chartPad.right;
   const chartHeight = svgHeight - chartPad.top - chartPad.bottom;
 
-  const showVoterLane = showAxisLabels && contestPhase !== "before" && voteEvents.length > 0;
-  const bottomInset = showVoterLane ? AVATAR_LANE_HEIGHT : 0;
-
-  const { yScale, getX, getY, gridLines, yTicks, xTicks } = useChartScales(data, chartWidth, chartHeight, bottomInset);
+  const showVoters = showAxisLabels && contestPhase !== "before" && voteEvents.length > 0;
+  const { yScale, getX, getY, gridLines, yTicks, xTicks } = useChartScales(data, chartWidth, chartHeight, 0);
   const { hoveredIndex, handleMouseMove, handleTouchMove, handleLeave } = useChartInteraction(
     svgRef,
     data,
@@ -113,11 +100,18 @@ const PriceCurve: FC<PriceCurveProps> = ({
     chartPad.left,
   );
 
-  // Group nearby votes into avatar clusters positioned along the time axis (see buildAvatarClusters).
-  const voterClusters = useMemo(() => buildAvatarClusters(voteEvents, data, getX), [voteEvents, data, getX]);
-  const laneLabelY = chartHeight - AVATAR_LANE_HEIGHT + AVATAR_LANE_TOP_GAP;
-  const laneCenterY = laneLabelY + AVATAR_LABEL_GAP + AVATAR_RADIUS;
-  const axisLabelXTickY = showVoterLane ? laneLabelY : undefined;
+  const positionedVotes = useMemo(
+    () => buildPositionedVotes(voteEvents, data, getX, yScale),
+    [voteEvents, data, getX, yScale],
+  );
+  const entryColors = useMemo(
+    () =>
+      buildEntryColors(
+        voteEvents.map(vote => vote.proposalId),
+        leadingProposalId,
+      ),
+    [voteEvents, leadingProposalId],
+  );
 
   const collapsed = isExpanded === false;
 
@@ -201,14 +195,12 @@ const PriceCurve: FC<PriceCurveProps> = ({
               style={TOUCH_PAN_STYLE}
             />
 
-            {/* Rendered after the capture rect so the avatars receive hover, not the rect. */}
-            {showVoterLane && (
-              <VoterAvatarStrip
-                clusters={voterClusters}
-                centerY={laneCenterY}
-                formatPrice={formatPrice}
-                entryTitlesById={entryTitlesById}
-                onClusterSelect={isMobile ? setSelectedClusterKey : undefined}
+            {showVoters && (
+              <CurveMarker
+                positioned={positionedVotes}
+                entryColors={entryColors}
+                chartWidth={chartWidth}
+                chartHeight={chartHeight}
               />
             )}
 
@@ -222,18 +214,16 @@ const PriceCurve: FC<PriceCurveProps> = ({
                 yScale={yScale}
                 getX={getX}
                 formatPrice={formatPrice}
-                xTickY={axisLabelXTickY}
               />
             )}
           </Group>
         </svg>
       )}
 
-      {!collapsed && showVoterLane && isMobile && (
-        <VoterClusterDrawer
-          clusters={voterClusters}
-          selectedKey={selectedClusterKey}
-          onClose={() => setSelectedClusterKey(null)}
+      {!collapsed && showVoters && (
+        <VoterRibbon
+          votes={positionedVotes}
+          entryColors={entryColors}
           formatPrice={formatPrice}
           entryTitlesById={entryTitlesById}
         />

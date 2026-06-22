@@ -5,6 +5,7 @@ import useNativeRates from "@hooks/useCurrency/useNativeRates";
 import useCurrentPricePercentageIncrease from "@hooks/useCurrentPricePercentageIncrease";
 import useContestEntryTitles from "@hooks/useContestEntryTitles";
 import useContestVoteMarkers from "@hooks/useContestVoteMarkers";
+import { useProposalStore } from "@hooks/useProposal/store";
 import usePriceCurveData from "@hooks/usePriceCurveData";
 import { useCountdownTimer } from "@hooks/useTimer";
 import { useParentSize } from "@visx/responsive";
@@ -56,6 +57,10 @@ const PriceCurveWrapper = ({
     chainName: contestConfig.chainName,
     enabled: !!contestConfig.address,
   });
+
+  const leadingProposalId = useProposalStore(
+    useShallow(state => state.listProposalsData.find(p => p.rank === 1)?.id ?? null),
+  );
 
   const votedProposalIds = useMemo(() => voteEvents.map(event => event.proposalId), [voteEvents]);
   const entryTitlesById = useContestEntryTitles({
@@ -140,6 +145,7 @@ const PriceCurveWrapper = ({
         onToggleExpand={onToggleExpand}
         voteEvents={voteEvents}
         entryTitlesById={entryTitlesById}
+        leadingProposalId={leadingProposalId}
       />
     </div>
   );

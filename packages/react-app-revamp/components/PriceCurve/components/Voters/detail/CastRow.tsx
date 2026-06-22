@@ -1,6 +1,7 @@
+import { colorOf } from "@helpers/entryColors";
 import { FC } from "react";
-import { NEUTRAL_ENTRY_COLOR } from "./entryColors";
-import { PositionedVote } from "./types";
+import { PositionedVote } from "../types";
+import CastAmount from "./CastAmount";
 
 interface CastRowProps {
   vote: PositionedVote;
@@ -11,7 +12,7 @@ interface CastRowProps {
 
 const CastRow: FC<CastRowProps> = ({ vote, formatPrice, entryTitlesById, entryColorsById }) => {
   const title = entryTitlesById.get(vote.proposalId);
-  const color = entryColorsById.get(vote.proposalId) ?? NEUTRAL_ENTRY_COLOR;
+  const color = colorOf(entryColorsById, vote.proposalId);
 
   return (
     <div className="flex items-center gap-2 text-neutral-11/70">
@@ -20,13 +21,7 @@ const CastRow: FC<CastRowProps> = ({ vote, formatPrice, entryTitlesById, entryCo
         {title && <span className="truncate">{title}</span>}
       </span>
 
-      <span className="flex-none whitespace-nowrap text-right tabular-nums">
-        <span className="text-neutral-11">{formatPrice(vote.totalCost)}</span>
-        <span className="text-neutral-11/50">
-          {" · "}
-          {vote.voteAmount} {vote.voteAmount === 1 ? "vote" : "votes"}
-        </span>
-      </span>
+      <CastAmount cost={vote.totalCost} votes={vote.voteAmount} formatPrice={formatPrice} />
     </div>
   );
 };

@@ -1,10 +1,11 @@
 import { Avatar } from "@components/UI/Avatar";
 import CustomLink from "@components/UI/Link";
 import { ROUTE_VIEW_USER } from "@config/routes";
+import { colorOf } from "@helpers/entryColors";
 import useProfileData from "@hooks/useProfileData";
 import { FC } from "react";
-import { NEUTRAL_ENTRY_COLOR } from "./entryColors";
-import { PositionedVote } from "./types";
+import { PositionedVote } from "../types";
+import CastAmount from "./CastAmount";
 
 interface VoterRowProps {
   vote: PositionedVote;
@@ -16,7 +17,7 @@ interface VoterRowProps {
 const VoterRow: FC<VoterRowProps> = ({ vote, formatPrice, entryTitlesById, entryColorsById }) => {
   const { profileName: name, profileAvatar } = useProfileData(vote.userAddress, true);
   const title = entryTitlesById.get(vote.proposalId);
-  const color = entryColorsById.get(vote.proposalId) ?? NEUTRAL_ENTRY_COLOR;
+  const color = colorOf(entryColorsById, vote.proposalId);
 
   return (
     <div className="flex items-center gap-2">
@@ -35,13 +36,7 @@ const VoterRow: FC<VoterRowProps> = ({ vote, formatPrice, entryTitlesById, entry
         {title && <span className="truncate">{title}</span>}
       </span>
 
-      <span className="flex-none whitespace-nowrap text-right tabular-nums">
-        <span className="text-neutral-11">{formatPrice(vote.totalCost)}</span>
-        <span className="text-neutral-11/50">
-          {" · "}
-          {vote.voteAmount} {vote.voteAmount === 1 ? "vote" : "votes"}
-        </span>
-      </span>
+      <CastAmount cost={vote.totalCost} votes={vote.voteAmount} formatPrice={formatPrice} />
     </div>
   );
 };

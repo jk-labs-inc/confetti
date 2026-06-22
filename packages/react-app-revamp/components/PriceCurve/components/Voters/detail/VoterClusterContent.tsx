@@ -1,14 +1,13 @@
 import { formatNumber } from "@helpers/formatNumber";
-import useScrollFade from "@hooks/useScrollFade";
+import { useVirtualizer } from "@tanstack/react-virtual";
 import moment from "moment";
 import { FC, useMemo, useRef } from "react";
-import { MAX_TOOLTIP_VOTERS } from "./constants";
-import { AvatarCluster, PositionedVote } from "./types";
+import { PositionedVote, VoterCluster } from "../types";
 import VoterGroup from "./VoterGroup";
 import VoterRow from "./VoterRow";
 
 interface VoterClusterContentProps {
-  cluster: AvatarCluster;
+  cluster: VoterCluster;
   formatPrice: (nativePrice: number) => string;
   entryTitlesById: Map<string, string>;
   entryColorsById: Map<string, string>;
@@ -40,24 +39,25 @@ const VoterClusterContent: FC<VoterClusterContentProps> = ({
       group.totalVotes += vote.voteAmount;
       group.totalSpent += vote.totalCost;
     }
-    // Biggest voters first; sort is stable so ties keep first-seen (chronological) order.
     return Array.from(byAddress.values()).sort((a, b) => b.totalVotes - a.totalVotes);
   }, [cluster]);
 
   const totalVotes = useMemo(() => groups.reduce((sum, group) => sum + group.totalVotes, 0), [groups]);
 
-  const shownGroups = groups.slice(0, MAX_TOOLTIP_VOTERS);
-  const remaining = groups.length - shownGroups.length;
-
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const { maskImageStyle } = useScrollFade(scrollRef, shownGroups.length, [cluster]);
-
-  const earliestMs = cluster.voters[0].createdAt * 1000;
-  const latestMs = cluster.voters[cluster.voters.length - 1].createdAt * 1000;
+  const earliestMs = (cluster.voters[0]?.createdAt ?? 0) * 1000;
+  const latestMs = (cluster.voters[cluster.voters.length - 1]?.createdAt ?? 0) * 1000;
   const spansTime = latestMs - earliestMs >= 60_000;
   const headerTime = spansTime
     ? `${moment(earliestMs).format("MMM D • h:mm A")} – ${moment(latestMs).format("h:mm A")}`
     : moment(latestMs).format("MMM D • h:mm A");
+
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const rowVirtualizer = useVirtualizer({
+    count: groups.length,
+    getScrollElement: () => scrollRef.current,
+    estimateSize: () => 52,
+    overscan: 8,
+  });
 
   return (
     <div className="flex flex-col gap-2 text-[12px] text-neutral-11">
@@ -71,38 +71,47 @@ const VoterClusterContent: FC<VoterClusterContentProps> = ({
         </span>
         <span className="text-neutral-11/55 font-normal whitespace-nowrap">{headerTime}</span>
       </div>
-      <div
-        ref={scrollRef}
-        className="flex flex-col gap-3 max-h-[260px] overflow-y-auto no-scrollbar"
-        style={maskImageStyle ? { maskImage: maskImageStyle, WebkitMaskImage: maskImageStyle } : undefined}
-      >
-        {shownGroups.map(group =>
-          group.casts.length === 1 ? (
-            <VoterRow
-              key={group.address}
-              vote={group.casts[0]}
-              formatPrice={formatPrice}
-              entryTitlesById={entryTitlesById}
-              entryColorsById={entryColorsById}
-            />
-          ) : (
-            <VoterGroup
-              key={group.address}
-              address={group.address}
-              casts={group.casts}
-              totalVotes={group.totalVotes}
-              totalSpent={group.totalSpent}
-              formatPrice={formatPrice}
-              entryTitlesById={entryTitlesById}
-              entryColorsById={entryColorsById}
-            />
-          ),
-        )}
-        {remaining > 0 && (
-          <span className="text-neutral-11/45">
-            +{remaining} more {remaining === 1 ? "voter" : "voters"}
-          </span>
-        )}
+
+      <div ref={scrollRef} className="no-scrollbar overflow-y-auto overscroll-contain" style={{ maxHeight: "60vh" }}>
+        <div style={{ height: rowVirtualizer.getTotalSize(), width: "100%", position: "relative" }}>
+          {rowVirtualizer.getVirtualItems().map(virtualRow => {
+            const group = groups[virtualRow.index];
+            return (
+              <div
+                key={group.address}
+                data-index={virtualRow.index}
+                ref={rowVirtualizer.measureElement}
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  width: "100%",
+                  transform: `translateY(${virtualRow.start}px)`,
+                  paddingBottom: 12,
+                }}
+              >
+                {group.casts.length === 1 ? (
+                  <VoterRow
+                    vote={group.casts[0]}
+                    formatPrice={formatPrice}
+                    entryTitlesById={entryTitlesById}
+                    entryColorsById={entryColorsById}
+                  />
+                ) : (
+                  <VoterGroup
+                    address={group.address}
+                    casts={group.casts}
+                    totalVotes={group.totalVotes}
+                    totalSpent={group.totalSpent}
+                    formatPrice={formatPrice}
+                    entryTitlesById={entryTitlesById}
+                    entryColorsById={entryColorsById}
+                  />
+                )}
+              </div>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

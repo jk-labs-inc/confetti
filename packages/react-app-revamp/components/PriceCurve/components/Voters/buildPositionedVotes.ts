@@ -1,11 +1,7 @@
 import { ContestVoteEvent } from "@hooks/useContestVoteMarkers";
+import { clamp } from "lodash";
 import { ChartDataPoint } from "../../types";
-import { MERGE_PX } from "./constants";
-import { AvatarCluster, PositionedVote } from "./types";
-
-const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(max, value));
-
-export const clusterKey = (cluster: AvatarCluster): string => cluster.voters[0].uuid;
+import { PositionedVote } from "./types";
 
 const findPointIndex = (times: number[], t: number): number => {
   const last = times.length - 1;
@@ -21,11 +17,12 @@ const findPointIndex = (times: number[], t: number): number => {
   return lo;
 };
 
-export function buildAvatarClusters(
+export function buildPositionedVotes(
   voteEvents: ContestVoteEvent[],
   data: ChartDataPoint[],
   getX: (d: ChartDataPoint) => number,
-): AvatarCluster[] {
+  yScale: (nativePrice: number) => number,
+): PositionedVote[] {
   if (voteEvents.length === 0 || data.length === 0) return [];
 
   const times = data.map(d => new Date(d.date).getTime());
@@ -48,21 +45,9 @@ export function buildAvatarClusters(
 
     const totalCost = vote.amountSent != null ? vote.amountSent : curvePrice * vote.voteAmount;
 
-    return { ...vote, x, totalCost };
+    return { ...vote, x, y: yScale(curvePrice), totalCost };
   });
 
-  positioned.sort((a, b) => a.x - b.x);
-
-  const clusters: AvatarCluster[] = [];
-  for (const vote of positioned) {
-    const group = clusters[clusters.length - 1];
-    if (group && vote.x - group.x <= MERGE_PX) {
-      group.voters.push(vote);
-    } else {
-      clusters.push({ x: vote.x, voters: [vote] });
-    }
-  }
-
-  for (const cluster of clusters) cluster.voters.sort((a, b) => a.createdAt - b.createdAt);
-  return clusters;
+  positioned.sort((a, b) => a.createdAt - b.createdAt);
+  return positioned;
 }

@@ -23,6 +23,7 @@ interface ProposalLayoutClassicProps {
   allowDelete: boolean;
   selectedProposalIds: string[];
   isHighlighted: boolean;
+  highlightColor?: string;
   handleVotingDrawerOpen?: () => void;
   toggleProposalSelection?: (proposalId: string) => void;
 }
@@ -35,6 +36,7 @@ const ProposalLayoutClassic = ({
   allowDelete,
   selectedProposalIds,
   isHighlighted,
+  highlightColor,
   handleVotingDrawerOpen,
   toggleProposalSelection,
 }: ProposalLayoutClassicProps) => {
@@ -68,8 +70,9 @@ const ProposalLayoutClassic = ({
           <div className="flex w-full">
             <div
               className={`inline-block p-4 rounded-[8px] bg-primary-1 border transition-colors duration-300 ease-in-out overflow-hidden ${
-                isHighlighted ? "border-secondary-14" : "border-transparent"
+                isHighlighted ? "" : "border-transparent"
               }`}
+              style={highlightColor ? { borderColor: highlightColor } : undefined}
             >
               <div className="max-w-full overflow-hidden interweave-container">
                 <Interweave

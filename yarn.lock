@@ -4913,7 +4913,7 @@
   dependencies:
     "@tanstack/query-core" "5.101.0"
 
-"@tanstack/react-virtual@^3.13.21", "@tanstack/react-virtual@^3.13.9":
+"@tanstack/react-virtual@3.13.23", "@tanstack/react-virtual@^3.13.21", "@tanstack/react-virtual@^3.13.9":
   version "3.13.23"
   resolved "https://registry.yarnpkg.com/@tanstack/react-virtual/-/react-virtual-3.13.23.tgz#27e969396c39ee919dead847b2f513e2f3b707bf"
   integrity sha512-XnMRnHQ23piOVj2bzJqHrRrLg4r+F86fuBcwteKfbIjJrtGxb4z7tIvPVAe4B+4UVwo9G4Giuz5fmapcrnZ0OQ==

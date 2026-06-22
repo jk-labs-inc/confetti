@@ -4,8 +4,9 @@ import { ROUTE_VIEW_USER } from "@config/routes";
 import { formatNumber } from "@helpers/formatNumber";
 import useProfileData from "@hooks/useProfileData";
 import { FC } from "react";
+import { PositionedVote } from "../types";
+import CastAmount from "./CastAmount";
 import CastRow from "./CastRow";
-import { PositionedVote } from "./types";
 
 interface VoterGroupProps {
   address: string;
@@ -41,13 +42,7 @@ const VoterGroup: FC<VoterGroupProps> = ({
           {name}
         </CustomLink>
 
-        <span className="flex-none whitespace-nowrap text-right tabular-nums">
-          <span className="text-neutral-11">{formatPrice(totalSpent)}</span>
-          <span className="text-neutral-11/50">
-            {" · "}
-            {formatNumber(totalVotes)} votes
-          </span>
-        </span>
+        <CastAmount cost={totalSpent} votes={totalVotes} formatPrice={formatPrice} formatVotes={formatNumber} />
       </div>
 
       <div className="flex flex-col gap-1 pl-8">

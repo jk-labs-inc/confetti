@@ -2,24 +2,24 @@ import { DEFAULT_AVATAR_URL } from "@components/UI/Avatar/constants";
 import { generatedAvatarDataUri } from "@components/UI/Avatar/generatedAvatarDataUri";
 import useProfileData from "@hooks/useProfileData";
 import { FC, useMemo } from "react";
-import { AVATAR_BG } from "./constants";
-import { PositionedVote } from "./types";
+import { AVATAR_BG } from "../constants";
 
 interface VoterAvatarProps {
-  vote: PositionedVote;
+  address: string;
+  clipKey: string;
   cx: number;
   cy: number;
   r: number;
 }
 
-const VoterAvatar: FC<VoterAvatarProps> = ({ vote, cx, cy, r }) => {
-  const { profileAvatar } = useProfileData(vote.userAddress, true);
-  const clipId = `voter-avatar-${vote.uuid}`;
+const VoterAvatar: FC<VoterAvatarProps> = ({ address, clipKey, cx, cy, r }) => {
+  const { profileAvatar } = useProfileData(address, true);
+  const clipId = `voter-avatar-${clipKey}`;
   const hasRealAvatar = !!profileAvatar && profileAvatar !== DEFAULT_AVATAR_URL;
 
   const href = useMemo(
-    () => (hasRealAvatar ? profileAvatar : generatedAvatarDataUri(vote.userAddress, Math.ceil(r * 2))),
-    [hasRealAvatar, profileAvatar, vote.userAddress, r],
+    () => (hasRealAvatar ? profileAvatar : generatedAvatarDataUri(address, Math.ceil(r * 2))),
+    [hasRealAvatar, profileAvatar, address, r],
   );
 
   return (
