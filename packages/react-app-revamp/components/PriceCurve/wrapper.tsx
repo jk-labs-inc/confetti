@@ -63,15 +63,15 @@ const PriceCurveWrapper = ({
   );
 
   const votedProposalIds = useMemo(() => voteEvents.map(event => event.proposalId), [voteEvents]);
-  const entryTitlesById = useContestEntryTitles({
+  const { titlesById: entryTitlesById, resolvedIds } = useContestEntryTitles({
     contestConfig,
     proposalIds: votedProposalIds,
     enabled: !!contestConfig.address && voteEvents.length > 0,
   });
 
   const resolvedVoteEvents = useMemo(
-    () => voteEvents.filter(event => entryTitlesById.has(event.proposalId)),
-    [voteEvents, entryTitlesById],
+    () => voteEvents.filter(event => resolvedIds.has(event.proposalId)),
+    [voteEvents, resolvedIds],
   );
 
   const endTime = useMemo(() => new Date(endTimeMs), [endTimeMs]);

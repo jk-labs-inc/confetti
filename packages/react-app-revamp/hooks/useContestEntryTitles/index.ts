@@ -36,11 +36,16 @@ interface UseContestEntryTitlesParams {
  *    the entry (e.g. the paged list reloads). The store is still used as a free, reactive source when
  *    it already holds the entry — the chain read only fires for ids the store doesn't have yet.
  */
+interface UseContestEntryTitlesResult {
+  titlesById: Map<string, string>;
+  resolvedIds: Set<string>;
+}
+
 export function useContestEntryTitles({
   contestConfig,
   proposalIds,
   enabled = true,
-}: UseContestEntryTitlesParams): Map<string, string> {
+}: UseContestEntryTitlesParams): UseContestEntryTitlesResult {
   const listProposalsData = useProposalStore(state => state.listProposalsData);
   const proposalStore = useProposalStoreApi();
   const firstFieldPrompt = useMetadataStore(state => (state.fields.length > 0 ? state.fields[0].prompt : null));
@@ -88,16 +93,19 @@ export function useContestEntryTitles({
   return useMemo(() => {
     const storeById = new Map(listProposalsData.map(p => [p.id, p]));
     const titles = new Map<string, string>();
+    const resolvedIds = new Set<string>();
 
     for (const id of distinctIds) {
       // Prefer the live store entry (freshest), fall back to the cached fetch (eviction-safe).
       const entry = storeById.get(id) ?? fetchedById.get(id);
       if (!entry) continue;
-      const title = getEntryPreview(entry, enabledPreview).title?.trim();
+      const preview = getEntryPreview(entry, enabledPreview);
+      const title = preview.title?.trim();
+      if (title || preview.image) resolvedIds.add(id);
       if (title) titles.set(id, title);
     }
 
-    return titles;
+    return { titlesById: titles, resolvedIds };
   }, [distinctIds, listProposalsData, fetchedById, enabledPreview]);
 }
 
