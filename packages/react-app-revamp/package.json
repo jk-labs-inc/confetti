@@ -49,7 +49,7 @@
     "@visx/responsive": "4.0.0",
     "@visx/scale": "4.0.0",
     "@visx/shape": "4.0.0",
-    "@wagmi/core": "3.5.1",
+    "@wagmi/core": "3.5.2",
     "autoprefixer": "10.5.0",
     "cheerio": "1.2.0",
     "class-variance-authority": "0.7.1",
