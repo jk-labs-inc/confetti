@@ -1,13 +1,5 @@
 import { useVirtualizer } from "@tanstack/react-virtual";
-import {
-  FC,
-  PointerEvent as ReactPointerEvent,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-  WheelEvent as ReactWheelEvent,
-} from "react";
+import { FC, PointerEvent as ReactPointerEvent, useCallback, useEffect, useRef, useState } from "react";
 import VoterChip, { voterChipData } from "../components/VoterChip";
 import VoterRibbonHeader from "../components/VoterRibbonHeader";
 import { CHIP_GAP, DESKTOP_CHIP_W, RIBBON_FADE } from "../constants";
@@ -50,11 +42,23 @@ const VoterRibbonDesktop: FC<VoterRibbonProps> = ({
     if (node) setChipH(prev => (prev === FALLBACK_CHIP_H ? node.offsetHeight : prev));
   }, []);
 
-  const onWheel = (e: ReactWheelEvent<HTMLDivElement>) => {
+  useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
-    if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) el.scrollLeft += e.deltaY;
-  };
+
+    const onWheel = (e: WheelEvent) => {
+      if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return;
+      const max = el.scrollWidth - el.clientWidth;
+      if (max <= 0) return;
+      const next = Math.min(max, Math.max(0, el.scrollLeft + e.deltaY));
+      if (next === el.scrollLeft) return;
+      el.scrollLeft = next;
+      e.preventDefault();
+    };
+
+    el.addEventListener("wheel", onWheel, { passive: false });
+    return () => el.removeEventListener("wheel", onWheel);
+  }, []);
 
   const onPointerDown = (e: ReactPointerEvent<HTMLDivElement>) => {
     const el = scrollRef.current;
@@ -102,7 +106,6 @@ const VoterRibbonDesktop: FC<VoterRibbonProps> = ({
 
       <div
         ref={scrollRef}
-        onWheel={onWheel}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={endDrag}
