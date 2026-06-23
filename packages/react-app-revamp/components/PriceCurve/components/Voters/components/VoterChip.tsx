@@ -55,7 +55,7 @@ const timeAgo = (sec: number): string => {
 const compactVotes = (n: number): string =>
   n >= 10000 ? `${Math.round(n / 1000)}k` : n >= 1000 ? `${(n / 1000).toFixed(1)}k` : formatNumber(n);
 
-const PRICE_FONT_SIZES = [16, 14, 12];
+const PRICE_FONT_SIZES = [14, 12, 10];
 
 const VoterChip: FC<VoterChipProps> = ({
   uuid,
@@ -104,9 +104,9 @@ const VoterChip: FC<VoterChipProps> = ({
       onClick={() => onSelect?.(uuid)}
       onKeyDown={handleKeyDown}
       onMouseEnter={() => onHover?.(uuid)}
-      aria-label={`${profileName}, ${formatNumber(voteAmount)} votes for ${priceText}${
-        entryTitle ? `, ${entryTitle}` : ""
-      }`}
+      aria-label={`${profileName} bought ${formatNumber(voteAmount)} ${
+        voteAmount === 1 ? "vote" : "votes"
+      } for ${entryTitle ?? "an entry"}, ${priceText}, ${timeAgo(createdAt)}`}
       className={`box-border flex shrink-0 cursor-pointer flex-col gap-[9px] overflow-hidden rounded-[15px] border bg-neutral-2 p-[11px] text-left transition-[border-color,box-shadow,transform] duration-150 ${
         isActive ? "-translate-y-0.5" : "border-neutral-4"
       } ${entering ? "voter-chip-enter" : ""}`}
@@ -128,19 +128,29 @@ const VoterChip: FC<VoterChipProps> = ({
       </div>
 
       <div className="flex min-w-0 items-baseline gap-1">
-        <span ref={priceRef} className="truncate font-extrabold text-neutral-11" style={{ fontSize: priceFontSize }}>
-          {priceText}
+        <span className="flex-none whitespace-nowrap text-[16px] font-extrabold text-neutral-11">
+          +{compactVotes(voteAmount)}{" "}
+          <span className="text-[11px] font-semibold text-neutral-9">{voteAmount === 1 ? "vote" : "votes"}</span>
         </span>
-        <span className="ml-auto flex-none whitespace-nowrap text-[10.5px] text-neutral-9">
-          {compactVotes(voteAmount)} votes
+        <span
+          ref={priceRef}
+          className="min-w-0 flex-1 truncate text-right font-semibold text-neutral-9"
+          style={{ fontSize: priceFontSize }}
+        >
+          {priceText}
         </span>
       </div>
 
       <div className="flex min-w-0 items-center gap-1.5">
+        <span className="flex-none text-[10.5px] text-neutral-9">for</span>
         <span className="size-2 flex-none rounded-full" style={{ backgroundColor: color }} />
-        <span className="min-w-0 flex-1 truncate text-[11.5px] font-semibold" style={{ color }}>
-          {entryTitle ?? ""}
-        </span>
+        {entryTitle ? (
+          <span className="min-w-0 flex-1 truncate text-[11.5px] font-semibold" style={{ color }}>
+            {entryTitle}
+          </span>
+        ) : (
+          <span className="min-w-0 flex-1 truncate text-[11.5px] font-semibold text-neutral-9">an entry</span>
+        )}
       </div>
     </div>
   );
