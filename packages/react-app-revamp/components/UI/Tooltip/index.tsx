@@ -1,20 +1,50 @@
-import { FC, ReactNode } from "react";
-import { Tooltip as ReactTooltip, type ITooltip } from "react-tooltip";
+import { type Placement } from "@floating-ui/react";
+import { CSSProperties, ElementType, FC, ReactNode } from "react";
+import FloatingSurface from "./FloatingSurface";
+import { TooltipSurface, useTooltip } from "./useTooltip";
 
-interface TooltipProps extends Omit<ITooltip, "children"> {
+interface TooltipProps {
+  content: ReactNode;
   children: ReactNode;
+  place?: Placement;
+  surface?: TooltipSurface;
+  offset?: number;
+  arrow?: boolean;
+  disabled?: boolean;
+  as?: ElementType;
+  className?: string;
+  style?: CSSProperties;
+  openDelay?: number;
+  closeDelay?: number;
 }
 
-const Tooltip: FC<TooltipProps> = ({ children, className = "", ...props }) => {
+const Tooltip: FC<TooltipProps> = ({
+  content,
+  children,
+  place = "top",
+  surface = "default",
+  offset = 8,
+  arrow = true,
+  disabled = false,
+  as: As = "span",
+  className,
+  style,
+  openDelay,
+  closeDelay,
+}) => {
+  const tooltip = useTooltip({ placement: place, offsetPx: offset, openDelay, closeDelay });
+
+  if (disabled) return <>{children}</>;
+
   return (
-    <ReactTooltip
-      clickable
-      opacity={1}
-      className={`p-2! z-50 bg-neutral-9! border border-transparent rounded-lg focus:outline-none ${className}`}
-      {...props}
-    >
-      {children}
-    </ReactTooltip>
+    <>
+      <As ref={tooltip.refs.setReference} {...tooltip.getReferenceProps()}>
+        {children}
+      </As>
+      <FloatingSurface tooltip={tooltip} surface={surface} arrow={arrow} className={className} style={style}>
+        {content}
+      </FloatingSurface>
+    </>
   );
 };
 

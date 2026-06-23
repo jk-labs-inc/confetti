@@ -23,34 +23,20 @@ const usePriceCurveChartData = ({ pricePoints }: UsePriceCurveChartDataParams): 
     return () => clearInterval(interval);
   }, []);
 
-  const chartData = useMemo(() => {
-    // Handle empty or invalid data
+  const chartData = useMemo<ChartDataPoint[]>(() => {
+    if (!pricePoints || pricePoints.length === 0) return [];
+    return convertToChartData(pricePoints);
+  }, [pricePoints]);
+
+  const { currentPrice, currentIndex } = useMemo(() => {
     if (!pricePoints || pricePoints.length === 0) {
-      return {
-        chartData: [],
-        currentPrice: 0,
-        currentIndex: -1,
-      };
+      return { currentPrice: 0, currentIndex: -1 };
     }
-
-    // Find current price index based on current time
-    const currentIndex = findCurrentPriceIndex(pricePoints, currentTime);
-
-    // Create sliding window of price points (for now we will use all price points)
-    const windowPricePoints = pricePoints;
-
-    const chartDataPoints = convertToChartData(windowPricePoints);
-
-    const currentPriceValue = getCurrentPriceValue(pricePoints, currentIndex);
-
-    return {
-      chartData: chartDataPoints,
-      currentPrice: currentPriceValue,
-      currentIndex: currentIndex,
-    };
+    const index = findCurrentPriceIndex(pricePoints, currentTime);
+    return { currentPrice: getCurrentPriceValue(pricePoints, index), currentIndex: index };
   }, [pricePoints, currentTime]);
 
-  return chartData;
+  return { chartData, currentPrice, currentIndex };
 };
 
 const findCurrentPriceIndex = (pricePoints: PricePoint[], currentTime: Date): number => {

@@ -1,10 +1,15 @@
 import { PriceCurveType } from "@hooks/useDeployContest/types";
+import { ContestVoteEvent } from "@hooks/useContestVoteMarkers";
 import AnimatedDot from "./components/AnimatedDot";
 import AxisLabels from "./components/AxisLabels";
 import ConfettiParticles from "./components/ConfettiParticles";
 import GridLines from "./components/GridLines";
 import PriceCurveHeader from "./components/Header";
 import HoverOverlay from "./components/HoverOverlay";
+import CurveMarker from "./components/Voters/components/CurveMarker";
+import VoterRibbon from "./components/Voters/Ribbon";
+import { buildPositionedVotes } from "./components/Voters/buildPositionedVotes";
+import { buildEntryColors } from "@helpers/entryColors";
 import {
   CARD_PADDING,
   CARD_PADDING_STYLE,
@@ -22,7 +27,7 @@ import { ChartDataPoint } from "./types";
 import { curveMonotoneX } from "@visx/curve";
 import { Group } from "@visx/group";
 import { LinePath } from "@visx/shape";
-import { FC, useRef } from "react";
+import { FC, useMemo, useRef } from "react";
 
 interface PriceCurveProps {
   data: ChartDataPoint[];
@@ -46,7 +51,15 @@ interface PriceCurveProps {
   showAxisLabels?: boolean;
   isExpanded?: boolean;
   onToggleExpand?: () => void;
+  voteEvents?: ContestVoteEvent[];
+  entryTitlesById?: Map<string, string>;
+  leadingProposalId?: string | null;
+  onLoadMoreVotes?: () => void;
+  hasMoreVotes?: boolean;
+  isLoadingMoreVotes?: boolean;
 }
+
+const EMPTY_ENTRY_TITLES: Map<string, string> = new Map();
 
 const PriceCurve: FC<PriceCurveProps> = ({
   data,
@@ -68,6 +81,12 @@ const PriceCurve: FC<PriceCurveProps> = ({
   showAxisLabels = false,
   isExpanded,
   onToggleExpand,
+  voteEvents = [],
+  entryTitlesById = EMPTY_ENTRY_TITLES,
+  leadingProposalId = null,
+  onLoadMoreVotes,
+  hasMoreVotes,
+  isLoadingMoreVotes,
 }) => {
   const svgRef = useRef<SVGSVGElement>(null);
 
@@ -78,12 +97,26 @@ const PriceCurve: FC<PriceCurveProps> = ({
   const chartWidth = svgWidth - chartPad.left - chartPad.right;
   const chartHeight = svgHeight - chartPad.top - chartPad.bottom;
 
-  const { yScale, getX, getY, gridLines, yTicks, xTicks } = useChartScales(data, chartWidth, chartHeight);
+  const showVoters = showAxisLabels && contestPhase !== "before" && voteEvents.length > 0;
+  const { yScale, getX, getY, gridLines, yTicks, xTicks } = useChartScales(data, chartWidth, chartHeight, 0);
   const { hoveredIndex, handleMouseMove, handleTouchMove, handleLeave } = useChartInteraction(
     svgRef,
     data,
     getX,
     chartPad.left,
+  );
+
+  const positionedVotes = useMemo(
+    () => buildPositionedVotes(voteEvents, data, getX, yScale),
+    [voteEvents, data, getX, yScale],
+  );
+  const entryColors = useMemo(
+    () =>
+      buildEntryColors(
+        voteEvents.map(vote => vote.proposalId),
+        leadingProposalId,
+      ),
+    [voteEvents, leadingProposalId],
   );
 
   const collapsed = isExpanded === false;
@@ -168,6 +201,15 @@ const PriceCurve: FC<PriceCurveProps> = ({
               style={TOUCH_PAN_STYLE}
             />
 
+            {showVoters && (
+              <CurveMarker
+                positioned={positionedVotes}
+                entryColors={entryColors}
+                chartWidth={chartWidth}
+                chartHeight={chartHeight}
+              />
+            )}
+
             {showAxisLabels && (
               <AxisLabels
                 yTicks={yTicks}
@@ -182,6 +224,19 @@ const PriceCurve: FC<PriceCurveProps> = ({
             )}
           </Group>
         </svg>
+      )}
+
+      {!collapsed && showVoters && (
+        <VoterRibbon
+          votes={positionedVotes}
+          entryColors={entryColors}
+          formatPrice={formatPrice}
+          entryTitlesById={entryTitlesById}
+          isLive={isDuring}
+          onLoadMore={onLoadMoreVotes}
+          hasMore={hasMoreVotes}
+          isLoadingMore={isLoadingMoreVotes}
+        />
       )}
     </div>
   );

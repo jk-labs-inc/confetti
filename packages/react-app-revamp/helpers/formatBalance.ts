@@ -3,6 +3,13 @@ import BigNumber from "bignumber.js";
 // 1 billion
 const MIN_VALUE_FOR_ABBREVIATION = 1_000_000_000;
 
+const TARGET_USD_DECIMALS = 2; // target ~$0.01 per displayed step
+const SMART_SIG_FIGS = 3;
+const SMART_SIG_FIGS_NO_RATE = 4;
+const SMART_MIN_DECIMALS = 0;
+const SMART_MAX_DECIMALS = 8;
+const SMART_ABBREVIATE_AT = 1_000_000;
+
 function formatNumberAbbreviated(num: number): string {
   const abbreviations = [
     { value: 1e9, symbol: "b" },
@@ -34,10 +41,7 @@ export const toFixedString = (num: number): string => {
   return new BigNumber(num).toFixed();
 };
 
-export function formatBalance(
-  balance: string,
-  rounding: BigNumber.RoundingMode = BigNumber.ROUND_HALF_UP,
-): string {
+export function formatBalance(balance: string, rounding: BigNumber.RoundingMode = BigNumber.ROUND_HALF_UP): string {
   const num = new BigNumber(balance);
 
   // handle zero
@@ -60,6 +64,51 @@ export function formatBalance(
   }
 
   return rounded.toString();
+}
+
+export function formatTokenAmountSmart(
+  amount: string,
+  usdUnitValue?: number,
+  rounding: BigNumber.RoundingMode = BigNumber.ROUND_HALF_UP,
+): string {
+  const x = new BigNumber(amount);
+
+  if (x.isNaN() || x.isZero()) {
+    return "0";
+  }
+
+  const abs = x.abs();
+
+  // large amounts → compact (e.g. "1.23m")
+  if (abs.isGreaterThanOrEqualTo(SMART_ABBREVIATE_AT)) {
+    return formatNumberAbbreviated(x.toNumber());
+  }
+
+  const magnitude = Math.floor(Math.log10(abs.toNumber()));
+  let decimals: number;
+
+  if (usdUnitValue !== undefined && Number.isFinite(usdUnitValue) && usdUnitValue > 0) {
+    const valueAware = Math.ceil(Math.log10(usdUnitValue)) + TARGET_USD_DECIMALS;
+    const sigFigFloor = SMART_SIG_FIGS - 1 - magnitude;
+    decimals = Math.max(valueAware, sigFigFloor);
+  } else {
+    // no rate → pure significant figures.
+    decimals = SMART_SIG_FIGS_NO_RATE - 1 - magnitude;
+  }
+  decimals = Math.min(SMART_MAX_DECIMALS, Math.max(SMART_MIN_DECIMALS, decimals));
+
+  let rounded = x.decimalPlaces(decimals, rounding);
+
+  // A real, non-zero amount that rounds to 0 at `decimals`: show the smallest
+  // exact value rather than "0", or a "<floor" indicator if it's true dust.
+  if (rounded.isZero()) {
+    if (abs.isLessThan(`1e-${SMART_MAX_DECIMALS}`)) {
+      return `${x.isNegative() ? "-" : ""}<0.${"0".repeat(SMART_MAX_DECIMALS - 1)}1`;
+    }
+    rounded = x.decimalPlaces(SMART_MAX_DECIMALS, rounding);
+  }
+
+  return rounded.toFixed(); // fixed-point, no scientific notation, trailing zeros trimmed
 }
 
 /**

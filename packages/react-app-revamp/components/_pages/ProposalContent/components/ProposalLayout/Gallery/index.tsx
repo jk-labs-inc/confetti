@@ -29,6 +29,7 @@ interface ProposalLayoutGalleryProps {
   selectedProposalIds: string[];
   enabledPreview: EntryPreview | null;
   isHighlighted: boolean;
+  highlightColor?: string;
   handleVotingDrawerOpen?: () => void;
   toggleProposalSelection?: (proposalId: string) => void;
 }
@@ -40,6 +41,7 @@ const ProposalLayoutGallery: FC<ProposalLayoutGalleryProps> = ({
   selectedProposalIds,
   enabledPreview,
   isHighlighted,
+  highlightColor,
   handleVotingDrawerOpen,
   toggleProposalSelection,
 }) => {
@@ -82,8 +84,9 @@ const ProposalLayoutGallery: FC<ProposalLayoutGalleryProps> = ({
   return (
     <div
       className={`flex flex-col gap-2 p-2 bg-true-black rounded-2xl shadow-entry-card w-full max-h-[70vh] border-2 transition duration-150 ease-out active:scale-[0.98] ${
-        isHighlighted ? "border-secondary-14" : "border-transparent"
+        isHighlighted ? "" : "border-transparent"
       }`}
+      style={highlightColor ? { borderColor: highlightColor } : undefined}
     >
       <div className="rounded-2xl overflow-hidden relative">
         <ImageWithFallback fullSrc={imgUrl} alt="entry image" />

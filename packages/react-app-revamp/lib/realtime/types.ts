@@ -37,10 +37,13 @@ export interface AnalyticsContestParticipantRow {
 export type ContestParticipantEvent =
   | {
       type: "vote.cast";
+      uuid: string;
       contestAddress: string;
       proposalId: string;
       userAddress: string;
+      networkName: string | null;
       voteAmount: number | null;
+      amountSent: number | null;
       createdAt: number | null;
     }
   | { type: "entry.deleted"; contestAddress: string; proposalId: string; userAddress: string }

@@ -6,13 +6,14 @@ import Image from "next/image";
 import { FC } from "react";
 
 interface AccountButtonProps {
+  address: string;
   ensName: string | null | undefined;
   ensAvatar: string | null | undefined;
   displayName: string;
   currentChain?: ChainWithIcon;
 }
 
-const AccountButton: FC<AccountButtonProps> = ({ ensName, ensAvatar, displayName, currentChain }) => {
+const AccountButton: FC<AccountButtonProps> = ({ address, ensName, ensAvatar, displayName, currentChain }) => {
   return (
     <MenuButton
       className={`w-auto h-8 flex items-center gap-2 bg-secondary-1 p-4 text-base text-neutral-9 font-bold focus:not-data-focus:outline-none data-focus:outline data-focus:outline-white border border-primary-3 rounded-4xl`}
@@ -20,7 +21,7 @@ const AccountButton: FC<AccountButtonProps> = ({ ensName, ensAvatar, displayName
       {({ open }) => (
         <>
           <div className="relative shrink-0">
-            <Avatar src={(ensAvatar as string) || ""} size="extraSmall" />
+            <Avatar src={(ensAvatar as string) || ""} address={address} size="extraSmall" />
             {currentChain?.iconUrl && (
               <Image
                 src={currentChain.iconUrl}
