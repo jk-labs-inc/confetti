@@ -3,6 +3,9 @@ import { useCurrencyStore } from "@hooks/useCurrency/store";
 import { convertToDisplayPrice, DisplayPriceOptions } from "@hooks/useCurrency/useDisplayPrice";
 import useNativeRates from "@hooks/useCurrency/useNativeRates";
 import useCurrentPricePercentageIncrease from "@hooks/useCurrentPricePercentageIncrease";
+import useContestEntryTitles from "@hooks/useContestEntryTitles";
+import useContestVoteMarkers from "@hooks/useContestVoteMarkers";
+import { useProposalStore } from "@hooks/useProposal/store";
 import usePriceCurveData from "@hooks/usePriceCurveData";
 import { useCountdownTimer } from "@hooks/useTimer";
 import { useParentSize } from "@visx/responsive";
@@ -48,6 +51,28 @@ const PriceCurveWrapper = ({
     isLoading,
     isError,
   } = usePriceCurveData();
+
+  const { voteEvents, fetchNextPage, hasNextPage, isFetchingNextPage } = useContestVoteMarkers({
+    contestAddress: contestConfig.address,
+    chainName: contestConfig.chainName,
+    enabled: !!contestConfig.address,
+  });
+
+  const leadingProposalId = useProposalStore(
+    useShallow(state => state.listProposalsData.find(p => p.rank === 1)?.id ?? null),
+  );
+
+  const votedProposalIds = useMemo(() => voteEvents.map(event => event.proposalId), [voteEvents]);
+  const { titlesById: entryTitlesById, resolvedIds } = useContestEntryTitles({
+    contestConfig,
+    proposalIds: votedProposalIds,
+    enabled: !!contestConfig.address && voteEvents.length > 0,
+  });
+
+  const resolvedVoteEvents = useMemo(
+    () => voteEvents.filter(event => resolvedIds.has(event.proposalId)),
+    [voteEvents, resolvedIds],
+  );
 
   const endTime = useMemo(() => new Date(endTimeMs), [endTimeMs]);
   const votingTimeLeft = useCountdownTimer(endTime);
@@ -123,6 +148,12 @@ const PriceCurveWrapper = ({
         showAxisLabels={showAxisLabels}
         isExpanded={isExpanded}
         onToggleExpand={onToggleExpand}
+        voteEvents={resolvedVoteEvents}
+        entryTitlesById={entryTitlesById}
+        leadingProposalId={leadingProposalId}
+        onLoadMoreVotes={fetchNextPage}
+        hasMoreVotes={hasNextPage}
+        isLoadingMoreVotes={isFetchingNextPage}
       />
     </div>
   );

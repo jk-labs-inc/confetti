@@ -1,0 +1,92 @@
+import { FC, useCallback, useMemo, useRef, useState } from "react";
+import VoterChip, { voterChipData } from "../components/VoterChip";
+import VoterDrawer from "../components/VoterDrawer";
+import VoterRibbonHeader from "../components/VoterRibbonHeader";
+import { CHIP_GAP, CHIP_W_CSS_MOBILE, RIBBON_FADE, RIBBON_MOBILE_CAP } from "../constants";
+import { useScrollEdges } from "../hooks/useScrollEdges";
+import { useVoterRibbon } from "../hooks/useVoterRibbon";
+import { VoterRibbonProps } from "../types";
+
+const VoterRibbonMobile: FC<VoterRibbonProps> = ({
+  votes,
+  entryColors,
+  formatPrice,
+  entryTitlesById,
+  isLive,
+  onLoadMore,
+  hasMore,
+  isLoadingMore,
+}) => {
+  const { ordered, newIds, clearNew, activeVoteUuid, setActiveVoteUuid } = useVoterRibbon(votes);
+  const capped = useMemo(() => ordered.slice(0, RIBBON_MOBILE_CAP), [ordered]);
+  const chips = useMemo(
+    () => capped.map(vote => voterChipData(vote, entryColors, entryTitlesById, formatPrice)),
+    [capped, entryColors, entryTitlesById, formatPrice],
+  );
+
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const ticking = useRef(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const edges = useScrollEdges(scrollRef);
+
+  const onScroll = useCallback(() => {
+    if (ticking.current) return;
+    ticking.current = true;
+    requestAnimationFrame(() => {
+      ticking.current = false;
+      const el = scrollRef.current;
+      if (!el) return;
+      const first = el.firstElementChild as HTMLElement | null;
+      const step = first ? first.offsetWidth + CHIP_GAP : 1;
+      const idx = Math.max(0, Math.min(capped.length - 1, Math.round(el.scrollLeft / step)));
+      const uuid = capped[idx]?.uuid;
+      if (uuid) setActiveVoteUuid(uuid);
+    });
+  }, [capped, setActiveVoteUuid]);
+
+  const onSelect = useCallback((uuid: string) => setActiveVoteUuid(uuid), [setActiveVoteUuid]);
+
+  return (
+    <div className="mt-2 flex flex-col">
+      <VoterRibbonHeader isLive={isLive} onViewAll={() => setDrawerOpen(true)} />
+
+      <div
+        ref={scrollRef}
+        onScroll={onScroll}
+        className="no-scrollbar flex gap-2.5 overflow-x-auto overflow-y-hidden pb-1 pt-0.5"
+        style={{
+          scrollSnapType: "x mandatory",
+          WebkitOverflowScrolling: "touch",
+          maskImage: edges.atEnd ? undefined : RIBBON_FADE,
+          WebkitMaskImage: edges.atEnd ? undefined : RIBBON_FADE,
+        }}
+      >
+        {chips.map(chip => (
+          <VoterChip
+            key={chip.uuid}
+            {...chip}
+            width={CHIP_W_CSS_MOBILE}
+            isActive={chip.uuid === activeVoteUuid}
+            isNew={newIds.has(chip.uuid)}
+            onSelect={onSelect}
+            onSeen={clearNew}
+          />
+        ))}
+      </div>
+
+      <VoterDrawer
+        isOpen={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        voters={votes}
+        formatPrice={formatPrice}
+        entryTitlesById={entryTitlesById}
+        entryColors={entryColors}
+        onLoadMore={onLoadMore}
+        hasMore={hasMore}
+        isLoadingMore={isLoadingMore}
+      />
+    </div>
+  );
+};
+
+export default VoterRibbonMobile;
