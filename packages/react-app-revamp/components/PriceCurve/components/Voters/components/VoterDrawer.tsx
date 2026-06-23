@@ -10,9 +10,22 @@ interface VoterDrawerProps {
   formatPrice: (nativePrice: number) => string;
   entryTitlesById: Map<string, string>;
   entryColors: Map<string, string>;
+  onLoadMore?: () => void;
+  hasMore?: boolean;
+  isLoadingMore?: boolean;
 }
 
-const VoterDrawer: FC<VoterDrawerProps> = ({ isOpen, onClose, voters, formatPrice, entryTitlesById, entryColors }) => {
+const VoterDrawer: FC<VoterDrawerProps> = ({
+  isOpen,
+  onClose,
+  voters,
+  formatPrice,
+  entryTitlesById,
+  entryColors,
+  onLoadMore,
+  hasMore,
+  isLoadingMore,
+}) => {
   const [shown, setShown] = useState<PositionedVote[]>(voters);
   useEffect(() => {
     if (voters.length) setShown(voters);
@@ -26,6 +39,9 @@ const VoterDrawer: FC<VoterDrawerProps> = ({ isOpen, onClose, voters, formatPric
           formatPrice={formatPrice}
           entryTitlesById={entryTitlesById}
           entryColorsById={entryColors}
+          onLoadMore={onLoadMore}
+          hasMore={hasMore}
+          isLoadingMore={isLoadingMore}
         />
       </div>
     </Drawer>

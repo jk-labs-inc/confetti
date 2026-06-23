@@ -52,7 +52,7 @@ const PriceCurveWrapper = ({
     isError,
   } = usePriceCurveData();
 
-  const { voteEvents } = useContestVoteMarkers({
+  const { voteEvents, fetchNextPage, hasNextPage, isFetchingNextPage } = useContestVoteMarkers({
     contestAddress: contestConfig.address,
     chainName: contestConfig.chainName,
     enabled: !!contestConfig.address,
@@ -151,6 +151,9 @@ const PriceCurveWrapper = ({
         voteEvents={resolvedVoteEvents}
         entryTitlesById={entryTitlesById}
         leadingProposalId={leadingProposalId}
+        onLoadMoreVotes={fetchNextPage}
+        hasMoreVotes={hasNextPage}
+        isLoadingMoreVotes={isFetchingNextPage}
       />
     </div>
   );

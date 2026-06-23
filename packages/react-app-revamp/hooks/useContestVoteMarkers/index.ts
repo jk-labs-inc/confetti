@@ -1,6 +1,11 @@
-import { ContestVoteEvent, getContestVoteEvents } from "lib/analytics/participants/getContestVoteEvents";
+import {
+  ContestVoteEvent,
+  getContestVoteEvents,
+  INITIAL_VOTE_PAGE_SIZE,
+  MORE_VOTE_PAGE_SIZE,
+} from "lib/analytics/participants/getContestVoteEvents";
 import { ContestParticipantEvent, subscribe } from "lib/realtime";
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 export type { ContestVoteEvent };
@@ -15,6 +20,9 @@ interface UseContestVoteMarkersResult {
   voteEvents: ContestVoteEvent[];
   isLoading: boolean;
   isError: boolean;
+  hasNextPage: boolean;
+  isFetchingNextPage: boolean;
+  fetchNextPage: () => void;
 }
 
 const RECONCILE_THROTTLE_MS = 10_000;
@@ -24,17 +32,26 @@ export function useContestVoteMarkers({
   chainName,
   enabled,
 }: UseContestVoteMarkersParams): UseContestVoteMarkersResult {
-  const {
-    data: fetchedEvents = [],
-    isLoading,
-    isError,
-    refetch,
-  } = useQuery({
+  const { data, isLoading, isError, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
     queryKey: ["contestVoteEvents", contestAddress?.toLowerCase(), chainName?.toLowerCase()],
-    queryFn: () => getContestVoteEvents(contestAddress, chainName),
+    initialPageParam: 0,
+    queryFn: ({ pageParam }) =>
+      getContestVoteEvents(
+        contestAddress,
+        chainName,
+        pageParam,
+        pageParam === 0 ? INITIAL_VOTE_PAGE_SIZE : MORE_VOTE_PAGE_SIZE,
+      ),
+    getNextPageParam: (lastPage, allPages, lastPageParam) => {
+      const requested = lastPageParam === 0 ? INITIAL_VOTE_PAGE_SIZE : MORE_VOTE_PAGE_SIZE;
+      if (lastPage.length < requested) return undefined;
+      return allPages.reduce((total, page) => total + page.length, 0);
+    },
     enabled: enabled && !!contestAddress && !!chainName,
     staleTime: Infinity,
   });
+
+  const fetchedEvents = useMemo<ContestVoteEvent[]>(() => data?.pages.flat() ?? [], [data]);
 
   const [liveEvents, setLiveEvents] = useState<Map<string, ContestVoteEvent>>(() => new Map());
 
@@ -45,14 +62,12 @@ export function useContestVoteMarkers({
     setLiveEvents(new Map());
   }
 
-  const refetchRef = useRef(refetch);
-  refetchRef.current = refetch;
-
   useEffect(() => {
     if (!contestAddress || !chainName) return;
 
     const normalizedAddress = contestAddress.toLowerCase();
     const normalizedChainName = chainName.toLowerCase();
+    let cancelled = false;
 
     const onEvent = (event: ContestParticipantEvent) => {
       if (event.type !== "vote.cast") return;
@@ -79,7 +94,20 @@ export function useContestVoteMarkers({
       const now = Date.now();
       if (now - lastReconcileAt < RECONCILE_THROTTLE_MS) return;
       lastReconcileAt = now;
-      void refetchRef.current();
+
+      void getContestVoteEvents(contestAddress, chainName, 0, MORE_VOTE_PAGE_SIZE).then(recent => {
+        if (cancelled || recent.length === 0) return;
+        setLiveEvents(prev => {
+          let next: Map<string, ContestVoteEvent> | null = null;
+          for (const ev of recent) {
+            if (!prev.has(ev.uuid)) {
+              if (!next) next = new Map(prev);
+              next.set(ev.uuid, ev);
+            }
+          }
+          return next ?? prev;
+        });
+      });
     };
 
     let hasConnected = false;
@@ -112,6 +140,7 @@ export function useContestVoteMarkers({
     }
 
     return () => {
+      cancelled = true;
       if (typeof document !== "undefined") {
         document.removeEventListener("visibilitychange", onVisibility);
       }
@@ -119,7 +148,6 @@ export function useContestVoteMarkers({
     };
   }, [contestAddress, chainName]);
 
-  // Merge fetched + live, deduped by uuid, sorted chronologically.
   const voteEvents = useMemo(() => {
     const byUuid = new Map<string, ContestVoteEvent>();
     for (const event of fetchedEvents) byUuid.set(event.uuid, event);
@@ -127,7 +155,7 @@ export function useContestVoteMarkers({
     return Array.from(byUuid.values()).sort((a, b) => a.createdAt - b.createdAt);
   }, [fetchedEvents, liveEvents]);
 
-  return { voteEvents, isLoading, isError };
+  return { voteEvents, isLoading, isError, fetchNextPage, hasNextPage: !!hasNextPage, isFetchingNextPage };
 }
 
 export default useContestVoteMarkers;

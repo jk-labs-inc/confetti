@@ -1,23 +1,47 @@
 import { Avatar } from "@components/UI/Avatar";
 import CustomLink from "@components/UI/Link";
 import { ROUTE_VIEW_USER } from "@config/routes";
-import { withAlpha } from "@helpers/entryColors";
+import { colorOf, withAlpha } from "@helpers/entryColors";
 import { formatNumber } from "@helpers/formatNumber";
 import useProfileData from "@hooks/useProfileData";
-import { CSSProperties, FC, useRef } from "react";
+import { CSSProperties, FC, KeyboardEvent as ReactKeyboardEvent, memo, useEffect, useRef, useState } from "react";
 import { useFitText } from "../hooks/useFitText";
 import { PositionedVote } from "../types";
 
-interface VoterChipProps {
-  vote: PositionedVote;
+export interface VoterChipData {
+  uuid: string;
+  userAddress: string;
+  priceText: string;
+  voteAmount: number;
+  createdAt: number;
   color: string;
   entryTitle?: string;
-  formatPrice: (nativePrice: number) => string;
+}
+
+export function voterChipData(
+  vote: PositionedVote,
+  entryColors: Map<string, string>,
+  entryTitlesById: Map<string, string>,
+  formatPrice: (nativePrice: number) => string,
+): VoterChipData {
+  return {
+    uuid: vote.uuid,
+    userAddress: vote.userAddress,
+    priceText: formatPrice(vote.totalCost),
+    voteAmount: vote.voteAmount,
+    createdAt: vote.createdAt,
+    color: colorOf(entryColors, vote.proposalId),
+    entryTitle: entryTitlesById.get(vote.proposalId),
+  };
+}
+
+interface VoterChipProps extends VoterChipData {
   width: string;
   isActive: boolean;
   isNew?: boolean;
-  onClick?: () => void;
-  onMouseEnter?: () => void;
+  onSelect?: (uuid: string) => void;
+  onHover?: (uuid: string) => void;
+  onSeen?: (uuid: string) => void;
 }
 
 const timeAgo = (sec: number): string => {
@@ -34,20 +58,28 @@ const compactVotes = (n: number): string =>
 const PRICE_FONT_SIZES = [16, 14, 12];
 
 const VoterChip: FC<VoterChipProps> = ({
-  vote,
+  uuid,
+  userAddress,
+  priceText,
+  voteAmount,
+  createdAt,
   color,
   entryTitle,
-  formatPrice,
   width,
   isActive,
   isNew,
-  onClick,
-  onMouseEnter,
+  onSelect,
+  onHover,
+  onSeen,
 }) => {
-  const { profileName, profileAvatar } = useProfileData(vote.userAddress, true);
-  const priceText = formatPrice(vote.totalCost);
+  const { profileName, profileAvatar } = useProfileData(userAddress, true);
   const priceRef = useRef<HTMLSpanElement>(null);
   const priceFontSize = useFitText(priceRef, priceText, PRICE_FONT_SIZES);
+
+  const [entering] = useState(!!isNew);
+  useEffect(() => {
+    if (entering) onSeen?.(uuid);
+  }, [entering, uuid, onSeen]);
 
   const style: CSSProperties = {
     flex: `0 0 ${width}`,
@@ -57,52 +89,50 @@ const VoterChip: FC<VoterChipProps> = ({
     boxShadow: isActive ? `0 6px 16px -12px ${withAlpha(color, 0.55)}` : undefined,
   };
 
+  const handleKeyDown = (e: ReactKeyboardEvent<HTMLDivElement>) => {
+    if (e.target !== e.currentTarget) return;
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      onSelect?.(uuid);
+    }
+  };
+
   return (
     <div
       role="button"
       tabIndex={0}
-      onClick={onClick}
-      onKeyDown={e => {
-        if (e.target !== e.currentTarget) return;
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          onClick?.();
-        }
-      }}
-      onMouseEnter={onMouseEnter}
-      aria-label={`${profileName}, ${formatNumber(vote.voteAmount)} votes for ${formatPrice(vote.totalCost)}${
+      onClick={() => onSelect?.(uuid)}
+      onKeyDown={handleKeyDown}
+      onMouseEnter={() => onHover?.(uuid)}
+      aria-label={`${profileName}, ${formatNumber(voteAmount)} votes for ${priceText}${
         entryTitle ? `, ${entryTitle}` : ""
       }`}
       className={`box-border flex shrink-0 cursor-pointer flex-col gap-[9px] overflow-hidden rounded-[15px] border bg-neutral-2 p-[11px] text-left transition-[border-color,box-shadow,transform] duration-150 ${
         isActive ? "-translate-y-0.5" : "border-neutral-4"
-      } ${isNew ? "voter-chip-enter" : ""}`}
+      } ${entering ? "voter-chip-enter" : ""}`}
       style={style}
     >
       <div className="flex min-w-0 items-center gap-2">
-        <Avatar src={profileAvatar} address={vote.userAddress} size="small" className="shrink-0" />
+        <Avatar src={profileAvatar} address={userAddress} size="small" className="shrink-0" />
         <div className="min-w-0 flex-1">
           <CustomLink
-            href={ROUTE_VIEW_USER.replace("[address]", vote.userAddress)}
+            href={ROUTE_VIEW_USER.replace("[address]", userAddress)}
             target="_blank"
             onClick={e => e.stopPropagation()}
             className="block truncate text-[12px] font-semibold text-neutral-11 no-underline hover:underline"
           >
             {profileName}
           </CustomLink>
-          <div className="whitespace-nowrap text-[10.5px] text-neutral-9">{timeAgo(vote.createdAt)}</div>
+          <div className="whitespace-nowrap text-[10.5px] text-neutral-9">{timeAgo(createdAt)}</div>
         </div>
       </div>
 
       <div className="flex min-w-0 items-baseline gap-1">
-        <span
-          ref={priceRef}
-          className="truncate font-extrabold text-neutral-11"
-          style={{ fontSize: priceFontSize }}
-        >
+        <span ref={priceRef} className="truncate font-extrabold text-neutral-11" style={{ fontSize: priceFontSize }}>
           {priceText}
         </span>
         <span className="ml-auto flex-none whitespace-nowrap text-[10.5px] text-neutral-9">
-          {compactVotes(vote.voteAmount)} votes
+          {compactVotes(voteAmount)} votes
         </span>
       </div>
 
@@ -116,4 +146,4 @@ const VoterChip: FC<VoterChipProps> = ({
   );
 };
 
-export default VoterChip;
+export default memo(VoterChip);

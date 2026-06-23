@@ -16,4 +16,7 @@ export interface VoterRibbonProps {
   formatPrice: (nativePrice: number) => string;
   entryTitlesById: Map<string, string>;
   isLive: boolean;
+  onLoadMore?: () => void;
+  hasMore?: boolean;
+  isLoadingMore?: boolean;
 }

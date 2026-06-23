@@ -11,6 +11,9 @@ interface VoterClusterContentProps {
   formatPrice: (nativePrice: number) => string;
   entryTitlesById: Map<string, string>;
   entryColorsById: Map<string, string>;
+  onLoadMore?: () => void;
+  hasMore?: boolean;
+  isLoadingMore?: boolean;
 }
 
 interface VoterGroupData {
@@ -25,6 +28,9 @@ const VoterClusterContent: FC<VoterClusterContentProps> = ({
   formatPrice,
   entryTitlesById,
   entryColorsById,
+  onLoadMore,
+  hasMore,
+  isLoadingMore,
 }) => {
   const groups = useMemo<VoterGroupData[]>(() => {
     const byAddress = new Map<string, VoterGroupData>();
@@ -113,6 +119,17 @@ const VoterClusterContent: FC<VoterClusterContentProps> = ({
           })}
         </div>
       </div>
+
+      {hasMore && (
+        <button
+          type="button"
+          onClick={onLoadMore}
+          disabled={isLoadingMore}
+          className="mt-1 self-center rounded-full bg-neutral-4 px-3 py-1 text-[12px] font-semibold text-neutral-9 disabled:opacity-60"
+        >
+          {isLoadingMore ? "loading…" : "load more"}
+        </button>
+      )}
     </div>
   );
 };

@@ -54,6 +54,9 @@ interface PriceCurveProps {
   voteEvents?: ContestVoteEvent[];
   entryTitlesById?: Map<string, string>;
   leadingProposalId?: string | null;
+  onLoadMoreVotes?: () => void;
+  hasMoreVotes?: boolean;
+  isLoadingMoreVotes?: boolean;
 }
 
 const EMPTY_ENTRY_TITLES: Map<string, string> = new Map();
@@ -81,6 +84,9 @@ const PriceCurve: FC<PriceCurveProps> = ({
   voteEvents = [],
   entryTitlesById = EMPTY_ENTRY_TITLES,
   leadingProposalId = null,
+  onLoadMoreVotes,
+  hasMoreVotes,
+  isLoadingMoreVotes,
 }) => {
   const svgRef = useRef<SVGSVGElement>(null);
 
@@ -227,6 +233,9 @@ const PriceCurve: FC<PriceCurveProps> = ({
           formatPrice={formatPrice}
           entryTitlesById={entryTitlesById}
           isLive={isDuring}
+          onLoadMore={onLoadMoreVotes}
+          hasMore={hasMoreVotes}
+          isLoadingMore={isLoadingMoreVotes}
         />
       )}
     </div>

@@ -1,25 +1,32 @@
-import { FC, useCallback, useRef, useState } from "react";
-import VoterChip from "../components/VoterChip";
+import { FC, useCallback, useMemo, useRef, useState } from "react";
+import VoterChip, { voterChipData } from "../components/VoterChip";
 import VoterDrawer from "../components/VoterDrawer";
 import VoterRibbonHeader from "../components/VoterRibbonHeader";
-import { colorOf } from "@helpers/entryColors";
-import { CHIP_GAP, CHIP_W_CSS_MOBILE, RIBBON_FADE } from "../constants";
+import { CHIP_GAP, CHIP_W_CSS_MOBILE, RIBBON_FADE, RIBBON_MOBILE_CAP } from "../constants";
 import { useScrollEdges } from "../hooks/useScrollEdges";
 import { useVoterRibbon } from "../hooks/useVoterRibbon";
-import { PositionedVote, VoterRibbonProps } from "../types";
+import { VoterRibbonProps } from "../types";
 
-/**
- * Mobile: scroll-snap ribbon with a peek of the next chip. The snapped chip drives
- * the on-curve marker; tapping a chip selects it directly (works for every chip,
- * including the last ones that can't be snapped to the start). The drawer is reserved
- * for "view all".
- */
-const VoterRibbonMobile: FC<VoterRibbonProps> = ({ votes, entryColors, formatPrice, entryTitlesById, isLive }) => {
-  const { ordered, newIds, activeVoteUuid, setActiveVoteUuid } = useVoterRibbon(votes);
+const VoterRibbonMobile: FC<VoterRibbonProps> = ({
+  votes,
+  entryColors,
+  formatPrice,
+  entryTitlesById,
+  isLive,
+  onLoadMore,
+  hasMore,
+  isLoadingMore,
+}) => {
+  const { ordered, newIds, clearNew, activeVoteUuid, setActiveVoteUuid } = useVoterRibbon(votes);
+  const capped = useMemo(() => ordered.slice(0, RIBBON_MOBILE_CAP), [ordered]);
+  const chips = useMemo(
+    () => capped.map(vote => voterChipData(vote, entryColors, entryTitlesById, formatPrice)),
+    [capped, entryColors, entryTitlesById, formatPrice],
+  );
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const ticking = useRef(false);
-  const [drawerVoters, setDrawerVoters] = useState<PositionedVote[] | null>(null);
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const edges = useScrollEdges(scrollRef);
 
   const onScroll = useCallback(() => {
@@ -31,15 +38,17 @@ const VoterRibbonMobile: FC<VoterRibbonProps> = ({ votes, entryColors, formatPri
       if (!el) return;
       const first = el.firstElementChild as HTMLElement | null;
       const step = first ? first.offsetWidth + CHIP_GAP : 1;
-      const idx = Math.max(0, Math.min(ordered.length - 1, Math.round(el.scrollLeft / step)));
-      const uuid = ordered[idx]?.uuid;
+      const idx = Math.max(0, Math.min(capped.length - 1, Math.round(el.scrollLeft / step)));
+      const uuid = capped[idx]?.uuid;
       if (uuid) setActiveVoteUuid(uuid);
     });
-  }, [ordered, setActiveVoteUuid]);
+  }, [capped, setActiveVoteUuid]);
+
+  const onSelect = useCallback((uuid: string) => setActiveVoteUuid(uuid), [setActiveVoteUuid]);
 
   return (
     <div className="mt-2 flex flex-col">
-      <VoterRibbonHeader isLive={isLive} onViewAll={() => setDrawerVoters(votes)} />
+      <VoterRibbonHeader isLive={isLive} onViewAll={() => setDrawerOpen(true)} />
 
       <div
         ref={scrollRef}
@@ -52,28 +61,29 @@ const VoterRibbonMobile: FC<VoterRibbonProps> = ({ votes, entryColors, formatPri
           WebkitMaskImage: edges.atEnd ? undefined : RIBBON_FADE,
         }}
       >
-        {ordered.map(vote => (
+        {chips.map(chip => (
           <VoterChip
-            key={vote.uuid}
-            vote={vote}
-            color={colorOf(entryColors, vote.proposalId)}
-            entryTitle={entryTitlesById.get(vote.proposalId)}
-            formatPrice={formatPrice}
+            key={chip.uuid}
+            {...chip}
             width={CHIP_W_CSS_MOBILE}
-            isActive={vote.uuid === activeVoteUuid}
-            isNew={newIds.has(vote.uuid)}
-            onClick={() => setActiveVoteUuid(vote.uuid)}
+            isActive={chip.uuid === activeVoteUuid}
+            isNew={newIds.has(chip.uuid)}
+            onSelect={onSelect}
+            onSeen={clearNew}
           />
         ))}
       </div>
 
       <VoterDrawer
-        isOpen={!!drawerVoters}
-        onClose={() => setDrawerVoters(null)}
-        voters={drawerVoters ?? []}
+        isOpen={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        voters={votes}
         formatPrice={formatPrice}
         entryTitlesById={entryTitlesById}
         entryColors={entryColors}
+        onLoadMore={onLoadMore}
+        hasMore={hasMore}
+        isLoadingMore={isLoadingMore}
       />
     </div>
   );
