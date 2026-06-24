@@ -15,7 +15,7 @@ interface VoterGroupProps {
   totalSpent: number;
   formatPrice: (nativePrice: number) => string;
   entryTitlesById: Map<string, string>;
-  entryColorsById: Map<string, string>;
+  rankById: Map<string, number>;
 }
 
 const VoterGroup: FC<VoterGroupProps> = ({
@@ -25,7 +25,7 @@ const VoterGroup: FC<VoterGroupProps> = ({
   totalSpent,
   formatPrice,
   entryTitlesById,
-  entryColorsById,
+  rankById,
 }) => {
   const { profileName: name, profileAvatar } = useProfileData(address, true);
 
@@ -52,7 +52,7 @@ const VoterGroup: FC<VoterGroupProps> = ({
             vote={cast}
             formatPrice={formatPrice}
             entryTitlesById={entryTitlesById}
-            entryColorsById={entryColorsById}
+            rankById={rankById}
           />
         ))}
       </div>

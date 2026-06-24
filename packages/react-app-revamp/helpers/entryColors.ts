@@ -1,12 +1,4 @@
-// Each contest entry gets a dedicated color used everywhere it appears: the price-curve
-// voter ribbon + on-curve marker, and the selected proposal card's border.
-
 export const FIRST_PLACE_ENTRY_COLOR = "#bb65ff";
-
-export const NEUTRAL_ENTRY_COLOR = "#9d9d9d";
-
-export const colorOf = (colors: Map<string, string>, proposalId: string): string =>
-  colors.get(proposalId) ?? NEUTRAL_ENTRY_COLOR;
 
 export const withAlpha = (hex: string, alpha: number): string => {
   const h = hex.replace("#", "");
@@ -17,37 +9,51 @@ export const withAlpha = (hex: string, alpha: number): string => {
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 };
 
-const ENTRY_PALETTE = [
-  "#66deff", // positive-18 · cyan
-  "#78ffc6", // positive-11 · mint
-  "#ffe25b", // primary-10 · yellow
-  "#ff78a9", // negative-11 · pink
-  "#e93d82", // negative-9 · rose
-] as const;
-
-const hashString = (s: string): number => {
-  let h = 2166136261 >>> 0;
-  for (let i = 0; i < s.length; i++) {
-    h ^= s.charCodeAt(i);
-    h = Math.imul(h, 16777619);
-  }
-  return h >>> 0;
-};
-
-/** The dedicated color for a single entry. */
-export function entryColor(proposalId: string, isLeader: boolean): string {
-  if (isLeader) return FIRST_PLACE_ENTRY_COLOR;
-  return ENTRY_PALETTE[hashString(proposalId) % ENTRY_PALETTE.length];
+export interface EntryMedalStop {
+  offset: string;
+  color: string;
 }
 
-/** proposalId → color map, with the given leader pinned to the first-place color. */
-export function buildEntryColors(
-  proposalIds: Iterable<string>,
-  leadingProposalId?: string | null,
-): Map<string, string> {
-  const colors = new Map<string, string>();
-  for (const id of new Set(proposalIds)) {
-    colors.set(id, entryColor(id, !!leadingProposalId && id === leadingProposalId));
-  }
-  return colors;
+export interface EntryMedal {
+  background: string;
+  solid: string;
+  isGradient: boolean;
+  stops: readonly EntryMedalStop[];
+}
+
+const gradient = (solid: string, mid: string): string =>
+  `linear-gradient(180deg, ${solid} 33.75%, ${mid} 49.37%, ${solid} 65%)`;
+
+const medal = (solid: string, mid: string): EntryMedal => ({
+  background: gradient(solid, mid),
+  solid,
+  isGradient: true,
+  stops: [
+    { offset: "33.75%", color: solid },
+    { offset: "49.37%", color: mid },
+    { offset: "65%", color: solid },
+  ],
+});
+
+const GOLD = medal("#FFE25B", "#FFF6CB");
+const SILVER = medal("#CCD4DE", "#FFFFFF");
+const BRONZE = medal("#CD7F32", "#F5BB74");
+const OTHER = medal("#9D9D9D", "#E5E5E5");
+
+const UNRANKED: EntryMedal = {
+  background: FIRST_PLACE_ENTRY_COLOR,
+  solid: FIRST_PLACE_ENTRY_COLOR,
+  isGradient: false,
+  stops: [
+    { offset: "0%", color: FIRST_PLACE_ENTRY_COLOR },
+    { offset: "100%", color: FIRST_PLACE_ENTRY_COLOR },
+  ],
+};
+
+export function entryMedal(rank: number | undefined | null): EntryMedal {
+  if (!rank) return UNRANKED;
+  if (rank === 1) return GOLD;
+  if (rank === 2) return SILVER;
+  if (rank === 3) return BRONZE;
+  return OTHER;
 }
