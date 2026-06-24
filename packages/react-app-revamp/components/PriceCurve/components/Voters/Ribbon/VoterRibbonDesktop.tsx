@@ -13,7 +13,7 @@ const LOAD_MORE_THRESHOLD = 5;
 
 const VoterRibbonDesktop: FC<VoterRibbonProps> = ({
   votes,
-  entryColors,
+  rankById,
   formatPrice,
   entryTitlesById,
   isLive,
@@ -136,7 +136,7 @@ const VoterRibbonDesktop: FC<VoterRibbonProps> = ({
                 }}
               >
                 <VoterChip
-                  {...voterChipData(vote, entryColors, entryTitlesById, formatPrice)}
+                  {...voterChipData(vote, rankById, entryTitlesById, formatPrice)}
                   width="100%"
                   isActive={vote.uuid === activeVoteUuid}
                   isNew={newIds.has(vote.uuid)}

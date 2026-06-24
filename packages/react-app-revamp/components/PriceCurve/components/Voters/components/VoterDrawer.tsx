@@ -9,7 +9,7 @@ interface VoterDrawerProps {
   voters: PositionedVote[];
   formatPrice: (nativePrice: number) => string;
   entryTitlesById: Map<string, string>;
-  entryColors: Map<string, string>;
+  rankById: Map<string, number>;
   onLoadMore?: () => void;
   hasMore?: boolean;
   isLoadingMore?: boolean;
@@ -21,7 +21,7 @@ const VoterDrawer: FC<VoterDrawerProps> = ({
   voters,
   formatPrice,
   entryTitlesById,
-  entryColors,
+  rankById,
   onLoadMore,
   hasMore,
   isLoadingMore,
@@ -38,7 +38,7 @@ const VoterDrawer: FC<VoterDrawerProps> = ({
           cluster={{ voters: shown }}
           formatPrice={formatPrice}
           entryTitlesById={entryTitlesById}
-          entryColorsById={entryColors}
+          rankById={rankById}
           onLoadMore={onLoadMore}
           hasMore={hasMore}
           isLoadingMore={isLoadingMore}

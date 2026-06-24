@@ -9,7 +9,7 @@ import { VoterRibbonProps } from "../types";
 
 const VoterRibbonMobile: FC<VoterRibbonProps> = ({
   votes,
-  entryColors,
+  rankById,
   formatPrice,
   entryTitlesById,
   isLive,
@@ -20,8 +20,8 @@ const VoterRibbonMobile: FC<VoterRibbonProps> = ({
   const { ordered, newIds, clearNew, activeVoteUuid, setActiveVoteUuid } = useVoterRibbon(votes);
   const capped = useMemo(() => ordered.slice(0, RIBBON_MOBILE_CAP), [ordered]);
   const chips = useMemo(
-    () => capped.map(vote => voterChipData(vote, entryColors, entryTitlesById, formatPrice)),
-    [capped, entryColors, entryTitlesById, formatPrice],
+    () => capped.map(vote => voterChipData(vote, rankById, entryTitlesById, formatPrice)),
+    [capped, rankById, entryTitlesById, formatPrice],
   );
 
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -80,7 +80,7 @@ const VoterRibbonMobile: FC<VoterRibbonProps> = ({
         voters={votes}
         formatPrice={formatPrice}
         entryTitlesById={entryTitlesById}
-        entryColors={entryColors}
+        rankById={rankById}
         onLoadMore={onLoadMore}
         hasMore={hasMore}
         isLoadingMore={isLoadingMore}

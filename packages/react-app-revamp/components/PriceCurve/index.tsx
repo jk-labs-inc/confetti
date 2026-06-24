@@ -9,7 +9,6 @@ import HoverOverlay from "./components/HoverOverlay";
 import CurveMarker from "./components/Voters/components/CurveMarker";
 import VoterRibbon from "./components/Voters/Ribbon";
 import { buildPositionedVotes } from "./components/Voters/buildPositionedVotes";
-import { buildEntryColors } from "@helpers/entryColors";
 import {
   CARD_PADDING,
   CARD_PADDING_STYLE,
@@ -53,13 +52,14 @@ interface PriceCurveProps {
   onToggleExpand?: () => void;
   voteEvents?: ContestVoteEvent[];
   entryTitlesById?: Map<string, string>;
-  leadingProposalId?: string | null;
+  rankById?: Map<string, number>;
   onLoadMoreVotes?: () => void;
   hasMoreVotes?: boolean;
   isLoadingMoreVotes?: boolean;
 }
 
 const EMPTY_ENTRY_TITLES: Map<string, string> = new Map();
+const EMPTY_RANKS: Map<string, number> = new Map();
 
 const PriceCurve: FC<PriceCurveProps> = ({
   data,
@@ -83,7 +83,7 @@ const PriceCurve: FC<PriceCurveProps> = ({
   onToggleExpand,
   voteEvents = [],
   entryTitlesById = EMPTY_ENTRY_TITLES,
-  leadingProposalId = null,
+  rankById = EMPTY_RANKS,
   onLoadMoreVotes,
   hasMoreVotes,
   isLoadingMoreVotes,
@@ -109,14 +109,6 @@ const PriceCurve: FC<PriceCurveProps> = ({
   const positionedVotes = useMemo(
     () => buildPositionedVotes(voteEvents, data, getX, yScale),
     [voteEvents, data, getX, yScale],
-  );
-  const entryColors = useMemo(
-    () =>
-      buildEntryColors(
-        voteEvents.map(vote => vote.proposalId),
-        leadingProposalId,
-      ),
-    [voteEvents, leadingProposalId],
   );
 
   const collapsed = isExpanded === false;
@@ -204,7 +196,7 @@ const PriceCurve: FC<PriceCurveProps> = ({
             {showVoters && (
               <CurveMarker
                 positioned={positionedVotes}
-                entryColors={entryColors}
+                rankById={rankById}
                 chartWidth={chartWidth}
                 chartHeight={chartHeight}
               />
@@ -229,7 +221,7 @@ const PriceCurve: FC<PriceCurveProps> = ({
       {!collapsed && showVoters && (
         <VoterRibbon
           votes={positionedVotes}
-          entryColors={entryColors}
+          rankById={rankById}
           formatPrice={formatPrice}
           entryTitlesById={entryTitlesById}
           isLive={isDuring}
