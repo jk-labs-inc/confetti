@@ -58,8 +58,12 @@ const PriceCurveWrapper = ({
     enabled: !!contestConfig.address,
   });
 
-  const leadingProposalId = useProposalStore(
-    useShallow(state => state.listProposalsData.find(p => p.rank === 1)?.id ?? null),
+  const rankById = useProposalStore(
+    useShallow(state => {
+      const map = new Map<string, number>();
+      for (const proposal of state.listProposalsData) map.set(proposal.id, proposal.rank);
+      return map;
+    }),
   );
 
   const votedProposalIds = useMemo(() => voteEvents.map(event => event.proposalId), [voteEvents]);
@@ -150,7 +154,7 @@ const PriceCurveWrapper = ({
         onToggleExpand={onToggleExpand}
         voteEvents={resolvedVoteEvents}
         entryTitlesById={entryTitlesById}
-        leadingProposalId={leadingProposalId}
+        rankById={rankById}
         onLoadMoreVotes={fetchNextPage}
         hasMoreVotes={hasNextPage}
         isLoadingMoreVotes={isFetchingNextPage}

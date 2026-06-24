@@ -12,7 +12,7 @@ export interface VoterCluster {
 
 export interface VoterRibbonProps {
   votes: PositionedVote[];
-  entryColors: Map<string, string>;
+  rankById: Map<string, number>;
   formatPrice: (nativePrice: number) => string;
   entryTitlesById: Map<string, string>;
   isLive: boolean;

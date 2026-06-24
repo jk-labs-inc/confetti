@@ -1,8 +1,9 @@
 import { Avatar } from "@components/UI/Avatar";
 import CustomLink from "@components/UI/Link";
 import { ROUTE_VIEW_USER } from "@config/routes";
-import { colorOf, withAlpha } from "@helpers/entryColors";
+import { entryMedal, withAlpha } from "@helpers/entryColors";
 import { formatNumber } from "@helpers/formatNumber";
+import useNow from "@hooks/useNow";
 import useProfileData from "@hooks/useProfileData";
 import { CSSProperties, FC, KeyboardEvent as ReactKeyboardEvent, memo, useEffect, useRef, useState } from "react";
 import { useFitText } from "../hooks/useFitText";
@@ -14,13 +15,13 @@ export interface VoterChipData {
   priceText: string;
   voteAmount: number;
   createdAt: number;
-  color: string;
+  rank?: number;
   entryTitle?: string;
 }
 
 export function voterChipData(
   vote: PositionedVote,
-  entryColors: Map<string, string>,
+  rankById: Map<string, number>,
   entryTitlesById: Map<string, string>,
   formatPrice: (nativePrice: number) => string,
 ): VoterChipData {
@@ -30,7 +31,7 @@ export function voterChipData(
     priceText: formatPrice(vote.totalCost),
     voteAmount: vote.voteAmount,
     createdAt: vote.createdAt,
-    color: colorOf(entryColors, vote.proposalId),
+    rank: rankById.get(vote.proposalId),
     entryTitle: entryTitlesById.get(vote.proposalId),
   };
 }
@@ -44,12 +45,17 @@ interface VoterChipProps extends VoterChipData {
   onSeen?: (uuid: string) => void;
 }
 
-const timeAgo = (sec: number): string => {
-  const d = Math.max(0, Math.floor(Date.now() / 1000) - sec);
+const timeAgo = (sec: number, nowMs: number): string => {
+  const d = Math.max(0, Math.floor(nowMs / 1000) - sec);
   if (d < 60) return "just now";
   if (d < 3600) return `${Math.floor(d / 60)}m ago`;
   if (d < 86400) return `${Math.floor(d / 3600)}h ago`;
   return `${Math.floor(d / 86400)}d ago`;
+};
+
+const TimeAgo: FC<{ createdAt: number }> = ({ createdAt }) => {
+  const now = useNow();
+  return <div className="whitespace-nowrap text-[10.5px] text-neutral-9">{timeAgo(createdAt, now)}</div>;
 };
 
 const compactVotes = (n: number): string =>
@@ -57,13 +63,19 @@ const compactVotes = (n: number): string =>
 
 const PRICE_FONT_SIZES = [14, 12, 10];
 
+const GRADIENT_TEXT: CSSProperties = {
+  WebkitBackgroundClip: "text",
+  WebkitTextFillColor: "transparent",
+  backgroundClip: "text",
+};
+
 const VoterChip: FC<VoterChipProps> = ({
   uuid,
   userAddress,
   priceText,
   voteAmount,
   createdAt,
-  color,
+  rank,
   entryTitle,
   width,
   isActive,
@@ -76,6 +88,8 @@ const VoterChip: FC<VoterChipProps> = ({
   const priceRef = useRef<HTMLSpanElement>(null);
   const priceFontSize = useFitText(priceRef, priceText, PRICE_FONT_SIZES);
 
+  const medal = entryMedal(rank);
+
   const [entering] = useState(!!isNew);
   useEffect(() => {
     if (entering) onSeen?.(uuid);
@@ -85,9 +99,13 @@ const VoterChip: FC<VoterChipProps> = ({
     flex: `0 0 ${width}`,
     width,
     scrollSnapAlign: "start",
-    borderColor: isActive ? withAlpha(color, 0.6) : undefined,
-    boxShadow: isActive ? `0 6px 16px -12px ${withAlpha(color, 0.55)}` : undefined,
+    borderColor: isActive ? withAlpha(medal.solid, 0.6) : undefined,
+    boxShadow: isActive ? `0 6px 16px -12px ${withAlpha(medal.solid, 0.55)}` : undefined,
   };
+
+  const titleStyle: CSSProperties = medal.isGradient
+    ? { backgroundImage: medal.background, ...GRADIENT_TEXT }
+    : { color: medal.solid };
 
   const handleKeyDown = (e: ReactKeyboardEvent<HTMLDivElement>) => {
     if (e.target !== e.currentTarget) return;
@@ -106,7 +124,7 @@ const VoterChip: FC<VoterChipProps> = ({
       onMouseEnter={() => onHover?.(uuid)}
       aria-label={`${profileName} bought ${formatNumber(voteAmount)} ${
         voteAmount === 1 ? "vote" : "votes"
-      } for ${entryTitle ?? "an entry"}, ${priceText}, ${timeAgo(createdAt)}`}
+      } for ${entryTitle ?? "an entry"}, ${priceText}`}
       className={`box-border flex shrink-0 cursor-pointer flex-col gap-[9px] overflow-hidden rounded-[15px] border bg-neutral-2 p-[11px] text-left transition-[border-color,box-shadow,transform] duration-150 ${
         isActive ? "-translate-y-0.5" : "border-neutral-4"
       } ${entering ? "voter-chip-enter" : ""}`}
@@ -123,7 +141,7 @@ const VoterChip: FC<VoterChipProps> = ({
           >
             {profileName}
           </CustomLink>
-          <div className="whitespace-nowrap text-[10.5px] text-neutral-9">{timeAgo(createdAt)}</div>
+          <TimeAgo createdAt={createdAt} />
         </div>
       </div>
 
@@ -143,9 +161,9 @@ const VoterChip: FC<VoterChipProps> = ({
 
       <div className="flex min-w-0 items-center gap-1.5">
         <span className="flex-none text-[10.5px] text-neutral-9">for</span>
-        <span className="size-2 flex-none rounded-full" style={{ backgroundColor: color }} />
+        <span className="size-2 flex-none rounded-full" style={{ backgroundColor: medal.solid }} />
         {entryTitle ? (
-          <span className="min-w-0 flex-1 truncate text-[11.5px] font-semibold" style={{ color }}>
+          <span className="min-w-0 flex-1 truncate text-[11.5px] font-semibold" style={titleStyle}>
             {entryTitle}
           </span>
         ) : (

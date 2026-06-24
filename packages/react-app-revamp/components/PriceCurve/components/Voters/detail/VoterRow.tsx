@@ -1,7 +1,7 @@
 import { Avatar } from "@components/UI/Avatar";
 import CustomLink from "@components/UI/Link";
 import { ROUTE_VIEW_USER } from "@config/routes";
-import { colorOf } from "@helpers/entryColors";
+import { entryMedal } from "@helpers/entryColors";
 import useProfileData from "@hooks/useProfileData";
 import { FC } from "react";
 import { PositionedVote } from "../types";
@@ -11,13 +11,13 @@ interface VoterRowProps {
   vote: PositionedVote;
   formatPrice: (nativePrice: number) => string;
   entryTitlesById: Map<string, string>;
-  entryColorsById: Map<string, string>;
+  rankById: Map<string, number>;
 }
 
-const VoterRow: FC<VoterRowProps> = ({ vote, formatPrice, entryTitlesById, entryColorsById }) => {
+const VoterRow: FC<VoterRowProps> = ({ vote, formatPrice, entryTitlesById, rankById }) => {
   const { profileName: name, profileAvatar } = useProfileData(vote.userAddress, true);
   const title = entryTitlesById.get(vote.proposalId);
-  const color = colorOf(entryColorsById, vote.proposalId);
+  const medal = entryMedal(rankById.get(vote.proposalId));
 
   return (
     <div className="flex items-center gap-2">
@@ -32,7 +32,7 @@ const VoterRow: FC<VoterRowProps> = ({ vote, formatPrice, entryTitlesById, entry
       </CustomLink>
 
       <span className="flex max-w-[88px] flex-none items-center gap-1 text-neutral-11/55">
-        <span className="size-2 flex-none rounded-full" style={{ backgroundColor: color }} />
+        <span className="size-2 flex-none rounded-full" style={{ backgroundColor: medal.solid }} />
         {title && <span className="truncate">{title}</span>}
       </span>
 

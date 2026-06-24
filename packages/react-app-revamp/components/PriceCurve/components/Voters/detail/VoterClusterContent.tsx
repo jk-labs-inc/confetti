@@ -10,7 +10,7 @@ interface VoterClusterContentProps {
   cluster: VoterCluster;
   formatPrice: (nativePrice: number) => string;
   entryTitlesById: Map<string, string>;
-  entryColorsById: Map<string, string>;
+  rankById: Map<string, number>;
   onLoadMore?: () => void;
   hasMore?: boolean;
   isLoadingMore?: boolean;
@@ -27,7 +27,7 @@ const VoterClusterContent: FC<VoterClusterContentProps> = ({
   cluster,
   formatPrice,
   entryTitlesById,
-  entryColorsById,
+  rankById,
   onLoadMore,
   hasMore,
   isLoadingMore,
@@ -101,7 +101,7 @@ const VoterClusterContent: FC<VoterClusterContentProps> = ({
                     vote={group.casts[0]}
                     formatPrice={formatPrice}
                     entryTitlesById={entryTitlesById}
-                    entryColorsById={entryColorsById}
+                    rankById={rankById}
                   />
                 ) : (
                   <VoterGroup
@@ -111,7 +111,7 @@ const VoterClusterContent: FC<VoterClusterContentProps> = ({
                     totalSpent={group.totalSpent}
                     formatPrice={formatPrice}
                     entryTitlesById={entryTitlesById}
-                    entryColorsById={entryColorsById}
+                    rankById={rankById}
                   />
                 )}
               </div>
