@@ -6,7 +6,7 @@ import { formatNumber } from "@helpers/formatNumber";
 import useNow from "@hooks/useNow";
 import useProfileData from "@hooks/useProfileData";
 import { CSSProperties, FC, KeyboardEvent as ReactKeyboardEvent, memo, useEffect, useRef, useState } from "react";
-import { useFitText } from "../hooks/useFitText";
+import { useFitText } from "@hooks/useFitText";
 import { PositionedVote } from "../types";
 
 export interface VoterChipData {
@@ -61,7 +61,7 @@ const TimeAgo: FC<{ createdAt: number }> = ({ createdAt }) => {
 const compactVotes = (n: number): string =>
   n >= 10000 ? `${Math.round(n / 1000)}k` : n >= 1000 ? `${(n / 1000).toFixed(1)}k` : formatNumber(n);
 
-const PRICE_FONT_SIZES = [14, 12, 10];
+const PRICE_FONT_SIZE = { min: 10, max: 14 };
 
 const GRADIENT_TEXT: CSSProperties = {
   WebkitBackgroundClip: "text",
@@ -86,7 +86,7 @@ const VoterChip: FC<VoterChipProps> = ({
 }) => {
   const { profileName, profileAvatar } = useProfileData(userAddress, true);
   const priceRef = useRef<HTMLSpanElement>(null);
-  const priceFontSize = useFitText(priceRef, priceText, PRICE_FONT_SIZES);
+  const priceFontSize = useFitText(priceRef, priceText, PRICE_FONT_SIZE);
 
   const medal = entryMedal(rank);
 

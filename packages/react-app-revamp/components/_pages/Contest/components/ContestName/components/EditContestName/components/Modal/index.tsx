@@ -9,8 +9,8 @@ interface EditContestNameModalProps {
   contestImageUrl?: string;
   isOpen: boolean;
   setIsCloseModal: (isOpen: boolean) => void;
-  handleEditContestName?: (value: string) => void;
-  onImageSave?: (imageUrl: string) => void;
+  handleEditContestName?: (value: string) => void | Promise<void>;
+  onImageSave?: (imageUrl: string) => void | Promise<void>;
 }
 
 const EditContestNameModal: FC<EditContestNameModalProps> = ({
@@ -59,17 +59,23 @@ const EditContestNameModal: FC<EditContestNameModalProps> = ({
     }
   };
 
-  const handleSaveClick = (value: string) => {
-    if (!value.trim() || value.length >= CONTEST_TITLE_MAX_LENGTH) {
+  const handleSaveClick = async (value: string) => {
+    if (!value.trim()) {
+      setError("title cannot be empty");
+      return;
+    }
+    if (value.length >= CONTEST_TITLE_MAX_LENGTH) {
+      setError(`title must not exceed ${CONTEST_TITLE_MAX_LENGTH} characters`);
       return;
     }
 
+    // Run the writes sequentially so two contract writes never race on the same nonce.
     if (value !== contestName) {
-      handleEditContestName?.(value);
+      await handleEditContestName?.(value);
     }
 
     if (imageValue && imageValue !== contestImageUrl && onImageSave) {
-      onImageSave(imageValue);
+      await onImageSave(imageValue);
     }
 
     setIsCloseModal(false);
