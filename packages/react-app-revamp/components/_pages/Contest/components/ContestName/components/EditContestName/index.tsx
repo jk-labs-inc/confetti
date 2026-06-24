@@ -11,6 +11,7 @@ import { useWallet } from "@hooks/useWallet";
 import { useShallow } from "zustand/shallow";
 import EditContestNameModal from "./components/Modal";
 import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
+import { toastError } from "@components/UI/Toast";
 
 interface EditContestNameProps {
   contestName: string;
@@ -47,25 +48,41 @@ const EditContestName: FC<EditContestNameProps> = ({ contestName, canEditTitle, 
   const handleOpenModal = () => setIsEditContestNameModalOpen(true);
 
   const handleEditContestName = async (value: string) => {
-    if (!contestConfig.chainId) return;
+    if (!contestConfig.chainId) {
+      toastError({ message: "unable to update title: contest chain not found" });
+      return;
+    }
     if (value === contestName) return;
 
     if (!isOnCorrectChain) {
-      await switchChain(getWagmiConfig(), { chainId: contestConfig.chainId });
+      try {
+        await switchChain(getWagmiConfig(), { chainId: contestConfig.chainId });
+      } catch (error) {
+        toastError({ message: "please switch to the correct network to update the title" });
+        return;
+      }
     }
 
     await editTitle(value);
   };
 
   const handleImageSave = async (newImageUrl: string) => {
-    if (!contestConfig.chainId || !contestPrompt) return;
+    if (!contestConfig.chainId) {
+      toastError({ message: "unable to update image: contest chain not found" });
+      return;
+    }
     if (newImageUrl === contestImageUrl) return;
 
     if (!isOnCorrectChain) {
-      await switchChain(getWagmiConfig(), { chainId: contestConfig.chainId });
+      try {
+        await switchChain(getWagmiConfig(), { chainId: contestConfig.chainId });
+      } catch (error) {
+        toastError({ message: "please switch to the correct network to update the image" });
+        return;
+      }
     }
 
-    const { contestSummary, contestEvaluate, contestContactDetails } = parsePrompt(contestPrompt);
+    const { contestSummary, contestEvaluate, contestContactDetails } = parsePrompt(contestPrompt ?? "");
 
     const formattedPrompt = new URLSearchParams({
       imageUrl: newImageUrl,
