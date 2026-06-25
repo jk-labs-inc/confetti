@@ -2,7 +2,7 @@ import { FC, useCallback, useMemo, useRef, useState } from "react";
 import VoterChip, { voterChipData } from "../components/VoterChip";
 import VoterDrawer from "../components/VoterDrawer";
 import VoterRibbonHeader from "../components/VoterRibbonHeader";
-import { CHIP_GAP, CHIP_W_CSS_MOBILE, RIBBON_FADE, RIBBON_MOBILE_CAP } from "../constants";
+import { CHIP_GAP, CHIP_W_CSS_MOBILE, LOAD_MORE_THRESHOLD, RIBBON_FADE } from "../constants";
 import { useScrollEdges } from "../hooks/useScrollEdges";
 import { useVoterRibbon } from "../hooks/useVoterRibbon";
 import { VoterRibbonProps } from "../types";
@@ -18,14 +18,14 @@ const VoterRibbonMobile: FC<VoterRibbonProps> = ({
   isLoadingMore,
 }) => {
   const { ordered, newIds, clearNew, activeVoteUuid, setActiveVoteUuid } = useVoterRibbon(votes);
-  const capped = useMemo(() => ordered.slice(0, RIBBON_MOBILE_CAP), [ordered]);
   const chips = useMemo(
-    () => capped.map(vote => voterChipData(vote, rankById, entryTitlesById, formatPrice)),
-    [capped, rankById, entryTitlesById, formatPrice],
+    () => ordered.map(vote => voterChipData(vote, rankById, entryTitlesById, formatPrice)),
+    [ordered, rankById, entryTitlesById, formatPrice],
   );
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const ticking = useRef(false);
+  const requestedAtLen = useRef(0);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const edges = useScrollEdges(scrollRef);
 
@@ -38,11 +38,21 @@ const VoterRibbonMobile: FC<VoterRibbonProps> = ({
       if (!el) return;
       const first = el.firstElementChild as HTMLElement | null;
       const step = first ? first.offsetWidth + CHIP_GAP : 1;
-      const idx = Math.max(0, Math.min(capped.length - 1, Math.round(el.scrollLeft / step)));
-      const uuid = capped[idx]?.uuid;
+      const idx = Math.max(0, Math.min(ordered.length - 1, Math.round(el.scrollLeft / step)));
+      const uuid = ordered[idx]?.uuid;
       if (uuid) setActiveVoteUuid(uuid);
+
+      if (
+        hasMore &&
+        !isLoadingMore &&
+        idx >= ordered.length - 1 - LOAD_MORE_THRESHOLD &&
+        ordered.length !== requestedAtLen.current
+      ) {
+        requestedAtLen.current = ordered.length;
+        onLoadMore?.();
+      }
     });
-  }, [capped, setActiveVoteUuid]);
+  }, [ordered, setActiveVoteUuid, hasMore, isLoadingMore, onLoadMore]);
 
   const onSelect = useCallback((uuid: string) => setActiveVoteUuid(uuid), [setActiveVoteUuid]);
 
