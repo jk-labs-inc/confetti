@@ -6,7 +6,7 @@ export const CHIP_W_CSS_MOBILE = `calc((100% - ${CHIP_GAP}px - ${CHIP_PEEK}px) /
 export const DESKTOP_CHIP_W = 168;
 export const RIBBON_FADE = "linear-gradient(90deg, #000 0, #000 calc(100% - 12px), transparent 100%)";
 
-export const RIBBON_MOBILE_CAP = 80;
+export const LOAD_MORE_THRESHOLD = 5;
 
 export const MARKER_AVATAR_R = 13;
 export const MARKER_ANCHOR_R = 3.6;
