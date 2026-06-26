@@ -5915,10 +5915,10 @@
     mipd "0.0.7"
     zustand "5.0.0"
 
-"@wagmi/core@3.5.4":
-  version "3.5.4"
-  resolved "https://registry.yarnpkg.com/@wagmi/core/-/core-3.5.4.tgz#5c9f9ed53f3d00275e068d4f10e80d76e57f3391"
-  integrity sha512-PV4RiZP+qKv5fF6FNpjzLFcDCj8r1AI9ZwrslGQlXpP2f+emU0DwsIR/SL4wlZyVMYu7g7kWjnvex4XjWFDW9A==
+"@wagmi/core@3.5.5":
+  version "3.5.5"
+  resolved "https://registry.yarnpkg.com/@wagmi/core/-/core-3.5.5.tgz#adb9b896d8de05875c09b84b7d2c023d0a0870e8"
+  integrity sha512-JEJAwo25p9c52JwQs1WunqANPs4PjJ+eepDLXvQJ390vEXsBexYdCDmsPPcYZaGpk0Umx0w85U1ruRodXusMzg==
   dependencies:
     eventemitter3 "5.0.1"
     mipd "0.0.7"
