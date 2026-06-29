@@ -46,12 +46,12 @@ const EntryCarousel: FC<EntryCarouselProps> = ({
 }) => {
   const wrapRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
-  const pos = useMotionValue(0); // fractional ring index; integer = a card centered
+  const pos = useMotionValue(0);
   const drag = useRef({ active: false, startX: 0, startPos: 0, moved: 0 });
   const activeRef = useRef(0);
   const [stageWidth, setStageWidth] = useState(0);
-  const [activeIdx, setActiveIdx] = useState(0); // centered card index; drives the highlight and the vote target
-  const [availableH, setAvailableH] = useState(0); // viewport space below the carousel's top edge (for void-fill)
+  const [activeIdx, setActiveIdx] = useState(0);
+  const [availableH, setAvailableH] = useState(0);
 
   const { cards, n, totalVotes, maybeLoadMore } = useEntryFeed({
     proposals,
@@ -71,25 +71,16 @@ const EntryCarousel: FC<EntryCarouselProps> = ({
   // A 2-item ring can't be balanced (the lone neighbor always lands one step to the right, leaving the left
   // empty), so render exactly-2 entries as a centered two-up where tapping a card makes it the active vote target.
   const isTwoUp = n === 2 && !hasNextPage;
-  const twoUpCardW = Math.max(0, (stageWidth - TWO_UP_GAP_PX) / 2); // two cards split the full width, minus the gap
+  const twoUpCardW = Math.max(0, (stageWidth - TWO_UP_GAP_PX) / 2);
   const naturalTwoUpH = twoUpCardW * cardAspect;
 
-  // the active highlight + card selection only mean something while voting is open; otherwise it's view-only
   const votingOpen = contestStatus === ContestStatus.VotingOpen;
-
-  // A bottom voting bar only exists while voting is open; before it opens and after it ends that space is
-  // dead. So when voting isn't open, grow the cards down into the void (capped at MAX_FILL_ASPECT) so they
-  // fill the page instead of floating in the top half. availableH is measured to the top of the fixed bottom
-  // nav, so the cards never tuck under it. Applies to both the coverflow center card and the two-up.
   const fillVoidHeight = (natW: number, natH: number) =>
     !votingOpen && availableH > natH ? Math.min(availableH, natW * MAX_FILL_ASPECT) : natH;
   const cardH = fillVoidHeight(cardW, naturalCardH);
   const twoUpCardH = fillVoidHeight(twoUpCardW, naturalTwoUpH);
   const containerH = isTwoUp ? twoUpCardH : cardH;
 
-  // only cards within WINDOW_RADIUS of center mount their (heavy) image/tweet content; the rest stay empty
-  // boxes, so the DOM/network footprint tracks the visible window, not the total number of loaded entries.
-  // recomputed only when the centered card changes, not per drag frame.
   const mountedWindow = useMemo(() => {
     const s = new Set<number>();
     if (n === 0) return s;
@@ -97,7 +88,6 @@ const EntryCarousel: FC<EntryCarouselProps> = ({
     return s;
   }, [activeIdx, n]);
 
-  // shortest signed distance from card i to ring position p, wrapped into (-n/2, n/2]
   const circularDelta = useCallback(
     (i: number, p: number) => {
       if (n === 0) return 0;
@@ -117,8 +107,6 @@ const EntryCarousel: FC<EntryCarouselProps> = ({
         const el = stage.children[i] as HTMLElement;
         const delta = circularDelta(i, p);
         const abs = Math.abs(delta);
-        // far card: already off-screen — hide it once, then skip the per-frame transform math entirely.
-        // this is what bounds the loop to the handful of cards near center instead of every loaded entry.
         if (abs > MAX_VISIBLE + 1) {
           if (el.style.opacity !== "0") {
             el.style.opacity = "0";
@@ -129,7 +117,7 @@ const EntryCarousel: FC<EntryCarouselProps> = ({
         const dir = Math.max(-1, Math.min(1, delta));
         const x = delta * spacing;
         const z = -Math.min(abs, MAX_VISIBLE) * DEPTH_PX;
-        const rotateY = -dir * MAX_ROTATE_DEG; // left tilts one way, right the other -> faces center
+        const rotateY = -dir * MAX_ROTATE_DEG;
         const scale = 1 - MAX_SCALE_DROP * Math.min(1, abs);
         const visible = abs <= MAX_VISIBLE + 0.5;
         el.style.transform = `translate(-50%, -50%) translateX(${x.toFixed(1)}px) translateZ(${z.toFixed(
@@ -146,17 +134,16 @@ const EntryCarousel: FC<EntryCarouselProps> = ({
   // highlight whichever card is currently closest to center — updates live while rotating, not only on settle
   const updateActive = useCallback(
     (p: number) => {
-      if (n === 0 || isTwoUp) return; // two-up selection is driven by taps, not the ring position
+      if (n === 0 || isTwoUp) return;
       const norm = ((Math.round(p) % n) + n) % n;
       if (norm !== activeRef.current) {
-        activeRef.current = norm; // synchronous guard against redundant setState within a frame
-        setActiveIdx(norm); // local highlight, live while rotating — no global store write per card crossed
+        activeRef.current = norm;
+        setActiveIdx(norm);
       }
     },
     [n, isTwoUp],
   );
 
-  // drive the layout + active highlight off the motion value (no React re-render per frame for the transforms)
   useEffect(() => {
     const handler = (p: number) => {
       layout(p);
@@ -167,7 +154,6 @@ const EntryCarousel: FC<EntryCarouselProps> = ({
     return () => unsub();
   }, [layout, updateActive, pos]);
 
-  // re-measure stage width
   useEffect(() => {
     const wrap = wrapRef.current;
     if (!wrap) return;
@@ -177,12 +163,6 @@ const EntryCarousel: FC<EntryCarouselProps> = ({
     return () => ro.disconnect();
   }, []);
 
-  // measure the gap from the carousel's top down to the top of the fixed bottom nav so the cards can grow to
-  // fill it when there's no voting bar. the bottom nav (home/search + the bar slot) is position:fixed, so the
-  // slot's top marks the real floor — measuring to window.innerHeight would let cards tuck under it. the
-  // carousel is the last content in flow, so growing it only extends the page downward (its own top stays
-  // put) — no resize feedback loop. observe the body so it re-measures when content above settles (images
-  // load, price curve toggles); not tied to scroll, so cards don't resize mid-scroll.
   useEffect(() => {
     const wrap = wrapRef.current;
     if (!wrap) return;
@@ -205,7 +185,6 @@ const EntryCarousel: FC<EntryCarouselProps> = ({
   // re-layout when sizing or the entry set changes
   useEffect(() => {
     layout(pos.get());
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stageWidth, cards]);
 
   const snapTo = useCallback(
@@ -226,9 +205,6 @@ const EntryCarousel: FC<EntryCarouselProps> = ({
   );
 
   const onPointerDown = (e: ReactPointerEvent<HTMLDivElement>) => {
-    // Cancel any in-flight snap spring so the finger drives the carousel instead of fighting it. jump() stops the
-    // animation — so the abandoned spring's onComplete -> maybeLoadMore never fires — and resets velocity to 0, so
-    // a tap to "catch" a spinning carousel reads ~0 velocity and snaps in place rather than re-flinging.
     pos.jump(pos.get());
     drag.current = { active: true, startX: e.clientX, startPos: pos.get(), moved: 0 };
     e.currentTarget.setPointerCapture?.(e.pointerId);
@@ -246,9 +222,7 @@ const EntryCarousel: FC<EntryCarouselProps> = ({
     const d = drag.current;
     if (!d.active) return;
     d.active = false;
-    // project the throw from release velocity so a fast flick carries past the nearest card;
-    // a slow/held release reads ~0 velocity and just snaps to the nearest, as before
-    const v = pos.getVelocity(); // ring-index units/sec, sign matches drag direction
+    const v = pos.getVelocity();
     const base = Math.round(pos.get());
     const projected = Math.round(pos.get() + v * FLICK_PROJECTION_S);
     const target = Math.max(base - MAX_FLICK, Math.min(base + MAX_FLICK, projected));

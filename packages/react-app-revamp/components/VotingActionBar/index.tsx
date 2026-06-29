@@ -85,7 +85,7 @@ const VotingActionBar = () => {
   });
 
   // The number font shrinks to keep any amount inside the fixed-width pill.
-  const { ref: inputFitRef, fontSize: inputFontSize } = useFitTextToBox<HTMLInputElement>(displayValue || "0", 10, 26);
+  const { ref: inputFitRef, fontSize: inputFontSize } = useFitTextToBox<HTMLInputElement>(displayValue || "0", 8, 26);
 
   const totalVotes = useVotesFromInput({ inputValue, costToVote: effectiveCost });
 
@@ -147,7 +147,7 @@ const VotingActionBar = () => {
         >
           {displaySymbol === "$" && (
             <span
-              className="shrink-0 font-bold text-neutral-9 transition-[font-size] duration-150 ease-out"
+              className="shrink-0 font-bold text-neutral-9"
               style={{ fontSize: `${Math.round(inputFontSize * 0.6)}px` }}
             >
               $
@@ -163,7 +163,7 @@ const VotingActionBar = () => {
             onBlur={() => setIsFocused(false)}
             placeholder="0"
             aria-label="amount to spend"
-            className="w-[64px] bg-transparent text-center font-bold text-neutral-11 placeholder-neutral-9 outline-none transition-[font-size] duration-150 ease-out"
+            className="w-[64px] bg-transparent text-center font-bold text-neutral-11 placeholder-neutral-9 outline-none"
             style={{ fontSize: `${inputFontSize}px` }}
           />
           {displaySymbol !== "$" && (
@@ -177,9 +177,9 @@ const VotingActionBar = () => {
             <span className="text-[13px] text-neutral-9">votes</span>
             <FitText
               text={votesDisplay}
-              min={11}
+              min={8}
               max={20}
-              className="block w-full overflow-hidden whitespace-nowrap text-center text-neutral-11 transition-[font-size] duration-150 ease-out"
+              className="block w-full overflow-hidden whitespace-nowrap text-center text-neutral-11"
             />
           </div>
 
@@ -190,9 +190,9 @@ const VotingActionBar = () => {
                 <span className="text-[13px] text-neutral-9">win up to</span>
                 <FitText
                   text={winDisplay}
-                  min={11}
+                  min={8}
                   max={20}
-                  className="block w-full overflow-hidden whitespace-nowrap bg-clip-text text-center font-bold text-transparent transition-[font-size] duration-150 ease-out"
+                  className="block w-full overflow-hidden whitespace-nowrap bg-clip-text text-center font-bold text-transparent"
                   style={{ backgroundImage: WIN_GRADIENT }}
                 />
               </div>

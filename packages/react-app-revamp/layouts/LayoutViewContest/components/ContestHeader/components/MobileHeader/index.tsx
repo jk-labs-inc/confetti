@@ -32,7 +32,7 @@ const MobileHeader: FC<MobileHeaderProps> = ({
   const filteredLinks = useMemo(() => FOOTER_LINKS.filter(link => BURGER_MENU_LINKS.includes(link.label)), []);
 
   return (
-    <div className="animate-fade-in">
+    <div className="animate-fade-in sticky top-0 z-20 bg-true-black pt-3 pb-3">
       <div className="flex flex-col gap-6">
         <div className="flex flex-col gap-4">
           <div className="flex items-center justify-between">
