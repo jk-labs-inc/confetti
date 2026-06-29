@@ -1,8 +1,13 @@
+import EntryCarousel from "@components/EntryCarousel";
+import EntryVerticalFeed from "@components/EntryCarousel/EntryVerticalFeed";
+import { EntryPreview } from "@hooks/useDeployContest/slices/contestMetadataSlice";
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import ProposalContent from "@components/_pages/ProposalContent";
+import { toContentProposal } from "@components/_pages/ProposalContent/toContentProposal";
 import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import { useContestStore } from "@hooks/useContest/store";
 import useContestConfigStore from "@hooks/useContestConfig/store";
+import { useContestStatusStore } from "@hooks/useContestStatus/store";
 import useDeleteProposal from "@hooks/useDeleteProposal";
 import { useMetadataStore } from "@hooks/useMetadataFields/store";
 import useProposal from "@hooks/useProposal";
@@ -12,6 +17,7 @@ import { switchChain } from "@wagmi/core";
 import { LayoutGroup, motion } from "motion/react";
 import { useState } from "react";
 import useInfiniteScroll from "react-infinite-scroll-hook";
+import { useMediaQuery } from "react-responsive";
 import { useShallow } from "zustand/shallow";
 import { verifyEntryPreviewPrompt } from "../DialogModalSendProposal/utils";
 import ListProposalsContainer from "./container";
@@ -36,6 +42,8 @@ export const ListProposals = () => {
     listProposalsData,
   } = useProposalStore(state => state);
   const { contestAuthorEthereumAddress } = useContestStore(state => state);
+  const contestStatus = useContestStatusStore(useShallow(state => state.contestStatus));
+  const isMobile = useMediaQuery({ maxWidth: 768 });
   const [deletingProposalIds, setDeletingProposalIds] = useState<string[]>([]);
   const [selectedProposalIds, setSelectedProposalIds] = useState<string[]>([]);
   const showDeleteButton = selectedProposalIds.length > 0 && !isDeleteInProcess;
@@ -45,6 +53,8 @@ export const ListProposals = () => {
     metadataFieldsConfig.length > 0
       ? verifyEntryPreviewPrompt(metadataFieldsConfig[0].prompt)
       : { enabledPreview: null };
+  // tweet entries are variable-height, so they use a vertical snap feed instead of the fixed-height coverflow
+  const isTweetContest = enabledPreview === EntryPreview.TWEET || enabledPreview === EntryPreview.TWEET_AND_TITLE;
 
   const hasNextPage = listProposalsData.length < submissionsCount;
 
@@ -105,61 +115,73 @@ export const ListProposals = () => {
 
   return (
     <>
-      <LayoutGroup>
-        <ListProposalsContainer enabledPreview={enabledPreview}>
-          {listProposalsData.map((proposal, index) => {
-            if (deletingProposalIds.includes(proposal.id) && isDeleteInProcess) {
-              return (
-                <motion.div key={`deleting-${proposal.id}`} layout transition={{ duration: 0.4, ease: "easeInOut" }}>
-                  <ListProposalsSkeleton enabledPreview={enabledPreview} highlightColor="#FF78A9" count={1} />
-                </motion.div>
-              );
-            }
-            return (
-              <motion.div
-                key={proposal.id}
-                layout
-                layoutId={proposal.id}
-                transition={{ duration: 0.4, ease: "easeInOut" }}
+      {isMobile ? (
+        isTweetContest ? (
+          <EntryVerticalFeed
+            proposals={listProposalsData}
+            enabledPreview={enabledPreview}
+            contestStatus={contestStatus}
+            hasNextPage={hasNextPage}
+            isLoadingMore={isPageProposalsLoading}
+            onLoadMore={handleLoadMore}
+          />
+        ) : (
+          <EntryCarousel
+            proposals={listProposalsData}
+            enabledPreview={enabledPreview}
+            contestStatus={contestStatus}
+            hasNextPage={hasNextPage}
+            isLoadingMore={isPageProposalsLoading}
+            onLoadMore={handleLoadMore}
+          />
+        )
+      ) : (
+        <>
+          <LayoutGroup>
+            <ListProposalsContainer enabledPreview={enabledPreview}>
+              {listProposalsData.map(proposal => {
+                if (deletingProposalIds.includes(proposal.id) && isDeleteInProcess) {
+                  return (
+                    <motion.div key={`deleting-${proposal.id}`} layout transition={{ duration: 0.4, ease: "easeInOut" }}>
+                      <ListProposalsSkeleton enabledPreview={enabledPreview} highlightColor="#FF78A9" count={1} />
+                    </motion.div>
+                  );
+                }
+                return (
+                  <motion.div
+                    key={proposal.id}
+                    layout
+                    layoutId={proposal.id}
+                    transition={{ duration: 0.4, ease: "easeInOut" }}
+                  >
+                    <ProposalContent
+                      proposal={toContentProposal(proposal)}
+                      enabledPreview={enabledPreview}
+                      selectedProposalIds={selectedProposalIds}
+                      toggleProposalSelection={toggleProposalSelection}
+                      contestAuthorEthereumAddress={contestAuthorEthereumAddress}
+                    />
+                  </motion.div>
+                );
+              })}
+            </ListProposalsContainer>
+          </LayoutGroup>
+
+          {hasNextPage && <ListProposalsLoader ref={infiniteRef} />}
+
+          {/* Bulk delete is a desktop-only affordance; the mobile carousel has no selection UI. */}
+          {showDeleteButton && (
+            <div className="flex sticky bottom-0 left-0 right-0 p-4">
+              <ButtonV3
+                size={ButtonSize.EXTRA_LARGE}
+                colorClass="bg-gradient-light-pink mx-auto animate-appear"
+                onClick={onDeleteSelectedProposals}
               >
-                <ProposalContent
-                  proposal={{
-                    id: proposal.id,
-                    authorEthereumAddress: proposal.author,
-                    content: proposal.description,
-                    exists: proposal.exists,
-                    isContentImage: proposal.isContentImage,
-                    tweet: proposal.tweet,
-                    votes: proposal.netVotes,
-                    rank: proposal.rank,
-                    isTied: proposal.isTied,
-                    // TODO: check if this is correct (it is, but we need to fix the type, we can do this afterwards)
-                    // @ts-ignore
-                    metadataFields: proposal.metadataFields ?? [],
-                  }}
-                  enabledPreview={enabledPreview}
-                  selectedProposalIds={selectedProposalIds}
-                  toggleProposalSelection={toggleProposalSelection}
-                  contestAuthorEthereumAddress={contestAuthorEthereumAddress}
-                />
-              </motion.div>
-            );
-          })}
-        </ListProposalsContainer>
-      </LayoutGroup>
-
-      {hasNextPage && <ListProposalsLoader ref={infiniteRef} />}
-
-      {showDeleteButton && (
-        <div className="flex sticky bottom-0 left-0 right-0 p-4">
-          <ButtonV3
-            size={ButtonSize.EXTRA_LARGE}
-            colorClass="bg-gradient-light-pink mx-auto animate-appear"
-            onClick={onDeleteSelectedProposals}
-          >
-            Delete {selectedProposalIds.length} {selectedProposalIds.length === 1 ? "entry" : "entries"}
-          </ButtonV3>
-        </div>
+                Delete {selectedProposalIds.length} {selectedProposalIds.length === 1 ? "entry" : "entries"}
+              </ButtonV3>
+            </div>
+          )}
+        </>
       )}
     </>
   );

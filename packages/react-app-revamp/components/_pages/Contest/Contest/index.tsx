@@ -10,6 +10,7 @@ import moment from "moment";
 import { useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useShallow } from "zustand/shallow";
+import VotingActionBar from "@components/VotingActionBar";
 import ContestPrompt from "../components/Prompt";
 import ContestStickyCards from "../components/StickyCards";
 import ContestSubmitBar from "./ContestSubmitBar";
@@ -43,7 +44,13 @@ const ContestTab = () => {
   const [isPriceCurveExpanded, setIsPriceCurveExpanded] = useState(!isContestOver);
 
   const isSubmissionOpen = contestStatus === ContestStatus.SubmissionOpen;
-  const hasMobileFixedBar = isMobile && isSubmissionOpen && (variant.kind === "counter-submit" || variant.kind === "connect");
+  const isVotingOpen = contestStatus === ContestStatus.VotingOpen;
+  const hasMobileFixedBar =
+    isMobile && isSubmissionOpen && (variant.kind === "counter-submit" || variant.kind === "connect");
+  const hasMobileVotingBar = isMobile && isVotingOpen && !isContestCanceled;
+
+  const listBottomPadding = hasMobileFixedBar ? "pb-24" : hasMobileVotingBar ? "pb-12" : "";
+  const listBottomMargin = isInPwaMode && !hasMobileVotingBar ? "mb-12" : "mb-0";
 
   return (
     <div className="animate-fade-in">
@@ -78,7 +85,7 @@ const ContestTab = () => {
 
       {isMobile && <ContestStickyCards />}
 
-      <div className={`mt-6 ${hasMobileFixedBar ? "pb-24" : ""} ${isInPwaMode ? "mb-12" : "mb-0"}`}>
+      <div className={`mt-6 ${listBottomPadding} ${listBottomMargin}`}>
         <div className="flex flex-col gap-2">
           {!isContestLoading && !isListProposalsLoading && isContestSuccess && isListProposalsSuccess && (
             <div className="animate-fade-in">
@@ -87,6 +94,8 @@ const ContestTab = () => {
           )}
         </div>
       </div>
+
+      {hasMobileVotingBar && <VotingActionBar />}
 
       <DialogModalSendProposal isOpen={isSubmitProposalModalOpen} setIsOpen={setIsSubmitProposalModalOpen} />
     </div>
