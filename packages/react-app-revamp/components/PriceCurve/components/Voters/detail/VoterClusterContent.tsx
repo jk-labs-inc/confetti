@@ -1,7 +1,6 @@
 import { formatNumber } from "@helpers/formatNumber";
-import { useVirtualizer } from "@tanstack/react-virtual";
 import moment from "moment";
-import { FC, useMemo, useRef } from "react";
+import { FC, useMemo } from "react";
 import { PositionedVote, VoterCluster } from "../types";
 import VoterGroup from "./VoterGroup";
 import VoterRow from "./VoterRow";
@@ -57,14 +56,6 @@ const VoterClusterContent: FC<VoterClusterContentProps> = ({
     ? `${moment(earliestMs).format("MMM D • h:mm A")} – ${moment(latestMs).format("h:mm A")}`
     : moment(latestMs).format("MMM D • h:mm A");
 
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const rowVirtualizer = useVirtualizer({
-    count: groups.length,
-    getScrollElement: () => scrollRef.current,
-    estimateSize: () => 52,
-    overscan: 8,
-  });
-
   return (
     <div className="flex flex-col gap-2 text-[12px] text-neutral-11">
       <div className="flex items-baseline justify-between gap-3 font-bold">
@@ -78,46 +69,29 @@ const VoterClusterContent: FC<VoterClusterContentProps> = ({
         <span className="text-neutral-11/55 font-normal whitespace-nowrap">{headerTime}</span>
       </div>
 
-      <div ref={scrollRef} className="no-scrollbar overflow-y-auto overscroll-contain" style={{ maxHeight: "60vh" }}>
-        <div style={{ height: rowVirtualizer.getTotalSize(), width: "100%", position: "relative" }}>
-          {rowVirtualizer.getVirtualItems().map(virtualRow => {
-            const group = groups[virtualRow.index];
-            return (
-              <div
-                key={group.address}
-                data-index={virtualRow.index}
-                ref={rowVirtualizer.measureElement}
-                style={{
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                  width: "100%",
-                  transform: `translateY(${virtualRow.start}px)`,
-                  paddingBottom: 12,
-                }}
-              >
-                {group.casts.length === 1 ? (
-                  <VoterRow
-                    vote={group.casts[0]}
-                    formatPrice={formatPrice}
-                    entryTitlesById={entryTitlesById}
-                    rankById={rankById}
-                  />
-                ) : (
-                  <VoterGroup
-                    address={group.address}
-                    casts={group.casts}
-                    totalVotes={group.totalVotes}
-                    totalSpent={group.totalSpent}
-                    formatPrice={formatPrice}
-                    entryTitlesById={entryTitlesById}
-                    rankById={rankById}
-                  />
-                )}
-              </div>
-            );
-          })}
-        </div>
+      <div className="no-scrollbar flex flex-col gap-3 overflow-y-auto overscroll-contain" style={{ maxHeight: "60vh" }}>
+        {groups.map(group =>
+          group.casts.length === 1 ? (
+            <VoterRow
+              key={group.address}
+              vote={group.casts[0]}
+              formatPrice={formatPrice}
+              entryTitlesById={entryTitlesById}
+              rankById={rankById}
+            />
+          ) : (
+            <VoterGroup
+              key={group.address}
+              address={group.address}
+              casts={group.casts}
+              totalVotes={group.totalVotes}
+              totalSpent={group.totalSpent}
+              formatPrice={formatPrice}
+              entryTitlesById={entryTitlesById}
+              rankById={rankById}
+            />
+          ),
+        )}
       </div>
 
       {hasMore && (

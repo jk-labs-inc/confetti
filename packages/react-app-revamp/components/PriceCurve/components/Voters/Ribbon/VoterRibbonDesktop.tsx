@@ -2,14 +2,13 @@ import { useVirtualizer } from "@tanstack/react-virtual";
 import { FC, PointerEvent as ReactPointerEvent, useCallback, useEffect, useRef, useState } from "react";
 import VoterChip, { voterChipData } from "../components/VoterChip";
 import VoterRibbonHeader from "../components/VoterRibbonHeader";
-import { CHIP_GAP, DESKTOP_CHIP_W, RIBBON_FADE } from "../constants";
+import { CHIP_GAP, DESKTOP_CHIP_W, LOAD_MORE_THRESHOLD, RIBBON_FADE } from "../constants";
 import { useScrollEdges } from "../hooks/useScrollEdges";
 import { useVoterRibbon } from "../hooks/useVoterRibbon";
 import { VoterRibbonProps } from "../types";
 
 const DRAG_THRESHOLD = 4;
 const FALLBACK_CHIP_H = 108;
-const LOAD_MORE_THRESHOLD = 5;
 
 const VoterRibbonDesktop: FC<VoterRibbonProps> = ({
   votes,
