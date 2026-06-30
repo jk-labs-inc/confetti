@@ -1,4 +1,5 @@
 import { Proposal } from "@components/_pages/ProposalContent";
+import VoteCountPulse from "@components/_pages/ProposalContent/components/VoteFeedback";
 import { CheckIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { ContestStatus } from "@hooks/useContestStatus/store";
 import { EntryPreview } from "@hooks/useDeployContest/slices/contestMetadataSlice";
@@ -16,6 +17,7 @@ interface ProposalLayoutTweetProps {
   selectedProposalIds: string[];
   enabledPreview: EntryPreview | null;
   isHighlighted: boolean;
+  highlightColor?: string;
   handleVotingDrawerOpen?: () => void;
   toggleProposalSelection?: (proposalId: string) => void;
 }
@@ -32,6 +34,7 @@ const ProposalLayoutTweet: FC<ProposalLayoutTweetProps> = ({
   selectedProposalIds,
   enabledPreview,
   isHighlighted,
+  highlightColor,
   handleVotingDrawerOpen,
   toggleProposalSelection,
 }) => {
@@ -75,8 +78,9 @@ const ProposalLayoutTweet: FC<ProposalLayoutTweetProps> = ({
   return (
     <div
       className={`flex flex-col gap-4 p-2 bg-true-black rounded-2xl shadow-entry-card w-full border-2 transition duration-150 ease-out active:scale-[0.98] ${
-        isHighlighted ? "border-secondary-14" : "border-transparent"
+        isHighlighted ? "" : "border-transparent"
       }`}
+      style={highlightColor ? { borderColor: highlightColor } : undefined}
     >
       <div className="pl-2 items-center flex w-full">
         <ProposalLayoutTweetRankOrPlaceholder proposal={proposal} />
@@ -84,7 +88,9 @@ const ProposalLayoutTweet: FC<ProposalLayoutTweetProps> = ({
           {tweetTitle ? <p className="text-[12px] font-bold text-neutral-11">{tweetTitle}</p> : null}
           {(contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed) &&
           proposal.votes > 0 ? (
-            <p className="text-[12px] text-neutral-11">{formatNumberWithCommas(proposal.votes)} votes</p>
+            <p className="text-[12px] text-neutral-11">
+              <VoteCountPulse votes={proposal.votes}>{formatNumberWithCommas(proposal.votes)}</VoteCountPulse> votes
+            </p>
           ) : null}
         </div>
       </div>

@@ -34,9 +34,8 @@ contract ContestTest is Test {
     // SORTING INT PARAMS
     uint256 public constant RANK_LIMIT_250 = 250;
 
-    // METADATA CONSTRUCTOR PARAMS
-    string public constant METADATA_FIELDS_SCHEMA =
-        "{\'Test Address Field\': \'address\', \'Test String Field\': \'string\', \'Test Uint Field\': \'uint256\'}";
+    // ENTRY PARAMS
+    string public CONTEST_ENTRY_TYPE = "TEXT";
 
     Governor.IntConstructorArgs public payPerVoteExpCurveIntConstructorArgs = Governor.IntConstructorArgs(
         ANYONE_CAN_SUBMIT,
@@ -73,7 +72,7 @@ contract ContestTest is Test {
         CONTEST_PROMPT,
         payPerVoteExpCurveIntConstructorArgs,
         JK_LABS_SPLIT_DESTINATION,
-        METADATA_FIELDS_SCHEMA
+        CONTEST_ENTRY_TYPE
     );
 
     Governor.ConstructorArgs public payPerVoteLogCurveParams = Governor.ConstructorArgs(
@@ -81,7 +80,7 @@ contract ContestTest is Test {
         CONTEST_PROMPT,
         payPerVoteLogCurveIntConstructorArgs,
         JK_LABS_SPLIT_DESTINATION,
-        METADATA_FIELDS_SCHEMA
+        CONTEST_ENTRY_TYPE
     );
 
     address public constant JK_LABS_ADDRESS = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738;
@@ -89,26 +88,11 @@ contract ContestTest is Test {
     address public constant TEST_ADDRESS_1 = 0xd698e31229aB86334924ed9DFfd096a71C686900;
     address public constant TEST_ADDRESS_2 = 0x016C8780e5ccB32E5CAA342a926794cE64d9C364;
 
-    // METADATA PARAMS
-    address[] public safeSigners = [address(0)];
-    uint8 public constant SAFE_THRESHOLD = 1;
-    address[] public METADATA_FIELDS_ADDRESS_ARRAY = [CREATOR_ADDRESS]; // placeholder value
-    string[] public METADATA_FIELDS_STRING_ARRAY = [METADATA_FIELDS_SCHEMA]; // placeholder value
-    uint256[] public METADATA_FIELDS_UINT_ARRAY = [SAFE_THRESHOLD]; // placeholder value
-
     // PROPOSAL PARAMS
     uint256[] public proposalsToDelete;
 
-    Governor.ProposalCore public testAddress1AuthorProposal = Governor.ProposalCore({
-        author: TEST_ADDRESS_1,
-        description: "testAddress1AuthorProposal",
-        exists: true,
-        fieldsMetadata: Governor.FieldsMetadata({
-            addressArray: METADATA_FIELDS_ADDRESS_ARRAY,
-            stringArray: METADATA_FIELDS_STRING_ARRAY,
-            uintArray: METADATA_FIELDS_UINT_ARRAY
-        })
-    });
+    Governor.ProposalCore public testAddress1AuthorProposal =
+        Governor.ProposalCore({author: TEST_ADDRESS_1, description: "testAddress1AuthorProposal", exists: true});
 
     // REWARDS MODULE VARS
     VoterRewardsModule public voterRewardsModule;

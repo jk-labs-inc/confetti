@@ -1,12 +1,11 @@
-import { compareVersions } from "compare-versions";
+import { safeCompareVersions } from "@helpers/versions";
+import { METADATA_FIELDS_VERSION } from "constants/versions";
 import { useEffect } from "react";
 import { Abi } from "viem";
 import { useReadContract } from "wagmi";
 import { useShallow } from "zustand/shallow";
 import { parseMetadataFieldsSchema } from "./helpers";
 import { useMetadataStore } from "./store";
-
-const METADATA_FIELDS_VERSION = "4.31";
 
 interface UseMetadataFieldsParams {
   address: `0x${string}`;
@@ -29,7 +28,7 @@ const useMetadataFields = ({ address, chainId, abi, version, enabled = true }: U
     chainId: chainId,
     functionName: "metadataFieldsSchema",
     query: {
-      enabled: !!version && Boolean(compareVersions(version, METADATA_FIELDS_VERSION) >= 0) && enabled,
+      enabled: enabled && !!version && (safeCompareVersions(version, METADATA_FIELDS_VERSION) ?? -1) >= 0,
     },
   });
 

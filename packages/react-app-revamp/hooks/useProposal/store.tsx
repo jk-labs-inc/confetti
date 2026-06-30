@@ -107,3 +107,11 @@ export function useProposalStore<T>(selector: (state: ProposalState) => T) {
   const value = useStore(store, selector);
   return value;
 }
+
+export function useProposalStoreApi() {
+  const store = useContext(ProposalContext);
+  if (store === null) {
+    throw new Error("Missing ProposalWrapper in the tree");
+  }
+  return store;
+}

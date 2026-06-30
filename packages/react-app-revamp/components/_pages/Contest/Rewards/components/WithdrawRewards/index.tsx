@@ -1,6 +1,6 @@
+import Tooltip from "@components/UI/Tooltip";
 import { TokenInfo, useReleasableRewards } from "@hooks/useReleasableRewards";
 import { FC, useMemo, useState } from "react";
-import { Tooltip } from "react-tooltip";
 import { Abi } from "viem";
 import WithdrawRewardsModal from "./components/Modal";
 
@@ -11,8 +11,6 @@ interface ContestWithdrawRewardsProps {
   rankings: number[];
   isCanceledByJkLabs: boolean;
 }
-
-const tooltipId = "withdraw-rewards-canceled-tooltip";
 
 const ContestWithdrawRewards: FC<ContestWithdrawRewardsProps> = ({
   rewardsModuleAddress,
@@ -49,31 +47,30 @@ const ContestWithdrawRewards: FC<ContestWithdrawRewardsProps> = ({
   return (
     <>
       {aggregatedRewards.length > 0 ? (
-        <div className="inline-block">
-          <button
-            className={`text-[16px] font-bold ${
-              isCanceledByJkLabs ? "text-positive-11 cursor-not-allowed opacity-50" : "text-positive-11 cursor-pointer"
-            }`}
-            onClick={isCanceledByJkLabs ? undefined : () => setIsWithdrawRewardsModalOpen(true)}
-            disabled={isCanceledByJkLabs}
-            data-tooltip-id={isCanceledByJkLabs ? tooltipId : undefined}
-            data-tooltip-place="top"
-          >
-            📤 withdraw funds
-          </button>
-          {isCanceledByJkLabs && (
-            <Tooltip
-              opacity={1}
-              id={tooltipId}
-              className="max-w-64 p-2 z-50! border border-transparent rounded-lg focus:outline-none"
+        <Tooltip
+          place="top"
+          surface="dark"
+          className="max-w-64"
+          disabled={!isCanceledByJkLabs}
+          content={
+            <div className="text-[12px] text-white">
+              this rewards module has been canceled by jk labs at least a week after the underlying contest has ended and
+              only they can withdraw the remaining funds in it to resolve any issues.
+            </div>
+          }
+        >
+          <span className="inline-block">
+            <button
+              className={`text-[16px] font-bold ${
+                isCanceledByJkLabs ? "text-positive-11 cursor-not-allowed opacity-50" : "text-positive-11 cursor-pointer"
+              }`}
+              onClick={isCanceledByJkLabs ? undefined : () => setIsWithdrawRewardsModalOpen(true)}
+              disabled={isCanceledByJkLabs}
             >
-              <div className="text-[12px] text-white">
-                this rewards module has been canceled by jk labs at least a week after the underlying contest has ended
-                and only they can withdraw the remaining funds in it to resolve any issues.
-              </div>
-            </Tooltip>
-          )}
-        </div>
+              📤 withdraw funds
+            </button>
+          </span>
+        </Tooltip>
       ) : (
         <p className="text-neutral-11 text-[16px] font-bold">you have withdrawn funds</p>
       )}

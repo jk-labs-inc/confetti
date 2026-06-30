@@ -16,6 +16,11 @@ const sizeConfig = {
   small: { className: "w-10 h-[30px] rounded-[8px]", preset: CONTEST_IMAGE_PRESETS.headerThumbSmall },
 };
 
+const objectFitClasses: Record<ContestImageSize, string> = {
+  default: "object-cover",
+  small: "object-contain",
+};
+
 const ContestImage: FC<ContestImageProps> = ({ imageUrl, size = "default" }) => {
   const { className, preset } = sizeConfig[size];
   const { src, srcSet } = useCloudflareImage(imageUrl, preset);
@@ -29,7 +34,7 @@ const ContestImage: FC<ContestImageProps> = ({ imageUrl, size = "default" }) => 
         height={preset.height}
         alt="contest"
         decoding="async"
-        className="w-full h-full object-cover"
+        className={`w-full h-full ${objectFitClasses[size]}`}
       />
     </div>
   );

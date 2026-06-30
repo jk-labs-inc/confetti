@@ -1,4 +1,5 @@
 import { toastInfo } from "@components/UI/Toast";
+import { entryMedal, withAlpha } from "@helpers/entryColors";
 import { extractPathSegments } from "@helpers/extractPath";
 import { Tweet as TweetType } from "@helpers/isContentTweet";
 import { useCastVotesStore } from "@hooks/useCastVotes/store";
@@ -14,6 +15,7 @@ import { FC, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useShallow } from "zustand/shallow";
 import DrawerVoteForProposal from "../DrawerVoteForProposal";
+import VoteParticleOverlay from "./components/VoteFeedback/VoteParticleOverlay";
 import ProposalLayoutClassic from "./components/ProposalLayout/Classic";
 import ProposalLayoutGallery from "./components/ProposalLayout/Gallery";
 import ProposalLayoutLeaderboard from "./components/ProposalLayout/Leaderboard";
@@ -63,6 +65,10 @@ const ProposalContent: FC<ProposalContentProps> = ({
   const [isVotingDrawerOpen, setIsVotingDrawerOpen] = useState(false);
   const { contestState } = useContestStateStore(state => state);
   const isContestCanceled = contestState === ContestStateEnum.Canceled;
+  const isVotingOpenStatus = contestStatus === ContestStatus.VotingOpen;
+  const isVotingClosedStatus = contestStatus === ContestStatus.VotingClosed;
+  const canSelectForSidebar =
+    !isContestCanceled && (isVotingOpenStatus || (isVotingClosedStatus && proposal.votes > 0));
   const { setPickedProposal, pickedProposal } = useCastVotesStore(
     useShallow(state => ({
       setPickedProposal: state.setPickedProposal,
@@ -71,6 +77,7 @@ const ProposalContent: FC<ProposalContentProps> = ({
   );
   const isPicked = pickedProposal === proposal.id;
   const isHighlighted = isPicked && (isDesktop || isVotingDrawerOpen);
+  const highlightColor = isHighlighted ? withAlpha(entryMedal(proposal.rank).solid, 0.6) : undefined;
   const shouldReduceOpacity = isVotingDrawerOpen && !isPicked;
   const {
     profileAvatar,
@@ -120,6 +127,7 @@ const ProposalContent: FC<ProposalContentProps> = ({
     toggleProposalSelection,
     enabledPreview,
     isHighlighted,
+    highlightColor,
   };
 
   const renderLayout = () => {
@@ -139,25 +147,25 @@ const ProposalContent: FC<ProposalContentProps> = ({
 
   const handleCardClick = () => {
     if (isContestCanceled) return;
-    if (contestStatus !== ContestStatus.VotingOpen) return;
 
     if (!isDesktop) {
-      handleVotingDrawerOpen();
+      if (isVotingOpenStatus) handleVotingDrawerOpen();
       return;
     }
 
-    setPickedProposal(proposal.id);
+    if (canSelectForSidebar) setPickedProposal(proposal.id);
   };
 
   return (
     <>
       <div
         onClick={handleCardClick}
-        className={`transition-opacity duration-300 ease-in-out ${
-          isDesktop && contestStatus === ContestStatus.VotingOpen && !isContestCanceled ? "xl:cursor-pointer" : ""
+        className={`relative transition-opacity duration-300 ease-in-out ${
+          isDesktop && canSelectForSidebar ? "xl:cursor-pointer" : ""
         } ${shouldReduceOpacity ? "opacity-30" : "opacity-100"}`}
       >
         {renderLayout()}
+        <VoteParticleOverlay votes={proposal.votes} />
       </div>
       <DrawerVoteForProposal isOpen={isVotingDrawerOpen} setIsOpen={handleVotingDrawerClose} />
     </>

@@ -7,7 +7,6 @@ import dynamic from "next/dynamic";
 import localFont from "next/font/local";
 import NextTopLoader from "nextjs-toploader";
 import "react-loading-skeleton/dist/skeleton.css";
-import "react-tooltip/dist/react-tooltip.css";
 import "simplebar-react/dist/simplebar.min.css";
 import "./globals.css";
 import Providers from "./providers";
@@ -79,13 +78,11 @@ export const viewport: Viewport = {
 };
 
 const DynamicPortal = dynamic(() => import("./portal"), { ssr: !!false });
-const DynamicReactScan = dynamic(() => import("./react-scan"), { ssr: !!false });
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${lato.variable} ${saboRegular.variable} ${saboFilled.variable} antialiased`}>
       <body className={lato.className}>
-        <DynamicReactScan />
         <div id="__next">
           <NextTopLoader color="#BB65FF" shadow="0 0 10px #BB65FF, 0 0 5px #78FFC6" showSpinner={false} />
           <Providers>

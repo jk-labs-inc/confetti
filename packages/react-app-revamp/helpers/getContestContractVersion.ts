@@ -68,6 +68,8 @@ import AddAnalyticsContract from "@contracts/bytecodeAndAbi/Contest.6.16.addAnal
 import CompleteCostToEnterDepContract from "@contracts/bytecodeAndAbi/Contest.6.17.completeCostToEnterDep.sol/Contest.json";
 import UpdateVotingPeriodLimitContract from "@contracts/bytecodeAndAbi/Contest.6.18.updateVotingPeriodLimit.sol/Contest.json";
 import AddLogCurveContract from "@contracts/bytecodeAndAbi/Contest.6.19.addLogCurve.sol/Contest.json";
+import RmMetadataFieldsContract from "@contracts/bytecodeAndAbi/Contest.6.20.rmMetadataFields.sol/Contest.json";
+import UpdateVotingLimitContract from "@contracts/bytecodeAndAbi/Contest.6.21.updateVotingLimit.sol/Contest.json";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { MAX_TIME_TO_WAIT_FOR_RPC, executeWithTimeout } from "./timeout";
 import { createTransport } from "@config/wagmi/chains";
@@ -80,6 +82,8 @@ type ContractData = {
 };
 
 const VERSION_TO_CONTRACT: Record<string, ContractData> = {
+  "6.21": UpdateVotingLimitContract,
+  "6.20": RmMetadataFieldsContract,
   "6.19": AddLogCurveContract,
   "6.18": UpdateVotingPeriodLimitContract,
   "6.17": CompleteCostToEnterDepContract,

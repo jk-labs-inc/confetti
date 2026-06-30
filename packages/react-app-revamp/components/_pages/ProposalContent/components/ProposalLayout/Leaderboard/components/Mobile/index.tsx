@@ -1,4 +1,5 @@
 import { Proposal } from "@components/_pages/ProposalContent";
+import VoteCountPulse from "@components/_pages/ProposalContent/components/VoteFeedback";
 import ProposalContentDeleteButton from "@components/_pages/ProposalContent/components/Buttons/Delete";
 import ProposalContentVotePrimary from "@components/_pages/ProposalContent/components/Buttons/Vote/Primary";
 import { formatNumberWithCommas } from "@helpers/formatNumber";
@@ -53,7 +54,7 @@ const ProposalLayoutLeaderboardMobile: FC<ProposalLayoutLeaderboardMobileProps> 
         {isVotingActive ? (
           <>
             <p className="text-[16px] text-neutral-11 tabular-nums">
-              {formatNumberWithCommas(proposal.votes)}
+              <VoteCountPulse votes={proposal.votes}>{formatNumberWithCommas(proposal.votes)}</VoteCountPulse>
             </p>
             <div className="flex justify-end">
               <ProposalContentVotePrimary proposal={proposal} handleVotingModalOpen={handleVotingDrawerOpen} />

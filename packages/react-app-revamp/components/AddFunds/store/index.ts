@@ -11,7 +11,7 @@ interface AddFundsStore {
 }
 
 export const useAddFundsStore = create<AddFundsStore>((set, get) => ({
-  providerType: AddFundsProviderType.ONRAMP,
+  providerType: AddFundsProviderType.BRIDGE,
   expandedCards: {},
 
   setProviderType: (type: AddFundsProviderType) => set({ providerType: type }),

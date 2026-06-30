@@ -2,7 +2,7 @@ import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import Drawer from "@components/UI/Drawer";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import { Charge } from "@hooks/useDeployContest/types";
-import useMetadataFields from "@hooks/useMetadataFields";
+import useContestEntryType from "@hooks/useContestEntryType";
 import { useMetadataStore } from "@hooks/useMetadataFields/store";
 import useSubmitProposal from "@hooks/useSubmitProposal";
 import { useModal } from "@getpara/react-sdk-lite";
@@ -48,7 +48,7 @@ const DialogModalSendProposalMobileLayout: FC<DialogModalSendProposalMobileLayou
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const { isLoading, isSuccess, error } = useSubmitProposal();
   const { contestConfig } = useContestConfigStore(useShallow(state => state));
-  const { isLoading: isMetadataFieldsLoading, isError: isMetadataFieldsError } = useMetadataFields({
+  const { isLoading: isEntryTypeLoading, isError: isEntryTypeError } = useContestEntryType({
     address: contestConfig.address,
     chainId: contestConfig.chainId,
     abi: contestConfig.abi,
@@ -90,10 +90,10 @@ const DialogModalSendProposalMobileLayout: FC<DialogModalSendProposalMobileLayou
           )}
 
           <div className="flex flex-col gap-8">
-            {isMetadataFieldsLoading ? (
-              <p className="loadingDots font-sabo-filled text-[16px] text-neutral-14">loading metadata fields</p>
-            ) : isMetadataFieldsError ? (
-              <p className="text-negative-11">Error while loading metadata fields. Please reload the page.</p>
+            {isEntryTypeLoading ? (
+              <p className="loadingDots font-sabo-filled text-[16px] text-neutral-14">loading entry format</p>
+            ) : isEntryTypeError ? (
+              <p className="text-negative-11">Error while loading entry format. Please reload the page.</p>
             ) : null}
           </div>
         </div>

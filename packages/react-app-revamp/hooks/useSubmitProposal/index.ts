@@ -11,13 +11,12 @@ import { useError } from "@hooks/useError";
 import { useMetadataStore } from "@hooks/useMetadataFields/store";
 import useProposal from "@hooks/useProposal";
 import { useProposalStore } from "@hooks/useProposal/store";
-import useRewardsModule from "@hooks/useRewards";
-import { useTotalRewards } from "@hooks/useTotalRewards";
 import { useWallet } from "@hooks/useWallet";
 import { simulateContract, waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { compareVersions } from "compare-versions";
+import { safeCompareVersions } from "@helpers/versions";
+import { CONTEST_ENTRY_TYPE_VERSION } from "constants/versions";
 import { addUserActionForAnalytics } from "lib/analytics/participants";
-import { updateRewardAnalytics } from "lib/analytics/rewards";
 import { useMediaQuery } from "react-responsive";
 import { useShallow } from "zustand/shallow";
 import { useSubmitProposalStore } from "./store";
@@ -31,36 +30,18 @@ interface UserAnalyticsParams {
   charge: Charge;
 }
 
-interface RewardsAnalyticsParams {
-  address: string;
-  rewardsModuleAddress: string;
-  charge: Charge;
-  chainName: string;
-  amount: number;
-  operation: "deposit" | "withdraw";
-  token_address: string | null;
-}
-
-interface CombinedAnalyticsParams extends UserAnalyticsParams, RewardsAnalyticsParams {}
-
 export function useSubmitProposal() {
   const { userAddress, chain } = useWallet();
   const { contestConfig } = useContestConfigStore(state => state);
   const isMobile = useMediaQuery({ maxWidth: "768px" });
   const showToast = !isMobile;
   const charge = useContestStore(useShallow(state => state.charge));
-  const { data: rewards } = useRewardsModule();
   const { error: errorMessage, handleError } = useError();
   const { fetchSingleProposal } = useProposal();
   const { setSubmissionsCount, submissionsCount } = useProposalStore(state => state);
   const { isLoading, isSuccess, error, setIsLoading, setIsSuccess, setError, setTransactionData } =
     useSubmitProposalStore(state => state);
   const { fields: metadataFields, setFields: setMetadataFields } = useMetadataStore(state => state);
-  const { refetch: refetchTotalRewards } = useTotalRewards({
-    rewardsModuleAddress: rewards?.contractAddress as `0x${string}`,
-    rewardsModuleAbi: rewards?.abi,
-    chainId: contestConfig.chainId,
-  });
 
   const getContractConfig = () => {
     return {
@@ -81,24 +62,26 @@ export function useSubmitProposal() {
     setError("");
     setTransactionData(null);
 
-    const entryPreviewHTML = generateEntryPreviewHTML(metadataFields);
-
-    const fullProposalContent = `${entryPreviewHTML}\n\n${proposalContent}`;
+    const isEntryTypeVersion = (safeCompareVersions(contestConfig.version, CONTEST_ENTRY_TYPE_VERSION) ?? -1) >= 0;
 
     return new Promise<{ tx: TransactionResponse; proposalId: string }>(async (resolve, reject) => {
       try {
         const contractConfig = getContractConfig();
-        const fieldsMetadata = processFieldInputs(metadataFields);
-        const isVersionBelowMetadataRemoval = compareVersions(contestConfig.version, "6.14") < 0;
+        const isVersionBelowMetadataRemoval = !isEntryTypeVersion && compareVersions(contestConfig.version, "6.14") < 0;
+        const description = isEntryTypeVersion
+          ? metadataFields.length > 0
+            ? metadataFields[0].inputValue
+            : proposalContent
+          : `${generateEntryPreviewHTML(metadataFields)}\n\n${proposalContent}`;
         const proposalCore = {
           author: userAddress,
           exists: true,
-          description: fullProposalContent,
+          description,
           ...(isVersionBelowMetadataRemoval && {
             targetMetadata: targetMetadata,
             safeMetadata: safeMetadata,
           }),
-          fieldsMetadata: fieldsMetadata,
+          ...(!isEntryTypeVersion && { fieldsMetadata: processFieldInputs(metadataFields) }),
         };
 
         let hash: `0x${string}`;
@@ -128,16 +111,12 @@ export function useSubmitProposal() {
           transactionHref: `${chain?.blockExplorers?.default?.url}/tx/${hash}`,
         });
 
-        await performAnalytics({
+        await addUserActionAnalytics({
           address: contestConfig.address,
           userAddress,
           chainName: contestConfig.chainName,
           proposalId,
           charge,
-          rewardsModuleAddress: rewards?.contractAddress as `0x${string}`,
-          amount: 0,
-          operation: "deposit",
-          token_address: null,
         });
 
         await fetchSingleProposal(getContractConfig(), contestConfig.version, proposalId);
@@ -179,32 +158,6 @@ export function useSubmitProposal() {
       });
     } catch (error) {
       console.error("Error in addUserActionForAnalytics:", error);
-    }
-  }
-
-  async function updateRewardAnalyticsIfNeeded(params: RewardsAnalyticsParams) {
-    try {
-      await updateRewardAnalytics({
-        contest_address: params.address,
-        rewards_module_address: params.rewardsModuleAddress,
-        network_name: params.chainName,
-        amount: 0,
-        operation: "deposit",
-        token_address: null,
-        created_at: Math.floor(Date.now() / 1000),
-      });
-    } catch (error) {
-      console.error("Error while updating reward analytics", error);
-    }
-    refetchTotalRewards();
-  }
-
-  async function performAnalytics(params: CombinedAnalyticsParams) {
-    try {
-      await addUserActionAnalytics(params);
-      await updateRewardAnalyticsIfNeeded(params);
-    } catch (error) {
-      console.error("Error in performAnalytics:", error);
     }
   }
 

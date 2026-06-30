@@ -1,22 +1,18 @@
-import Tooltip from "@components/UI/Tooltip";
-import { flip, offset, shift } from "@floating-ui/dom";
+import FloatingSurface from "@components/UI/Tooltip/FloatingSurface";
+import { useTooltip } from "@components/UI/Tooltip/useTooltip";
+import { type Placement } from "@floating-ui/react";
 import { InformationCircleIcon } from "@heroicons/react/24/outline";
-import { CSSProperties, FC, ReactNode, useEffect, useId, useRef, useState } from "react";
-import type { PlacesType } from "react-tooltip";
+import { CSSProperties, FC, ReactNode } from "react";
 
 interface HoverInfoTooltipProps {
   ariaLabel: string;
   children: ReactNode;
-  place?: PlacesType;
+  place?: Placement;
   buttonClassName?: string;
   contentClassName?: string;
   tooltipClassName?: string;
   tooltipStyle?: CSSProperties;
 }
-
-const HIDE_DELAY_MS = 150;
-
-const middlewares = [offset(10), flip({ fallbackPlacements: ["bottom"] }), shift({ padding: 5 })];
 
 const HoverInfoTooltip: FC<HoverInfoTooltipProps> = ({
   ariaLabel,
@@ -27,60 +23,22 @@ const HoverInfoTooltip: FC<HoverInfoTooltipProps> = ({
   tooltipClassName,
   tooltipStyle,
 }) => {
-  const tooltipId = useId();
-  const [isOpen, setIsOpen] = useState(false);
-  const hideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const cancelHide = () => {
-    if (hideTimerRef.current) {
-      clearTimeout(hideTimerRef.current);
-      hideTimerRef.current = null;
-    }
-  };
-
-  const scheduleHide = () => {
-    cancelHide();
-    hideTimerRef.current = setTimeout(() => setIsOpen(false), HIDE_DELAY_MS);
-  };
-
-  const open = () => {
-    cancelHide();
-    setIsOpen(true);
-  };
-
-  useEffect(() => cancelHide, []);
+  const tooltip = useTooltip({ interactive: true, placement: place, enableClick: true });
 
   return (
     <>
       <button
+        ref={tooltip.refs.setReference}
+        {...tooltip.getReferenceProps()}
         type="button"
         aria-label={ariaLabel}
-        data-tooltip-id={tooltipId}
-        data-tooltip-place={place}
-        data-tooltip-position-strategy="fixed"
-        onMouseEnter={open}
-        onMouseLeave={scheduleHide}
-        onFocus={open}
-        onBlur={scheduleHide}
         className={`flex items-center justify-center transition-colors ${buttonClassName}`}
       >
         <InformationCircleIcon className="w-5 h-5" />
       </button>
-      <Tooltip
-        id={tooltipId}
-        place={place}
-        positionStrategy="fixed"
-        offset={10}
-        middlewares={middlewares}
-        isOpen={isOpen}
-        imperativeModeOnly
-        style={tooltipStyle}
-        className={tooltipClassName}
-      >
-        <div onMouseEnter={cancelHide} onMouseLeave={scheduleHide} className={contentClassName}>
-          {children}
-        </div>
-      </Tooltip>
+      <FloatingSurface tooltip={tooltip} surface="default" className={tooltipClassName} style={tooltipStyle}>
+        <div className={contentClassName}>{children}</div>
+      </FloatingSurface>
     </>
   );
 };

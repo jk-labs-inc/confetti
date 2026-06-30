@@ -3,17 +3,18 @@ import Loader from "@components/UI/Loader";
 import VotingSidebar from "@components/_pages/Contest/VotingSidebar";
 import ContestNotifyButton from "@components/_pages/Contest/components/ContestNotifyButton";
 import ContestShareButton from "@components/_pages/Contest/components/ContestShareButton";
-import ContestStickyTrigger from "@components/_pages/Contest/components/ContestStickyTrigger";
 import ContestTabs, { Tab } from "@components/_pages/Contest/components/Tabs";
 import { populateBugReportLink } from "@helpers/githubIssue";
 import { useContestStore } from "@hooks/useContest/store";
+import useContestEntryType from "@hooks/useContestEntryType";
 import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import { useContestStickyScroll } from "@hooks/useContestStickyScroll";
 import { useContestStickyStore } from "@hooks/useContestStickyStore";
+import useTotalVotesCastOnContest from "@hooks/useTotalVotesCastOnContest";
 import { useWallet } from "@hooks/useWallet";
 import { useUrl } from "nextjs-current-url";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useShallow } from "zustand/shallow";
 import ContestHeader from "./components/ContestHeader";
 import ContestTabsContent from "./components/ContestTabsContent";
@@ -37,6 +38,13 @@ const LayoutViewContest = () => {
     contestPrompt,
     canEditTitleAndDescription,
   } = useLayoutViewContest();
+
+  useContestEntryType({
+    address: contestConfig.address,
+    chainId: contestConfig.chainId,
+    abi: contestConfig.abi,
+    version: contestConfig.version,
+  });
   const bugReportLink = populateBugReportLink(url?.href ?? "", userAddress ?? "", error ?? "");
   const contestImageUrl = getContestImageUrl(contestPrompt);
   const contestStatus = useContestStatusStore(state => state.contestStatus);
@@ -44,11 +52,20 @@ const LayoutViewContest = () => {
   const { votesOpen, votesClose } = useContestStore(
     useShallow(state => ({ votesOpen: state.votesOpen, votesClose: state.votesClose })),
   );
-  const showSidebar = contestStatus === ContestStatus.VotingOpen && contestState !== ContestStateEnum.Canceled;
+  const isVotingOpen = contestStatus === ContestStatus.VotingOpen;
+  const isVotingClosed = contestStatus === ContestStatus.VotingClosed;
+  const { totalVotesCast } = useTotalVotesCastOnContest(contestConfig.address, contestConfig.chainId, {
+    enabled: isVotingClosed,
+  });
+  const contestHasVotes = !!totalVotesCast && Number(totalVotesCast) > 0;
+  const showSidebar =
+    contestState !== ContestStateEnum.Canceled && (isVotingOpen || (isVotingClosed && contestHasVotes));
+
+  const compactSentinelRef = useRef<HTMLDivElement>(null);
 
   const resetStickyStore = useContestStickyStore(state => state.reset);
   useEffect(() => () => resetStickyStore(), [resetStickyStore]);
-  useContestStickyScroll();
+  useContestStickyScroll(compactSentinelRef);
 
   const excludeTabs = useMemo(() => {
     const tabsToExclude: Tab[] = [];
@@ -70,11 +87,11 @@ const LayoutViewContest = () => {
     <div
       className={`w-full px-6 pt-6 md:px-12 md:pt-0 lg:w-[760px] lg:px-0 mx-auto ${showSidebar ? "xl:w-[1272px]" : ""}`}
     >
-      <div className={`md:pt-5 md:pb-20 ${showSidebar ? "xl:flex xl:items-start xl:gap-8" : ""}`}>
-        <div className={`flex flex-col md:col-span-9 ${showSidebar ? "xl:w-[760px] xl:shrink-0" : ""}`}>
+      <div className={`md:pt-5 md:pb-20 ${showSidebar ? "xl:flex xl:items-start xl:gap-8 xl:pt-0 xl:pb-0" : ""}`}>
+        <div className={`flex flex-col md:col-span-9 ${showSidebar ? "xl:w-[760px] xl:shrink-0 xl:px-4" : ""}`}>
           <ReadOnlyBanner isReadOnly={isReadOnly} isLoading={isLoading} />
 
-          <ContestStickyTrigger trigger="compact" />
+          <div ref={compactSentinelRef} aria-hidden className="h-px w-full" />
           <ContestHeader
             contestImageUrl={contestImageUrl ?? ""}
             contestName={contestName}
@@ -114,7 +131,7 @@ const LayoutViewContest = () => {
           </div>
         </div>
         {showSidebar && (
-          <aside className="hidden xl:block xl:w-[480px] xl:shrink-0 xl:mt-4 sticky top-4 self-start max-h-[calc(100vh-2rem)] overflow-y-auto sidebar-scroll">
+          <aside className="hidden xl:block xl:w-[480px] xl:shrink-0 xl:sticky xl:top-4 xl:max-h-[calc(100dvh_-_2rem)] xl:overflow-y-auto xl:overflow-x-hidden xl:overscroll-contain no-scrollbar xl:pt-4">
             <VotingSidebar />
           </aside>
         )}

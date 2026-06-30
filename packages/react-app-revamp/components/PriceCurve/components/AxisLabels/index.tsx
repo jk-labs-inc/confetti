@@ -11,6 +11,7 @@ interface AxisLabelsProps {
   yScale: (value: number) => number;
   getX: (d: ChartDataPoint) => number;
   formatPrice: (nativePrice: number) => string;
+  xTickY?: number;
 }
 
 const AxisLabels: FC<AxisLabelsProps> = ({
@@ -22,6 +23,7 @@ const AxisLabels: FC<AxisLabelsProps> = ({
   yScale,
   getX,
   formatPrice,
+  xTickY,
 }) => {
   return (
     <>
@@ -45,7 +47,7 @@ const AxisLabels: FC<AxisLabelsProps> = ({
           <text
             key={`x-tick-${i}`}
             x={getX(tick)}
-            y={chartHeight + 16}
+            y={xTickY ?? chartHeight + 16}
             fill="#6A6A6A"
             fontSize={10}
             textAnchor={anchor}

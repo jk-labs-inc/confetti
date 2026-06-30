@@ -3,6 +3,9 @@ import { useCurrencyStore } from "@hooks/useCurrency/store";
 import { convertToDisplayPrice, DisplayPriceOptions } from "@hooks/useCurrency/useDisplayPrice";
 import useNativeRates from "@hooks/useCurrency/useNativeRates";
 import useCurrentPricePercentageIncrease from "@hooks/useCurrentPricePercentageIncrease";
+import useContestEntryTitles from "@hooks/useContestEntryTitles";
+import useContestVoteMarkers from "@hooks/useContestVoteMarkers";
+import { useProposalStore } from "@hooks/useProposal/store";
 import usePriceCurveData from "@hooks/usePriceCurveData";
 import { useCountdownTimer } from "@hooks/useTimer";
 import { useParentSize } from "@visx/responsive";
@@ -49,6 +52,32 @@ const PriceCurveWrapper = ({
     isError,
   } = usePriceCurveData();
 
+  const { voteEvents, fetchNextPage, hasNextPage, isFetchingNextPage } = useContestVoteMarkers({
+    contestAddress: contestConfig.address,
+    chainName: contestConfig.chainName,
+    enabled: !!contestConfig.address,
+  });
+
+  const rankById = useProposalStore(
+    useShallow(state => {
+      const map = new Map<string, number>();
+      for (const proposal of state.listProposalsData) map.set(proposal.id, proposal.rank);
+      return map;
+    }),
+  );
+
+  const votedProposalIds = useMemo(() => voteEvents.map(event => event.proposalId), [voteEvents]);
+  const { titlesById: entryTitlesById, resolvedIds } = useContestEntryTitles({
+    contestConfig,
+    proposalIds: votedProposalIds,
+    enabled: !!contestConfig.address && voteEvents.length > 0,
+  });
+
+  const resolvedVoteEvents = useMemo(
+    () => voteEvents.filter(event => resolvedIds.has(event.proposalId)),
+    [voteEvents, resolvedIds],
+  );
+
   const endTime = useMemo(() => new Date(endTimeMs), [endTimeMs]);
   const votingTimeLeft = useCountdownTimer(endTime);
 
@@ -87,7 +116,7 @@ const PriceCurveWrapper = ({
   const setShowPriceUpdateWarning = usePriceCurveChartStore(useShallow(state => state.setShowPriceUpdateWarning));
 
   useEffect(() => {
-    const shouldWarn = showPriceWarning && secondsUntilNextUpdate < 15 && votingTimeLeft > 60;
+    const shouldWarn = showPriceWarning && secondsUntilNextUpdate < 10 && votingTimeLeft > 60;
     setShowPriceUpdateWarning(shouldWarn);
   }, [showPriceWarning, secondsUntilNextUpdate, votingTimeLeft, setShowPriceUpdateWarning]);
 
@@ -123,6 +152,12 @@ const PriceCurveWrapper = ({
         showAxisLabels={showAxisLabels}
         isExpanded={isExpanded}
         onToggleExpand={onToggleExpand}
+        voteEvents={resolvedVoteEvents}
+        entryTitlesById={entryTitlesById}
+        rankById={rankById}
+        onLoadMoreVotes={fetchNextPage}
+        hasMoreVotes={hasNextPage}
+        isLoadingMoreVotes={isFetchingNextPage}
       />
     </div>
   );

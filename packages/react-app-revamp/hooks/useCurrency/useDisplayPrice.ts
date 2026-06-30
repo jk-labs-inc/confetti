@@ -1,4 +1,4 @@
-import { formatBalance, formatUsd, formatUsdCeil } from "@helpers/formatBalance";
+import { formatTokenAmountSmart, formatUsd, formatUsdCeil } from "@helpers/formatBalance";
 import BigNumber from "bignumber.js";
 import { DisplayCurrency, useCurrencyStore } from "./store";
 import useErc20Rates from "./useErc20Rates";
@@ -54,7 +54,7 @@ export const convertToDisplayPrice = (
   const hasValidRate = rate !== undefined && !isNaN(numericValue);
   const nativeRounding = options.ceilingPrecision ? BigNumber.ROUND_CEIL : BigNumber.ROUND_HALF_UP;
   const formatUsdValue = options.ceilingPrecision ? formatUsdCeil : formatUsd;
-  const formattedNative = formatBalance(nativeValue, nativeRounding);
+  const formattedNative = formatTokenAmountSmart(nativeValue, rate, nativeRounding);
   const tickerSymbol = "$" + nativeCurrencySymbol.toUpperCase();
 
   if (displayCurrency === "native") {

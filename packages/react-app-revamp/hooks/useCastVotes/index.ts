@@ -14,11 +14,13 @@ import { useError } from "@hooks/useError";
 import { useFetchUserVotesOnProposal } from "@hooks/useFetchUserVotesOnProposal";
 import useProposal from "@hooks/useProposal";
 import { useProposalStore } from "@hooks/useProposal/store";
+import { invalidateProposalVoters } from "@hooks/useProposalVoters/invalidate";
 import useRewardsModule from "@hooks/useRewards";
 import { useTotalRewards } from "@hooks/useTotalRewards";
 import useTotalVotesCastOnContest from "@hooks/useTotalVotesCastOnContest";
 import { useVoteBalance } from "@hooks/useVoteBalance";
 import { useWallet } from "@hooks/useWallet";
+import { useQueryClient } from "@tanstack/react-query";
 import { readContract, simulateContract, waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import moment from "moment";
 import { useState } from "react";
@@ -38,6 +40,7 @@ interface UseCastVotesProps {
 }
 
 export function useCastVotes({ charge, votesClose }: UseCastVotesProps) {
+  const queryClient = useQueryClient();
   const { contestConfig } = useContestConfigStore(useShallow(state => state));
   const { data: rewards } = useRewardsModule();
   const { updateProposal } = useProposal();
@@ -143,7 +146,7 @@ export function useCastVotes({ charge, votesClose }: UseCastVotesProps) {
         operation: "deposit",
         token_address: null,
       };
-      await performAnalytics(analyticsParams, refetchTotalRewards);
+      void performAnalytics(analyticsParams, refetchTotalRewards);
 
       setTransactionData({
         hash: receipt.transactionHash,
@@ -161,13 +164,10 @@ export function useCastVotes({ charge, votesClose }: UseCastVotesProps) {
         const existingProposal = listProposalsData.find(proposal => proposal.id === pickedProposal);
 
         if (existingProposal) {
-          updateProposal(
-            {
-              ...existingProposal,
-              netVotes: votes,
-            },
-            listProposalsData,
-          );
+          updateProposal({
+            ...existingProposal,
+            netVotes: votes,
+          });
         }
       } catch (voteUpdateError) {
         console.error("Error updating proposal votes after casting:", voteUpdateError);
@@ -197,6 +197,15 @@ export function useCastVotes({ charge, votesClose }: UseCastVotesProps) {
       refetchTotalVotesCastOnContest();
       refetchCurrentUserVotesOnProposal();
       refetchBalance?.();
+
+      // Refresh the entry's voters list so the user's own vote (and updated count) shows immediately.
+      if (pickedProposal) {
+        invalidateProposalVoters(queryClient, {
+          contractAddress: contestConfig.address,
+          chainId: contestConfig.chainId,
+          proposalId: pickedProposal,
+        });
+      }
 
       if (emailAddress) {
         await subscribeUser(emailAddress, userAddress);

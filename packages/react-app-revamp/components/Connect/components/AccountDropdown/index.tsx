@@ -32,7 +32,13 @@ const AccountDropdown: FC<AccountDropdownProps> = ({ address, displayName, onDis
   return (
     <>
       <Menu>
-        <AccountButton ensName={ensName} ensAvatar={ensAvatar} displayName={displayName} currentChain={currentChain} />
+        <AccountButton
+          address={address}
+          ensName={ensName}
+          ensAvatar={ensAvatar}
+          displayName={displayName}
+          currentChain={currentChain}
+        />
 
         <MenuItems
           transition

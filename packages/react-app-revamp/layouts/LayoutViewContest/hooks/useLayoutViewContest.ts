@@ -3,6 +3,7 @@ import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
 import { useContest } from "@hooks/useContest";
 import { useContestStore } from "@hooks/useContest/store";
 import useContestConfigStore from "@hooks/useContestConfig/store";
+import { useContestRealtime } from "@hooks/useContestRealtime";
 import { useContestStatusStore } from "@hooks/useContestStatus/store";
 import { useContestStatusTimer } from "@hooks/useContestStatusTimer";
 import useRewardsModule from "@hooks/useRewards";
@@ -43,6 +44,8 @@ export const useLayoutViewContest = () => {
     isLoading,
   });
 
+  const { isConnected: isRealtimeConnected } = useContestRealtime();
+
   // OFAC address check
   useConnectionEffect({
     onConnect(data) {
@@ -73,5 +76,6 @@ export const useLayoutViewContest = () => {
     isReadOnly,
     contestPrompt,
     canEditTitleAndDescription,
+    isRealtimeConnected,
   };
 };

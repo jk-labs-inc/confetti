@@ -1,4 +1,5 @@
 import { useReadContract } from "wagmi";
+import { VOTERS_GC_TIME, VOTERS_STALE_TIME } from "../constants";
 
 interface UseProposalVoterAddressesProps {
   contractAddress: string;
@@ -26,7 +27,9 @@ export const useProposalVoterAddresses = ({
     args: [proposalId],
     query: {
       enabled: !!contractAddress && !!proposalId && !!abi,
-      gcTime: 0,
+
+      staleTime: VOTERS_STALE_TIME,
+      gcTime: VOTERS_GC_TIME,
     },
   }) as {
     data: string[] | undefined;

@@ -22,10 +22,6 @@ abstract contract Governor is GovernorSorting, GovernorAnalytics {
         Completed
     }
 
-    enum Metadatas {
-        Fields
-    }
-
     enum Actions {
         Submit,
         Vote
@@ -56,21 +52,13 @@ abstract contract Governor is GovernorSorting, GovernorAnalytics {
         string prompt;
         IntConstructorArgs intConstructorArgs;
         address jkLabsSplitDestination;
-        string metadataFieldsSchema;
-    }
-
-    struct FieldsMetadata {
-        // all of these have max length of MAX_FIELDS_METADATA_LENGTH as enforced in validateProposalData()
-        address[] addressArray;
-        string[] stringArray;
-        uint256[] uintArray;
+        string contestEntryType;
     }
 
     struct ProposalCore {
         address author;
         bool exists;
         string description;
-        FieldsMetadata fieldsMetadata;
     }
 
     event JokeraceCreated(
@@ -90,13 +78,11 @@ abstract contract Governor is GovernorSorting, GovernorAnalytics {
     event JkLabsPaymentReleased(address to, uint256 amount);
     event CreatorPaymentReleased(address to, uint256 amount);
 
-    uint256 public constant METADATAS_COUNT = uint256(type(Metadatas).max) + 1;
-    uint256 public constant MAX_FIELDS_METADATA_LENGTH = 10;
     uint256 public constant AMOUNT_FOR_SUMBITTER_PROOF = 10000000000000000000;
     address public constant JK_LABS_ADDRESS = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738; // Our hot wallet that we collect revenue to.
     uint256 public constant PRICE_CURVE_UPDATE_INTERVAL = 60; // How often the price curve updates if applicable.
     uint256 public constant COST_ROUNDING_VALUE = 1e12; // Used for rounding costs, means cost to propose or vote can't be less than 1e18/this.
-    string private constant VERSION = "6.19"; // Private as to not clutter the ABI.
+    string private constant VERSION = "6.21"; // Private as to not clutter the ABI.
 
     string public name; // The title of the contest
     string public prompt;
@@ -113,7 +99,7 @@ abstract contract Governor is GovernorSorting, GovernorAnalytics {
     uint256 public multiple; // Multiple for price curves.
     uint256 public creatorSplitEnabled; // If 1, half of the jk labs split is sent to the creator; if 0, none of it is.
     address public jkLabsSplitDestination; // Where the jk labs split of revenue goes.
-    string public metadataFieldsSchema; // JSON Schema of what the metadata fields are.
+    string public contestEntryType; // What type of entries the contest has (tweet, text, or image).
 
     uint256[] public proposalIds;
     uint256[] public deletedProposalIds;
@@ -125,10 +111,6 @@ abstract contract Governor is GovernorSorting, GovernorAnalytics {
     address[] public addressesThatHaveVoted;
 
     error AuthorIsNotSender(address author, address sender);
-    error AddressFieldMetadataArrayTooLong();
-    error StringFieldMetadataArrayTooLong();
-    error UintFieldMetadataArrayTooLong();
-    error UnexpectedMetadata(Metadatas unexpectedMetadata);
     error EmptyProposalDescription();
 
     error IncorrectCostSent(uint256 msgValue, uint256 costToVote);
@@ -177,7 +159,7 @@ abstract contract Governor is GovernorSorting, GovernorAnalytics {
         multiple = constructorArgs_.intConstructorArgs.multiple;
         creatorSplitEnabled = constructorArgs_.intConstructorArgs.creatorSplitEnabled;
         jkLabsSplitDestination = constructorArgs_.jkLabsSplitDestination;
-        metadataFieldsSchema = constructorArgs_.metadataFieldsSchema;
+        contestEntryType = constructorArgs_.contestEntryType;
 
         emit JokeraceCreated(VERSION, name, prompt, creator, contestStart, votingDelay, votingPeriod); // emit upon creation to be able to easily find jokeraces on a chain
     }
@@ -325,22 +307,6 @@ abstract contract Governor is GovernorSorting, GovernorAnalytics {
      */
     function validateProposalData(ProposalCore memory proposal) public view {
         if (proposal.author != msg.sender) revert AuthorIsNotSender(proposal.author, msg.sender);
-        for (uint256 index = 0; index < METADATAS_COUNT; index++) {
-            Metadatas currentMetadata = Metadatas(index);
-            if (currentMetadata == Metadatas.Fields) {
-                if (proposal.fieldsMetadata.addressArray.length > MAX_FIELDS_METADATA_LENGTH) {
-                    revert AddressFieldMetadataArrayTooLong();
-                }
-                if (proposal.fieldsMetadata.stringArray.length > MAX_FIELDS_METADATA_LENGTH) {
-                    revert StringFieldMetadataArrayTooLong();
-                }
-                if (proposal.fieldsMetadata.uintArray.length > MAX_FIELDS_METADATA_LENGTH) {
-                    revert UintFieldMetadataArrayTooLong();
-                }
-            } else {
-                revert UnexpectedMetadata(currentMetadata);
-            }
-        }
         if (bytes(proposal.description).length == 0) revert EmptyProposalDescription();
     }
 

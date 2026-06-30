@@ -46,6 +46,7 @@ const ContestNotifyButton: FC<ContestNotifyButtonProps> = ({
 
   return (
     <motion.button
+      id="add_to_calendar_button_click"
       onClick={handleClick}
       aria-label="Remind me when voting opens"
       className={buttonClassName}
