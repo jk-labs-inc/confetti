@@ -7,7 +7,9 @@ import {
   IconEditorListUnordered,
   IconEditorQuote,
 } from "@components/UI/Icons";
+import { toastError } from "@components/UI/Toast";
 import { useUploadImageStore } from "@hooks/useUploadImage";
+import { validateImageUpload } from "lib/image/uploadValidation";
 import { Editor } from "@tiptap/react";
 import { useRef } from "react";
 import { useMediaQuery } from "react-responsive";
@@ -35,14 +37,19 @@ export const TipTapEditorControls = (props: TipTapEditorControlsProps) => {
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files && event.target.files[0];
     if (file) {
-      try {
-        const imgUrl = await uploadImage(file);
+      const uploadError = await validateImageUpload(file);
+      if (uploadError) {
+        toastError({ message: uploadError });
+      } else {
+        try {
+          const imgUrl = await uploadImage(file);
 
-        if (imgUrl) {
-          editor.chain().focus().setImage({ src: imgUrl }).run();
+          if (imgUrl) {
+            editor.chain().focus().setImage({ src: imgUrl }).run();
+          }
+        } catch (error) {
+          console.error("Failed to upload image:", error);
         }
-      } catch (error) {
-        console.error("Failed to upload image:", error);
       }
 
       if (fileInputRef.current) {
