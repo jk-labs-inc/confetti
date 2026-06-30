@@ -185,7 +185,7 @@ const VotingActionBar = () => {
 
           {showProjection ? (
             <>
-              <div className="h-9 w-px shrink-0 bg-neutral-3" />
+              <div className="h-9 w-px shrink-0 bg-neutral-9" />
               <div className="flex min-w-0 flex-1 flex-col items-center leading-tight">
                 <span className="text-[13px] text-neutral-9">win up to</span>
                 <FitText
