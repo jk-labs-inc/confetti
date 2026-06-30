@@ -1,5 +1,5 @@
 import EntryCarousel from "@components/EntryCarousel";
-import EntryVerticalFeed from "@components/EntryCarousel/EntryVerticalFeed";
+import EntryList from "@components/EntryCarousel/EntryList";
 import { EntryPreview } from "@hooks/useDeployContest/slices/contestMetadataSlice";
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import ProposalContent from "@components/_pages/ProposalContent";
@@ -53,7 +53,6 @@ export const ListProposals = () => {
     metadataFieldsConfig.length > 0
       ? verifyEntryPreviewPrompt(metadataFieldsConfig[0].prompt)
       : { enabledPreview: null };
-  // tweet entries are variable-height, so they use a vertical snap feed instead of the fixed-height coverflow
   const isTweetContest = enabledPreview === EntryPreview.TWEET || enabledPreview === EntryPreview.TWEET_AND_TITLE;
 
   const hasNextPage = listProposalsData.length < submissionsCount;
@@ -117,14 +116,17 @@ export const ListProposals = () => {
     <>
       {isMobile ? (
         isTweetContest ? (
-          <EntryVerticalFeed
-            proposals={listProposalsData}
-            enabledPreview={enabledPreview}
-            contestStatus={contestStatus}
-            hasNextPage={hasNextPage}
-            isLoadingMore={isPageProposalsLoading}
-            onLoadMore={handleLoadMore}
-          />
+          <>
+            <EntryList
+              proposals={listProposalsData}
+              enabledPreview={enabledPreview}
+              contestStatus={contestStatus}
+              hasNextPage={hasNextPage}
+              isLoadingMore={isPageProposalsLoading}
+              onLoadMore={handleLoadMore}
+            />
+            {hasNextPage && <ListProposalsLoader ref={infiniteRef} />}
+          </>
         ) : (
           <EntryCarousel
             proposals={listProposalsData}
@@ -142,7 +144,11 @@ export const ListProposals = () => {
               {listProposalsData.map(proposal => {
                 if (deletingProposalIds.includes(proposal.id) && isDeleteInProcess) {
                   return (
-                    <motion.div key={`deleting-${proposal.id}`} layout transition={{ duration: 0.4, ease: "easeInOut" }}>
+                    <motion.div
+                      key={`deleting-${proposal.id}`}
+                      layout
+                      transition={{ duration: 0.4, ease: "easeInOut" }}
+                    >
                       <ListProposalsSkeleton enabledPreview={enabledPreview} highlightColor="#FF78A9" count={1} />
                     </motion.div>
                   );

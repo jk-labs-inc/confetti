@@ -99,78 +99,50 @@ const EntryCard: FC<EntryCardProps> = ({
   );
 
   const votePercentage = totalVotes > 0 ? Math.round((proposal.votes / totalVotes) * 100) : 0;
-
   const isFeed = variant === "feed";
   const isRanked = !!proposal.rank;
-
-  // The foil border carries the rank medal. Unranked entries — before voting opens, or any entry with no
-  // standing yet — have no medal to surface, so they fall back to a neutral edge and lean on the elevation
-  // shadow alone (no stray purple border while a contest hasn't started voting). In the feed only the active
-  // card is allowed to show its medal, preserving that variant's single-highlight treatment.
-  const showMedalFoil = isRanked && (!isFeed || active);
-  const foilBg = showMedalFoil ? medal.background : "rgba(255,255,255,0.08)";
-
-  // In the two-up layout each card is only ~half the screen wide, so the vote figures shrink to stay
-  // legible instead of dominating the card.
+  const foilBg = isRanked || active ? medal.background : "transparent";
   const pctSize = compact ? "text-[16px]" : "text-[24px]";
   const pctLabelSize = compact ? "text-[8px]" : "text-[9px]";
   const voteCountSize = compact ? "text-[16px]" : "text-[22px]";
   const overlayVoteCountSize = compact ? "text-[16px]" : "text-[24px]";
   const voteLabelSize = compact ? "text-[9px]" : "text-[10px]";
 
-  // A black drop shadow is invisible on the true-black page, so elevated cards lift off the background with
-  // the shared `--shadow-entry-card` grey-glow halo (the same one the desktop entries use), giving a defined
-  // edge on every side — bottom included. Only the two-up uses the halo: its wrapper doesn't clip overflow,
-  // whereas the coverflow wrapper clips its neighbours and would crop the halo, so that mode keeps the drop.
   const elevatedShadow = compact ? "var(--shadow-entry-card)" : "0 12px 32px -16px rgba(0,0,0,0.95)";
   const foilShadow = active
     ? `0 0 26px -4px ${withAlpha(accent, 0.5)}, 0 12px 32px -14px rgba(0,0,0,0.9)`
-    : !isFeed && elevated
-      ? elevatedShadow
-      : undefined;
+    : isFeed
+      ? "var(--shadow-entry-card)"
+      : elevated
+        ? elevatedShadow
+        : undefined;
 
   const innerBg = isTitleOnly ? "linear-gradient(180deg, #1a1a1a 0%, #0c0c0c 54%, #050505 100%)" : "#000";
 
   if (isFeed) {
+    const showHeader = !!proposal.rank || !!entry.title || showVotes;
     return (
       <div
         className="relative w-full rounded-2xl transition-shadow duration-300 ease-out"
-        style={{ background: foilBg, padding: FOIL_PX, boxShadow: foilShadow }}
+        style={{ background: active ? medal.background : "transparent", padding: FOIL_PX, boxShadow: foilShadow }}
       >
-        <div className="relative flex w-full flex-col overflow-hidden rounded-[14px] bg-true-black">
-          {entry.kind === "tweet" ? (
-            <div className="w-full p-2">
-              <Tweet id={entry.tweetId} apiUrl={`/api/tweet/${entry.tweetId}`} />
+        <div className="relative flex w-full flex-col gap-4 overflow-hidden rounded-[14px] bg-true-black p-2">
+          {showHeader ? (
+            <div className="flex w-full items-center pl-2">
+              {proposal.rank ? <ProposalLayoutGalleryRankOrPlaceholder rank={proposal.rank} /> : null}
+              <div className="ml-auto flex flex-col items-end gap-1">
+                {entry.title ? <p className="text-[12px] font-bold text-neutral-11">{entry.title}</p> : null}
+                {showVotes ? <p className="text-[12px] text-neutral-11">{votesNumber} votes</p> : null}
+              </div>
             </div>
           ) : null}
 
-          {entry.title || showVotes ? (
-            <div className="flex shrink-0 flex-col items-center gap-1 px-3 pb-3 pt-2">
-              {entry.title ? <p className="text-center text-[16px] font-bold text-neutral-11">{entry.title}</p> : null}
-              {showVotes ? (
-                <div className="flex items-baseline gap-2">
-                  <span className="text-[20px] font-bold leading-none tabular-nums text-neutral-11">{votesNumber}</span>
-                  <span
-                    className="text-[10px] font-bold uppercase leading-none tracking-[0.22em]"
-                    style={{ color: withAlpha(accent, 0.92) }}
-                  >
-                    votes
-                  </span>
-                </div>
-              ) : null}
-            </div>
-          ) : null}
+          {entry.kind === "tweet" ? <Tweet id={entry.tweetId} apiUrl={`/api/tweet/${entry.tweetId}`} /> : null}
 
           <div
             className="pointer-events-none absolute inset-0"
             style={{ backgroundImage: GRAIN_URL, backgroundSize: "120px 120px", opacity: 0.06 }}
           />
-
-          {proposal.rank ? (
-            <div className="pointer-events-none absolute left-2 top-2 z-10">
-              <ProposalLayoutGalleryRankOrPlaceholder rank={proposal.rank} />
-            </div>
-          ) : null}
         </div>
       </div>
     );
@@ -262,7 +234,10 @@ const EntryCard: FC<EntryCardProps> = ({
             ) : null}
             {showVotes ? (
               <div className="flex items-baseline justify-center gap-2">
-                <span className={`${overlayVoteCountSize} font-bold leading-none tabular-nums`} style={overlayTextStyle}>
+                <span
+                  className={`${overlayVoteCountSize} font-bold leading-none tabular-nums`}
+                  style={overlayTextStyle}
+                >
                   {votesNumber}
                 </span>
                 <span
