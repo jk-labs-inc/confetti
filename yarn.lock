@@ -1902,12 +1902,14 @@
     "@babel/helper-string-parser" "^8.0.0"
     "@babel/helper-validator-identifier" "^8.0.0"
 
-"@bigmi/client@0.8.1":
-  version "0.8.1"
-  resolved "https://registry.yarnpkg.com/@bigmi/client/-/client-0.8.1.tgz#26d857375dbbb9f0f7326be5ff64ac17883b131d"
-  integrity sha512-VFpo0slAL1lytO0cs17MEeChMYct5HyiM0wHw1eXVNAFQDUev01aPIuvigZUFWikk2sFO3Y1h2loT2v0DQYluQ==
+"@bigmi/client@0.9.0":
+  version "0.9.0"
+  resolved "https://registry.yarnpkg.com/@bigmi/client/-/client-0.9.0.tgz#19436d55ad59f1008b53542b269f2b3d332079dc"
+  integrity sha512-Nyr5LQ4MSXowx4s65b9xlfUb1zSwmB5Nv8Pd3F6LkO+EggJ9X+6q/94F62tlljh/ANBO4MoOLukGHBxbpDjfqw==
   dependencies:
     "@bigmi/core" "0.8.1"
+    "@wallet-standard/app" "^1.1.0"
+    "@wallet-standard/base" "^1.1.0"
     eventemitter3 "^5.0.4"
     zustand "^5.0.14"
 
@@ -1944,12 +1946,12 @@
     eventemitter3 "^5.0.4"
     zustand "^5.0.11"
 
-"@bigmi/react@0.8.1":
-  version "0.8.1"
-  resolved "https://registry.yarnpkg.com/@bigmi/react/-/react-0.8.1.tgz#b2d40df8f5ab23d6c4a0968c0bf19e40d72b0159"
-  integrity sha512-sRC3at217i/ISYIqCNh/E0kBTgwToxQ/fXT1zFHBKO0qR3XSTvGembtZv6mOg//98SNPJHWHRTuxTvRdrWGP+A==
+"@bigmi/react@0.8.2":
+  version "0.8.2"
+  resolved "https://registry.yarnpkg.com/@bigmi/react/-/react-0.8.2.tgz#48e3665807f1d9b7755dffd6a63b39cd9e6fe434"
+  integrity sha512-MDZ7bsx24KiVDsdX3FlRg5iKsObrgOt/d0D71Ca589C3+jPppCWbldKLsZTSr1GyKI/9ZzRHRznNzG7Pucr6CQ==
   dependencies:
-    "@bigmi/client" "0.8.1"
+    "@bigmi/client" "0.9.0"
     "@bigmi/core" "0.8.1"
 
 "@bitcoinerlab/secp256k1@^1.2.0":
