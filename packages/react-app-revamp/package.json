@@ -16,7 +16,7 @@
     "@bigmi/react": "0.8.2",
     "@clustersxyz/sdk": "1.0.2",
     "@coinbase/wallet-sdk": "4.3.7",
-    "@floating-ui/react": "0.26.28",
+    "@floating-ui/react": "0.27.19",
     "@getbrevo/brevo": "5.0.4",
     "@getpara/evm-wallet-connectors": "2.18.0",
     "@getpara/react-sdk-lite": "2.18.0",
