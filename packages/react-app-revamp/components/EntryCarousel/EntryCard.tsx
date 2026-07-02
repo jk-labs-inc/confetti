@@ -2,7 +2,7 @@ import { Proposal } from "@components/_pages/ProposalContent";
 import ProposalLayoutGalleryRankOrPlaceholder from "@components/_pages/ProposalContent/components/ProposalLayout/Gallery/components/RankOrPlaceholder";
 import { Tweet } from "@components/_pages/ProposalContent/components/ProposalLayout/Tweet/components/CustomTweet";
 import VoteCountPulse from "@components/_pages/ProposalContent/components/VoteFeedback";
-import { entryMedal, withAlpha } from "@helpers/entryColors";
+import { ENTRY_ACCENT_COLOR, withAlpha } from "@helpers/entryColors";
 import { formatNumberWithCommas } from "@helpers/formatNumber";
 import { ContestStatus } from "@hooks/useContestStatus/store";
 import { EntryPreview } from "@hooks/useDeployContest/slices/contestMetadataSlice";
@@ -91,8 +91,7 @@ const EntryCard: FC<EntryCardProps> = ({
   const titleMaxFont = Math.round(Math.max(20, Math.min(32, 32 - (titleText.trim().length - 12) * 0.8)));
   const { ref: titleFitRef, fontSize: titleFontSize } = useFitTextToBox<HTMLDivElement>(titleText, 14, titleMaxFont);
 
-  const medal = entryMedal(proposal.rank);
-  const accent = medal.solid;
+  const accent = ENTRY_ACCENT_COLOR;
 
   const votesNumber: ReactNode = (
     <VoteCountPulse votes={proposal.votes}>{formatNumberWithCommas(proposal.votes)}</VoteCountPulse>
@@ -100,8 +99,7 @@ const EntryCard: FC<EntryCardProps> = ({
 
   const votePercentage = totalVotes > 0 ? Math.round((proposal.votes / totalVotes) * 100) : 0;
   const isFeed = variant === "feed";
-  const isRanked = !!proposal.rank;
-  const foilBg = isRanked || active ? medal.background : "transparent";
+  const foilBg = active ? ENTRY_ACCENT_COLOR : "transparent";
   const pctSize = compact ? "text-[16px]" : "text-[24px]";
   const pctLabelSize = compact ? "text-[8px]" : "text-[9px]";
   const voteCountSize = compact ? "text-[16px]" : "text-[22px]";
@@ -109,13 +107,14 @@ const EntryCard: FC<EntryCardProps> = ({
   const voteLabelSize = compact ? "text-[9px]" : "text-[10px]";
 
   const elevatedShadow = compact ? "var(--shadow-entry-card)" : "0 12px 32px -16px rgba(0,0,0,0.95)";
+  const restingShadow = "0 0 0 1px rgba(255,255,255,0.22), 0 0 22px -2px rgba(255,255,255,0.26)";
   const foilShadow = active
     ? `0 0 26px -4px ${withAlpha(accent, 0.5)}, 0 12px 32px -14px rgba(0,0,0,0.9)`
     : isFeed
       ? "var(--shadow-entry-card)"
       : elevated
         ? elevatedShadow
-        : undefined;
+        : restingShadow;
 
   const innerBg = isTitleOnly ? "linear-gradient(180deg, #1a1a1a 0%, #0c0c0c 54%, #050505 100%)" : "#000";
 
@@ -124,7 +123,7 @@ const EntryCard: FC<EntryCardProps> = ({
     return (
       <div
         className="relative w-full rounded-2xl transition-shadow duration-300 ease-out"
-        style={{ background: active ? medal.background : "transparent", padding: FOIL_PX, boxShadow: foilShadow }}
+        style={{ background: active ? ENTRY_ACCENT_COLOR : "transparent", padding: FOIL_PX, boxShadow: foilShadow }}
       >
         <div className="relative flex w-full flex-col gap-4 overflow-hidden rounded-[14px] bg-true-black p-2">
           {showHeader ? (
@@ -185,8 +184,7 @@ const EntryCard: FC<EntryCardProps> = ({
                     {votesNumber}
                   </span>
                   <span
-                    className={`${voteLabelSize} font-bold uppercase leading-none tracking-[0.22em]`}
-                    style={{ color: withAlpha(accent, 0.92) }}
+                    className={`${voteLabelSize} font-bold uppercase leading-none tracking-[0.22em] text-neutral-11`}
                   >
                     votes
                   </span>
@@ -213,9 +211,7 @@ const EntryCard: FC<EntryCardProps> = ({
               compact ? "right-2 top-2" : "right-3 top-3"
             }`}
           >
-            <span className={`${pctSize} font-bold tabular-nums`} style={{ color: accent }}>
-              {votePercentage}%
-            </span>
+            <span className={`${pctSize} font-bold tabular-nums text-neutral-11`}>{votePercentage}%</span>
             <span className={`mt-1 ${pctLabelSize} font-bold uppercase tracking-[0.18em] text-neutral-10`}>
               of votes
             </span>
@@ -242,7 +238,7 @@ const EntryCard: FC<EntryCardProps> = ({
                 </span>
                 <span
                   className={`${voteLabelSize} font-bold uppercase leading-none tracking-[0.22em]`}
-                  style={{ color: accent, textShadow: "1px 1px 0 #000" }}
+                  style={{ color: "#E5E5E5", textShadow: "1px 1px 0 #000" }}
                 >
                   votes
                 </span>

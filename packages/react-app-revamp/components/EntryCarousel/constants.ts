@@ -5,8 +5,9 @@ export const CARD_ASPECT = 5 / 4; // card height / width (image / title entries)
 export const TWEET_CARD_ASPECT = 8 / 5; // taller cards for tweet entries so the tweet fits without being cut off
 export const NEIGHBOR_SPACING_PCT = 46; // horizontal offset between adjacent cards (% of stage width)
 
-export const TWO_UP_GAP_PX = 12;
-export const TWO_UP_DIM_OPACITY = 0.5; // non-selected two-up card during voting — faded hard so the pick stands out
+export const EDGE_RESISTANCE = 0.3; // rubber-band drag past the ends of the bounded 2-entry track (0 = wall, 1 = free)
+export const BOUNDED_END_SHIFT = 1; // at an end of the 2-entry track, pull the active card this fraction of the
+
 export const FILL_BOTTOM_GAP_PX = 16; // breathing room kept below a carousel that grows to fill the viewport
 export const MAX_FILL_ASPECT = 1.8; // cap on how tall cards grow when filling the void (height / width)
 

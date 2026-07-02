@@ -7,10 +7,12 @@ import { FC, PointerEvent as ReactPointerEvent, useCallback, useEffect, useMemo,
 import EntryCard from "./EntryCard";
 import { useEntryFeed } from "./useEntryFeed";
 import {
+  BOUNDED_END_SHIFT,
   CARD_ASPECT,
   CARD_WIDTH_PCT,
   DEPTH_PX,
   DRAG_THRESHOLD,
+  EDGE_RESISTANCE,
   FILL_BOTTOM_GAP_PX,
   FLICK_PROJECTION_S,
   MAX_FILL_ASPECT,
@@ -22,8 +24,6 @@ import {
   NEIGHBOR_SPACING_PCT,
   PERSPECTIVE_PX,
   TWEET_CARD_ASPECT,
-  TWO_UP_DIM_OPACITY,
-  TWO_UP_GAP_PX,
   WINDOW_RADIUS,
 } from "./constants";
 
@@ -67,19 +67,13 @@ const EntryCarousel: FC<EntryCarouselProps> = ({
   const cardW = stageWidth * (CARD_WIDTH_PCT / 100);
   const naturalCardH = cardW * cardAspect;
   const spacing = stageWidth * (NEIGHBOR_SPACING_PCT / 100);
-
-  // A 2-item ring can't be balanced (the lone neighbor always lands one step to the right, leaving the left
-  // empty), so render exactly-2 entries as a centered two-up where tapping a card makes it the active vote target.
-  const isTwoUp = n === 2 && !hasNextPage;
-  const twoUpCardW = Math.max(0, (stageWidth - TWO_UP_GAP_PX) / 2);
-  const naturalTwoUpH = twoUpCardW * cardAspect;
+  const isBounded = n === 2 && !hasNextPage;
 
   const votingOpen = contestStatus === ContestStatus.VotingOpen;
   const fillVoidHeight = (natW: number, natH: number) =>
     !votingOpen && availableH > natH ? Math.min(availableH, natW * MAX_FILL_ASPECT) : natH;
   const cardH = fillVoidHeight(cardW, naturalCardH);
-  const twoUpCardH = fillVoidHeight(twoUpCardW, naturalTwoUpH);
-  const containerH = isTwoUp ? twoUpCardH : cardH;
+  const containerH = cardH;
 
   const mountedWindow = useMemo(() => {
     const s = new Set<number>();
@@ -88,14 +82,15 @@ const EntryCarousel: FC<EntryCarouselProps> = ({
     return s;
   }, [activeIdx, n]);
 
-  const circularDelta = useCallback(
+  const cardDelta = useCallback(
     (i: number, p: number) => {
       if (n === 0) return 0;
+      if (isBounded) return i - p; // linear track — no wrap, so nothing peeks past the two ends
       let d = (((i - p) % n) + n) % n;
       if (d > n / 2) d -= n;
       return d;
     },
-    [n],
+    [n, isBounded],
   );
 
   // position every card around the ring for a given fractional position (imperative; runs on the motion value)
@@ -103,9 +98,11 @@ const EntryCarousel: FC<EntryCarouselProps> = ({
     (p: number) => {
       const stage = stageRef.current;
       if (!stage) return;
+      const endBias = isBounded && n > 1 ? (2 * p) / (n - 1) - 1 : 0;
+      const trackShift = ((endBias * (stageWidth - cardW)) / 2) * BOUNDED_END_SHIFT;
       for (let i = 0; i < stage.children.length; i++) {
         const el = stage.children[i] as HTMLElement;
-        const delta = circularDelta(i, p);
+        const delta = cardDelta(i, p);
         const abs = Math.abs(delta);
         if (abs > MAX_VISIBLE + 1) {
           if (el.style.opacity !== "0") {
@@ -115,7 +112,7 @@ const EntryCarousel: FC<EntryCarouselProps> = ({
           continue;
         }
         const dir = Math.max(-1, Math.min(1, delta));
-        const x = delta * spacing;
+        const x = delta * spacing + trackShift;
         const z = -Math.min(abs, MAX_VISIBLE) * DEPTH_PX;
         const rotateY = -dir * MAX_ROTATE_DEG;
         const scale = 1 - MAX_SCALE_DROP * Math.min(1, abs);
@@ -128,20 +125,20 @@ const EntryCarousel: FC<EntryCarouselProps> = ({
         el.style.pointerEvents = visible ? "auto" : "none";
       }
     },
-    [circularDelta, spacing],
+    [cardDelta, spacing, isBounded, n, stageWidth, cardW],
   );
 
   // highlight whichever card is currently closest to center — updates live while rotating, not only on settle
   const updateActive = useCallback(
     (p: number) => {
-      if (n === 0 || isTwoUp) return;
-      const norm = ((Math.round(p) % n) + n) % n;
+      if (n === 0) return;
+      const norm = isBounded ? Math.max(0, Math.min(n - 1, Math.round(p))) : ((Math.round(p) % n) + n) % n;
       if (norm !== activeRef.current) {
         activeRef.current = norm;
         setActiveIdx(norm);
       }
     },
-    [n, isTwoUp],
+    [n, isBounded],
   );
 
   useEffect(() => {
@@ -189,19 +186,20 @@ const EntryCarousel: FC<EntryCarouselProps> = ({
 
   const snapTo = useCallback(
     (target: number) => {
-      animate(pos, target, {
+      const dest = isBounded ? Math.max(0, Math.min(n - 1, target)) : target;
+      animate(pos, dest, {
         type: "spring",
         stiffness: 320,
         damping: 34,
         onComplete: () => {
-          // keep the value bounded; circular layout makes this jump invisible
-          const norm = n > 0 ? ((Math.round(target) % n) + n) % n : 0;
+          const norm =
+            n > 0 ? (isBounded ? Math.max(0, Math.min(n - 1, Math.round(dest))) : ((Math.round(dest) % n) + n) % n) : 0;
           pos.set(norm);
           maybeLoadMore(norm);
         },
       });
     },
-    [pos, n, maybeLoadMore],
+    [pos, n, maybeLoadMore, isBounded],
   );
 
   const onPointerDown = (e: ReactPointerEvent<HTMLDivElement>) => {
@@ -215,7 +213,13 @@ const EntryCarousel: FC<EntryCarouselProps> = ({
     if (!d.active || spacing === 0) return;
     const dx = e.clientX - d.startX;
     d.moved = Math.max(d.moved, Math.abs(dx));
-    pos.set(d.startPos - dx / spacing);
+    let next = d.startPos - dx / spacing;
+    if (isBounded) {
+      // rubber-band past the ends so the two-card track feels walled, not wrapped
+      if (next < 0) next *= EDGE_RESISTANCE;
+      else if (next > n - 1) next = n - 1 + (next - (n - 1)) * EDGE_RESISTANCE;
+    }
+    pos.set(next);
   };
 
   const onPointerUp = () => {
@@ -232,7 +236,7 @@ const EntryCarousel: FC<EntryCarouselProps> = ({
   const handleCardClick = (index: number) => {
     if (drag.current.moved > DRAG_THRESHOLD) return; // it was a drag, not a tap
     const cur = pos.get();
-    snapTo(cur + circularDelta(index, cur)); // rotate the tapped card to center
+    snapTo(cur + cardDelta(index, cur)); // bring the tapped card to center
   };
 
   if (n === 0) return null;
@@ -240,77 +244,43 @@ const EntryCarousel: FC<EntryCarouselProps> = ({
   return (
     <div
       ref={wrapRef}
-      className={`relative w-full select-none ${isTwoUp ? "" : "touch-pan-y overflow-hidden"}`}
+      className="relative w-full select-none touch-pan-y overflow-hidden"
       style={{ height: containerH ? `${containerH}px` : undefined }}
     >
-      {isTwoUp ? (
-        <div className="absolute inset-0 flex justify-center" style={{ gap: `${TWO_UP_GAP_PX}px` }}>
-          {cards.map((proposal, index) => {
-            const isActive = index === activeIdx;
-            const isActiveTarget = votingOpen && isActive;
-            return (
-              <div
-                key={proposal.id}
-                onClick={
-                  votingOpen
-                    ? () => {
-                        activeRef.current = index;
-                        setActiveIdx(index);
-                      }
-                    : undefined
-                }
-                className={`h-full min-w-0 flex-1 transition-opacity duration-200 ${votingOpen ? "cursor-pointer" : ""}`}
-                style={{ opacity: !votingOpen || isActive ? 1 : TWO_UP_DIM_OPACITY }}
-              >
+      <div
+        ref={stageRef}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
+        onPointerCancel={onPointerUp}
+        className="absolute inset-0"
+        style={{ perspective: `${PERSPECTIVE_PX}px`, perspectiveOrigin: "50% 50%" }}
+      >
+        {cards.map((proposal, index) => {
+          const isActive = index === activeIdx;
+          const isActiveTarget = votingOpen && isActive;
+          const mounted = mountedWindow.has(index);
+          return (
+            <div
+              key={proposal.id}
+              onClick={() => handleCardClick(index)}
+              className={`absolute left-1/2 top-1/2 cursor-pointer ${mounted ? "will-change-transform" : ""}`}
+              style={{ width: cardW ? `${cardW}px` : `${CARD_WIDTH_PCT}%`, height: cardH ? `${cardH}px` : undefined }}
+            >
+              {mounted ? (
                 <EntryCard
                   proposal={proposal}
                   enabledPreview={enabledPreview}
                   contestStatus={contestStatus}
                   totalVotes={totalVotes}
                   active={isActiveTarget}
-                  elevated
-                  compact
+                  elevated={isActive}
                 />
-              </div>
-            );
-          })}
-        </div>
-      ) : (
-        <div
-          ref={stageRef}
-          onPointerDown={onPointerDown}
-          onPointerMove={onPointerMove}
-          onPointerUp={onPointerUp}
-          onPointerCancel={onPointerUp}
-          className="absolute inset-0"
-          style={{ perspective: `${PERSPECTIVE_PX}px`, perspectiveOrigin: "50% 50%" }}
-        >
-          {cards.map((proposal, index) => {
-            const isActive = index === activeIdx;
-            const isActiveTarget = votingOpen && isActive;
-            const mounted = mountedWindow.has(index);
-            return (
-              <div
-                key={proposal.id}
-                onClick={() => handleCardClick(index)}
-                className={`absolute left-1/2 top-1/2 cursor-pointer ${mounted ? "will-change-transform" : ""}`}
-                style={{ width: cardW ? `${cardW}px` : `${CARD_WIDTH_PCT}%`, height: cardH ? `${cardH}px` : undefined }}
-              >
-                {mounted ? (
-                  <EntryCard
-                    proposal={proposal}
-                    enabledPreview={enabledPreview}
-                    contestStatus={contestStatus}
-                    totalVotes={totalVotes}
-                    active={isActiveTarget}
-                    elevated={isActive}
-                  />
-                ) : null}
-              </div>
-            );
-          })}
-        </div>
-      )}
+              ) : null}
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 };

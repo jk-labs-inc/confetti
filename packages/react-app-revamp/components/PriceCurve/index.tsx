@@ -194,12 +194,7 @@ const PriceCurve: FC<PriceCurveProps> = ({
             />
 
             {showVoters && (
-              <CurveMarker
-                positioned={positionedVotes}
-                rankById={rankById}
-                chartWidth={chartWidth}
-                chartHeight={chartHeight}
-              />
+              <CurveMarker positioned={positionedVotes} chartWidth={chartWidth} chartHeight={chartHeight} />
             )}
 
             {showAxisLabels && (

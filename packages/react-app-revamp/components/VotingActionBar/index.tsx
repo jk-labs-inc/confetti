@@ -133,91 +133,99 @@ const VotingActionBar = () => {
 
   const winDisplay = winSymbol === "$" ? `$${winValue}` : `${winValue} ${winSymbol}`;
   const votesDisplay = formatNumberWithCommas(totalVotes);
-  const buttonLabel = !isConnected ? "sign in" : insufficientBalance ? "add funds" : null;
+  const buttonLabel = isConnected && insufficientBalance ? "add funds" : null;
 
   if (!slot) return null;
 
   return ReactDOM.createPortal(
     <>
-      <div className="flex items-center gap-2 border-t border-neutral-2 bg-true-black px-4 py-3">
-        {/* amount input */}
-        <div
-          className="flex h-10 w-[104px] shrink-0 cursor-text items-center justify-center gap-1 rounded-full border border-neutral-9 px-3"
-          onClick={() => inputFitRef.current?.focus()}
-        >
-          {displaySymbol === "$" && (
-            <span
-              className="shrink-0 font-bold text-neutral-9"
-              style={{ fontSize: `${Math.round(inputFontSize * 0.6)}px` }}
-            >
-              $
-            </span>
-          )}
-          <input
-            ref={inputFitRef}
-            type="text"
-            inputMode="decimal"
-            value={displayValue}
-            onChange={e => handleDisplayChange(e.target.value)}
-            onFocus={() => setIsFocused(true)}
-            onBlur={() => setIsFocused(false)}
-            placeholder="0"
-            aria-label="amount to spend"
-            className="w-[64px] bg-transparent text-center font-bold text-neutral-11 placeholder-neutral-9 outline-none"
-            style={{ fontSize: `${inputFontSize}px` }}
-          />
-          {displaySymbol !== "$" && (
-            <span className="shrink-0 text-[11px] font-bold uppercase text-neutral-9">{displaySymbol}</span>
-          )}
-        </div>
-
-        {/* votes + win up to */}
-        <div className="flex min-w-0 flex-1 items-center justify-center gap-2">
-          <div className="flex min-w-0 flex-1 flex-col items-center leading-tight">
-            <span className="text-[13px] text-neutral-9">votes</span>
-            <FitText
-              text={votesDisplay}
-              min={8}
-              max={20}
-              className="block w-full overflow-hidden whitespace-nowrap text-center text-neutral-11"
+      <div
+        className="mx-3 mb-2 rounded-[16px]"
+        style={{
+          padding: 1.5,
+          boxShadow: "0 0 0 1px rgba(255,255,255,0.16), 0 0 10px -6px rgba(255,255,255,0.14)",
+        }}
+      >
+        <div className="flex items-center gap-2 rounded-[14.5px] bg-neutral-2 px-3 py-2.5">
+          {/* amount input */}
+          <div
+            className="flex h-10 w-[104px] shrink-0 cursor-text items-center justify-center gap-1 rounded-full border border-neutral-9 px-3"
+            onClick={() => inputFitRef.current?.focus()}
+          >
+            {displaySymbol === "$" && (
+              <span
+                className="shrink-0 font-bold text-neutral-9"
+                style={{ fontSize: `${Math.round(inputFontSize * 0.6)}px` }}
+              >
+                $
+              </span>
+            )}
+            <input
+              ref={inputFitRef}
+              type="text"
+              inputMode="decimal"
+              value={displayValue}
+              onChange={e => handleDisplayChange(e.target.value)}
+              onFocus={() => setIsFocused(true)}
+              onBlur={() => setIsFocused(false)}
+              placeholder="0"
+              aria-label="amount to spend"
+              className="w-[64px] bg-transparent text-center font-bold text-neutral-11 placeholder-neutral-9 outline-none"
+              style={{ fontSize: `${inputFontSize}px` }}
             />
+            {displaySymbol !== "$" && (
+              <span className="shrink-0 text-[11px] font-bold uppercase text-neutral-9">{displaySymbol}</span>
+            )}
           </div>
 
-          {showProjection ? (
-            <>
-              <div className="h-9 w-px shrink-0 bg-neutral-9" />
-              <div className="flex min-w-0 flex-1 flex-col items-center leading-tight">
-                <span className="text-[13px] text-neutral-9">win up to</span>
-                <FitText
-                  text={winDisplay}
-                  min={8}
-                  max={20}
-                  className="block w-full overflow-hidden whitespace-nowrap bg-clip-text text-center font-bold text-transparent"
-                  style={{ backgroundImage: WIN_GRADIENT }}
-                />
-              </div>
-            </>
-          ) : null}
-        </div>
+          {/* votes + win up to */}
+          <div className="flex min-w-0 flex-1 items-center justify-center gap-2">
+            <div className="flex min-w-0 flex-1 flex-col items-center leading-tight">
+              <span className="text-[13px] text-neutral-9">votes</span>
+              <FitText
+                text={votesDisplay}
+                min={8}
+                max={20}
+                className="block w-full overflow-hidden whitespace-nowrap text-center text-neutral-11"
+              />
+            </div>
 
-        <button
-          onClick={handleClick}
-          disabled={isConnected && !insufficientBalance && voteDisabled}
-          aria-label={isConnected ? (insufficientBalance ? "add funds" : "upvote") : "sign in"}
-          className="flex h-10 w-20 shrink-0 items-center justify-center rounded-full px-1 font-bold text-true-black transition-opacity disabled:opacity-50"
-          style={{ backgroundImage: UPVOTE_GRADIENT }}
-        >
-          {buttonLabel ? (
-            <FitText
-              text={buttonLabel}
-              min={11}
-              max={13}
-              className="block w-full overflow-hidden whitespace-nowrap text-center"
-            />
-          ) : (
-            <img src="/icons/upvote-black.svg" width={20} height={24} alt="upvote" className="shrink-0" />
-          )}
-        </button>
+            {showProjection ? (
+              <>
+                <div className="h-9 w-px shrink-0 bg-neutral-9" />
+                <div className="flex min-w-0 flex-1 flex-col items-center leading-tight">
+                  <span className="text-[13px] text-neutral-9">win up to</span>
+                  <FitText
+                    text={winDisplay}
+                    min={8}
+                    max={20}
+                    className="block w-full overflow-hidden whitespace-nowrap bg-clip-text text-center font-bold text-transparent"
+                    style={{ backgroundImage: WIN_GRADIENT }}
+                  />
+                </div>
+              </>
+            ) : null}
+          </div>
+
+          <button
+            onClick={handleClick}
+            disabled={isConnected && !insufficientBalance && voteDisabled}
+            aria-label={isConnected ? (insufficientBalance ? "add funds" : "upvote") : "buy votes"}
+            className="flex h-10 w-20 shrink-0 items-center justify-center rounded-full px-1 font-bold text-true-black transition-opacity disabled:opacity-50"
+            style={{ backgroundImage: UPVOTE_GRADIENT }}
+          >
+            {buttonLabel ? (
+              <FitText
+                text={buttonLabel}
+                min={11}
+                max={13}
+                className="block w-full overflow-hidden whitespace-nowrap text-center"
+              />
+            ) : (
+              <img src="/icons/upvote-black.svg" width={18} height={22} alt="upvote" className="shrink-0" />
+            )}
+          </button>
+        </div>
       </div>
 
       <Drawer
