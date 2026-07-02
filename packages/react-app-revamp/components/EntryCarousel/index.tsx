@@ -275,6 +275,7 @@ const EntryCarousel: FC<EntryCarouselProps> = ({
                   totalVotes={totalVotes}
                   active={isActiveTarget}
                   elevated={isActive}
+                  boxAspect={cardW > 0 && cardH > 0 ? cardH / cardW : cardAspect}
                 />
               ) : null}
             </div>

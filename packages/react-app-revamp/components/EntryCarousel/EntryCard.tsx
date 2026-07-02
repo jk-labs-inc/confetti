@@ -7,6 +7,8 @@ import { formatNumberWithCommas } from "@helpers/formatNumber";
 import { ContestStatus } from "@hooks/useContestStatus/store";
 import { EntryPreview } from "@hooks/useDeployContest/slices/contestMetadataSlice";
 import { CSSProperties, FC, ReactNode, useMemo } from "react";
+import { CARD_ASPECT } from "./constants";
+import EntryImage from "./EntryImage";
 import { useFitTextToBox } from "./useFitTextToBox";
 
 const FOIL_PX = 1.5;
@@ -30,6 +32,7 @@ interface EntryCardProps {
   elevated?: boolean;
   variant?: "coverflow" | "feed";
   compact?: boolean;
+  boxAspect?: number;
 }
 
 type ParsedEntry =
@@ -81,6 +84,7 @@ const EntryCard: FC<EntryCardProps> = ({
   elevated,
   variant = "coverflow",
   compact,
+  boxAspect = CARD_ASPECT,
 }) => {
   const entry = useMemo(() => parseEntry(proposal, enabledPreview), [proposal, enabledPreview]);
   const showVotes =
@@ -99,17 +103,18 @@ const EntryCard: FC<EntryCardProps> = ({
 
   const votePercentage = totalVotes > 0 ? Math.round((proposal.votes / totalVotes) * 100) : 0;
   const isFeed = variant === "feed";
-  const foilBg = active ? ENTRY_ACCENT_COLOR : "transparent";
+  const foilBg = active || elevated ? ENTRY_ACCENT_COLOR : "transparent";
   const pctSize = compact ? "text-[16px]" : "text-[24px]";
   const pctLabelSize = compact ? "text-[8px]" : "text-[9px]";
   const voteCountSize = compact ? "text-[16px]" : "text-[22px]";
   const overlayVoteCountSize = compact ? "text-[16px]" : "text-[24px]";
   const voteLabelSize = compact ? "text-[9px]" : "text-[10px]";
 
-  const elevatedShadow = compact ? "var(--shadow-entry-card)" : "0 12px 32px -16px rgba(0,0,0,0.95)";
+  const accentGlow = `0 0 26px -4px ${withAlpha(accent, 0.5)}, 0 12px 32px -14px rgba(0,0,0,0.9)`;
+  const elevatedShadow = compact ? "var(--shadow-entry-card)" : accentGlow;
   const restingShadow = "0 0 0 1px rgba(255,255,255,0.22), 0 0 22px -2px rgba(255,255,255,0.26)";
   const foilShadow = active
-    ? `0 0 26px -4px ${withAlpha(accent, 0.5)}, 0 12px 32px -14px rgba(0,0,0,0.9)`
+    ? accentGlow
     : isFeed
       ? "var(--shadow-entry-card)"
       : elevated
@@ -155,7 +160,12 @@ const EntryCard: FC<EntryCardProps> = ({
       <div className="relative h-full w-full overflow-hidden rounded-[14px]" style={{ background: innerBg }}>
         {entry.kind === "image" ? (
           entry.imageUrl?.trim() ? (
-            <img src={entry.imageUrl} alt="entry image" className="absolute inset-0 h-full w-full object-cover" />
+            <EntryImage
+              key={entry.imageUrl}
+              src={entry.imageUrl}
+              boxAspect={boxAspect}
+              fit={contestStatus === ContestStatus.VotingOpen ? "adaptive" : "contain"}
+            />
           ) : null
         ) : entry.kind === "tweet" ? (
           <div className="no-scrollbar absolute inset-0 overflow-y-auto">
