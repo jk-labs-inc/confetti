@@ -130,7 +130,7 @@ const EntryCard: FC<EntryCardProps> = ({
         className="relative w-full rounded-2xl transition-shadow duration-300 ease-out"
         style={{ background: active ? ENTRY_ACCENT_COLOR : "transparent", padding: FOIL_PX, boxShadow: foilShadow }}
       >
-        <div className="relative flex w-full flex-col gap-4 overflow-hidden rounded-[14px] bg-true-black p-2">
+        <div className="relative isolate flex w-full flex-col gap-4 overflow-hidden rounded-[14px] bg-true-black p-2">
           {showHeader ? (
             <div className="flex w-full items-center pl-2">
               {proposal.rank ? <ProposalLayoutGalleryRankOrPlaceholder rank={proposal.rank} /> : null}
@@ -157,7 +157,7 @@ const EntryCard: FC<EntryCardProps> = ({
       className="relative h-full w-full rounded-2xl transition-shadow duration-300 ease-out"
       style={{ background: foilBg, padding: FOIL_PX, boxShadow: foilShadow }}
     >
-      <div className="relative h-full w-full overflow-hidden rounded-[14px]" style={{ background: innerBg }}>
+      <div className="relative isolate h-full w-full overflow-hidden rounded-[14px]" style={{ background: innerBg }}>
         {entry.kind === "image" ? (
           entry.imageUrl?.trim() ? (
             <EntryImage
