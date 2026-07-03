@@ -2,6 +2,7 @@
 import AddFunds from "@components/AddFunds";
 import { useFitTextToBox } from "@components/EntryCarousel/useFitTextToBox";
 import Drawer from "@components/UI/Drawer";
+import FitText from "@components/VotingActionBar/FitText";
 import { useVotingRewardsProjection } from "@components/Voting/components/RewardsProjection/hooks";
 import useVotingInputDisplay from "@components/Voting/components/VoteAmountInput/hooks/useVotingInputDisplay";
 import { useVoteExecution } from "@components/Voting/hooks/useVoteExecution";
@@ -21,28 +22,12 @@ import { useProposalStore } from "@hooks/useProposal/store";
 import { useVoteBalance } from "@hooks/useVoteBalance";
 import { useVotesFromInput } from "@hooks/useVotesFromInput";
 import { useWallet } from "@hooks/useWallet";
-import { CSSProperties, FC, useState } from "react";
+import { useRef, useState } from "react";
 import ReactDOM from "react-dom";
 import { useShallow } from "zustand/shallow";
 
 const UPVOTE_GRADIENT = "linear-gradient(90deg, #bb65ff 0%, #78ffc6 100%)";
 const WIN_GRADIENT = "linear-gradient(180deg, #66DEFF 0%, #BB65FF 100%)";
-
-/** Renders text that auto-shrinks to always fit its (fixed-width) box. */
-const FitText: FC<{ text: string; min: number; max: number; className?: string; style?: CSSProperties }> = ({
-  text,
-  min,
-  max,
-  className,
-  style,
-}) => {
-  const { ref, fontSize } = useFitTextToBox<HTMLSpanElement>(text, min, max);
-  return (
-    <span ref={ref} className={className} style={{ ...style, fontSize: `${fontSize}px` }}>
-      {text}
-    </span>
-  );
-};
 
 const VotingActionBar = () => {
   const slot = useMobileNavSlot();
@@ -84,14 +69,30 @@ const VotingActionBar = () => {
     isConnected,
   });
 
-  // The number font shrinks to keep any amount inside the fixed-width pill.
-  const { ref: inputFitRef, fontSize: inputFontSize } = useFitTextToBox<HTMLInputElement>(displayValue || "0", 8, 26);
+  const hasPrice = parseFloat(effectiveCost) > 0;
+  const isGhost = !displayValue && hasPrice;
+  const { displayValue: pricePerVoteDisplay } = useDisplayPrice(
+    effectiveCost,
+    contestConfig.chainNativeCurrencySymbol,
+    undefined,
+    undefined,
+    { ceilingPrecision: true },
+  );
+  // Strip digit grouping so the placeholder is always typeable as shown.
+  const placeholder = (pricePerVoteDisplay || "0").replace(/,/g, "");
+
+  const inputRef = useRef<HTMLInputElement>(null);
+  const { ref: inputFitRef, fontSize: inputFontSize } = useFitTextToBox<HTMLSpanElement>(
+    displayValue || placeholder,
+    8,
+    26,
+  );
 
   const totalVotes = useVotesFromInput({ inputValue, costToVote: effectiveCost });
 
   const { winUpToFormatted, shouldShow: showProjection } = useVotingRewardsProjection({
     currentPricePerVote: currentPricePerVoteRaw,
-    inputValue,
+    inputValue: isGhost ? effectiveCost : inputValue,
     submissionsCount,
   });
   const { displayValue: winValue, displaySymbol: winSymbol } = useDisplayPrice(
@@ -132,8 +133,7 @@ const VotingActionBar = () => {
   };
 
   const winDisplay = winSymbol === "$" ? `$${winValue}` : `${winValue} ${winSymbol}`;
-  const votesDisplay = formatNumberWithCommas(totalVotes);
-  const buttonLabel = isConnected && insufficientBalance ? "add funds" : null;
+  const votesDisplay = isGhost ? "1" : formatNumberWithCommas(totalVotes);
 
   if (!slot) return null;
 
@@ -149,9 +149,16 @@ const VotingActionBar = () => {
         <div className="flex items-center gap-2 rounded-[14.5px] bg-neutral-2 px-3 py-2.5">
           {/* amount input */}
           <div
-            className="flex h-10 w-[104px] shrink-0 cursor-text items-center justify-center gap-1 rounded-full border border-neutral-9 px-3"
-            onClick={() => inputFitRef.current?.focus()}
+            className="relative flex h-10 w-[104px] shrink-0 cursor-text items-center justify-center gap-1 rounded-full border border-neutral-9 px-3"
+            onClick={() => inputRef.current?.focus()}
           >
+            <span
+              ref={inputFitRef}
+              aria-hidden="true"
+              className="invisible absolute left-0 top-0 block w-[64px] overflow-hidden whitespace-nowrap font-bold"
+            >
+              {displayValue || placeholder}
+            </span>
             {displaySymbol === "$" && (
               <span
                 className="shrink-0 font-bold text-neutral-9"
@@ -161,14 +168,14 @@ const VotingActionBar = () => {
               </span>
             )}
             <input
-              ref={inputFitRef}
+              ref={inputRef}
               type="text"
               inputMode="decimal"
               value={displayValue}
               onChange={e => handleDisplayChange(e.target.value)}
               onFocus={() => setIsFocused(true)}
               onBlur={() => setIsFocused(false)}
-              placeholder="0"
+              placeholder={placeholder}
               aria-label="amount to spend"
               className="w-[64px] bg-transparent text-center font-bold text-neutral-11 placeholder-neutral-9 outline-none"
               style={{ fontSize: `${inputFontSize}px` }}
@@ -186,7 +193,9 @@ const VotingActionBar = () => {
                 text={votesDisplay}
                 min={8}
                 max={20}
-                className="block w-full overflow-hidden whitespace-nowrap text-center text-neutral-11"
+                className={`block w-full overflow-hidden whitespace-nowrap text-center ${
+                  isGhost ? "text-neutral-9" : "text-neutral-11"
+                }`}
               />
             </div>
 
@@ -199,8 +208,10 @@ const VotingActionBar = () => {
                     text={winDisplay}
                     min={8}
                     max={20}
-                    className="block w-full overflow-hidden whitespace-nowrap bg-clip-text text-center font-bold text-transparent"
-                    style={{ backgroundImage: WIN_GRADIENT }}
+                    className={`block w-full overflow-hidden whitespace-nowrap text-center font-bold ${
+                      isGhost ? "text-neutral-9" : "bg-clip-text text-transparent"
+                    }`}
+                    style={isGhost ? undefined : { backgroundImage: WIN_GRADIENT }}
                   />
                 </div>
               </>
@@ -214,16 +225,7 @@ const VotingActionBar = () => {
             className="flex h-10 w-20 shrink-0 items-center justify-center rounded-full px-1 font-bold text-true-black transition-opacity disabled:opacity-50"
             style={{ backgroundImage: UPVOTE_GRADIENT }}
           >
-            {buttonLabel ? (
-              <FitText
-                text={buttonLabel}
-                min={11}
-                max={13}
-                className="block w-full overflow-hidden whitespace-nowrap text-center"
-              />
-            ) : (
-              <img src="/icons/upvote-black.svg" width={18} height={22} alt="upvote" className="shrink-0" />
-            )}
+            <img src="/icons/upvote-black.svg" width={18} height={22} alt="upvote" className="shrink-0" />
           </button>
         </div>
       </div>

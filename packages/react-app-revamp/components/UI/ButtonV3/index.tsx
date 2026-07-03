@@ -34,6 +34,7 @@ interface ButtonProps {
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
   children?: React.ReactNode;
   id?: string;
+  ariaLabel?: string;
 }
 
 const sizeClasses = {
@@ -62,6 +63,7 @@ const Button: React.FC<ButtonProps> = ({
   onClick,
   children,
   id,
+  ariaLabel,
 }) => {
   const { isConnected } = useWallet();
   const { openModal } = useModal();
@@ -79,6 +81,7 @@ const Button: React.FC<ButtonProps> = ({
   return (
     <motion.button
       id={id}
+      aria-label={ariaLabel}
       className={`text-[16px] tracking-tighter rounded-[10px] font-bold ${disabledClasses} ${textColorClass} ${colorClass} ${sizeClasses[size]} `}
       style={{ willChange: "transform" }}
       whileTap={{ scale: 0.97 }}

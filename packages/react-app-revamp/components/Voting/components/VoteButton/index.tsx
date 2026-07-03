@@ -20,18 +20,6 @@ interface VoteButtonProps {
   onAddFunds?: () => void;
 }
 
-enum VoteButtonType {
-  INSUFFICIENT_BALANCE = "insufficientBalance",
-  CONNECT_WALLET = "connectWallet",
-  DEFAULT = "default",
-}
-
-const ButtonText = {
-  [VoteButtonType.INSUFFICIENT_BALANCE]: "add funds to vote",
-  [VoteButtonType.CONNECT_WALLET]: "buy votes",
-  [VoteButtonType.DEFAULT]: "buy votes",
-};
-
 const VoteButton: FC<VoteButtonProps> = ({ isDisabled, isInvalidBalance, isConnected, onVote, onAddFunds }) => {
   const { openModal } = useModal();
   const [isHovered, setIsHovered] = useState(false);
@@ -47,16 +35,6 @@ const VoteButton: FC<VoteButtonProps> = ({ isDisabled, isInvalidBalance, isConne
       })),
     [],
   );
-
-  const getButtonText = () => {
-    if (isInvalidBalance) {
-      return ButtonText[VoteButtonType.INSUFFICIENT_BALANCE];
-    } else if (isConnected) {
-      return ButtonText[VoteButtonType.DEFAULT];
-    } else {
-      return ButtonText[VoteButtonType.CONNECT_WALLET];
-    }
-  };
 
   const handleClick = () => {
     if (isInvalidBalance) {
@@ -98,13 +76,14 @@ const VoteButton: FC<VoteButtonProps> = ({ isDisabled, isInvalidBalance, isConne
         ))}
       <ButtonV3
         id={isInvalidBalance ? "voting_add_funds_button" : isConnected ? "vote_button" : undefined}
+        ariaLabel={isInvalidBalance ? "add funds to vote" : undefined}
         type={ButtonType.TX_ACTION}
         isDisabled={isInvalidBalance || !isConnected ? false : isDisabled}
         colorClass="px-[20px] text-[24px] font-bold bg-gradient-purple rounded-[40px] w-full"
         size={ButtonSize.FULL}
         onClick={handleClick}
       >
-        <span className="w-full text-center">{getButtonText()}</span>
+        <span className="w-full text-center">buy votes</span>
       </ButtonV3>
     </div>
     </div>

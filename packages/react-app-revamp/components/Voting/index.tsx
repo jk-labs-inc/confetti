@@ -127,6 +127,7 @@ const VotingWidget: FC<VotingWidgetProps> = ({
           currentPricePerVote={costToVoteRaw}
           inputValue={inputValue}
           submissionsCount={submissionsCount}
+          placeholderSpend={effectiveCostToVote}
         />
         <VotingWidgetEmailSignup />
         <VoteButton

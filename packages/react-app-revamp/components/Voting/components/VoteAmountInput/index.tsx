@@ -1,3 +1,4 @@
+import { useFitTextToBox } from "@components/EntryCarousel/useFitTextToBox";
 import { VotingWidgetStyle } from "@components/Voting";
 import { useVotingStore } from "@components/Voting/store";
 import { formatNumberWithCommas } from "@helpers/formatNumber";
@@ -6,6 +7,7 @@ import { useVotesFromInput } from "@hooks/useVotesFromInput";
 import { FC, RefObject } from "react";
 import { motion } from "motion/react";
 import Skeleton from "react-loading-skeleton";
+import { useMediaQuery } from "react-responsive";
 import { useShallow } from "zustand/shallow";
 import useVotingInputDisplay from "./hooks/useVotingInputDisplay";
 
@@ -83,10 +85,22 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
     }
   };
 
-  const placeholder = "0";
+  const hasPrice = parseFloat(costToVote) > 0;
+  const isGhost = !displayValue && hasPrice;
+  // Strip digit grouping so the placeholder is always typeable as shown.
+  const placeholder = (pricePerVoteDisplay || "0").replace(/,/g, "");
   const valueString = displayValue || placeholder;
   const dotCount = (valueString.match(/\./g) || []).length;
   const charCount = valueString.length - dotCount * 0.5;
+
+  const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
+
+  const mirrorText = displaySymbol === "$" ? `$${valueString}` : `${valueString} ${displaySymbol}`;
+  const { ref: inputFitRef, fontSize: inputFontSize } = useFitTextToBox<HTMLSpanElement>(
+    mirrorText,
+    12,
+    isMobile ? 24 : 40,
+  );
 
   const hasBalance = parseFloat(maxBalance) > 0;
   const styleConfig = STYLE_CONFIG[style];
@@ -94,19 +108,9 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
   const textColor = hasError ? "text-negative-11" : "text-neutral-11";
   const borderColor = hasError ? "border-negative-11" : styleConfig.borderColor;
 
-  const votesText = `${formatNumberWithCommas(totalVotes)} ${totalVotes === 1 ? "vote" : "votes"}`;
+  const votesText = isGhost ? "1 vote" : `${formatNumberWithCommas(totalVotes)} ${totalVotes === 1 ? "vote" : "votes"}`;
 
   const showPresets = hasBalance && isConnected;
-
-  const valueLength = valueString.length;
-  const mobileTextSize =
-    valueLength <= 4
-      ? "text-[24px]"
-      : valueLength <= 6
-        ? "text-[20px]"
-        : valueLength <= 9
-          ? "text-[20px]"
-          : "text-[16px]";
 
   return (
     <div className="flex flex-col gap-2">
@@ -114,14 +118,22 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
         className={`flex w-full items-center px-6 py-2 text-[16px] ${styleConfig.background} font-bold ${textColor} border ${borderColor} rounded-[40px] transition-colors duration-300 cursor-text`}
         onClick={() => inputRef.current?.focus()}
       >
-        <div className="flex min-w-0 flex-1 items-baseline overflow-hidden">
+        <div className="relative flex min-w-0 flex-1 items-baseline overflow-hidden">
+          <span
+            ref={inputFitRef}
+            aria-hidden="true"
+            className="invisible absolute left-0 top-0 block w-full overflow-hidden whitespace-nowrap pr-2"
+          >
+            {mirrorText}
+          </span>
           {isLoading ? (
             <Skeleton width={120} height={40} baseColor="#706f78" highlightColor="#FFE25B" borderRadius={8} />
           ) : (
             <>
               {displaySymbol === "$" && (
                 <span
-                  className={`${mobileTextSize} md:text-[40px] text-neutral-9 whitespace-nowrap mr-1 transition-[font-size] duration-150`}
+                  className="text-neutral-9 whitespace-nowrap mr-1 transition-[font-size] duration-150"
+                  style={{ fontSize: `${inputFontSize}px` }}
                 >
                   {displaySymbol}
                 </span>
@@ -137,8 +149,8 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
                 onBlur={() => setIsFocused(false)}
                 placeholder={placeholder}
                 onKeyDown={onKeyDown}
-                className={`${mobileTextSize} md:text-[40px] bg-transparent outline-none placeholder-neutral-9 min-w-0 transition-[font-size] duration-150`}
-                style={{ width: `${charCount || 1}ch`, maxWidth: "70%" }}
+                className="bg-transparent outline-none placeholder-neutral-9 min-w-0 transition-[font-size] duration-150"
+                style={{ fontSize: `${inputFontSize}px`, width: `${charCount || 1}ch`, maxWidth: "100%" }}
               />
               {displaySymbol !== "$" && (
                 <span className="text-[16px] text-neutral-9 whitespace-nowrap ml-2 uppercase">{displaySymbol}</span>
