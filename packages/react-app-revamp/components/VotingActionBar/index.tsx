@@ -81,12 +81,12 @@ const VotingActionBar = () => {
   // Strip digit grouping so the placeholder is always typeable as shown.
   const placeholder = (pricePerVoteDisplay || "0").replace(/,/g, "");
 
+  const valueString = displayValue || placeholder;
+  const dotCount = (valueString.match(/\./g) || []).length;
+  const charCount = valueString.length - dotCount * 0.5;
+
   const inputRef = useRef<HTMLInputElement>(null);
-  const { ref: inputFitRef, fontSize: inputFontSize } = useFitTextToBox<HTMLSpanElement>(
-    displayValue || placeholder,
-    8,
-    26,
-  );
+  const { ref: inputFitRef, fontSize: inputFontSize } = useFitTextToBox<HTMLSpanElement>(valueString, 8, 26);
 
   const totalVotes = useVotesFromInput({ inputValue, costToVote: effectiveCost });
 
@@ -157,7 +157,7 @@ const VotingActionBar = () => {
               aria-hidden="true"
               className="invisible absolute left-0 top-0 block w-[64px] overflow-hidden whitespace-nowrap font-bold"
             >
-              {displayValue || placeholder}
+              {valueString}
             </span>
             {displaySymbol === "$" && (
               <span
@@ -177,8 +177,8 @@ const VotingActionBar = () => {
               onBlur={() => setIsFocused(false)}
               placeholder={placeholder}
               aria-label="amount to spend"
-              className="w-[64px] bg-transparent text-center font-bold text-neutral-11 placeholder-neutral-9 outline-none"
-              style={{ fontSize: `${inputFontSize}px` }}
+              className="min-w-0 bg-transparent text-left font-bold text-neutral-11 placeholder-neutral-9 outline-none"
+              style={{ fontSize: `${inputFontSize}px`, width: `${charCount || 1}ch`, maxWidth: "64px" }}
             />
             {displaySymbol !== "$" && (
               <span className="shrink-0 text-[11px] font-bold uppercase text-neutral-9">{displaySymbol}</span>
