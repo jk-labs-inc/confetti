@@ -47,7 +47,7 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
   inputRef,
   onKeyDown,
 }) => {
-  const { displayValue, displaySymbol, isLoading, isInvalid, handleDisplayChange, handleDisplayMax, setIsFocused } =
+  const { displayValue, displaySymbol, isLoading, handleDisplayChange, handleDisplayMax, setIsFocused } =
     useVotingInputDisplay({
       nativeCurrencySymbol: symbol,
       maxBalance,
@@ -104,7 +104,7 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
 
   const hasBalance = parseFloat(maxBalance) > 0;
   const styleConfig = STYLE_CONFIG[style];
-  const hasError = isConnected && (isInvalid || isBelowMinimum);
+  const hasError = isConnected && isBelowMinimum;
   const textColor = hasError ? "text-negative-11" : "text-neutral-11";
   const borderColor = hasError ? "border-negative-11" : styleConfig.borderColor;
 
