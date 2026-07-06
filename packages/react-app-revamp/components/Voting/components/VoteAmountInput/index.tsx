@@ -149,7 +149,7 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
                 onBlur={() => setIsFocused(false)}
                 placeholder={placeholder}
                 onKeyDown={onKeyDown}
-                className="bg-transparent outline-none placeholder-neutral-9 min-w-0 transition-[font-size] duration-150"
+                className="bg-transparent text-right outline-none placeholder-neutral-9 min-w-0 transition-[font-size] duration-150"
                 style={{ fontSize: `${inputFontSize}px`, width: `${charCount || 1}ch`, maxWidth: "100%" }}
               />
               {displaySymbol !== "$" && (

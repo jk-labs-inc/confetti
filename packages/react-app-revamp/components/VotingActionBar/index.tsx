@@ -133,7 +133,7 @@ const VotingActionBar = () => {
   };
 
   const winDisplay = winSymbol === "$" ? `$${winValue}` : `${winValue} ${winSymbol}`;
-  const votesDisplay = isGhost ? "1" : formatNumberWithCommas(totalVotes);
+  const votesDisplay = isGhost ? "+1" : `+${formatNumberWithCommas(totalVotes)}`;
 
   if (!slot) return null;
 
@@ -177,7 +177,7 @@ const VotingActionBar = () => {
               onBlur={() => setIsFocused(false)}
               placeholder={placeholder}
               aria-label="amount to spend"
-              className="min-w-0 bg-transparent text-left font-bold text-neutral-11 placeholder-neutral-9 outline-none"
+              className="min-w-0 bg-transparent text-right font-bold text-neutral-11 placeholder-neutral-9 outline-none"
               style={{ fontSize: `${inputFontSize}px`, width: `${charCount || 1}ch`, maxWidth: "64px" }}
             />
             {displaySymbol !== "$" && (
@@ -221,11 +221,11 @@ const VotingActionBar = () => {
           <button
             onClick={handleClick}
             disabled={isConnected && !insufficientBalance && voteDisabled}
-            aria-label={isConnected ? (insufficientBalance ? "add funds" : "upvote") : "buy votes"}
-            className="flex h-10 w-20 shrink-0 items-center justify-center rounded-full px-1 font-bold text-true-black transition-opacity disabled:opacity-50"
+            aria-label="buy votes"
+            className="flex h-10 shrink-0 items-center justify-center whitespace-nowrap rounded-full px-4 text-[14px] font-bold text-true-black transition-opacity disabled:opacity-50"
             style={{ backgroundImage: UPVOTE_GRADIENT }}
           >
-            <img src="/icons/upvote-black.svg" width={18} height={22} alt="upvote" className="shrink-0" />
+            buy votes
           </button>
         </div>
       </div>
