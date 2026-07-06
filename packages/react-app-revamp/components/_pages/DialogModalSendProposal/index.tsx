@@ -4,12 +4,6 @@ import { chains } from "@config/wagmi";
 import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import { extractPathSegments } from "@helpers/extractPath";
 import { emailRegex } from "@helpers/regex";
-import {
-  SubmissionCache,
-  loadSubmissionFromLocalStorage,
-  removeSubmissionFromLocalStorage,
-  saveSubmissionToLocalStorage,
-} from "@helpers/submissionCaching";
 import { useContestStore } from "@hooks/useContest/store";
 import { useEditorStore } from "@hooks/useEditor/store";
 import useEmailSignup from "@hooks/useEmailSignup";
@@ -53,7 +47,7 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
     setEmailForSubscription,
     setEmailAlreadyExists,
   } = useSubmitProposalStore(state => state);
-  const { votesOpen, charge } = useContestStore(state => state);
+  const { charge } = useContestStore(state => state);
   const { data: accountData } = useBalance({
     address: userAddress as `0x${string}`,
   });
@@ -61,8 +55,7 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
   const chainId = chains.filter(
     (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName,
   )?.[0]?.id;
-  const savedProposal = loadSubmissionFromLocalStorage("submissions", contestId);
-  const [proposal, setProposal] = useState(savedProposal?.content || "");
+  const [proposal, setProposal] = useState("");
   const isCorrectNetwork = chainId === chain?.id;
   const [isDragging, setIsDragging] = useState(false);
   const { uploadImage } = useUploadImageStore(state => state);
@@ -99,15 +92,7 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
       },
     },
     onUpdate: ({ editor }) => {
-      const content = editor.getHTML();
-      setProposal(content);
-
-      const submissionCache: SubmissionCache = {
-        contestId,
-        content,
-        expiresAt: votesOpen,
-      };
-      saveSubmissionToLocalStorage("submissions", submissionCache);
+      setProposal(editor.getHTML());
     },
     immediatelyRender: false,
   });
@@ -147,8 +132,9 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
       const [proposalResult] = await Promise.all(promises);
 
       if (proposalResult) {
-        // Clean up local storage before navigation (which happens in sendProposal)
-        removeSubmissionFromLocalStorage("submissions", contestId);
+        editorProposal?.commands.clearContent();
+        setProposal("");
+        setIsOpen(false);
       }
     } catch (error) {
       console.error("Error:", error);
