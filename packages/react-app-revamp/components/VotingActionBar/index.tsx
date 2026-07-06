@@ -120,6 +120,7 @@ const VotingActionBar = () => {
     !pickedProposal || isBalanceLoading || isPriceLoading || isCastLoading || isZeroValue || isBelowMinimum;
 
   const handleClick = () => {
+    inputRef.current?.blur();
     if (isConnected && insufficientBalance) {
       setShowAddFunds(true);
       return;
@@ -150,7 +151,7 @@ const VotingActionBar = () => {
           {/* amount input */}
           <div
             className="relative flex h-10 w-[104px] shrink-0 cursor-text items-center justify-center gap-1 rounded-full border border-neutral-9 px-3"
-            onClick={() => inputRef.current?.focus()}
+            onClick={() => inputRef.current?.focus({ preventScroll: true })}
           >
             <span
               ref={inputFitRef}
@@ -173,7 +174,11 @@ const VotingActionBar = () => {
               inputMode="decimal"
               value={displayValue}
               onChange={e => handleDisplayChange(e.target.value)}
-              onFocus={() => setIsFocused(true)}
+              onFocus={() => {
+                setIsFocused(true);
+
+                window.scrollTo({ top: document.documentElement.scrollHeight, behavior: "smooth" });
+              }}
               onBlur={() => setIsFocused(false)}
               placeholder={placeholder}
               aria-label="amount to spend"
@@ -220,6 +225,9 @@ const VotingActionBar = () => {
 
           <button
             onClick={handleClick}
+            // Keep the input focused through the tap so the keyboard doesn't
+            // collapse and shift the bar mid-press.
+            onPointerDown={e => e.preventDefault()}
             disabled={isConnected && !insufficientBalance && voteDisabled}
             aria-label="buy votes"
             className="flex h-10 shrink-0 items-center justify-center whitespace-nowrap rounded-full px-4 text-[14px] font-bold text-true-black transition-opacity disabled:opacity-50"
