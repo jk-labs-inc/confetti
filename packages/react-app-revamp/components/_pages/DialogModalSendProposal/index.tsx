@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import Iframe from "@components/tiptap/Iframe";
+import { toastError } from "@components/UI/Toast";
 import { chains } from "@config/wagmi";
 import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import { extractPathSegments } from "@helpers/extractPath";
@@ -11,6 +12,7 @@ import useSubmitProposal from "@hooks/useSubmitProposal";
 import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
 import { useUploadImageStore } from "@hooks/useUploadImage";
 import { useWallet } from "@hooks/useWallet";
+import { validateImageUpload } from "lib/image/uploadValidation";
 import Document from "@tiptap/extension-document";
 import Heading from "@tiptap/extension-heading";
 import Image from "@tiptap/extension-image";
@@ -149,18 +151,23 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
     setIsDragging(false);
 
     const file = event.dataTransfer.files[0];
+    if (!file) return;
 
-    if (file && file.type.startsWith("image/")) {
-      try {
-        const imageUrl = await uploadImage(file);
-        if (imageUrl) {
-          editorProposal?.chain().focus().setImage({ src: imageUrl }).run();
-        } else {
-          console.error("Received no URL from the upload.");
-        }
-      } catch (error) {
-        console.error("Error uploading image:", error);
+    const uploadError = await validateImageUpload(file);
+    if (uploadError) {
+      toastError({ message: uploadError });
+      return;
+    }
+
+    try {
+      const imageUrl = await uploadImage(file);
+      if (imageUrl) {
+        editorProposal?.chain().focus().setImage({ src: imageUrl }).run();
+      } else {
+        console.error("Received no URL from the upload.");
       }
+    } catch (error) {
+      console.error("Error uploading image:", error);
     }
   };
 
