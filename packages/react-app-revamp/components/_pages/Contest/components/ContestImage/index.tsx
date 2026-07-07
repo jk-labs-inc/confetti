@@ -2,7 +2,7 @@
 
 import { CONTEST_IMAGE_PRESETS } from "lib/image/cloudflare";
 import { useCloudflareImage } from "lib/image/useCloudflareImage";
-import { FC } from "react";
+import { FC, useState } from "react";
 
 export type ContestImageSize = "default" | "small";
 
@@ -24,12 +24,18 @@ const objectFitClasses: Record<ContestImageSize, string> = {
 const ContestImage: FC<ContestImageProps> = ({ imageUrl, size = "default" }) => {
   const { className, preset } = sizeConfig[size];
   const { src, srcSet } = useCloudflareImage(imageUrl, preset);
+  const [failed, setFailed] = useState(false);
+
+  const handleError = () => {
+    if (!failed && src !== imageUrl) setFailed(true);
+  };
 
   return (
     <div className={`${className} relative overflow-hidden shrink-0`}>
       <img
-        src={src}
-        srcSet={srcSet}
+        src={failed ? imageUrl : src}
+        srcSet={failed ? undefined : srcSet}
+        onError={handleError}
         width={preset.width}
         height={preset.height}
         alt="contest"
