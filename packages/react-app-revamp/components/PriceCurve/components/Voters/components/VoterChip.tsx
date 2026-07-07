@@ -1,13 +1,14 @@
 import { Avatar } from "@components/UI/Avatar";
 import CustomLink from "@components/UI/Link";
 import { ROUTE_VIEW_USER } from "@config/routes";
-import { entryMedal, withAlpha } from "@helpers/entryColors";
+import { ENTRY_ACCENT_COLOR, withAlpha } from "@helpers/entryColors";
 import { formatNumber } from "@helpers/formatNumber";
 import useNow from "@hooks/useNow";
 import useProfileData from "@hooks/useProfileData";
 import { CSSProperties, FC, KeyboardEvent as ReactKeyboardEvent, memo, useEffect, useRef, useState } from "react";
 import { useFitText } from "@hooks/useFitText";
 import { PositionedVote } from "../types";
+import EntryRankMedal from "./EntryRankMedal";
 
 export interface VoterChipData {
   uuid: string;
@@ -63,12 +64,6 @@ const compactVotes = (n: number): string =>
 
 const PRICE_FONT_SIZE = { min: 10, max: 14 };
 
-const GRADIENT_TEXT: CSSProperties = {
-  WebkitBackgroundClip: "text",
-  WebkitTextFillColor: "transparent",
-  backgroundClip: "text",
-};
-
 const VoterChip: FC<VoterChipProps> = ({
   uuid,
   userAddress,
@@ -88,8 +83,6 @@ const VoterChip: FC<VoterChipProps> = ({
   const priceRef = useRef<HTMLSpanElement>(null);
   const priceFontSize = useFitText(priceRef, priceText, PRICE_FONT_SIZE);
 
-  const medal = entryMedal(rank);
-
   const [entering] = useState(!!isNew);
   useEffect(() => {
     if (entering) onSeen?.(uuid);
@@ -99,13 +92,9 @@ const VoterChip: FC<VoterChipProps> = ({
     flex: `0 0 ${width}`,
     width,
     scrollSnapAlign: "start",
-    borderColor: isActive ? withAlpha(medal.solid, 0.6) : undefined,
-    boxShadow: isActive ? `0 6px 16px -12px ${withAlpha(medal.solid, 0.55)}` : undefined,
+    borderColor: isActive ? withAlpha(ENTRY_ACCENT_COLOR, 0.6) : undefined,
+    boxShadow: isActive ? `0 6px 16px -12px ${withAlpha(ENTRY_ACCENT_COLOR, 0.55)}` : undefined,
   };
-
-  const titleStyle: CSSProperties = medal.isGradient
-    ? { backgroundImage: medal.background, ...GRADIENT_TEXT }
-    : { color: medal.solid };
 
   const handleKeyDown = (e: ReactKeyboardEvent<HTMLDivElement>) => {
     if (e.target !== e.currentTarget) return;
@@ -161,9 +150,9 @@ const VoterChip: FC<VoterChipProps> = ({
 
       <div className="flex min-w-0 items-center gap-1.5">
         <span className="flex-none text-[10.5px] text-neutral-9">for</span>
-        <span className="size-2 flex-none rounded-full" style={{ backgroundColor: medal.solid }} />
+        <EntryRankMedal rank={rank} />
         {entryTitle ? (
-          <span className="min-w-0 flex-1 truncate text-[11.5px] font-semibold" style={titleStyle}>
+          <span className="min-w-0 flex-1 truncate text-[11.5px] font-semibold text-neutral-11">
             {entryTitle}
           </span>
         ) : (

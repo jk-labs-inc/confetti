@@ -1,5 +1,5 @@
-import { entryMedal } from "@helpers/entryColors";
 import { FC } from "react";
+import EntryRankMedal from "../components/EntryRankMedal";
 import { PositionedVote } from "../types";
 import CastAmount from "./CastAmount";
 
@@ -12,13 +12,13 @@ interface CastRowProps {
 
 const CastRow: FC<CastRowProps> = ({ vote, formatPrice, entryTitlesById, rankById }) => {
   const title = entryTitlesById.get(vote.proposalId);
-  const medal = entryMedal(rankById.get(vote.proposalId));
+  const rank = rankById.get(vote.proposalId);
 
   return (
     <div className="flex items-center gap-2 text-neutral-11/70">
       <span className="flex min-w-0 flex-1 items-center gap-1">
-        <span className="size-2 flex-none rounded-full" style={{ backgroundColor: medal.solid }} />
-        {title && <span className="truncate">{title}</span>}
+        <EntryRankMedal rank={rank} />
+        {title && <span className="truncate font-semibold text-neutral-11">{title}</span>}
       </span>
 
       <CastAmount cost={vote.totalCost} votes={vote.voteAmount} formatPrice={formatPrice} />
