@@ -2,7 +2,7 @@
 
 import { ENTRY_IMAGE_PRESET } from "lib/image/cloudflare";
 import { useCloudflareFluidImage } from "lib/image/useCloudflareImage";
-import React from "react";
+import React, { useState } from "react";
 
 interface ImageWithFallbackProps {
   fullSrc: string;
@@ -18,6 +18,11 @@ const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({ fullSrc, alt }) =
     quality: ENTRY_IMAGE_PRESET.quality,
     fit: ENTRY_IMAGE_PRESET.fit,
   });
+  const [failed, setFailed] = useState(false);
+
+  const handleError = () => {
+    if (!failed && src !== fullSrc) setFailed(true);
+  };
 
   // Don't render anything if no valid source is available
   if (!hasValidSrc) {
@@ -27,9 +32,10 @@ const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({ fullSrc, alt }) =
   return (
     <div className="relative rounded-[16px] w-full h-full">
       <img
-        src={src}
-        srcSet={srcSet}
+        src={failed ? fullSrc : src}
+        srcSet={failed ? undefined : srcSet}
         sizes={sizes}
+        onError={handleError}
         alt={alt}
         loading="lazy"
         decoding="async"
