@@ -9,6 +9,7 @@ import { EntryPreview } from "@hooks/useDeployContest/slices/contestMetadataSlic
 import { CSSProperties, FC, ReactNode, useMemo } from "react";
 import { CARD_ASPECT } from "./constants";
 import EntryImage from "./EntryImage";
+import ShadowCrossfade from "./ShadowCrossfade";
 import { useFitTextToBox } from "./useFitTextToBox";
 
 const FOIL_PX = 1.5;
@@ -33,6 +34,7 @@ interface EntryCardProps {
   variant?: "coverflow" | "feed";
   compact?: boolean;
   boxAspect?: number;
+  imageFetchPriority?: "high" | "low" | "auto";
 }
 
 type ParsedEntry =
@@ -85,6 +87,7 @@ const EntryCard: FC<EntryCardProps> = ({
   variant = "coverflow",
   compact,
   boxAspect = CARD_ASPECT,
+  imageFetchPriority,
 }) => {
   const entry = useMemo(() => parseEntry(proposal, enabledPreview), [proposal, enabledPreview]);
   const showVotes =
@@ -111,15 +114,8 @@ const EntryCard: FC<EntryCardProps> = ({
   const voteLabelSize = compact ? "text-[9px]" : "text-[10px]";
 
   const accentGlow = `0 0 26px -4px ${withAlpha(accent, 0.5)}, 0 12px 32px -14px rgba(0,0,0,0.9)`;
-  const elevatedShadow = compact ? "var(--shadow-entry-card)" : accentGlow;
+  const centerShadow = !active && compact ? "var(--shadow-entry-card)" : accentGlow;
   const restingShadow = "0 0 0 1px rgba(255,255,255,0.22), 0 0 22px -2px rgba(255,255,255,0.26)";
-  const foilShadow = active
-    ? accentGlow
-    : isFeed
-      ? "var(--shadow-entry-card)"
-      : elevated
-        ? elevatedShadow
-        : restingShadow;
 
   const innerBg = isTitleOnly ? "linear-gradient(180deg, #1a1a1a 0%, #0c0c0c 54%, #050505 100%)" : "#000";
 
@@ -127,9 +123,10 @@ const EntryCard: FC<EntryCardProps> = ({
     const showHeader = !!proposal.rank || !!entry.title || showVotes;
     return (
       <div
-        className="relative w-full rounded-2xl transition-shadow duration-300 ease-out"
-        style={{ background: active ? ENTRY_ACCENT_COLOR : "transparent", padding: FOIL_PX, boxShadow: foilShadow }}
+        className="relative w-full rounded-2xl"
+        style={{ background: active ? ENTRY_ACCENT_COLOR : "transparent", padding: FOIL_PX }}
       >
+        <ShadowCrossfade activeShadow={accentGlow} restingShadow="var(--shadow-entry-card)" active={!!active} />
         <div className="relative isolate flex w-full flex-col gap-4 overflow-hidden rounded-[14px] bg-true-black p-2">
           {showHeader ? (
             <div className="flex w-full items-center pl-2">
@@ -153,14 +150,17 @@ const EntryCard: FC<EntryCardProps> = ({
   }
 
   return (
-    <div
-      className="relative h-full w-full rounded-2xl transition-shadow duration-300 ease-out"
-      style={{ background: foilBg, padding: FOIL_PX, boxShadow: foilShadow }}
-    >
+    <div className="relative h-full w-full rounded-2xl" style={{ background: foilBg, padding: FOIL_PX }}>
+      <ShadowCrossfade activeShadow={centerShadow} restingShadow={restingShadow} active={!!(active || elevated)} />
       <div className="relative isolate h-full w-full overflow-hidden rounded-[14px]" style={{ background: innerBg }}>
         {entry.kind === "image" ? (
           entry.imageUrl?.trim() ? (
-            <EntryImage key={entry.imageUrl} src={entry.imageUrl} boxAspect={boxAspect} />
+            <EntryImage
+              key={entry.imageUrl}
+              src={entry.imageUrl}
+              boxAspect={boxAspect}
+              fetchPriority={imageFetchPriority}
+            />
           ) : null
         ) : entry.kind === "tweet" ? (
           <div className="no-scrollbar absolute inset-0 overflow-y-auto">
@@ -172,7 +172,7 @@ const EntryCard: FC<EntryCardProps> = ({
           <div className="relative z-1 flex h-full w-full flex-col">
             <div
               ref={titleFitRef}
-              className="flex flex-1 items-center justify-center overflow-hidden px-5 pb-3 pt-14"
+              className="flex flex-1 items-center justify-center overflow-hidden px-5 pb-3 pt-14 [contain:layout]"
               style={{ fontSize: `${titleFontSize}px` }}
             >
               <p

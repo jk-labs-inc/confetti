@@ -27,7 +27,17 @@ export function useEntryFeed({
   isLoadingMore,
   onLoadMore,
 }: UseEntryFeedParams): UseEntryFeedResult {
-  const cards = useMemo(() => proposals.map(toContentProposal), [proposals]);
+  const orderRef = useRef<string[]>([]);
+  const cards = useMemo(() => {
+    const byId = new Map(proposals.map(p => [p.id, p]));
+    const order = orderRef.current.filter(id => byId.has(id));
+    const seen = new Set(order);
+    for (const p of proposals) {
+      if (!seen.has(p.id)) order.push(p.id);
+    }
+    orderRef.current = order;
+    return order.map(id => toContentProposal(byId.get(id)!));
+  }, [proposals]);
   const n = cards.length;
 
   const initialMappedProposalIds = useProposalStore(state => state.initialMappedProposalIds);

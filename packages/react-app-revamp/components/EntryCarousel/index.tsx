@@ -12,8 +12,10 @@ import {
   CARD_WIDTH_PCT,
   DEPTH_PX,
   DRAG_THRESHOLD,
-  EDGE_RESISTANCE,
+  DRAG_THRESHOLD_TOUCH,
   FILL_BOTTOM_GAP_PX,
+  FLICK_MIN_TRAVEL,
+  FLICK_MIN_VELOCITY,
   FLICK_PROJECTION_S,
   MAX_FILL_ASPECT,
   MAX_FLICK,
@@ -23,7 +25,10 @@ import {
   MAX_VISIBLE,
   NEIGHBOR_SPACING_PCT,
   PERSPECTIVE_PX,
+  RUBBER_BAND_COEF,
   TWEET_CARD_ASPECT,
+  VELOCITY_STALE_MS,
+  VELOCITY_WINDOW_MS,
   WINDOW_RADIUS,
 } from "./constants";
 
@@ -36,6 +41,35 @@ interface EntryCarouselProps {
   onLoadMore: () => void;
 }
 
+interface DragState {
+  active: boolean;
+  pointerId: number;
+  pointerType: string;
+  startX: number;
+  startY: number;
+  startPos: number;
+  moved: number;
+  engaged: boolean;
+  rejected: boolean;
+  downIndex: number | null;
+  history: { p: number; t: number }[];
+}
+
+// iOS scroll-view rubber band: asymptotic resistance that saturates instead of a linear multiplier
+const rubberBand = (overshoot: number) => (RUBBER_BAND_COEF * overshoot) / (1 + RUBBER_BAND_COEF * overshoot);
+
+const releaseVelocity = (history: { p: number; t: number }[]): number => {
+  const last = history[history.length - 1];
+  if (!last || performance.now() - last.t > VELOCITY_STALE_MS) return 0;
+  let first = last;
+  for (let i = history.length - 1; i >= 0; i--) {
+    if (last.t - history[i].t > VELOCITY_WINDOW_MS) break;
+    first = history[i];
+  }
+  const dt = (last.t - first.t) / 1000;
+  return dt > 0.005 ? (last.p - first.p) / dt : 0;
+};
+
 const EntryCarousel: FC<EntryCarouselProps> = ({
   proposals,
   enabledPreview,
@@ -47,7 +81,19 @@ const EntryCarousel: FC<EntryCarouselProps> = ({
   const wrapRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const pos = useMotionValue(0);
-  const drag = useRef({ active: false, startX: 0, startPos: 0, moved: 0 });
+  const drag = useRef<DragState>({
+    active: false,
+    pointerId: 0,
+    pointerType: "",
+    startX: 0,
+    startY: 0,
+    startPos: 0,
+    moved: 0,
+    engaged: false,
+    rejected: false,
+    downIndex: null,
+    history: [],
+  });
   const activeRef = useRef(0);
   const [stageWidth, setStageWidth] = useState(0);
   const [activeIdx, setActiveIdx] = useState(0);
@@ -185,12 +231,13 @@ const EntryCarousel: FC<EntryCarouselProps> = ({
   }, [stageWidth, cards]);
 
   const snapTo = useCallback(
-    (target: number) => {
+    (target: number, velocity?: number) => {
       const dest = isBounded ? Math.max(0, Math.min(n - 1, target)) : target;
       animate(pos, dest, {
         type: "spring",
         stiffness: 320,
         damping: 34,
+        ...(velocity !== undefined ? { velocity } : {}),
         onComplete: () => {
           const norm =
             n > 0 ? (isBounded ? Math.max(0, Math.min(n - 1, Math.round(dest))) : ((Math.round(dest) % n) + n) % n) : 0;
@@ -203,40 +250,100 @@ const EntryCarousel: FC<EntryCarouselProps> = ({
   );
 
   const onPointerDown = (e: ReactPointerEvent<HTMLDivElement>) => {
-    pos.jump(pos.get());
-    drag.current = { active: true, startX: e.clientX, startPos: pos.get(), moved: 0 };
+    if (drag.current.active) return; // one gesture at a time — a second finger must not hijack the frame of reference
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+    pos.jump(pos.get()); // catch a settling spring in place (also zeroes its velocity)
+    const card = (e.target as HTMLElement).closest?.("[data-index]") as HTMLElement | null;
+    const downIndex = card ? Number(card.dataset.index) : NaN;
+    drag.current = {
+      active: true,
+      pointerId: e.pointerId,
+      pointerType: e.pointerType,
+      startX: e.clientX,
+      startY: e.clientY,
+      startPos: pos.get(),
+      moved: 0,
+      engaged: false,
+      rejected: false,
+      downIndex: Number.isInteger(downIndex) ? downIndex : null,
+      history: [{ p: pos.get(), t: performance.now() }],
+    };
     e.currentTarget.setPointerCapture?.(e.pointerId);
   };
 
   const onPointerMove = (e: ReactPointerEvent<HTMLDivElement>) => {
     const d = drag.current;
-    if (!d.active || spacing === 0) return;
-    const dx = e.clientX - d.startX;
-    d.moved = Math.max(d.moved, Math.abs(dx));
+    if (!d.active || e.pointerId !== d.pointerId || spacing === 0) return;
+    const dy = e.clientY - d.startY;
+    let dx = e.clientX - d.startX;
+    d.moved = Math.max(d.moved, Math.abs(dx), Math.abs(dy));
+    if (!d.engaged) {
+      // axis lock: only claim the gesture once horizontal intent is clear, so vertical
+      // page scrolls never wiggle the deck
+      if (d.rejected) return;
+      const slop = d.pointerType === "mouse" ? DRAG_THRESHOLD : DRAG_THRESHOLD_TOUCH;
+      if (Math.abs(dx) < slop) {
+        if (Math.abs(dy) >= slop) d.rejected = true;
+        return;
+      }
+      if (Math.abs(dy) > Math.abs(dx)) {
+        d.rejected = true;
+        return;
+      }
+      d.engaged = true;
+      d.startX = e.clientX; // re-baseline so engagement starts without a slop-sized jump
+      dx = 0;
+    }
     let next = d.startPos - dx / spacing;
     if (isBounded) {
-      // rubber-band past the ends so the two-card track feels walled, not wrapped
-      if (next < 0) next *= EDGE_RESISTANCE;
-      else if (next > n - 1) next = n - 1 + (next - (n - 1)) * EDGE_RESISTANCE;
+      if (next < 0) next = -rubberBand(-next);
+      else if (next > n - 1) next = n - 1 + rubberBand(next - (n - 1));
     }
     pos.set(next);
+    const t = performance.now();
+    d.history.push({ p: next, t });
+    while (d.history.length > 2 && t - d.history[0].t > VELOCITY_WINDOW_MS + 50) d.history.shift();
   };
 
-  const onPointerUp = () => {
+  const onPointerUp = (e: ReactPointerEvent<HTMLDivElement>) => {
     const d = drag.current;
-    if (!d.active) return;
+    if (!d.active || e.pointerId !== d.pointerId) return;
     d.active = false;
-    const v = pos.getVelocity();
-    const base = Math.round(pos.get());
-    const projected = Math.round(pos.get() + v * FLICK_PROJECTION_S);
-    const target = Math.max(base - MAX_FLICK, Math.min(base + MAX_FLICK, projected));
-    snapTo(target);
+    if (d.engaged) {
+      const v = releaseVelocity(d.history);
+      const cur = pos.get();
+      const base = Math.round(cur);
+      let projected = Math.round(cur + v * FLICK_PROJECTION_S);
+      const traveled = cur - d.startPos;
+      // native pagers advance on a short-but-fast fling even when projection rounds home
+      if (
+        projected === base &&
+        Math.abs(v) >= FLICK_MIN_VELOCITY &&
+        Math.abs(traveled) >= FLICK_MIN_TRAVEL &&
+        Math.sign(v) === Math.sign(traveled)
+      ) {
+        projected = base + Math.sign(v);
+      }
+      const target = Math.max(base - MAX_FLICK, Math.min(base + MAX_FLICK, projected));
+      snapTo(target, v);
+      return;
+    }
+    const slop = d.pointerType === "mouse" ? DRAG_THRESHOLD : DRAG_THRESHOLD_TOUCH;
+    if (d.moved <= slop && d.downIndex !== null) {
+      const cur = pos.get();
+      snapTo(cur + cardDelta(d.downIndex, cur)); // tap: bring the tapped card to center
+      return;
+    }
+    snapTo(Math.round(pos.get())); // ambiguous release (caught spring, rejected axis): settle nearest
   };
 
-  const handleCardClick = (index: number) => {
-    if (drag.current.moved > DRAG_THRESHOLD) return; // it was a drag, not a tap
-    const cur = pos.get();
-    snapTo(cur + cardDelta(index, cur)); // bring the tapped card to center
+  const onPointerCancel = (e: ReactPointerEvent<HTMLDivElement>) => {
+    const d = drag.current;
+    if (!d.active || e.pointerId !== d.pointerId) return;
+    d.active = false;
+    // the browser claimed the gesture (vertical scroll) — settle without projection so the
+    // horizontal remnant of a diagonal swipe never advances a card
+    snapTo(Math.round(pos.get()));
   };
 
   if (n === 0) return null;
@@ -244,7 +351,7 @@ const EntryCarousel: FC<EntryCarouselProps> = ({
   return (
     <div
       ref={wrapRef}
-      className="relative w-full select-none touch-pan-y overflow-hidden"
+      className="relative w-full select-none touch-pan-y overflow-hidden [-webkit-touch-callout:none]"
       style={{ height: containerH ? `${containerH}px` : undefined }}
     >
       <div
@@ -252,7 +359,7 @@ const EntryCarousel: FC<EntryCarouselProps> = ({
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
-        onPointerCancel={onPointerUp}
+        onPointerCancel={onPointerCancel}
         className="absolute inset-0"
         style={{ perspective: `${PERSPECTIVE_PX}px`, perspectiveOrigin: "50% 50%" }}
       >
@@ -260,10 +367,12 @@ const EntryCarousel: FC<EntryCarouselProps> = ({
           const isActive = index === activeIdx;
           const isActiveTarget = votingOpen && isActive;
           const mounted = mountedWindow.has(index);
+          const rawDist = Math.abs(index - activeIdx);
+          const ringDist = isBounded || n === 0 ? rawDist : Math.min(rawDist, n - rawDist);
           return (
             <div
               key={proposal.id}
-              onClick={() => handleCardClick(index)}
+              data-index={index}
               className={`absolute left-1/2 top-1/2 cursor-pointer ${mounted ? "will-change-transform" : ""}`}
               style={{ width: cardW ? `${cardW}px` : `${CARD_WIDTH_PCT}%`, height: cardH ? `${cardH}px` : undefined }}
             >
@@ -276,6 +385,7 @@ const EntryCarousel: FC<EntryCarouselProps> = ({
                   active={isActiveTarget}
                   elevated={isActive}
                   boxAspect={cardW > 0 && cardH > 0 ? cardH / cardW : cardAspect}
+                  imageFetchPriority={ringDist <= 1 ? "high" : "low"}
                 />
               ) : null}
             </div>

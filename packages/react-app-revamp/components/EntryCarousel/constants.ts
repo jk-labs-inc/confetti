@@ -6,7 +6,7 @@ export const COVER_MIN_VISIBLE = 0.75; // a crop must keep at least this fractio
 export const TWEET_CARD_ASPECT = 8 / 5; // taller cards for tweet entries so the tweet fits without being cut off
 export const NEIGHBOR_SPACING_PCT = 46; // horizontal offset between adjacent cards (% of stage width)
 
-export const EDGE_RESISTANCE = 0.3; // rubber-band drag past the ends of the bounded 2-entry track (0 = wall, 1 = free)
+export const RUBBER_BAND_COEF = 0.55; // iOS scroll-view rubber band: overshoot maps to c*x/(1+c*x) — asymptotic, saturates at ~1 card
 export const BOUNDED_END_SHIFT = 1; // at an end of the 2-entry track, pull the active card this fraction of the
 
 export const FILL_BOTTOM_GAP_PX = 16; // breathing room kept below a carousel that grows to fill the viewport
@@ -21,8 +21,13 @@ export const WINDOW_RADIUS = MAX_VISIBLE + 2; // mount heavy card content only w
 export const MAX_SCALE_DROP = 0.24; // one step off-center renders at scale 0.76 (neighbors recede more)
 export const MAX_OPACITY_DROP = 0.5; // one step off-center renders at opacity 0.5 (neighbors a touch more faded)
 
-export const DRAG_THRESHOLD = 6; // px of movement before a pointer gesture counts as a drag (vs a tap)
+export const DRAG_THRESHOLD = 6; // px of mouse movement before a pointer gesture counts as a drag (vs a click)
+export const DRAG_THRESHOLD_TOUCH = 8; // finger slop (Android ViewConfiguration = 8dp; finger roll during a tap must not read as a drag)
 export const LOAD_MORE_THRESHOLD = 2; // fetch the next page as the centered index nears the loaded end
 
 export const FLICK_PROJECTION_S = 0.12; // seconds of release velocity to project past the lift point
 export const MAX_FLICK = 4; // cap on cards crossed by a single flick (no runaway spin)
+export const FLICK_MIN_VELOCITY = 2.2; // card-units/s — a fling this fast always advances a card, even if projection rounds home (ViewPager 400dp/s analog)
+export const FLICK_MIN_TRAVEL = 0.14; // min drag (card units) before the velocity gate applies, so tap jitter can't page (25dp analog)
+export const VELOCITY_WINDOW_MS = 100; // release velocity is measured over this trailing window of move samples
+export const VELOCITY_STALE_MS = 170; // no move sample this recent at lift → velocity is 0 (hold-then-release never flicks)
