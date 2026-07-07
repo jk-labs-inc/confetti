@@ -1,5 +1,5 @@
 import { toastInfo } from "@components/UI/Toast";
-import { entryMedal, withAlpha } from "@helpers/entryColors";
+import { ENTRY_ACCENT_COLOR, withAlpha } from "@helpers/entryColors";
 import { extractPathSegments } from "@helpers/extractPath";
 import { Tweet as TweetType } from "@helpers/isContentTweet";
 import { useCastVotesStore } from "@hooks/useCastVotes/store";
@@ -77,7 +77,7 @@ const ProposalContent: FC<ProposalContentProps> = ({
   );
   const isPicked = pickedProposal === proposal.id;
   const isHighlighted = isPicked && (isDesktop || isVotingDrawerOpen);
-  const highlightColor = isHighlighted ? withAlpha(entryMedal(proposal.rank).solid, 0.6) : undefined;
+  const highlightColor = isHighlighted ? withAlpha(ENTRY_ACCENT_COLOR, 0.6) : undefined;
   const shouldReduceOpacity = isVotingDrawerOpen && !isPicked;
   const {
     profileAvatar,

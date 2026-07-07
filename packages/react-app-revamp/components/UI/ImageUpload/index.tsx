@@ -1,10 +1,10 @@
 import { useUploadImageStore } from "@hooks/useUploadImage";
+import { validateImageUpload } from "lib/image/uploadValidation";
 import React, { FC, useEffect, useRef, useState } from "react";
 import NetworkErrorRetry from "./components/NetworkErrorRetry";
 import SelectedImagePreview from "./components/SelectedImagePreview";
 import UploadArea from "./components/UploadArea";
 import UrlInputField from "./components/UrlInputField";
-import { ACCEPTED_FILE_TYPES } from "./utils";
 
 interface ImageUploadProps {
   initialImageUrl?: string;
@@ -39,20 +39,12 @@ const ImageUpload: FC<ImageUploadProps> = ({ initialImageUrl, initialFileName, o
     }
   }, [isNetworkError]);
 
-  const validateFile = (file: File): boolean => {
-    if (!ACCEPTED_FILE_TYPES.includes(file.type)) {
+  const validateFile = async (file: File): Promise<boolean> => {
+    const error = await validateImageUpload(file);
+    if (error) {
       setValidationError({
         ...validationError,
-        upload: "please upload a valid image/gif file (JPEG, JPG, PNG, JFIF, GIF, or WebP)",
-      });
-      return false;
-    }
-
-    const maxSize = 5 * 1024 * 1024; // 5MB in bytes
-    if (file.size > maxSize) {
-      setValidationError({
-        ...validationError,
-        upload: "file size should be less than 5MB",
+        upload: error,
       });
       return false;
     }
@@ -74,7 +66,7 @@ const ImageUpload: FC<ImageUploadProps> = ({ initialImageUrl, initialFileName, o
     if (files && files.length > 0) {
       const file = files[0];
 
-      if (validateFile(file)) {
+      if (await validateFile(file)) {
         await processFileUpload(file);
       }
     }
@@ -120,7 +112,7 @@ const ImageUpload: FC<ImageUploadProps> = ({ initialImageUrl, initialFileName, o
     if (files && files.length > 0) {
       const file = files[0];
 
-      if (validateFile(file)) {
+      if (await validateFile(file)) {
         await processFileUpload(file);
       }
     }

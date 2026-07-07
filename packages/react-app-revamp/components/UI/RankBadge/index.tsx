@@ -2,13 +2,13 @@ import { FC } from "react";
 
 interface RankBadgeProps {
   rank: number;
-  size?: "sm" | "md";
+  size?: "xs" | "sm" | "md";
 }
 
 const RankBadge: FC<RankBadgeProps> = ({ rank, size = "md" }) => {
-  const outerSize = size === "sm" ? "w-6 h-6" : "w-10 h-10";
-  const innerSize = size === "sm" ? "w-[22px] h-[22px]" : "w-[37px] h-[37px]";
-  const textSize = size === "sm" ? "text-[10px]" : "text-[16px]";
+  const outerSize = size === "xs" ? "w-[18px] h-[18px]" : size === "sm" ? "w-6 h-6" : "w-10 h-10";
+  const innerSize = size === "xs" ? "w-[15px] h-[15px]" : size === "sm" ? "w-[22px] h-[22px]" : "w-[37px] h-[37px]";
+  const textSize = size === "xs" ? "text-[8px]" : size === "sm" ? "text-[10px]" : "text-[16px]";
 
   return (
     <div

@@ -1,7 +1,7 @@
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import { useContestStore } from "@hooks/useContest/store";
+import { useMobileNavSlot } from "@hooks/useMobileNavSlot";
 import { useProposalStore } from "@hooks/useProposal/store";
-import { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 import { useMediaQuery } from "react-responsive";
 import { useShallow } from "zustand/shallow";
@@ -10,37 +10,6 @@ import { SubmitBarVariant } from "../useContestSubmitButton";
 interface ContestSubmitBarProps {
   variant: SubmitBarVariant;
 }
-
-const MOBILE_NAV_SLOT_ID = "mobile-create-nav-slot";
-
-const useMobileNavSlot = (enabled: boolean) => {
-  const [slot, setSlot] = useState<HTMLElement | null>(null);
-
-  useEffect(() => {
-    if (!enabled) {
-      setSlot(null);
-      return;
-    }
-
-    const existing = document.getElementById(MOBILE_NAV_SLOT_ID);
-    if (existing) {
-      setSlot(existing);
-      return;
-    }
-
-    const observer = new MutationObserver(() => {
-      const el = document.getElementById(MOBILE_NAV_SLOT_ID);
-      if (el) {
-        setSlot(el);
-        observer.disconnect();
-      }
-    });
-    observer.observe(document.body, { childList: true, subtree: true });
-    return () => observer.disconnect();
-  }, [enabled]);
-
-  return slot;
-};
 
 const ContestSubmitBar = ({ variant }: ContestSubmitBarProps) => {
   const isMobile = useMediaQuery({ maxWidth: 768 });
