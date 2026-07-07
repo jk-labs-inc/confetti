@@ -2,7 +2,7 @@
 
 export const CARD_WIDTH_PCT = 62; // center card width as a % of the stage width (selected card dominates)
 export const CARD_ASPECT = 5 / 4; // card height / width (image / title entries)
-export const COVER_MIN_VISIBLE = 0.75; // while voting is open, a crop must keep at least this fraction of the image; mismatched images bleed up to this budget, then letterbox over a blurred fill (other phases always contain)
+export const COVER_MIN_VISIBLE = 0.75; // a crop must keep at least this fraction of the image; mismatched images bleed up to this budget, then letterbox over a blurred fill
 export const TWEET_CARD_ASPECT = 8 / 5; // taller cards for tweet entries so the tweet fits without being cut off
 export const NEIGHBOR_SPACING_PCT = 46; // horizontal offset between adjacent cards (% of stage width)
 

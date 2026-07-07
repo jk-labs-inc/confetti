@@ -160,12 +160,7 @@ const EntryCard: FC<EntryCardProps> = ({
       <div className="relative isolate h-full w-full overflow-hidden rounded-[14px]" style={{ background: innerBg }}>
         {entry.kind === "image" ? (
           entry.imageUrl?.trim() ? (
-            <EntryImage
-              key={entry.imageUrl}
-              src={entry.imageUrl}
-              boxAspect={boxAspect}
-              fit={contestStatus === ContestStatus.VotingOpen ? "adaptive" : "contain"}
-            />
+            <EntryImage key={entry.imageUrl} src={entry.imageUrl} boxAspect={boxAspect} />
           ) : null
         ) : entry.kind === "tweet" ? (
           <div className="no-scrollbar absolute inset-0 overflow-y-auto">
