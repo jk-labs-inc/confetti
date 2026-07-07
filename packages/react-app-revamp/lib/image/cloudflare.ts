@@ -69,6 +69,8 @@ function serializeOptions(options: CloudflareImageOptions): string {
   if (dpr) directives.push(`dpr=${dpr}`);
   if (sharpen) directives.push(`sharpen=${sharpen}`);
 
+  directives.push("onerror=redirect");
+
   return directives.join(",");
 }
 
