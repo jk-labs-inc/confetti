@@ -5,6 +5,7 @@ import { useShallow } from "zustand/shallow";
 
 const VotingWidgetEmailSignup: FC = () => {
   const setEmailAddress = useVotingStore(useShallow(state => state.setEmailAddress));
+  const resetSignupsNonce = useVotingStore(state => state.resetSignupsNonce);
   const [inputValue, setInputValue] = useState("");
 
   useEffect(() => {
@@ -14,6 +15,10 @@ const VotingWidgetEmailSignup: FC = () => {
       setEmailAddress("");
     }
   }, [inputValue, setEmailAddress]);
+
+  useEffect(() => {
+    setInputValue("");
+  }, [resetSignupsNonce]);
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);

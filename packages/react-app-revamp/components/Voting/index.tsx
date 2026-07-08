@@ -7,6 +7,7 @@ import { FC, RefObject, useEffect, useRef, useCallback } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useShallow } from "zustand/shallow";
 import VotingWidgetEmailSignup from "./components/EmailSignup";
+import VotingWidgetPhoneNumberSignup from "./components/PhoneNumberSignup";
 import VotingWidgetRewardsProjection from "./components/RewardsProjection";
 import VoteAmountInput from "./components/VoteAmountInput";
 import VoteButton from "./components/VoteButton";
@@ -128,6 +129,7 @@ const VotingWidget: FC<VotingWidgetProps> = ({
           inputValue={inputValue}
           submissionsCount={submissionsCount}
         />
+        <VotingWidgetPhoneNumberSignup />
         <VotingWidgetEmailSignup />
         <VoteButton
           isDisabled={voteDisabled}

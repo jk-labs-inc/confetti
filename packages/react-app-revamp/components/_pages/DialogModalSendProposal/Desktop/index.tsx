@@ -2,6 +2,7 @@ import AddFunds from "@components/AddFunds";
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import DialogModalV3 from "@components/UI/DialogModalV3";
 import EmailSubscription from "@components/UI/EmailSubscription";
+import PhoneNumberSubscription from "@components/UI/PhoneNumberSubscription";
 import ContestPrompt from "@components/_pages/Contest/components/Prompt";
 import CreateGradientTitle from "@components/_pages/Create/components/GradientTitle";
 import { FOOTER_LINKS } from "@config/links";
@@ -15,6 +16,8 @@ import { useMetadataStore } from "@hooks/useMetadataFields/store";
 import useSubmitProposal from "@hooks/useSubmitProposal";
 import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
 import { useModal } from "@getpara/react-sdk-lite";
+import { isPhoneNumberEmpty, isValidPhoneNumber } from "lib/phone";
+import { PhoneNumberValue } from "lib/phone/types";
 import { Editor } from "@tiptap/react";
 import { type GetBalanceReturnType } from "@wagmi/core";
 import { FC, ReactNode, useEffect, useState } from "react";
@@ -74,9 +77,14 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
     emailForSubscription,
     emailAlreadyExists,
     setEmailAlreadyExists,
+    phoneNumberForSubscription,
+    setPhoneNumberForSubscription,
+    phoneNumberAlreadyExists,
+    setPhoneNumberAlreadyExists,
   } = useSubmitProposalStore(state => state);
   const { isLoading } = useSubmitProposal();
   const [emailError, setEmailError] = useState<string | null>(null);
+  const [phoneNumberError, setPhoneNumberError] = useState<string | null>(null);
   const tosHref = FOOTER_LINKS.find(link => link.label === "Terms")?.href;
   const { isLoading: isEntryTypeLoading, isError: isEntryTypeError } = useContestEntryType({
     address: contestConfig.address,
@@ -104,6 +112,12 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
     setEmailAlreadyExists(false);
   };
 
+  const handlePhoneNumberChange = (value: PhoneNumberValue) => {
+    setPhoneNumberForSubscription(value);
+    setPhoneNumberError(null);
+    setPhoneNumberAlreadyExists(false);
+  };
+
   const handleConfirm = () => {
     setError(null);
 
@@ -123,11 +137,17 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
       }
     }
 
+    if (!isPhoneNumberEmpty(phoneNumberForSubscription) && !isValidPhoneNumber(phoneNumberForSubscription)) {
+      setPhoneNumberError("Invalid phone number.");
+      return;
+    }
+
     if (emailForSubscription && !emailRegex.test(emailForSubscription)) {
       setEmailError("Invalid email address.");
       return;
     }
 
+    setPhoneNumberError(null);
     setEmailError(null);
     onSubmitProposal?.();
   };
@@ -172,6 +192,17 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
                   <p className="text-negative-11">Error while loading entry format. Please reload the page.</p>
                 ) : null}
                 <div className="flex flex-col gap-4 -mt-2">
+                  <CreateGradientTitle textSize="small" additionalInfo="optional">
+                    get updates by phone
+                  </CreateGradientTitle>
+                  <PhoneNumberSubscription
+                    phoneNumberAlreadyExists={phoneNumberAlreadyExists ?? false}
+                    phoneNumberError={phoneNumberError}
+                    phoneNumberForSubscription={phoneNumberForSubscription}
+                    handlePhoneNumberChange={handlePhoneNumberChange}
+                  />
+                </div>
+                <div className="flex flex-col gap-4">
                   <CreateGradientTitle textSize="small" additionalInfo="optional">
                     get updates by email
                   </CreateGradientTitle>

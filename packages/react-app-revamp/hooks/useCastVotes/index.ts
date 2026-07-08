@@ -1,4 +1,4 @@
-import { toastLoading, toastSuccess } from "@components/UI/Toast";
+import { toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
 import { LoadingToastMessageType } from "@components/UI/Toast/components/Loading";
 import { useVotingStore } from "@components/Voting/store";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
@@ -10,6 +10,7 @@ import useCurrentPricePerVote from "@hooks/useCurrentPricePerVote";
 import { Charge } from "@hooks/useDeployContest/types";
 import { useEmailSend } from "@hooks/useEmailSend";
 import useEmailSignup from "@hooks/useEmailSignup";
+import usePhoneNumberSignup from "@hooks/usePhoneNumberSignup";
 import { useError } from "@hooks/useError";
 import { useFetchUserVotesOnProposal } from "@hooks/useFetchUserVotesOnProposal";
 import useProposal from "@hooks/useProposal";
@@ -83,13 +84,15 @@ export function useCastVotes({ charge, votesClose }: UseCastVotesProps) {
     chainId: contestConfig.chainId,
     costToVote: currentPricePerVote,
   });
-  const { emailAddress, resetVotingStore } = useVotingStore(
+  const { emailAddress, phoneNumber, resetVotingStore } = useVotingStore(
     useShallow(state => ({
       emailAddress: state.emailAddress,
+      phoneNumber: state.phoneNumber,
       resetVotingStore: state.reset,
     })),
   );
   const { subscribeUser } = useEmailSignup();
+  const { subscribePhoneNumber } = usePhoneNumberSignup();
   const { data: nativeRates } = useNativeRates();
   const { creatorSplitEnabled } = useCreatorSplitEnabled({
     address: contestConfig.address,
@@ -207,8 +210,20 @@ export function useCastVotes({ charge, votesClose }: UseCastVotesProps) {
         });
       }
 
+      let phoneNumberSubscribed = true;
+
+      if (phoneNumber) {
+        phoneNumberSubscribed = await subscribePhoneNumber(phoneNumber, userAddress, !emailAddress);
+      }
+
       if (emailAddress) {
         await subscribeUser(emailAddress, userAddress);
+      }
+
+      if (phoneNumber && emailAddress && !phoneNumberSubscribed) {
+        toastError({
+          message: "There was an error while subscribing your phone number. Please try again later.",
+        });
       }
 
       resetVotingStore();
