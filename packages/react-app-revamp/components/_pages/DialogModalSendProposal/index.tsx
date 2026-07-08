@@ -1,15 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import Iframe from "@components/tiptap/Iframe";
+import { toastError } from "@components/UI/Toast";
 import { chains } from "@config/wagmi";
 import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import { extractPathSegments } from "@helpers/extractPath";
 import { emailRegex } from "@helpers/regex";
-import {
-  SubmissionCache,
-  loadSubmissionFromLocalStorage,
-  removeSubmissionFromLocalStorage,
-  saveSubmissionToLocalStorage,
-} from "@helpers/submissionCaching";
 import { useContestStore } from "@hooks/useContest/store";
 import { useEditorStore } from "@hooks/useEditor/store";
 import useEmailSignup from "@hooks/useEmailSignup";
@@ -19,6 +14,7 @@ import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
 import { useUploadImageStore } from "@hooks/useUploadImage";
 import { useWallet } from "@hooks/useWallet";
 import { EMPTY_PHONE_NUMBER, isPhoneNumberEmpty, isValidPhoneNumber, phoneNumberToE164 } from "lib/phone";
+import { validateImageUpload } from "lib/image/uploadValidation";
 import Document from "@tiptap/extension-document";
 import Heading from "@tiptap/extension-heading";
 import Image from "@tiptap/extension-image";
@@ -59,7 +55,7 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
     setPhoneNumberForSubscription,
     setPhoneNumberAlreadyExists,
   } = useSubmitProposalStore(state => state);
-  const { votesOpen, charge } = useContestStore(state => state);
+  const { charge } = useContestStore(state => state);
   const { data: accountData } = useBalance({
     address: userAddress as `0x${string}`,
   });
@@ -67,8 +63,7 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
   const chainId = chains.filter(
     (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName,
   )?.[0]?.id;
-  const savedProposal = loadSubmissionFromLocalStorage("submissions", contestId);
-  const [proposal, setProposal] = useState(savedProposal?.content || "");
+  const [proposal, setProposal] = useState("");
   const isCorrectNetwork = chainId === chain?.id;
   const [isDragging, setIsDragging] = useState(false);
   const { uploadImage } = useUploadImageStore(state => state);
@@ -105,15 +100,7 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
       },
     },
     onUpdate: ({ editor }) => {
-      const content = editor.getHTML();
-      setProposal(content);
-
-      const submissionCache: SubmissionCache = {
-        contestId,
-        content,
-        expiresAt: votesOpen,
-      };
-      saveSubmissionToLocalStorage("submissions", submissionCache);
+      setProposal(editor.getHTML());
     },
     immediatelyRender: false,
   });
@@ -176,8 +163,9 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
       const [proposalResult] = await Promise.all(promises);
 
       if (proposalResult) {
-        // Clean up local storage before navigation (which happens in sendProposal)
-        removeSubmissionFromLocalStorage("submissions", contestId);
+        editorProposal?.commands.clearContent();
+        setProposal("");
+        setIsOpen(false);
       }
     } catch (error) {
       console.error("Error:", error);
@@ -195,18 +183,23 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
     setIsDragging(false);
 
     const file = event.dataTransfer.files[0];
+    if (!file) return;
 
-    if (file && file.type.startsWith("image/")) {
-      try {
-        const imageUrl = await uploadImage(file);
-        if (imageUrl) {
-          editorProposal?.chain().focus().setImage({ src: imageUrl }).run();
-        } else {
-          console.error("Received no URL from the upload.");
-        }
-      } catch (error) {
-        console.error("Error uploading image:", error);
+    const uploadError = await validateImageUpload(file);
+    if (uploadError) {
+      toastError({ message: uploadError });
+      return;
+    }
+
+    try {
+      const imageUrl = await uploadImage(file);
+      if (imageUrl) {
+        editorProposal?.chain().focus().setImage({ src: imageUrl }).run();
+      } else {
+        console.error("Received no URL from the upload.");
       }
+    } catch (error) {
+      console.error("Error uploading image:", error);
     }
   };
 

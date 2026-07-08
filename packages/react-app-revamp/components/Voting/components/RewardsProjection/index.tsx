@@ -12,18 +12,22 @@ interface VotingWidgetRewardsProjectionProps {
   currentPricePerVote: bigint;
   inputValue: string;
   submissionsCount: number;
+  /** Native-unit spend to project while the input is empty; rendered greyed out. */
+  placeholderSpend?: string;
 }
 
 const VotingWidgetRewardsProjection: FC<VotingWidgetRewardsProjectionProps> = ({
   currentPricePerVote,
   inputValue,
   submissionsCount,
+  placeholderSpend,
 }) => {
   const contestConfig = useContestConfigStore(useShallow(state => state.contestConfig));
+  const isGhost = !inputValue && parseFloat(placeholderSpend || "0") > 0;
 
   const { winUpToFormatted, shouldShow } = useVotingRewardsProjection({
     currentPricePerVote,
-    inputValue,
+    inputValue: isGhost && placeholderSpend ? placeholderSpend : inputValue,
     submissionsCount,
   });
 
@@ -45,6 +49,10 @@ const VotingWidgetRewardsProjection: FC<VotingWidgetRewardsProjectionProps> = ({
       <div className="ml-auto">
         {isLoading ? (
           <Skeleton width={100} height={24} baseColor="#706f78" highlightColor="#FFE25B" />
+        ) : isGhost ? (
+          <span className="text-[24px] font-bold uppercase text-neutral-9">
+            {displaySymbol === "$" ? `$${displayValue}` : `${displayValue} ${displaySymbol}`}
+          </span>
         ) : (
           <GradientText textSizeClassName="text-[24px] font-bold uppercase" isFontSabo={false}>
             {displaySymbol === "$" ? `$${displayValue}` : `${displayValue} ${displaySymbol}`}

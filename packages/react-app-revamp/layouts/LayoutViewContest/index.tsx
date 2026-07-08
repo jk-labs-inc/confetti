@@ -15,6 +15,7 @@ import useTotalVotesCastOnContest from "@hooks/useTotalVotesCastOnContest";
 import { useWallet } from "@hooks/useWallet";
 import { useUrl } from "nextjs-current-url";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useMediaQuery } from "react-responsive";
 import { useShallow } from "zustand/shallow";
 import ContestHeader from "./components/ContestHeader";
 import ContestTabsContent from "./components/ContestTabsContent";
@@ -60,6 +61,8 @@ const LayoutViewContest = () => {
   const contestHasVotes = !!totalVotesCast && Number(totalVotesCast) > 0;
   const showSidebar =
     contestState !== ContestStateEnum.Canceled && (isVotingOpen || (isVotingClosed && contestHasVotes));
+
+  const isDesktop = useMediaQuery({ minWidth: 1280 });
 
   const compactSentinelRef = useRef<HTMLDivElement>(null);
 
@@ -130,8 +133,8 @@ const LayoutViewContest = () => {
             <ContestTabsContent tab={tab} rewardsModule={rewardsModule} version={contestConfig.version} />
           </div>
         </div>
-        {showSidebar && (
-          <aside className="hidden xl:block xl:w-[480px] xl:shrink-0 xl:sticky xl:top-4 xl:max-h-[calc(100dvh_-_2rem)] xl:overflow-y-auto xl:overflow-x-hidden xl:overscroll-contain no-scrollbar xl:pt-4">
+        {showSidebar && isDesktop && (
+          <aside className="hidden xl:block xl:w-[480px] xl:shrink-0 xl:sticky xl:top-4 xl:max-h-[calc(100dvh-2rem)] xl:overflow-y-auto xl:overflow-x-hidden xl:overscroll-contain no-scrollbar xl:pt-4">
             <VotingSidebar />
           </aside>
         )}

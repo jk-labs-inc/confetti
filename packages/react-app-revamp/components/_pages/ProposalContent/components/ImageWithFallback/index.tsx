@@ -1,4 +1,8 @@
-import React from "react";
+"use client";
+
+import { ENTRY_IMAGE_PRESET } from "lib/image/cloudflare";
+import { useCloudflareFluidImage } from "lib/image/useCloudflareImage";
+import React, { useState } from "react";
 
 interface ImageWithFallbackProps {
   fullSrc: string;
@@ -8,6 +12,18 @@ interface ImageWithFallbackProps {
 const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({ fullSrc, alt }) => {
   const hasValidSrc = fullSrc && fullSrc.trim() !== "";
 
+  // High-quality, resized, responsive variants of the entry image. Non-transformable
+  // sources (external/IPFS) fall back to the original URL untouched.
+  const { src, srcSet, sizes } = useCloudflareFluidImage(fullSrc, ENTRY_IMAGE_PRESET.widths, ENTRY_IMAGE_PRESET.sizes, {
+    quality: ENTRY_IMAGE_PRESET.quality,
+    fit: ENTRY_IMAGE_PRESET.fit,
+  });
+  const [failed, setFailed] = useState(false);
+
+  const handleError = () => {
+    if (!failed && src !== fullSrc) setFailed(true);
+  };
+
   // Don't render anything if no valid source is available
   if (!hasValidSrc) {
     return null;
@@ -15,7 +31,16 @@ const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({ fullSrc, alt }) =
 
   return (
     <div className="relative rounded-[16px] w-full h-full">
-      <img src={fullSrc} alt={alt} className="rounded-[16px] w-full h-full min-h-52 object-contain" />
+      <img
+        src={failed ? fullSrc : src}
+        srcSet={failed ? undefined : srcSet}
+        sizes={sizes}
+        onError={handleError}
+        alt={alt}
+        loading="lazy"
+        decoding="async"
+        className="rounded-[16px] w-full h-full min-h-52 object-contain"
+      />
       <div
         className="xl:hidden absolute inset-x-0 top-0 h-20 rounded-t-[16px]"
         style={{

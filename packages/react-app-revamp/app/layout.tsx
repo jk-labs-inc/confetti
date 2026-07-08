@@ -75,6 +75,9 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
+  // Android Chrome/Firefox resize the layout viewport for the keyboard, so
+  // fixed bottom bars sit above it natively. No effect on iOS (unsupported).
+  interactiveWidget: "resizes-content",
 };
 
 const DynamicPortal = dynamic(() => import("./portal"), { ssr: !!false });
