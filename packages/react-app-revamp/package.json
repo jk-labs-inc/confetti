@@ -22,7 +22,7 @@
     "@getpara/react-sdk-lite": "2.18.0",
     "@headlessui/react": "2.2.10",
     "@heroicons/react": "2.2.0",
-    "@lifi/widget": "4.1.0",
+    "@lifi/widget": "4.2.0",
     "@mysten/dapp-kit": "0.20.0",
     "@next/third-parties": "15.5.20",
     "@solana/wallet-adapter-react": "0.15.39",
