@@ -3102,7 +3102,7 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
-"@lifi/sdk@^4.0.0":
+"@lifi/sdk@^4.1.0":
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/@lifi/sdk/-/sdk-4.1.0.tgz#4ed20b2c9df69eaf7a4c33bb654d136fd779ccb0"
   integrity sha512-rLjP/JXBC7syLimGNZfZmjPUxMpXozhX250IP0UwqnUB7K1lunvQA0NTGC4n6KcsMAHU210XkiTqpbjtFG4q3g==
@@ -3114,49 +3114,49 @@
   resolved "https://registry.yarnpkg.com/@lifi/types/-/types-17.85.0.tgz#7c1940fa42fc63cd0193f4c3bd6108c45e7a8c60"
   integrity sha512-EueQyqhyvZbHygkyxj9EPAhUwn69ViRn9zJ56UnZlXsHlOZ/NdNVWxUwrVFVuRt/8qkdZH35R/1vE+SOxFHCNw==
 
-"@lifi/wallet-management@4.1.0":
-  version "4.1.0"
-  resolved "https://registry.yarnpkg.com/@lifi/wallet-management/-/wallet-management-4.1.0.tgz#5f0e4b45571286fd2ff8032df37d29d6f57d8c48"
-  integrity sha512-Zu1FQdqD4QQJWDTrCOyq5Lw84bXWDJzjlj0AtdUjLwfFeQkjwXFNwkTdAq6Kcfb4LWFISBmgHMaa5bp4WeY39Q==
+"@lifi/wallet-management@4.1.1":
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/@lifi/wallet-management/-/wallet-management-4.1.1.tgz#5ebcb4233c651325b7683563d6986a4bba31ec1a"
+  integrity sha512-HDX5uxNZpdd4AJ+MMu9OnAWfh7LuLxS7gFTC8SkDVNczxOyh8UXLPXnN7H7sUcMhGsfbtiR8VaGxRt+wDCND9Q==
   dependencies:
     "@emotion/react" "^11.14.0"
     "@emotion/styled" "^11.14.1"
-    "@lifi/sdk" "^4.0.0"
-    "@lifi/widget-provider" "4.1.0"
-    "@mui/icons-material" "^9.1.1"
-    "@mui/material" "^9.1.1"
-    "@mui/system" "^9.1.1"
+    "@lifi/sdk" "^4.1.0"
+    "@lifi/widget-provider" "4.2.0"
+    "@mui/icons-material" "^9.2.0"
+    "@mui/material" "^9.2.0"
+    "@mui/system" "^9.2.0"
     eventemitter3 "^5.0.4"
-    i18next "^26.3.1"
+    i18next "^26.3.4"
     react-i18next "^17.0.8"
     zustand "^5.0.14"
 
-"@lifi/widget-provider@4.1.0":
-  version "4.1.0"
-  resolved "https://registry.yarnpkg.com/@lifi/widget-provider/-/widget-provider-4.1.0.tgz#ca0420f451656f3fa7b85aac762057cf315d6ad8"
-  integrity sha512-hQP3wlIbQUs6jwm3zzLEwarKz0IRHmArHoeTb4cXkmZBwUjdUJvK5BQXi/jJ30a2QPQZtsqQ4af9llvsTPdJ+Q==
+"@lifi/widget-provider@4.2.0":
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/@lifi/widget-provider/-/widget-provider-4.2.0.tgz#72c963773d80a32f8a40a6d765828b07dd37dfc6"
+  integrity sha512-+rI8TyRl08la2CieqllprT6siTvAgc1R944WW06qTqPxmCdX1RvLu0ssUDdD6ori8BM1syY9NP81QnhMAYALEw==
   dependencies:
-    "@lifi/sdk" "^4.0.0"
+    "@lifi/sdk" "^4.1.0"
 
-"@lifi/widget@4.1.0":
-  version "4.1.0"
-  resolved "https://registry.yarnpkg.com/@lifi/widget/-/widget-4.1.0.tgz#45f727955110a68de92955fe603bc264ef7914f3"
-  integrity sha512-bbJYjR/hFuwstQs/+wSjHPp95k2XxpjrBaI3UirBfJWkMbSnSUQdAKVn3is7FTOhIKJ5VWnybZng1wkH7EC1ng==
+"@lifi/widget@4.2.0":
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/@lifi/widget/-/widget-4.2.0.tgz#5feef76aae8f2d249f477d022b0979bdaabc6307"
+  integrity sha512-SexaN11JqZinQ8y5rjWJxL5WBSgo6HG3pijDxktAKbpR/TAf2jM5ZMaD+KGs+szRpRDBC47uCnQ/DwOPBASHXQ==
   dependencies:
     "@emotion/react" "^11.14.0"
     "@emotion/styled" "^11.14.1"
-    "@lifi/sdk" "^4.0.0"
-    "@lifi/wallet-management" "4.1.0"
-    "@lifi/widget-provider" "4.1.0"
-    "@mui/icons-material" "^9.1.1"
-    "@mui/material" "^9.1.1"
-    "@mui/system" "^9.1.1"
-    "@tanstack/react-router" "^1.170.16"
-    "@tanstack/react-virtual" "^3.14.3"
+    "@lifi/sdk" "^4.1.0"
+    "@lifi/wallet-management" "4.1.1"
+    "@lifi/widget-provider" "4.2.0"
+    "@mui/icons-material" "^9.2.0"
+    "@mui/material" "^9.2.0"
+    "@mui/system" "^9.2.0"
+    "@tanstack/react-router" "^1.170.17"
+    "@tanstack/react-virtual" "^3.14.5"
     eventemitter3 "^5.0.4"
-    i18next "^26.3.1"
+    i18next "^26.3.4"
     microdiff "^1.5.0"
-    motion "^12.38.0"
+    motion "^12.42.2"
     react-i18next "^17.0.8"
     react-intersection-observer "^10.0.3"
     react-transition-group "^4.4.5"
@@ -3207,14 +3207,14 @@
   resolved "https://registry.yarnpkg.com/@mui/core-downloads-tracker/-/core-downloads-tracker-9.2.0.tgz#100cb334d57cab467a6cded6da5c42fd49dcaa41"
   integrity sha512-+XMav+ZaXkZKUFUgzjrfMEedfyJKxxviAske2q8N8CWDMeqZdDU2lWMkiUPiB388hGaDqhwvOAwkrsc/pUyp8g==
 
-"@mui/icons-material@^9.1.1":
+"@mui/icons-material@^9.2.0":
   version "9.2.0"
   resolved "https://registry.yarnpkg.com/@mui/icons-material/-/icons-material-9.2.0.tgz#1fe4bd0c4c88393ff643e1c12914a269cc301b17"
   integrity sha512-VgBd3z7Qc3vd/thcNSMC03nHRh/U4DzMUd+1dRyJTbm/hGo7+N6N4GDuJZDNHa6LZhhwG6Cu1X3DNvrVv8sNag==
   dependencies:
     "@babel/runtime" "^7.29.2"
 
-"@mui/material@^9.1.1":
+"@mui/material@^9.2.0":
   version "9.2.0"
   resolved "https://registry.yarnpkg.com/@mui/material/-/material-9.2.0.tgz#a77a9c7a5f0c61f8f1cf3dca197a64693d3071cf"
   integrity sha512-+YTRSgGKGrrRo2XJZXs7JRA6qHoHWvNtxyqxnrRJTBmIuLOUpxxh7m4G9lF4tWberxGFY+EqkkRPgJCl+fSMJg==
@@ -3253,7 +3253,7 @@
     csstype "^3.2.3"
     prop-types "^15.8.1"
 
-"@mui/system@^9.1.1", "@mui/system@^9.2.0":
+"@mui/system@^9.2.0":
   version "9.2.0"
   resolved "https://registry.yarnpkg.com/@mui/system/-/system-9.2.0.tgz#74032a64632f8fd7ae8da881d2dd43316fca51ac"
   integrity sha512-YvUJwKoGVtbnOm2PyPi5TvX2d1rOA6sqSpEWVs4WmXNIaFTuYmNUaVdU2o1NKUEe31URnD3E8ZVUMcsLQXwcYg==
@@ -4679,7 +4679,7 @@
   dependencies:
     "@tanstack/query-core" "5.101.2"
 
-"@tanstack/react-router@^1.170.16":
+"@tanstack/react-router@^1.170.17":
   version "1.170.17"
   resolved "https://registry.yarnpkg.com/@tanstack/react-router/-/react-router-1.170.17.tgz#74054d3c4c85e0c5c54aae45544b43af379782be"
   integrity sha512-ppLkjCfSMaeug9rmFRYzOd4TIqWV+yTE7tzIny7alJsSnM7w4lzEZm6eqCehG0SPetpZ0R3K+UnanSmBgOAVcQ==
@@ -4697,7 +4697,7 @@
     "@tanstack/store" "0.9.3"
     use-sync-external-store "^1.6.0"
 
-"@tanstack/react-virtual@3.14.5", "@tanstack/react-virtual@^3.14.3":
+"@tanstack/react-virtual@3.14.5", "@tanstack/react-virtual@^3.14.5":
   version "3.14.5"
   resolved "https://registry.yarnpkg.com/@tanstack/react-virtual/-/react-virtual-3.14.5.tgz#183c959aeb85448899dcb1a4da55213e5d4f6078"
   integrity sha512-4EKRXh7zBLkbKbFmG3AUVkircuHd+7OdT1pocJSepxtfBd3qnrJgJ5rtPkRYyo9fmyVb2+pI2xPy5oYvMLQy6A==
@@ -8770,10 +8770,10 @@ hyphenate-style-name@^1.0.0, hyphenate-style-name@^1.0.3:
   resolved "https://registry.yarnpkg.com/hyphenate-style-name/-/hyphenate-style-name-1.1.0.tgz#1797bf50369588b47b72ca6d5e65374607cf4436"
   integrity sha512-WDC/ui2VVRrz3jOVi+XtjqkDjiVjTtFaAGiW37k6b+ohyQ5wYDOGkvCZa8+H0nx3gyvv0+BST9xuOgIyGQ00gw==
 
-i18next@^26.3.1:
-  version "26.3.4"
-  resolved "https://registry.yarnpkg.com/i18next/-/i18next-26.3.4.tgz#a2e8540b0a1a6004eba525c05faa89c256fb57c8"
-  integrity sha512-pa7m0d7pBDqGHZxljT+WPFeyFgQ7P7SciPPo1tTqYuO0z4sqADYhwnBESmmGp/wEof1inwdls/k8ZgTg8rxFHA==
+i18next@^26.3.4:
+  version "26.3.5"
+  resolved "https://registry.yarnpkg.com/i18next/-/i18next-26.3.5.tgz#53b9334335abfdfaca7d5a2bca62146902f4affe"
+  integrity sha512-cd5lgkvjYQAPDfP3bbrAIE1wJmjTIlsrsjDqlvsHn4wFAerP5O0NfAe8RiDcXRfukN5ETe7Tlmfp6DkyuqDn6Q==
 
 iceberg-js@^0.8.1:
   version "0.8.1"
@@ -9873,7 +9873,7 @@ motion-utils@^12.39.0:
   resolved "https://registry.yarnpkg.com/motion-utils/-/motion-utils-12.39.0.tgz#e1c66f0e912999804bc5e69b4630c3bc794ef29f"
   integrity sha512-8nadJAJjTtqRkmRF36FoJTrywK9nnFmnPwnSMyxaOCU7GDjN9RTMJIxx9De8ErM+vpPhMccr/6fo5WciyQLnMQ==
 
-motion@12.42.2, motion@^12.38.0:
+motion@12.42.2, motion@^12.42.2:
   version "12.42.2"
   resolved "https://registry.yarnpkg.com/motion/-/motion-12.42.2.tgz#7a0954acb1975e1899ad65639a46fc12a3d24999"
   integrity sha512-Atvv11yUKIid41cVrRBDVX5m8tF8kNpExRSlbpt6APClhDjtwQssgFHhQzejxw7/7YYbjHSPKBVbHo05BuJT5Q==
