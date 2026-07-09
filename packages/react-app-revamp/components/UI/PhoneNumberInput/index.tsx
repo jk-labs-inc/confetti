@@ -5,6 +5,7 @@ import { FC, useLayoutEffect, useRef } from "react";
 
 interface PhoneNumberInputProps {
   value: PhoneNumberValue;
+  id?: string;
   placeholder?: string;
   inputClassName?: string;
   onChange: (value: PhoneNumberValue) => void;
@@ -27,7 +28,7 @@ const caretPositionForDigitCount = (formatted: string, digitCount: number) => {
   return formatted.length;
 };
 
-const PhoneNumberInput: FC<PhoneNumberInputProps> = ({ value, placeholder, inputClassName, onChange }) => {
+const PhoneNumberInput: FC<PhoneNumberInputProps> = ({ value, id, placeholder, inputClassName, onChange }) => {
   const country = getPhoneCountry(value.countryCode);
   const inputRef = useRef<HTMLInputElement>(null);
   const caretDigitCountRef = useRef<number | null>(null);
@@ -98,6 +99,7 @@ const PhoneNumberInput: FC<PhoneNumberInputProps> = ({ value, placeholder, input
       </span>
       <input
         ref={inputRef}
+        id={id}
         type="tel"
         inputMode="tel"
         autoComplete="tel"
