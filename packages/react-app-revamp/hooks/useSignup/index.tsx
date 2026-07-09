@@ -29,7 +29,7 @@ const useSignup = ({
 
   const subscribe = async (
     value: string,
-    user_address: string | null = null,
+    user_address: string | null,
     showToasts: boolean = true,
   ): Promise<boolean> => {
     if (!isSupabaseConfigured) {

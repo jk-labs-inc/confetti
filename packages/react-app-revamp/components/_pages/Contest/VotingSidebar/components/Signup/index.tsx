@@ -3,6 +3,7 @@ import { FOOTER_LINKS } from "@config/links";
 import { emailRegex } from "@helpers/regex";
 import useEmailSignup from "@hooks/useEmailSignup";
 import usePhoneNumberSignup from "@hooks/usePhoneNumberSignup";
+import { useWallet } from "@hooks/useWallet";
 import { EMPTY_PHONE_NUMBER, isPhoneNumberEmpty, isValidPhoneNumber, phoneNumberToE164 } from "lib/phone";
 import { PhoneNumberValue } from "lib/phone/types";
 import { motion } from "motion/react";
@@ -11,6 +12,7 @@ import { useId, useState } from "react";
 const VotingSidebarSignup = () => {
   const { subscribeUser, checkIfEmailExists, isLoading: isEmailLoading } = useEmailSignup();
   const { subscribePhoneNumber, checkIfPhoneNumberExists, isLoading: isPhoneNumberLoading } = usePhoneNumberSignup();
+  const { userAddress } = useWallet();
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState<PhoneNumberValue>(EMPTY_PHONE_NUMBER);
   const [emailError, setEmailError] = useState("");
@@ -76,7 +78,11 @@ const VotingSidebarSignup = () => {
 
       const willSubscribeEmail = !isEmailEmpty && !(await emailExistsPromise);
       // only toast from the phone subscription when the email one isn't about to toast too
-      const phoneNumberSubscribed = await subscribePhoneNumber(phoneNumberE164, null, !willSubscribeEmail);
+      const phoneNumberSubscribed = await subscribePhoneNumber(
+        phoneNumberE164,
+        userAddress ?? null,
+        !willSubscribeEmail,
+      );
       if (phoneNumberSubscribed) {
         setPhoneNumber(EMPTY_PHONE_NUMBER);
         setPhoneNumberError("");
@@ -96,7 +102,7 @@ const VotingSidebarSignup = () => {
         return;
       }
 
-      await subscribeUser(email);
+      await subscribeUser(email, userAddress ?? null);
       setEmail("");
       setEmailError("");
     };
@@ -121,9 +127,9 @@ const VotingSidebarSignup = () => {
         </div>
         <div aria-live="polite">
           {phoneNumberError ? (
-            <p className="text-negative-11 text-[12px] font-bold pl-2 mt-1">{phoneNumberError}</p>
+            <p className="text-negative-11 text-[12px] font-bold pl-2 mt-2">{phoneNumberError}</p>
           ) : phoneNumberAlreadyExistsMessage ? (
-            <p className="text-positive-11 text-[12px] font-bold pl-2 mt-1">{phoneNumberAlreadyExistsMessage}</p>
+            <p className="text-positive-11 text-[12px] font-bold pl-2 mt-2">{phoneNumberAlreadyExistsMessage}</p>
           ) : null}
         </div>
       </div>
@@ -144,9 +150,9 @@ const VotingSidebarSignup = () => {
         </div>
         <div aria-live="polite">
           {emailError ? (
-            <p className="text-negative-11 text-[12px] font-bold pl-2 mt-1">{emailError}</p>
+            <p className="text-negative-11 text-[12px] font-bold pl-2 mt-2">{emailError}</p>
           ) : emailAlreadyExistsMessage ? (
-            <p className="text-positive-11 text-[12px] font-bold pl-2 mt-1">{emailAlreadyExistsMessage}</p>
+            <p className="text-positive-11 text-[12px] font-bold pl-2 mt-2">{emailAlreadyExistsMessage}</p>
           ) : null}
         </div>
       </div>
@@ -155,7 +161,7 @@ const VotingSidebarSignup = () => {
         type="submit"
         disabled={isSubmitDisabled}
         aria-busy={isLoading}
-        className="flex items-center justify-center w-full h-12 text-true-black text-[16px] font-bold bg-gradient-purple rounded-4xl disabled:opacity-50 disabled:pointer-events-none"
+        className="flex items-center justify-center w-full h-10 text-true-black text-[16px] font-bold bg-gradient-purple rounded-4xl disabled:opacity-50 disabled:pointer-events-none"
         whileTap={{ scale: 0.97 }}
       >
         {submitLabel}

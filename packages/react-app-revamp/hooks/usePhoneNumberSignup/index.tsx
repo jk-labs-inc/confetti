@@ -15,7 +15,7 @@ const usePhoneNumberSignup = () => {
 
   const subscribePhoneNumber = async (
     phone_number: string,
-    user_address: string | null = null,
+    user_address: string | null,
     showToasts: boolean = true,
   ): Promise<boolean> => subscribe(phone_number, user_address, showToasts);
 

@@ -213,11 +213,11 @@ export function useCastVotes({ charge, votesClose }: UseCastVotesProps) {
       let phoneNumberSubscribed = true;
 
       if (phoneNumber) {
-        phoneNumberSubscribed = await subscribePhoneNumber(phoneNumber, userAddress, !emailAddress);
+        phoneNumberSubscribed = await subscribePhoneNumber(phoneNumber, userAddress ?? null, !emailAddress);
       }
 
       if (emailAddress) {
-        await subscribeUser(emailAddress, userAddress);
+        await subscribeUser(emailAddress, userAddress ?? null);
       }
 
       if (phoneNumber && emailAddress && !phoneNumberSubscribed) {

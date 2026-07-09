@@ -21,7 +21,7 @@ const useEmailSignup = () => {
 
   const subscribeUser = async (
     email_address: string,
-    user_address: string | null = null,
+    user_address: string | null,
     showToasts: boolean = true,
   ): Promise<boolean> => subscribe(email_address, user_address, showToasts);
 
