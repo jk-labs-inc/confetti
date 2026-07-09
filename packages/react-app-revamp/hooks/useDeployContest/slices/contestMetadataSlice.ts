@@ -18,6 +18,9 @@ export interface MetadataField {
   };
 }
 
+// these values are stored on-chain as metadata field prompts, so they are a wire format:
+// contests already deployed resolve their layout by matching against them. the TWEET members
+// are deprecated for creation but must stay — deleting one silently breaks rendering old contests.
 export enum EntryPreview {
   TITLE = "JOKERACE_TITLE_PREVIEW",
   IMAGE = "JOKERACE_IMAGE_PREVIEW",
