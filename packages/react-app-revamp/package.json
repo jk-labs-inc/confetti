@@ -39,7 +39,7 @@
     "@tiptap/react": "3.7.2",
     "@tiptap/starter-kit": "3.7.2",
     "@types/lodash": "4.17.24",
-    "@types/node": "24.13.2",
+    "@types/node": "24.13.3",
     "@types/react": "19.2.17",
     "@types/react-dom": "19.2.3",
     "@types/react-virtualized": "9.22.3",
