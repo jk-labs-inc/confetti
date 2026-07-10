@@ -3138,10 +3138,10 @@
   dependencies:
     "@lifi/sdk" "^4.1.0"
 
-"@lifi/widget@4.2.0":
-  version "4.2.0"
-  resolved "https://registry.yarnpkg.com/@lifi/widget/-/widget-4.2.0.tgz#5feef76aae8f2d249f477d022b0979bdaabc6307"
-  integrity sha512-SexaN11JqZinQ8y5rjWJxL5WBSgo6HG3pijDxktAKbpR/TAf2jM5ZMaD+KGs+szRpRDBC47uCnQ/DwOPBASHXQ==
+"@lifi/widget@4.3.1":
+  version "4.3.1"
+  resolved "https://registry.yarnpkg.com/@lifi/widget/-/widget-4.3.1.tgz#c319a0be184c3115eb1d5a1d8e713e91b161bb24"
+  integrity sha512-i+eAqc0zli1QHSNQDwEYzWpL2WTPmesgZoLj0sPzOR6cGpsH2hAz0LUpF8kS0cSWgkoJoIA0nfQIglFyo5d+Og==
   dependencies:
     "@emotion/react" "^11.14.0"
     "@emotion/styled" "^11.14.1"
