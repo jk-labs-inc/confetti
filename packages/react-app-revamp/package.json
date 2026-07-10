@@ -45,7 +45,7 @@
     "@types/react-virtualized": "9.22.3",
     "@types/underscore": "1.13.0",
     "@typescript-eslint/parser": "8.63.0",
-    "@vercel/node": "5.8.22",
+    "@vercel/node": "5.8.23",
     "@visx/curve": "4.0.0",
     "@visx/group": "4.0.0",
     "@visx/responsive": "4.0.0",
