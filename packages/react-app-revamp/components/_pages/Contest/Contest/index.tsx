@@ -7,7 +7,7 @@ import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/s
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import { useProposalStore } from "@hooks/useProposal/store";
 import moment from "moment";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useShallow } from "zustand/shallow";
 import VotingActionBar from "@components/VotingActionBar";
@@ -42,6 +42,19 @@ const ContestTab = () => {
 
   const isContestOver = votesClose ? moment().isSameOrAfter(moment(votesClose)) : false;
   const [isPriceCurveExpanded, setIsPriceCurveExpanded] = useState(!isContestOver);
+
+  // #6003: on mobile, default the price curve to collapsed so the essentials
+  // (entries, voting bar, price-per-vote, timing) are visible first. `isMobile`
+  // resolves to `false` on the first (SSR) render and updates after mount, so we
+  // apply the collapse in an effect. A ref ensures it runs only once and never
+  // fights a user who then manually expands the curve.
+  const didApplyMobileCollapse = useRef(false);
+  useEffect(() => {
+    if (isMobile && !didApplyMobileCollapse.current) {
+      setIsPriceCurveExpanded(false);
+      didApplyMobileCollapse.current = true;
+    }
+  }, [isMobile]);
 
   const isSubmissionOpen = contestStatus === ContestStatus.SubmissionOpen;
   const isVotingOpen = contestStatus === ContestStatus.VotingOpen;
