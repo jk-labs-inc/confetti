@@ -1,5 +1,4 @@
-import PhoneNumberInput from "@components/UI/PhoneNumberInput";
-import { FOOTER_LINKS } from "@config/links";
+import UpdatesSignup from "@components/UI/UpdatesSignup";
 import { emailRegex } from "@helpers/regex";
 import useEmailSignup from "@hooks/useEmailSignup";
 import usePhoneNumberSignup from "@hooks/usePhoneNumberSignup";
@@ -7,7 +6,7 @@ import { useWallet } from "@hooks/useWallet";
 import { EMPTY_PHONE_NUMBER, isPhoneNumberEmpty, isValidPhoneNumber, phoneNumberToE164 } from "lib/phone";
 import { PhoneNumberValue } from "lib/phone/types";
 import { motion } from "motion/react";
-import { useId, useState } from "react";
+import { useState } from "react";
 
 const VotingSidebarSignup = () => {
   const { subscribeUser, checkIfEmailExists, isLoading: isEmailLoading } = useEmailSignup();
@@ -20,10 +19,6 @@ const VotingSidebarSignup = () => {
   const [emailAlreadyExistsMessage, setEmailAlreadyExistsMessage] = useState("");
   const [phoneNumberAlreadyExistsMessage, setPhoneNumberAlreadyExistsMessage] = useState("");
   const isLoading = isEmailLoading || isPhoneNumberLoading;
-  const tosHref = FOOTER_LINKS.find(link => link.label === "Terms")?.href;
-  const fieldId = useId();
-  const phoneInputId = `${fieldId}-phone`;
-  const emailInputId = `${fieldId}-email`;
 
   const isEmailEmpty = email === "";
   const isPhoneEmpty = isPhoneNumberEmpty(phoneNumber);
@@ -36,8 +31,8 @@ const VotingSidebarSignup = () => {
         ? "email me updates"
         : "get updates";
 
-  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEmail(e.target.value);
+  const handleEmailChange = (value: string) => {
+    setEmail(value);
     setEmailError("");
     setEmailAlreadyExistsMessage("");
   };
@@ -111,51 +106,17 @@ const VotingSidebarSignup = () => {
   };
 
   return (
-    <form noValidate onSubmit={handleSubscribe} className="flex flex-col gap-2">
-      <div className="flex flex-col">
-        <div className="flex flex-col gap-1 h-14 bg-secondary-1 rounded-2xl border border-neutral-17 px-4 justify-center">
-          <label htmlFor={phoneInputId} className="text-neutral-11 text-[12px]">
-            phone number (optional)
-          </label>
-          <PhoneNumberInput
-            id={phoneInputId}
-            value={phoneNumber}
-            onChange={handlePhoneNumberChange}
-            inputClassName="placeholder-primary-3"
-            placeholder="type phone number..."
-          />
-        </div>
-        <div aria-live="polite">
-          {phoneNumberError ? (
-            <p className="text-negative-11 text-[12px] font-bold pl-2 mt-2">{phoneNumberError}</p>
-          ) : phoneNumberAlreadyExistsMessage ? (
-            <p className="text-positive-11 text-[12px] font-bold pl-2 mt-2">{phoneNumberAlreadyExistsMessage}</p>
-          ) : null}
-        </div>
-      </div>
-
-      <div className="flex flex-col">
-        <div className="flex flex-col gap-1 h-14 bg-secondary-1 rounded-2xl border border-neutral-17 px-4 justify-center">
-          <label htmlFor={emailInputId} className="text-neutral-11 text-[12px]">
-            email (optional)
-          </label>
-          <input
-            id={emailInputId}
-            type="email"
-            value={email}
-            onChange={handleEmailChange}
-            className="bg-transparent text-[16px] outline-none text-neutral-11 placeholder-primary-3"
-            placeholder="type email..."
-          />
-        </div>
-        <div aria-live="polite">
-          {emailError ? (
-            <p className="text-negative-11 text-[12px] font-bold pl-2 mt-2">{emailError}</p>
-          ) : emailAlreadyExistsMessage ? (
-            <p className="text-positive-11 text-[12px] font-bold pl-2 mt-2">{emailAlreadyExistsMessage}</p>
-          ) : null}
-        </div>
-      </div>
+    <form noValidate onSubmit={handleSubscribe} className="flex flex-col gap-4">
+      <UpdatesSignup
+        phoneNumber={phoneNumber}
+        email={email}
+        onPhoneNumberChange={handlePhoneNumberChange}
+        onEmailChange={handleEmailChange}
+        phoneNumberError={phoneNumberError}
+        emailError={emailError}
+        phoneNumberMessage={phoneNumberAlreadyExistsMessage}
+        emailMessage={emailAlreadyExistsMessage}
+      />
 
       <motion.button
         type="submit"
@@ -166,13 +127,6 @@ const VotingSidebarSignup = () => {
       >
         {submitLabel}
       </motion.button>
-
-      <p className="opacity-50 text-neutral-11 text-[12px] pl-2">
-        by sharing your email or phone number with jk labs, you agree to{" "}
-        <a className="text-positive-11 hover:text-positive-10" href={tosHref} rel="nofollow noreferrer" target="_blank">
-          our terms of service
-        </a>
-      </p>
     </form>
   );
 };

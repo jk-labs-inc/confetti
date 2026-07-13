@@ -6,7 +6,6 @@ import { FC, useLayoutEffect, useRef } from "react";
 interface PhoneNumberInputProps {
   value: PhoneNumberValue;
   id?: string;
-  placeholder?: string;
   inputClassName?: string;
   onChange: (value: PhoneNumberValue) => void;
 }
@@ -28,7 +27,7 @@ const caretPositionForDigitCount = (formatted: string, digitCount: number) => {
   return formatted.length;
 };
 
-const PhoneNumberInput: FC<PhoneNumberInputProps> = ({ value, id, placeholder, inputClassName, onChange }) => {
+const PhoneNumberInput: FC<PhoneNumberInputProps> = ({ value, id, inputClassName, onChange }) => {
   const country = getPhoneCountry(value.countryCode);
   const inputRef = useRef<HTMLInputElement>(null);
   const caretDigitCountRef = useRef<number | null>(null);
@@ -107,7 +106,7 @@ const PhoneNumberInput: FC<PhoneNumberInputProps> = ({ value, id, placeholder, i
         onBeforeInput={handleBeforeInput}
         onChange={handleNumberChange}
         className={`w-full bg-transparent text-[16px] outline-none text-ellipsis text-neutral-11 ${inputClassName ?? ""}`}
-        placeholder={placeholder ?? country.placeholder}
+        placeholder={country.placeholder}
       />
     </div>
   );

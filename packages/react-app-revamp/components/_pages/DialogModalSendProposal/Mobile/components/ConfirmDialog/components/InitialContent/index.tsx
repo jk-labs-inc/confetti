@@ -1,9 +1,6 @@
 import AddFunds from "@components/AddFunds";
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
-import EmailSubscription from "@components/UI/EmailSubscription";
-import PhoneNumberSubscription from "@components/UI/PhoneNumberSubscription";
-import CreateGradientTitle from "@components/_pages/Create/components/GradientTitle";
-import { FOOTER_LINKS } from "@config/links";
+import UpdatesSignup from "@components/UI/UpdatesSignup";
 import { chains } from "@config/wagmi";
 import { emailRegex } from "@helpers/regex";
 import { Charge } from "@hooks/useDeployContest/types";
@@ -45,7 +42,6 @@ const SendProposalMobileLayoutConfirmInitialContent: FC<SendProposalMobileLayout
   } = useSubmitProposalStore(state => state);
   const [emailError, setEmailError] = useState<string | null>(null);
   const [phoneNumberError, setPhoneNumberError] = useState<string | null>(null);
-  const tosHref = FOOTER_LINKS.find(link => link.label === "Terms")?.href;
   const chainCurrencySymbol = chains.find(chain => chain.name.toLowerCase() === chainName)?.nativeCurrency?.symbol;
   const [showAddFunds, setShowAddFunds] = useState(false);
   const [buttonText, setButtonText] = useState(ButtonText.SUBMIT);
@@ -55,8 +51,7 @@ const SendProposalMobileLayoutConfirmInitialContent: FC<SendProposalMobileLayout
     setButtonText(insufficientBalance ? ButtonText.ADD_FUNDS : ButtonText.SUBMIT);
   }, [insufficientBalance]);
 
-  const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value;
+  const handleEmailChange = (value: string) => {
     setEmailForSubscription(value);
     setWantsSubscription(!!value);
     setEmailError(null);
@@ -95,30 +90,17 @@ const SendProposalMobileLayoutConfirmInitialContent: FC<SendProposalMobileLayout
         <AddFunds chain={chainName} asset={chainCurrencySymbol || ""} onGoBack={handleAddFundsClose} />
       ) : (
         <>
-          <div className="flex flex-col gap-4">
-            <CreateGradientTitle textSize="small" additionalInfo="optional">
-              get updates by phone
-            </CreateGradientTitle>
-            <PhoneNumberSubscription
-              phoneNumberAlreadyExists={phoneNumberAlreadyExists ?? false}
-              phoneNumberError={phoneNumberError}
-              phoneNumberForSubscription={phoneNumberForSubscription}
-              handlePhoneNumberChange={handlePhoneNumberChange}
-            />
-          </div>
-
-          <div className="flex flex-col gap-4 mt-4">
-            <CreateGradientTitle textSize="small" additionalInfo="optional">
-              get updates by email
-            </CreateGradientTitle>
-            <EmailSubscription
-              emailAlreadyExists={emailAlreadyExists ?? false}
-              emailError={emailError}
-              emailForSubscription={emailForSubscription ?? ""}
-              tosHref={tosHref ?? ""}
-              handleEmailChange={handleEmailChange}
-            />
-          </div>
+          <UpdatesSignup
+            titleVariant="gradient"
+            phoneNumber={phoneNumberForSubscription}
+            email={emailForSubscription ?? ""}
+            phoneNumberError={phoneNumberError}
+            emailError={emailError}
+            phoneNumberMessage={phoneNumberAlreadyExists ? "your phone number has already been subscribed! :)" : null}
+            emailMessage={emailAlreadyExists ? "your email has already been subscribed! :)" : null}
+            onPhoneNumberChange={handlePhoneNumberChange}
+            onEmailChange={handleEmailChange}
+          />
 
           <div className="flex flex-col gap-2 mt-12">
             <ButtonV3

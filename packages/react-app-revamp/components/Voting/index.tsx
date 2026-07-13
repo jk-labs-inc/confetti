@@ -6,9 +6,8 @@ import { useWallet } from "@hooks/useWallet";
 import { FC, RefObject, useEffect, useRef, useCallback } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useShallow } from "zustand/shallow";
-import VotingWidgetEmailSignup from "./components/EmailSignup";
-import VotingWidgetPhoneNumberSignup from "./components/PhoneNumberSignup";
 import VotingWidgetRewardsProjection from "./components/RewardsProjection";
+import VotingWidgetSignup from "./components/Signup";
 import VoteAmountInput from "./components/VoteAmountInput";
 import VoteButton from "./components/VoteButton";
 import VoteInfoBlocks from "./components/VoteInfoBlocks";
@@ -130,8 +129,7 @@ const VotingWidget: FC<VotingWidgetProps> = ({
           submissionsCount={submissionsCount}
           placeholderSpend={effectiveCostToVote}
         />
-        <VotingWidgetPhoneNumberSignup />
-        <VotingWidgetEmailSignup />
+        <VotingWidgetSignup />
         <VoteButton
           isDisabled={voteDisabled}
           isInvalidBalance={insufficientBalance && isConnected}

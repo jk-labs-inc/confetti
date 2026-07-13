@@ -1,6 +1,6 @@
 import TestnetDeploymentModal from "@components/UI/Deployment/Testnet";
 import GradientText from "@components/UI/GradientText";
-import { FOOTER_LINKS } from "@config/links";
+import UpdatesSignup from "@components/UI/UpdatesSignup";
 import { chains } from "@config/wagmi";
 import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import { emailRegex } from "@helpers/regex";
@@ -15,9 +15,7 @@ import CreateContestButton from "../../components/Buttons/Submit";
 import MobileStepper from "../../components/MobileStepper";
 import { useContestSteps } from "../../hooks/useContestSteps";
 import CreateContestConfirmDescription from "./components/Description";
-import CreateContestConfirmEmailSubscription from "./components/EmailSubscription";
 import CreateContestConfirmMonetization from "./components/Monetization";
-import CreateContestConfirmPhoneNumberSubscription from "./components/PhoneNumberSubscription";
 import CreateContestConfirmPreview from "./components/Preview";
 import CreateContestConfirmRewards from "./components/Rewards";
 import CreateContestConfirmTiming from "./components/Timing";
@@ -33,7 +31,6 @@ const CreateContestConfirm = () => {
   const state = useDeployContestStore(state => state);
   const { setEmailSubscriptionAddress, setPhoneNumberForSubscription, getVotingOpenDate, getVotingCloseDate } = state;
   const { deployContest } = useDeployContest();
-  const tosHref = FOOTER_LINKS.find(link => link.label === "Terms")?.href;
   const emailError =
     !state.emailSubscriptionAddress || emailRegex.test(state.emailSubscriptionAddress)
       ? null
@@ -73,10 +70,6 @@ const CreateContestConfirm = () => {
       deployContest();
     }
   }, [chainId, connector, deployContest, emailError, phoneNumberError, testnet]);
-
-  const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setEmailSubscriptionAddress(event.target.value);
-  };
 
   const handlePhoneNumberChange = (value: PhoneNumberValue) => {
     setPhoneNumberForSubscription(value);
@@ -136,17 +129,14 @@ const CreateContestConfirm = () => {
           />
 
           <div className="flex flex-col gap-8 mt-6">
-            <CreateContestConfirmPhoneNumberSubscription
+            <UpdatesSignup
+              className="md:w-[328px]"
+              phoneNumber={state.phoneNumberForSubscription}
+              email={state.emailSubscriptionAddress}
               phoneNumberError={phoneNumberError}
-              phoneNumberForSubscription={state.phoneNumberForSubscription}
-              handlePhoneNumberChange={handlePhoneNumberChange}
-            />
-
-            <CreateContestConfirmEmailSubscription
               emailError={emailError}
-              emailSubscriptionAddress={state.emailSubscriptionAddress}
-              tosHref={tosHref}
-              handleEmailChange={handleEmailChange}
+              onPhoneNumberChange={handlePhoneNumberChange}
+              onEmailChange={setEmailSubscriptionAddress}
             />
 
             <CreateContestButton
