@@ -33,9 +33,11 @@ const EntriesList: FC<EntriesListProps> = ({
   const { shouldApplyFade, maskImageStyle } = useScrollFade(scrollContainerRef, entries.length, [entries, isExpanded]);
   const isEnded = cardState === "ended" || cardState === "canceled";
   const showLoadAll = totalEntries > COLLAPSED_ENTRIES_COUNT;
+  const needsExplicitHeight = isLoading || isExpanded || entries.length === 0;
+  const spacing = needsExplicitHeight ? "h-[112px]" : showLoadAll ? "" : "mb-6";
 
   return (
-    <div className="h-[116px] flex flex-col justify-center gap-2">
+    <div className={`flex flex-col gap-2 ${spacing}`}>
       {isLoading ? (
         <>
           <EntryRowSkeleton />

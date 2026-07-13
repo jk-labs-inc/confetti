@@ -13,7 +13,7 @@ interface EntryRowProps {
   onVoteClick: (entry: CardEntry) => void;
 }
 
-const EntryRow: FC<EntryRowProps> = ({ entry, contestUrl, cardState, hasEntryImages, onVoteClick, className }) => {
+const EntryRow: FC<EntryRowProps> = ({ entry, contestUrl, cardState, hasEntryImages, onVoteClick }) => {
   const isEnded = cardState === "ended" || cardState === "canceled";
   const isLive = cardState === "live";
   const showPercent = entry.percent !== null;
@@ -22,7 +22,7 @@ const EntryRow: FC<EntryRowProps> = ({ entry, contestUrl, cardState, hasEntryIma
   const rightGutter = showPercent ? (isLive ? "pr-[88px]" : "pr-14") : "";
 
   return (
-    <div className={`relative h-10 shrink-0 ${className ?? ""}`}>
+    <div className="relative h-10 shrink-0">
       <CustomLink href={contestUrl} className={`flex items-center gap-3 h-full ${rightGutter}`}>
         {hasEntryImages &&
           (entry.image ? (

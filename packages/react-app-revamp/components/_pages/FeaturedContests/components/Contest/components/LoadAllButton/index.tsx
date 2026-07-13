@@ -10,7 +10,7 @@ const LoadAllButton: FC<LoadAllButtonProps> = ({ onClick, isEnded }) => {
   return (
     <button
       onClick={onClick}
-      className={`flex items-center gap-1 h-5 text-xs font-bold cursor-pointer hover:brightness-110 text-positive-11 ${
+      className={`flex items-center gap-1 h-4 text-xs font-bold cursor-pointer hover:brightness-110 text-positive-11 ${
         isEnded ? "opacity-60" : ""
       }`}
     >
