@@ -32,21 +32,14 @@ const EntriesList: FC<EntriesListProps> = ({
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const { shouldApplyFade, maskImageStyle } = useScrollFade(scrollContainerRef, entries.length, [entries, isExpanded]);
   const isEnded = cardState === "ended" || cardState === "canceled";
-  // mobile shows 3 rows, so only >3 needs the button there; desktop shows 2, so exactly 3 needs it too.
-  const loadAllClass =
-    totalEntries > COLLAPSED_ENTRIES_COUNT
-      ? "flex"
-      : totalEntries === COLLAPSED_ENTRIES_COUNT
-        ? "hidden md:flex"
-        : null;
+  const showLoadAll = totalEntries > COLLAPSED_ENTRIES_COUNT;
 
   return (
-    <div className="h-[164px] md:h-[116px] flex flex-col gap-4">
+    <div className="h-[116px] flex flex-col justify-center gap-2">
       {isLoading ? (
         <>
           <EntryRowSkeleton />
           <EntryRowSkeleton />
-          <EntryRowSkeleton className="md:hidden" />
         </>
       ) : entries.length === 0 ? (
         <div className="flex-1 flex items-center justify-center">
@@ -71,7 +64,7 @@ const EntriesList: FC<EntriesListProps> = ({
         </div>
       ) : (
         <>
-          {entries.map((entry, index) => (
+          {entries.map(entry => (
             <EntryRow
               key={entry.id}
               entry={entry}
@@ -79,10 +72,9 @@ const EntriesList: FC<EntriesListProps> = ({
               cardState={cardState}
               hasEntryImages={hasEntryImages}
               onVoteClick={onVoteClick}
-              className={index === COLLAPSED_ENTRIES_COUNT - 1 ? "md:hidden" : ""}
             />
           ))}
-          {loadAllClass && <LoadAllButton onClick={onLoadAll} isEnded={isEnded} className={loadAllClass} />}
+          {showLoadAll && <LoadAllButton onClick={onLoadAll} isEnded={isEnded} />}
         </>
       )}
     </div>

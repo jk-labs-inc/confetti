@@ -11,7 +11,6 @@ interface EntryRowProps {
   cardState: CardState;
   hasEntryImages: boolean;
   onVoteClick: (entry: CardEntry) => void;
-  className?: string;
 }
 
 const EntryRow: FC<EntryRowProps> = ({ entry, contestUrl, cardState, hasEntryImages, onVoteClick, className }) => {

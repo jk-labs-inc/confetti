@@ -20,7 +20,7 @@ const CardFooter: FC<CardFooterProps> = ({ contest, rewardsData, isRewardsFetchi
     <div
       ref={rowRef}
       style={{ fontSize: `${fontSize}px` }}
-      className="flex items-center gap-6 h-8 min-w-0 overflow-hidden"
+      className="flex items-center gap-6 h-6 min-w-0 overflow-hidden"
     >
       <ContestTiming contest={contest} />
       <ContestRewards contestData={contest} rewardsData={rewardsData} isRewardsFetching={isRewardsFetching} />

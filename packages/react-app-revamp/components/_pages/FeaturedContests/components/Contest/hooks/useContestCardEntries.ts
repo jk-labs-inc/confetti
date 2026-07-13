@@ -7,8 +7,8 @@ import { ProcessedContest } from "lib/contests/types";
 import { useMemo, useState } from "react";
 import { CardEntry, CardState } from "../types";
 
-/** Rows fetched while collapsed: mobile shows all 3, desktop hides the 3rd via CSS. */
-export const COLLAPSED_ENTRIES_COUNT = 3;
+/** Rows fetched (and shown) while collapsed, on every breakpoint. */
+export const COLLAPSED_ENTRIES_COUNT = 2;
 
 export function useContestCardEntries(contest: ProcessedContest, cardState: CardState) {
   const [isExpanded, setIsExpanded] = useState(false);
