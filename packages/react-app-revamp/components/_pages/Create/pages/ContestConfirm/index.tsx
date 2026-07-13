@@ -1,19 +1,20 @@
 import TestnetDeploymentModal from "@components/UI/Deployment/Testnet";
 import GradientText from "@components/UI/GradientText";
-import { FOOTER_LINKS } from "@config/links";
+import UpdatesSignup from "@components/UI/UpdatesSignup";
 import { chains } from "@config/wagmi";
 import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import { emailRegex } from "@helpers/regex";
 import { useDeployContest } from "@hooks/useDeployContest";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { useWallet } from "@hooks/useWallet";
+import { isPhoneNumberEmpty, isValidPhoneNumber } from "lib/phone";
+import { PhoneNumberValue } from "lib/phone/types";
 import { switchChain } from "@wagmi/core";
 import { useCallback, useState } from "react";
 import CreateContestButton from "../../components/Buttons/Submit";
 import MobileStepper from "../../components/MobileStepper";
 import { useContestSteps } from "../../hooks/useContestSteps";
 import CreateContestConfirmDescription from "./components/Description";
-import CreateContestConfirmEmailSubscription from "./components/EmailSubscription";
 import CreateContestConfirmMonetization from "./components/Monetization";
 import CreateContestConfirmPreview from "./components/Preview";
 import CreateContestConfirmRewards from "./components/Rewards";
@@ -28,10 +29,16 @@ const CreateContestConfirm = () => {
   } = useWallet();
   const { steps, stepReferences } = useContestSteps();
   const state = useDeployContestStore(state => state);
-  const { setEmailSubscriptionAddress, getVotingOpenDate, getVotingCloseDate } = state;
+  const { setEmailSubscriptionAddress, setPhoneNumberForSubscription, getVotingOpenDate, getVotingCloseDate } = state;
   const { deployContest } = useDeployContest();
-  const tosHref = FOOTER_LINKS.find(link => link.label === "Terms")?.href;
-  const [emailError, setEmailError] = useState<string | null>(null);
+  const emailError =
+    !state.emailSubscriptionAddress || emailRegex.test(state.emailSubscriptionAddress)
+      ? null
+      : "Invalid email address.";
+  const phoneNumberError =
+    isPhoneNumberEmpty(state.phoneNumberForSubscription) || isValidPhoneNumber(state.phoneNumberForSubscription)
+      ? null
+      : "Invalid phone number.";
   const [isTestnetDeploymentModalOpen, setIsTestnetDeploymentModalOpen] = useState(false);
 
   const handleChangeChain = useCallback(async () => {
@@ -48,6 +55,10 @@ const CreateContestConfirm = () => {
       return;
     }
 
+    if (emailError || phoneNumberError) {
+      return;
+    }
+
     if (connector && isWalletForbidden(connector.id)) {
       displayWalletWarning(connector.id);
       return;
@@ -58,18 +69,10 @@ const CreateContestConfirm = () => {
     } else {
       deployContest();
     }
-  }, [chainId, connector, deployContest, testnet]);
+  }, [chainId, connector, deployContest, emailError, phoneNumberError, testnet]);
 
-  const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value;
-    if (!value) {
-      setEmailError(null);
-    } else if (emailRegex.test(value)) {
-      setEmailError(null);
-    } else {
-      setEmailError("Invalid email address.");
-    }
-    setEmailSubscriptionAddress(value);
+  const handlePhoneNumberChange = (value: PhoneNumberValue) => {
+    setPhoneNumberForSubscription(value);
   };
 
   const onNavigateToStep = (stepIndex: number) => {
@@ -126,14 +129,21 @@ const CreateContestConfirm = () => {
           />
 
           <div className="flex flex-col gap-8 mt-6">
-            <CreateContestConfirmEmailSubscription
+            <UpdatesSignup
+              className="md:w-[328px]"
+              phoneNumber={state.phoneNumberForSubscription}
+              email={state.emailSubscriptionAddress}
+              phoneNumberError={phoneNumberError}
               emailError={emailError}
-              emailSubscriptionAddress={state.emailSubscriptionAddress}
-              tosHref={tosHref}
-              handleEmailChange={handleEmailChange}
+              onPhoneNumberChange={handlePhoneNumberChange}
+              onEmailChange={setEmailSubscriptionAddress}
             />
 
-            <CreateContestButton step={state.step} onClick={onDeployHandler} isDisabled={!!emailError} />
+            <CreateContestButton
+              step={state.step}
+              onClick={onDeployHandler}
+              isDisabled={!!emailError || !!phoneNumberError}
+            />
           </div>
         </div>
 

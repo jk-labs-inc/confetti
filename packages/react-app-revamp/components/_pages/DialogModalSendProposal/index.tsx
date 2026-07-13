@@ -8,10 +8,12 @@ import { emailRegex } from "@helpers/regex";
 import { useContestStore } from "@hooks/useContest/store";
 import { useEditorStore } from "@hooks/useEditor/store";
 import useEmailSignup from "@hooks/useEmailSignup";
+import usePhoneNumberSignup from "@hooks/usePhoneNumberSignup";
 import useSubmitProposal from "@hooks/useSubmitProposal";
 import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
 import { useUploadImageStore } from "@hooks/useUploadImage";
 import { useWallet } from "@hooks/useWallet";
+import { EMPTY_PHONE_NUMBER, isPhoneNumberEmpty, isValidPhoneNumber, phoneNumberToE164 } from "lib/phone";
 import { validateImageUpload } from "lib/image/uploadValidation";
 import Document from "@tiptap/extension-document";
 import Heading from "@tiptap/extension-heading";
@@ -40,14 +42,18 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
   const asPath = usePathname();
   const isMobile = useMediaQuery({ maxWidth: "768px" });
   const { subscribeUser, checkIfEmailExists } = useEmailSignup();
+  const { subscribePhoneNumber, checkIfPhoneNumberExists } = usePhoneNumberSignup();
   const { chainName, address: contestId } = extractPathSegments(asPath ?? "");
   const { sendProposal } = useSubmitProposal();
   const {
     wantsSubscription,
     emailForSubscription,
+    phoneNumberForSubscription,
     setWantsSubscription,
     setEmailForSubscription,
     setEmailAlreadyExists,
+    setPhoneNumberForSubscription,
+    setPhoneNumberAlreadyExists,
   } = useSubmitProposalStore(state => state);
   const { charge } = useContestStore(state => state);
   const { data: accountData } = useBalance({
@@ -108,7 +114,7 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
       return null;
     }
 
-    // Check if the email already exists
+    // check if the email already exists
     const emailExists = await checkIfEmailExists({ emailAddress: emailForSubscription, userAddress: userAddress });
     if (emailExists) {
       setEmailAlreadyExists(true);
@@ -122,13 +128,36 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
     return subscribeUser(emailForSubscription, userAddress, false);
   };
 
-  const onSubmitProposal = async () => {
-    const promises = [sendProposal(proposal.trim())];
-
-    const subscriptionPromise = await handleSubscription();
-    if (subscriptionPromise) {
-      promises.push(subscriptionPromise);
+  const handlePhoneNumberSubscription = async () => {
+    if (isPhoneNumberEmpty(phoneNumberForSubscription) || !isValidPhoneNumber(phoneNumberForSubscription)) {
+      return null;
     }
+
+    const phoneNumberE164 = phoneNumberToE164(phoneNumberForSubscription);
+
+    // check if the phone number already exists
+    const phoneNumberExists = await checkIfPhoneNumberExists({
+      phoneNumber: phoneNumberE164,
+      userAddress,
+      displayToasts: false,
+    });
+    if (phoneNumberExists) {
+      setPhoneNumberAlreadyExists(true);
+      return null;
+    }
+
+    if (!userAddress) {
+      return null;
+    }
+
+    return subscribePhoneNumber(phoneNumberE164, userAddress, false);
+  };
+
+  const onSubmitProposal = async () => {
+    const promises: Promise<unknown>[] = [sendProposal(proposal.trim())];
+
+    promises.push(handleSubscription().catch(() => null));
+    promises.push(handlePhoneNumberSubscription().catch(() => null));
 
     try {
       const [proposalResult] = await Promise.all(promises);
@@ -143,6 +172,9 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
     } finally {
       setWantsSubscription(false);
       setEmailForSubscription("");
+      setEmailAlreadyExists(false);
+      setPhoneNumberForSubscription(EMPTY_PHONE_NUMBER);
+      setPhoneNumberAlreadyExists(false);
     }
   };
 

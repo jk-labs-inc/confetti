@@ -1,10 +1,8 @@
 import AddFunds from "@components/AddFunds";
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import DialogModalV3 from "@components/UI/DialogModalV3";
-import EmailSubscription from "@components/UI/EmailSubscription";
+import UpdatesSignup from "@components/UI/UpdatesSignup";
 import ContestPrompt from "@components/_pages/Contest/components/Prompt";
-import CreateGradientTitle from "@components/_pages/Create/components/GradientTitle";
-import { FOOTER_LINKS } from "@config/links";
 import { chains } from "@config/wagmi";
 import { emailRegex } from "@helpers/regex";
 import { useContestStore } from "@hooks/useContest/store";
@@ -15,6 +13,8 @@ import { useMetadataStore } from "@hooks/useMetadataFields/store";
 import useSubmitProposal from "@hooks/useSubmitProposal";
 import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
 import { useModal } from "@getpara/react-sdk-lite";
+import { isPhoneNumberEmpty, isValidPhoneNumber } from "lib/phone";
+import { PhoneNumberValue } from "lib/phone/types";
 import { Editor } from "@tiptap/react";
 import { type GetBalanceReturnType } from "@wagmi/core";
 import { FC, ReactNode, useEffect, useState } from "react";
@@ -74,10 +74,14 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
     emailForSubscription,
     emailAlreadyExists,
     setEmailAlreadyExists,
+    phoneNumberForSubscription,
+    setPhoneNumberForSubscription,
+    phoneNumberAlreadyExists,
+    setPhoneNumberAlreadyExists,
   } = useSubmitProposalStore(state => state);
   const { isLoading } = useSubmitProposal();
   const [emailError, setEmailError] = useState<string | null>(null);
-  const tosHref = FOOTER_LINKS.find(link => link.label === "Terms")?.href;
+  const [phoneNumberError, setPhoneNumberError] = useState<string | null>(null);
   const { isLoading: isEntryTypeLoading, isError: isEntryTypeError } = useContestEntryType({
     address: contestConfig.address,
     chainId: contestConfig.chainId,
@@ -96,12 +100,17 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
     setButtonText(insufficientBalance ? ButtonText.ADD_FUNDS : ButtonText.SUBMIT);
   }, [insufficientBalance]);
 
-  const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value;
+  const handleEmailChange = (value: string) => {
     setEmailForSubscription(value);
     setWantsSubscription(!!value);
     setEmailError(null);
     setEmailAlreadyExists(false);
+  };
+
+  const handlePhoneNumberChange = (value: PhoneNumberValue) => {
+    setPhoneNumberForSubscription(value);
+    setPhoneNumberError(null);
+    setPhoneNumberAlreadyExists(false);
   };
 
   const handleConfirm = () => {
@@ -123,11 +132,17 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
       }
     }
 
+    if (!isPhoneNumberEmpty(phoneNumberForSubscription) && !isValidPhoneNumber(phoneNumberForSubscription)) {
+      setPhoneNumberError("Invalid phone number.");
+      return;
+    }
+
     if (emailForSubscription && !emailRegex.test(emailForSubscription)) {
       setEmailError("Invalid email address.");
       return;
     }
 
+    setPhoneNumberError(null);
     setEmailError(null);
     onSubmitProposal?.();
   };
@@ -171,18 +186,20 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
                 ) : isEntryTypeError ? (
                   <p className="text-negative-11">Error while loading entry format. Please reload the page.</p>
                 ) : null}
-                <div className="flex flex-col gap-4 -mt-2">
-                  <CreateGradientTitle textSize="small" additionalInfo="optional">
-                    get updates by email
-                  </CreateGradientTitle>
-                  <EmailSubscription
-                    emailAlreadyExists={emailAlreadyExists ?? false}
-                    emailError={emailError}
-                    emailForSubscription={emailForSubscription ?? ""}
-                    tosHref={tosHref ?? ""}
-                    handleEmailChange={handleEmailChange}
-                  />
-                </div>
+                <UpdatesSignup
+                  className="-mt-2 md:w-[328px]"
+                  titleVariant="gradient"
+                  phoneNumber={phoneNumberForSubscription}
+                  email={emailForSubscription ?? ""}
+                  phoneNumberError={phoneNumberError}
+                  emailError={emailError}
+                  phoneNumberMessage={
+                    phoneNumberAlreadyExists ? "your phone number has already been subscribed! :)" : null
+                  }
+                  emailMessage={emailAlreadyExists ? "your email has already been subscribed! :)" : null}
+                  onPhoneNumberChange={handlePhoneNumberChange}
+                  onEmailChange={handleEmailChange}
+                />
               </div>
             </div>
             <div className="flex flex-col gap-6 mt-6">

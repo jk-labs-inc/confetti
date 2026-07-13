@@ -1,12 +1,12 @@
 import AddFunds from "@components/AddFunds";
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
-import EmailSubscription from "@components/UI/EmailSubscription";
-import CreateGradientTitle from "@components/_pages/Create/components/GradientTitle";
-import { FOOTER_LINKS } from "@config/links";
+import UpdatesSignup from "@components/UI/UpdatesSignup";
 import { chains } from "@config/wagmi";
 import { emailRegex } from "@helpers/regex";
 import { Charge } from "@hooks/useDeployContest/types";
 import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
+import { isPhoneNumberEmpty, isValidPhoneNumber } from "lib/phone";
+import { PhoneNumberValue } from "lib/phone/types";
 import { type GetBalanceReturnType } from "@wagmi/core";
 import { FC, useEffect, useState } from "react";
 
@@ -30,10 +30,18 @@ const SendProposalMobileLayoutConfirmInitialContent: FC<SendProposalMobileLayout
   onConfirm,
   onShowAddFunds,
 }) => {
-  const { emailForSubscription, setWantsSubscription, setEmailForSubscription, emailAlreadyExists } =
-    useSubmitProposalStore(state => state);
+  const {
+    emailForSubscription,
+    setWantsSubscription,
+    setEmailForSubscription,
+    emailAlreadyExists,
+    phoneNumberForSubscription,
+    setPhoneNumberForSubscription,
+    phoneNumberAlreadyExists,
+    setPhoneNumberAlreadyExists,
+  } = useSubmitProposalStore(state => state);
   const [emailError, setEmailError] = useState<string | null>(null);
-  const tosHref = FOOTER_LINKS.find(link => link.label === "Terms")?.href;
+  const [phoneNumberError, setPhoneNumberError] = useState<string | null>(null);
   const chainCurrencySymbol = chains.find(chain => chain.name.toLowerCase() === chainName)?.nativeCurrency?.symbol;
   const [showAddFunds, setShowAddFunds] = useState(false);
   const [buttonText, setButtonText] = useState(ButtonText.SUBMIT);
@@ -43,19 +51,30 @@ const SendProposalMobileLayoutConfirmInitialContent: FC<SendProposalMobileLayout
     setButtonText(insufficientBalance ? ButtonText.ADD_FUNDS : ButtonText.SUBMIT);
   }, [insufficientBalance]);
 
-  const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value;
+  const handleEmailChange = (value: string) => {
     setEmailForSubscription(value);
     setWantsSubscription(!!value);
     setEmailError(null);
   };
 
+  const handlePhoneNumberChange = (value: PhoneNumberValue) => {
+    setPhoneNumberForSubscription(value);
+    setPhoneNumberError(null);
+    setPhoneNumberAlreadyExists(false);
+  };
+
   const handleConfirm = () => {
+    if (!isPhoneNumberEmpty(phoneNumberForSubscription) && !isValidPhoneNumber(phoneNumberForSubscription)) {
+      setPhoneNumberError("Invalid phone number.");
+      return;
+    }
+
     if (emailForSubscription && !emailRegex.test(emailForSubscription)) {
       setEmailError("Invalid email address.");
       return;
     }
 
+    setPhoneNumberError(null);
     setEmailError(null);
     onConfirm?.();
   };
@@ -71,18 +90,17 @@ const SendProposalMobileLayoutConfirmInitialContent: FC<SendProposalMobileLayout
         <AddFunds chain={chainName} asset={chainCurrencySymbol || ""} onGoBack={handleAddFundsClose} />
       ) : (
         <>
-          <div className="flex flex-col gap-4">
-            <CreateGradientTitle textSize="small" additionalInfo="optional">
-              get updates by email
-            </CreateGradientTitle>
-            <EmailSubscription
-              emailAlreadyExists={emailAlreadyExists ?? false}
-              emailError={emailError}
-              emailForSubscription={emailForSubscription ?? ""}
-              tosHref={tosHref ?? ""}
-              handleEmailChange={handleEmailChange}
-            />
-          </div>
+          <UpdatesSignup
+            titleVariant="gradient"
+            phoneNumber={phoneNumberForSubscription}
+            email={emailForSubscription ?? ""}
+            phoneNumberError={phoneNumberError}
+            emailError={emailError}
+            phoneNumberMessage={phoneNumberAlreadyExists ? "your phone number has already been subscribed! :)" : null}
+            emailMessage={emailAlreadyExists ? "your email has already been subscribed! :)" : null}
+            onPhoneNumberChange={handlePhoneNumberChange}
+            onEmailChange={handleEmailChange}
+          />
 
           <div className="flex flex-col gap-2 mt-12">
             <ButtonV3
