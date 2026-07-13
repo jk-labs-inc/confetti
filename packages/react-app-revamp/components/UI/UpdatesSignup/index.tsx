@@ -38,9 +38,7 @@ const UpdatesSignup: FC<UpdatesSignupProps> = ({
 
   return (
     <div className={`flex flex-col gap-4 ${className ?? ""}`}>
-      <p className={`text-[16px] font-bold ${titleClassName}`}>
-        get updates <span className="text-[12px] font-normal">(optional)</span>
-      </p>
+      <p className={`text-[16px] font-bold ${titleClassName}`}>get updates</p>
 
       <div className="flex flex-col gap-2">
         <UpdatesSignupField
