@@ -210,6 +210,7 @@
   --background-image-gradient-metallic: linear-gradient(180deg, #6a6a6a 0%, #e5e5e5 100%);
   --background-image-gradient-calendar: linear-gradient(68deg, #bb65ff 15.17%, #66deff 85.72%);
   --background-image-gradient-profit-card: linear-gradient(252.15deg, #66deff 0.56%, #bb65ff 49.92%, #78ffc6 99.28%);
+  --background-image-gradient-vote-pill-stroke: radial-gradient(circle, #78ffc6 0%, #4da07d 50%, #78ffc6 100%);
 
   /* Box Shadows */
   --shadow-create-header: 0 3px 4px 0 rgba(106, 106, 106, 1);

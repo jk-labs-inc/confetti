@@ -48,6 +48,7 @@ function useFeaturedContests() {
     data: contestData = [],
     status,
     isFetching: isContestDataFetching,
+    refetch,
   } = useQuery({
     queryKey: ["featuredContestsStream", page],
     //TODO: test this streamedQuery from useQuery, let's see if this feature can replace our manual (still experimental but looks promising)
@@ -74,11 +75,12 @@ function useFeaturedContests() {
     rewardsData,
     isRewardsFetching,
     isContestDataFetching,
+    refetch,
   };
 }
 
 const LandingPage = () => {
-  const { status, contestData, rewardsData, isRewardsFetching, isContestDataFetching } = useFeaturedContests();
+  const { status, contestData, rewardsData, isRewardsFetching, isContestDataFetching, refetch } = useFeaturedContests();
 
   return (
     <div className="px-4 mt-6 lx:mt-12 pb-12">
@@ -91,6 +93,7 @@ const LandingPage = () => {
               rewardsData={rewardsData}
               isRewardsFetching={isRewardsFetching}
               isContestDataFetching={isContestDataFetching}
+              onRetry={() => refetch()}
             />
             <CustomLink
               prefetch={true}

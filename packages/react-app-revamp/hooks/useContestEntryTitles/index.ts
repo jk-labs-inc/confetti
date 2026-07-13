@@ -82,7 +82,10 @@ export function useContestEntryTitles({
         });
         if (result.status !== "success" || !result.result) return null;
         const data = result.result as FetchedEntry;
-        return { description: data.description, fieldsMetadata: data.fieldsMetadata };
+        return {
+          description: data.description,
+          fieldsMetadata: data.fieldsMetadata ?? (data.description ? { stringArray: [data.description] } : undefined),
+        };
       },
       enabled: enabled && !!address && !!abi,
       staleTime: Infinity,

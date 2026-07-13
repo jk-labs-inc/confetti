@@ -7,7 +7,7 @@ import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/st
 import Image from "next/image";
 import { FC } from "react";
 import { useShallow } from "zustand/shallow";
-import EntryPreviewHeader from "../EntryPreviewHeader";
+import EntryPreviewHeader from "@components/Voting/components/EntryPreviewHeader";
 import VotingSidebarEmailSignup from "../EmailSignup";
 import NoVotesPlaceholder from "./components/NoVotesPlaceholder";
 

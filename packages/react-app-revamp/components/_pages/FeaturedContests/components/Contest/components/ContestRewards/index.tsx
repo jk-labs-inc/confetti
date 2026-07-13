@@ -36,10 +36,10 @@ const ContestRewards: FC<ContestRewardsProps> = ({ contestData, rewardsData, isR
   const contestIsActive = isContestActive(contestData);
   const hasRewards = tokenItems.length > 0;
 
-  if (isRewardsFetching) {
+  if (isRewardsFetching && !rewardsData) {
     return (
-      <div className="flex items-center gap-1">
-        <span role="img" aria-label="money bag">
+      <div className="flex items-center gap-1 shrink-0">
+        <span role="img" aria-label="money bag" className="text-base">
           💰
         </span>
         <div className="w-16 h-4 bg-neutral-5 rounded animate-pulse" />
@@ -50,20 +50,20 @@ const ContestRewards: FC<ContestRewardsProps> = ({ contestData, rewardsData, isR
   if (!hasRewards) return null;
 
   return (
-    <div className="flex items-baseline gap-1">
-      <span role="img" aria-label="money bag" className="shrink-0">
+    <div className="flex items-baseline gap-1 shrink-0">
+      <span role="img" aria-label="money bag" className="shrink-0 text-base">
         💰
       </span>
-      <p className={`text-xs font-bold whitespace-nowrap ${contestIsActive ? "text-neutral-11" : "text-neutral-9"}`}>
+      <p className={`font-bold whitespace-nowrap ${contestIsActive ? "text-neutral-11" : "text-neutral-10"}`}>
         {totalUsd !== null ? (
           <>
             ${totalUsd}
-            {contestIsActive && <span className="inline-block -translate-y-0.5 ml-1">🚀</span>}
+            {contestIsActive && " (and climbing)"}
           </>
         ) : (
           <>
             {formatBalance(tokenItems[0].value)} <span className="uppercase">${tokenItems[0].symbol}</span>
-            {contestIsActive && <span className="inline-block -translate-y-0.5 ml-1">🚀</span>}
+            {contestIsActive && " (and climbing)"}
           </>
         )}
       </p>
