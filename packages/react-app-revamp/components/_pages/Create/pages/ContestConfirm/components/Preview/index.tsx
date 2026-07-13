@@ -14,8 +14,6 @@ const CreateContestConfirmPreview: FC<CreateContestConfirmPreviewProps> = ({ ent
         return "all entries require a title";
       case EntryPreview.IMAGE:
         return "all entries require an image and title";
-      case EntryPreview.TWEET:
-        return "all entries require a tweet and title";
     }
   }, [entryPreviewConfig.preview]);
 
