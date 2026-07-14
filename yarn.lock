@@ -1803,21 +1803,21 @@
     "@babel/helper-string-parser" "^8.0.0"
     "@babel/helper-validator-identifier" "^8.0.0"
 
-"@bigmi/client@0.9.0":
-  version "0.9.0"
-  resolved "https://registry.yarnpkg.com/@bigmi/client/-/client-0.9.0.tgz#19436d55ad59f1008b53542b269f2b3d332079dc"
-  integrity sha512-Nyr5LQ4MSXowx4s65b9xlfUb1zSwmB5Nv8Pd3F6LkO+EggJ9X+6q/94F62tlljh/ANBO4MoOLukGHBxbpDjfqw==
+"@bigmi/client@0.10.0":
+  version "0.10.0"
+  resolved "https://registry.yarnpkg.com/@bigmi/client/-/client-0.10.0.tgz#804d6e69e093b43e851a4066162aea9f4c152f3c"
+  integrity sha512-fjswLQdq9jXgtZn6cBtzbxk+S6QN1ajXN2OzEOkgY4dE7hRPsanvSs3H3s3hmmTnS+QleVEcD+s5+raHZqwnuQ==
   dependencies:
-    "@bigmi/core" "0.8.1"
+    "@bigmi/core" "0.9.0"
     "@wallet-standard/app" "^1.1.0"
     "@wallet-standard/base" "^1.1.0"
     eventemitter3 "^5.0.4"
     zustand "^5.0.14"
 
-"@bigmi/core@0.8.1":
-  version "0.8.1"
-  resolved "https://registry.yarnpkg.com/@bigmi/core/-/core-0.8.1.tgz#abe67ba2f96e3e16284002b15e4a4504c229184a"
-  integrity sha512-PX0x2iid3p4cWugP4qI4SPqsGuiogQGcwOLDnsMRkifr4z9rKFZl7CE4I9ynUSVDsqkw0PL/0iPIpN4EqhRqNQ==
+"@bigmi/core@0.9.0":
+  version "0.9.0"
+  resolved "https://registry.yarnpkg.com/@bigmi/core/-/core-0.9.0.tgz#60cb5a633c8d09429afb28c5cbf16f2b59f37f4c"
+  integrity sha512-jMYZ9fx4+gSVl+VongD7ZCZsPahKjAFEodsRPz3QI15DC3o1ISfcji1Srwc1uQtPKmjq3da2ERugIQamW0CVmg==
   dependencies:
     "@noble/hashes" "^1.8.0"
     bech32 "^2.0.0"
@@ -1826,13 +1826,13 @@
     eventemitter3 "^5.0.4"
     zustand "^5.0.14"
 
-"@bigmi/react@0.8.2":
-  version "0.8.2"
-  resolved "https://registry.yarnpkg.com/@bigmi/react/-/react-0.8.2.tgz#48e3665807f1d9b7755dffd6a63b39cd9e6fe434"
-  integrity sha512-MDZ7bsx24KiVDsdX3FlRg5iKsObrgOt/d0D71Ca589C3+jPppCWbldKLsZTSr1GyKI/9ZzRHRznNzG7Pucr6CQ==
+"@bigmi/react@0.9.0":
+  version "0.9.0"
+  resolved "https://registry.yarnpkg.com/@bigmi/react/-/react-0.9.0.tgz#9cc9653b4393e415e17f23c808e736b0fc6cf244"
+  integrity sha512-d+9RiAmZWhZzIApEt3bJWZE7O5truCkkuga2Zci+igCwegNwKcKrBZPT9hZTuloKpU8tMH7MT/GfkO57kO+Ajw==
   dependencies:
-    "@bigmi/client" "0.9.0"
-    "@bigmi/core" "0.8.1"
+    "@bigmi/client" "0.10.0"
+    "@bigmi/core" "0.9.0"
 
 "@bytecodealliance/preview2-shim@0.17.6":
   version "0.17.6"
