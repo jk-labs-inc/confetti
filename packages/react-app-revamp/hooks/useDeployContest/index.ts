@@ -2,8 +2,11 @@ import { useFundPoolStore } from "@components/_pages/Create/pages/ContestRewards
 import { toastLoading } from "@components/UI/Toast";
 import { isSupabaseConfigured } from "@helpers/database";
 import useEmailSignup from "@hooks/useEmailSignup";
+import usePhoneNumberSignup from "@hooks/usePhoneNumberSignup";
 import { useError } from "@hooks/useError";
 import { useWallet } from "@hooks/useWallet";
+import { isPhoneNumberEmpty, isValidPhoneNumber, phoneNumberToE164 } from "lib/phone";
+import { PhoneNumberValue } from "lib/phone/types";
 import { useShallow } from "zustand/shallow";
 import {
   deployContractToChain,
@@ -23,6 +26,7 @@ export const JK_LABS_SPLIT_DESTINATION_DEFAULT = "0xDc652C746A8F85e18Ce632d97c61
 
 export function useDeployContest() {
   const { subscribeUser, checkIfEmailExists } = useEmailSignup();
+  const { subscribePhoneNumber, checkIfPhoneNumberExists } = usePhoneNumberSignup();
   const {
     title,
     prompt,
@@ -33,6 +37,7 @@ export function useDeployContest() {
     setDeployContestData,
     entryPreviewConfig,
     emailSubscriptionAddress,
+    phoneNumberForSubscription,
     charge,
     priceCurve,
     setIsLoading,
@@ -57,6 +62,7 @@ export function useDeployContest() {
       setDeployContestData: state.setDeployContestData,
       entryPreviewConfig: state.entryPreviewConfig,
       emailSubscriptionAddress: state.emailSubscriptionAddress,
+      phoneNumberForSubscription: state.phoneNumberForSubscription,
       charge: state.charge,
       priceCurve: state.priceCurve,
       setIsLoading: state.setIsLoading,
@@ -146,6 +152,10 @@ export function useDeployContest() {
         console.error("Failed to subscribe email:", error);
       });
 
+      subscribeToPhoneNumber(phoneNumberForSubscription).catch(error => {
+        console.error("Failed to subscribe phone number:", error);
+      });
+
       await indexContestInDatabase(contestData);
 
       await orchestrateRewardsDeployment({
@@ -192,6 +202,29 @@ export function useDeployContest() {
     }
 
     await subscribeUser(emailAddress, userAddress, false);
+  }
+
+  async function subscribeToPhoneNumber(phoneNumber: PhoneNumberValue) {
+    if (!isSupabaseConfigured) {
+      throw new Error("Supabase is not configured");
+    }
+
+    if (isPhoneNumberEmpty(phoneNumber) || !isValidPhoneNumber(phoneNumber)) {
+      return;
+    }
+
+    const phoneNumberE164 = phoneNumberToE164(phoneNumber);
+    const phoneNumberExists = await checkIfPhoneNumberExists({
+      phoneNumber: phoneNumberE164,
+      userAddress,
+      displayToasts: false,
+    });
+
+    if (phoneNumberExists || !userAddress) {
+      return;
+    }
+
+    await subscribePhoneNumber(phoneNumberE164, userAddress, false);
   }
 
   return {

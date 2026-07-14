@@ -4,12 +4,10 @@ import { useShallow } from "zustand/shallow";
 import { EntryPreview } from "@hooks/useDeployContest/slices/contestMetadataSlice";
 import TitlePreview from "./components/previews/TitlePreview";
 import ImagePreview from "./components/previews/ImagePreview";
-import TweetPreview from "./components/previews/TweetPreview";
 
 const PREVIEW_OPTIONS = [
   { preview: EntryPreview.TITLE, title: "titles", Component: TitlePreview },
   { preview: EntryPreview.IMAGE, title: "images", Component: ImagePreview },
-  { preview: EntryPreview.TWEET, title: "tweets", Component: TweetPreview },
 ] as const;
 
 const CreateContestEntriesPreviewPickerOptions = () => {

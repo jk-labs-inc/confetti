@@ -8,7 +8,7 @@ import Image from "next/image";
 import { FC } from "react";
 import { useShallow } from "zustand/shallow";
 import EntryPreviewHeader from "@components/Voting/components/EntryPreviewHeader";
-import VotingSidebarEmailSignup from "../EmailSignup";
+import VotingSidebarSignup from "../Signup";
 import NoVotesPlaceholder from "./components/NoVotesPlaceholder";
 
 interface VotingSidebarVotersProps {
@@ -66,7 +66,7 @@ const VotingSidebarVoters: FC<VotingSidebarVotersProps> = ({ proposalId, image, 
           </div>
           {!isVotingOpen && (
             <div className="mt-4">
-              <VotingSidebarEmailSignup />
+              <VotingSidebarSignup />
             </div>
           )}
         </>
