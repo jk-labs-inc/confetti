@@ -58,7 +58,7 @@ const FeaturedContestCard: FC<FeaturedContestCardProps> = ({ contestData, reward
   const isEnded = cardState === "ended" || cardState === "canceled";
 
   return (
-    <div className="relative flex flex-col gap-4 p-4 w-full md:w-80 rounded-2xl border border-neutral-7 bg-[#141414] hover:border-neutral-10 transition-colors duration-200 animate-appear">
+    <div className="relative flex flex-col gap-4 p-4 w-full md:w-80 rounded-2xl border border-neutral-7 bg-[#141414] hover:border-neutral-10 transition-colors duration-200 animate-appear text-stroke-black">
       <CardHeader
         prompt={contestData.prompt}
         title={contestData.title}

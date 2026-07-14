@@ -965,6 +965,11 @@ li {
     font-weight: bold;
   }
 
+  .text-stroke-black {
+    -webkit-text-stroke: 1px #000;
+    paint-order: stroke fill;
+  }
+
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }
