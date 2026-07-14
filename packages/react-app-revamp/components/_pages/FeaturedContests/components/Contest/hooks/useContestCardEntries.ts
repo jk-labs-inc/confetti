@@ -44,7 +44,7 @@ export function useContestCardEntries(contest: ProcessedContest, cardState: Card
     return sliced.map(entry => entry.id);
   }, [sortedEntries, isExpanded]);
 
-  const { previewsById } = useContestEntriesPreviews({ config, proposalIds: visibleIds });
+  const { previewsById, pendingIds } = useContestEntriesPreviews({ config, proposalIds: visibleIds });
 
   const entries: CardEntry[] = useMemo(() => {
     const showPercents = hasVoteData && cardState !== "upcoming";
@@ -57,9 +57,10 @@ export function useContestCardEntries(contest: ProcessedContest, cardState: Card
         percent: showPercents ? (totalVotes > 0 ? (Math.max(0, votes ?? 0) / totalVotes) * 100 : 0) : null,
         title: preview?.title?.trim() || undefined,
         image: preview?.image,
+        isTitlePending: pendingIds.has(id),
       };
     });
-  }, [visibleIds, sortedEntries, previewsById, hasVoteData, cardState, totalVotes]);
+  }, [visibleIds, sortedEntries, previewsById, pendingIds, hasVoteData, cardState, totalVotes]);
 
   // title-only (and tweet) contests render no thumbnail column at all.
   const hasEntryImages =

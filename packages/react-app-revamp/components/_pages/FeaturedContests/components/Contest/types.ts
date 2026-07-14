@@ -4,6 +4,7 @@ export interface CardEntry {
   id: string;
   votes: number | null;
   percent: number | null;
+  isTitlePending: boolean;
   title?: string;
   image?: string;
 }

@@ -22,15 +22,18 @@ export function useContestEntriesPreviews({ config, proposalIds, enabled = true 
   const combine = useCallback(
     (results: UseQueryResult<FetchedEntry | null>[]) => {
       const byId = new Map<string, FetchedEntry>();
+
+      const pendingIds = new Set<string>();
       results.forEach((result, i) => {
         if (result.data) byId.set(distinctIds[i], result.data);
+        if (result.isPending) pendingIds.add(distinctIds[i]);
       });
-      return { byId, isLoading: results.some(result => result.isLoading) };
+      return { byId, pendingIds, isLoading: results.some(result => result.isLoading) };
     },
     [distinctIds],
   );
 
-  const { byId, isLoading } = useQueries({
+  const { byId, pendingIds, isLoading } = useQueries({
     queries: distinctIds.map(id => ({
       queryKey: ["contestEntryTitle", config?.address.toLowerCase(), config?.chainId, id],
       queryFn: async (): Promise<FetchedEntry | null> => {
@@ -70,7 +73,7 @@ export function useContestEntriesPreviews({ config, proposalIds, enabled = true 
     return map;
   }, [distinctIds, byId, config]);
 
-  return { previewsById, isLoading };
+  return { previewsById, pendingIds, isLoading };
 }
 
 export default useContestEntriesPreviews;
