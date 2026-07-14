@@ -1,5 +1,4 @@
-import useScrollFade from "@hooks/useScrollFade";
-import { FC, useRef } from "react";
+import { FC } from "react";
 import { COLLAPSED_ENTRIES_COUNT } from "../../hooks/useContestCardEntries";
 import { CardEntry, CardState } from "../../types";
 import EntryRow from "../EntryRow";
@@ -29,8 +28,6 @@ const EntriesList: FC<EntriesListProps> = ({
   onLoadAll,
   onVoteClick,
 }) => {
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const { shouldApplyFade, maskImageStyle } = useScrollFade(scrollContainerRef, entries.length, [entries, isExpanded]);
   const isEnded = cardState === "ended" || cardState === "canceled";
   const showLoadAll = totalEntries > COLLAPSED_ENTRIES_COUNT;
   const needsExplicitHeight = isLoading || isExpanded || entries.length === 0;
@@ -48,11 +45,7 @@ const EntriesList: FC<EntriesListProps> = ({
           <p className="text-xs text-neutral-9">no entries yet</p>
         </div>
       ) : isExpanded ? (
-        <div
-          ref={scrollContainerRef}
-          className="flex-1 min-h-0 flex flex-col gap-2 overflow-y-auto no-scrollbar"
-          style={shouldApplyFade ? { maskImage: maskImageStyle, WebkitMaskImage: maskImageStyle } : undefined}
-        >
+        <div className="flex-1 min-h-0 flex flex-col gap-1 overflow-y-auto overscroll-y-contain no-scrollbar">
           {entries.map(entry => (
             <EntryRow
               key={entry.id}
