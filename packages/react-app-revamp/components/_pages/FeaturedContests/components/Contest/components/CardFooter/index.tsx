@@ -10,7 +10,7 @@ interface CardFooterProps {
   isRewardsFetching: boolean;
 }
 
-const FOOTER_FONT_SIZE = { min: 9, max: 12 };
+const FOOTER_FONT_SIZE = { min: 9, max: 16 };
 
 const CardFooter: FC<CardFooterProps> = ({ contest, rewardsData, isRewardsFetching }) => {
   const rowRef = useRef<HTMLDivElement>(null);

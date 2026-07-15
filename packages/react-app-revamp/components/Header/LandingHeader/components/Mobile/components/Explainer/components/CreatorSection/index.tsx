@@ -17,7 +17,7 @@ const LandingHeaderMobileExplainerCreatorSection = () => {
           </CustomLink>
         </div>
       </div>
-      <img src="/landing/path.svg" alt="creator" />
+      <img src="/landing/path.svg" alt="creator" className="-mt-2" />
     </div>
   );
 };

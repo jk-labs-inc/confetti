@@ -56,16 +56,13 @@ const ContestRewards: FC<ContestRewardsProps> = ({ contestData, rewardsData, isR
       </span>
       <p className={`font-bold whitespace-nowrap ${contestIsActive ? "text-neutral-11" : "text-neutral-10"}`}>
         {totalUsd !== null ? (
-          <>
-            ${totalUsd}
-            {contestIsActive && " (and climbing)"}
-          </>
+          <>${totalUsd}</>
         ) : (
           <>
             {formatBalance(tokenItems[0].value)} <span className="uppercase">${tokenItems[0].symbol}</span>
-            {contestIsActive && " (and climbing)"}
           </>
         )}
+        {contestIsActive && <span className="font-normal text-[0.75em]"> (and climbing)</span>}
       </p>
     </div>
   );

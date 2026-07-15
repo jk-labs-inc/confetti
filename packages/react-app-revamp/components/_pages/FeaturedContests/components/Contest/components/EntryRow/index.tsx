@@ -21,6 +21,7 @@ const EntryRow: FC<EntryRowProps> = ({ entry, contestUrl, cardState, hasEntryIma
   const isEnded = cardState === "ended" || cardState === "canceled";
   const isLive = cardState === "live";
   const showPercent = entry.percent !== null;
+  const showEntryMarker = !hasEntryImages && !showPercent;
   const showBar = showPercent && Math.round(entry.percent as number) > 0;
   const { src, srcSet } = useCloudflareImage(entry.image, ENTRY_ROW_THUMB_PRESET);
   const rightGutter = showPercent ? (isLive ? "pr-[88px]" : "pr-14") : "";
@@ -48,6 +49,7 @@ const EntryRow: FC<EntryRowProps> = ({ entry, contestUrl, cardState, hasEntryIma
             </div>
           ) : (
             <p className={`text-base font-bold normal-case truncate ${isEnded ? "text-neutral-9" : "text-neutral-11"}`}>
+              {showEntryMarker && <span className="font-normal text-neutral-9 mr-2">›</span>}
               {entry.title ?? "untitled entry"}
             </p>
           )}

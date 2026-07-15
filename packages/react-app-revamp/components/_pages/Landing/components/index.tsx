@@ -83,7 +83,7 @@ const LandingPage = () => {
   const { status, contestData, rewardsData, isRewardsFetching, isContestDataFetching, refetch } = useFeaturedContests();
 
   return (
-    <div className="px-4 mt-6 lx:mt-12 pb-12">
+    <div className="px-4 mt-2 md:mt-6 lx:mt-12 pb-12">
       <div className="flex flex-col gap-12 md:gap-20 max-w-(--landing-content-max-width) mx-auto">
         {isSupabaseConfigured ? (
           <div className="flex flex-col gap-8 w-full lx:w-fit">
@@ -105,8 +105,8 @@ const LandingPage = () => {
           </div>
         ) : (
           <div className="border-neutral-4 animate-appear p-3 rounded-md border-solid border mb-5 text-sm font-bold">
-            This site&apos;s current deployment does not have access to Confetti&apos;s reference database of
-            contests, but you can check out our Supabase backups{" "}
+            This site&apos;s current deployment does not have access to Confetti&apos;s reference database of contests,
+            but you can check out our Supabase backups{" "}
             <a
               className="link px-1ex"
               href="https://github.com/jk-labs-inc/confetti/tree/staging/packages/supabase"
