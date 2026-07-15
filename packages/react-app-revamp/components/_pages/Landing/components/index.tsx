@@ -83,7 +83,7 @@ const LandingPage = () => {
   const { status, contestData, rewardsData, isRewardsFetching, isContestDataFetching, refetch } = useFeaturedContests();
 
   return (
-    <div className="px-4 mt-2 md:mt-6 lx:mt-12 pb-12">
+    <div className="px-4 mt-6 lx:mt-12 pb-12">
       <div className="flex flex-col gap-12 md:gap-20 max-w-(--landing-content-max-width) mx-auto">
         {isSupabaseConfigured ? (
           <div className="flex flex-col gap-8 w-full lx:w-fit">
