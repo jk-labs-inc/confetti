@@ -11,6 +11,7 @@ import { useCountdownTimer } from "@hooks/useTimer";
 import { useParentSize } from "@visx/responsive";
 import { useEffect, useMemo } from "react";
 import { useShallow } from "zustand/shallow";
+import { HEADER_HEIGHT } from "./constants";
 import PriceCurve from "./index";
 import usePriceCurveChartStore from "./store";
 
@@ -121,7 +122,10 @@ const PriceCurveWrapper = ({
   }, [showPriceWarning, secondsUntilNextUpdate, votingTimeLeft, setShowPriceUpdateWarning]);
 
   if (isLoading) {
-    return <div ref={parentRef} style={{ height }} className="w-full animate-pulse rounded-lg bg-neutral-2" />;
+    const skeletonHeight = isExpanded === false ? HEADER_HEIGHT : height;
+    return (
+      <div ref={parentRef} style={{ height: skeletonHeight }} className="w-full animate-pulse rounded-lg bg-neutral-2" />
+    );
   }
 
   if (isError || chartData.length === 0) {

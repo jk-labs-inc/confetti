@@ -41,7 +41,7 @@ const ContestTab = () => {
   });
 
   const isContestOver = votesClose ? moment().isSameOrAfter(moment(votesClose)) : false;
-  const [isPriceCurveExpanded, setIsPriceCurveExpanded] = useState(!isContestOver);
+  const [isPriceCurveExpanded, setIsPriceCurveExpanded] = useState(!isContestOver && !isMobile);
 
   const isSubmissionOpen = contestStatus === ContestStatus.SubmissionOpen;
   const isVotingOpen = contestStatus === ContestStatus.VotingOpen;
