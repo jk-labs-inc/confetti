@@ -1,5 +1,6 @@
 import { toFixedString } from "@helpers/formatBalance";
 import { emailRegex } from "@helpers/regex";
+import { e164PhoneRegex } from "lib/phone";
 import { create } from "zustand";
 
 interface VotingStore {
@@ -8,10 +9,13 @@ interface VotingStore {
   isInvalid: boolean;
   isFocused: boolean;
   emailAddress: string;
+  phoneNumber: string;
+  resetSignupsNonce: number;
   setInputValue: (value: string, maxBalance: string) => void;
   setSliderValue: (value: number, maxBalance: string, isConnected: boolean) => void;
   setIsFocused: (focused: boolean) => void;
   setEmailAddress: (email: string) => void;
+  setPhoneNumber: (phoneNumber: string) => void;
   handleMaxClick: (maxBalance: string, isConnected: boolean) => void;
   reset: () => void;
 }
@@ -22,6 +26,8 @@ const INITIAL_STATE = {
   isInvalid: false,
   isFocused: true,
   emailAddress: "",
+  phoneNumber: "",
+  resetSignupsNonce: 0,
 };
 
 export const useVotingStore = create<VotingStore>((set, get) => ({
@@ -69,6 +75,13 @@ export const useVotingStore = create<VotingStore>((set, get) => ({
     }
   },
 
+  setPhoneNumber: (phoneNumber: string) => {
+    // Only set phone number if it's empty or a valid E.164 number (e.g. +12015550123)
+    if (phoneNumber === "" || e164PhoneRegex.test(phoneNumber)) {
+      set({ phoneNumber });
+    }
+  },
+
   handleMaxClick: (maxBalance: string, isConnected: boolean) => {
     if (!isConnected) {
       return;
@@ -81,5 +94,5 @@ export const useVotingStore = create<VotingStore>((set, get) => ({
     });
   },
 
-  reset: () => set(INITIAL_STATE),
+  reset: () => set(state => ({ ...INITIAL_STATE, resetSignupsNonce: state.resetSignupsNonce + 1 })),
 }));

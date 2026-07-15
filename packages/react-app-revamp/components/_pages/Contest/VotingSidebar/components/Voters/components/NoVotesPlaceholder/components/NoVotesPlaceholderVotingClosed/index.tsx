@@ -1,4 +1,4 @@
-import VotingSidebarEmailSignup from "@components/_pages/Contest/VotingSidebar/components/EmailSignup";
+import VotingSidebarSignup from "@components/_pages/Contest/VotingSidebar/components/Signup";
 import Image from "next/image";
 
 const NoVotesPlaceholderVotingClosed = () => {
@@ -14,7 +14,7 @@ const NoVotesPlaceholderVotingClosed = () => {
         height={220}
         className="w-full h-auto"
       />
-      <VotingSidebarEmailSignup />
+      <VotingSidebarSignup />
     </div>
   );
 };
