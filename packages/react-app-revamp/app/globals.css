@@ -1,6 +1,8 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
+@custom-variant short (@media (max-height: 640px));
+
 @theme {
   /* Breakpoints */
   --breakpoint-min: 320px;

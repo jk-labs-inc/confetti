@@ -2,6 +2,7 @@ import { CONTESTS_FEATURE_COUNT } from "lib/contests/constants";
 import { ContestWithTotalRewards, ProcessedContest } from "lib/contests/types";
 import { FC } from "react";
 import FeaturedContestCard from "./components/Contest";
+import PeekCard from "./components/PeekCard";
 import SkeletonCard from "./components/SkeletonCard";
 
 interface FeaturedContestsProps {
@@ -29,15 +30,21 @@ const FeaturedContests: FC<FeaturedContestsProps> = ({
         <div className="flex flex-col gap-4">
           <p className="text-neutral-9 font-sabo-filled text-xs block md:hidden">featured contests</p>
           <div className="flex flex-col md:grid md:grid-cols-(--grid-featured-contests) gap-6 pb-4">
-            {contestData?.map((contest, index) => (
-              <div key={`contest-${index}`}>
+            {contestData?.map((contest, index) => {
+              const card = (
                 <FeaturedContestCard
                   contestData={contest}
                   rewardsData={rewardsData?.[index]}
                   isRewardsFetching={isRewardsFetching}
                 />
-              </div>
-            ))}
+              );
+
+              return index === 0 ? (
+                <PeekCard key={`contest-${index}`}>{card}</PeekCard>
+              ) : (
+                <div key={`contest-${index}`}>{card}</div>
+              );
+            })}
 
             {isContestDataFetching &&
               Array.from({
