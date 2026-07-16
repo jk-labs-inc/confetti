@@ -1,4 +1,3 @@
-import { getTimeZoneAbbreviation } from "@helpers/dates";
 import { ProcessedContest } from "lib/contests/types";
 import moment from "moment";
 import { CardState, ContestTimingData } from "./types";
@@ -11,35 +10,6 @@ export const getCardState = (contest: ProcessedContest): CardState => {
   if (now.isSameOrAfter(moment(contest.vote_start_at))) return "live";
 
   return "upcoming";
-};
-
-const formatScheduleWindow = (voteStart: moment.Moment, end: moment.Moment, useWeekdayFormat: boolean): string => {
-  const isSameDay = voteStart.isSame(end, "day");
-
-  if (isSameDay) {
-    const dayLabel = useWeekdayFormat ? voteStart.format("ddd").toLowerCase() : voteStart.format("MMM D").toLowerCase();
-    const startHour = voteStart.format("h");
-    const startPeriod = voteStart.format("a");
-    const endHour = end.format("h");
-    const endPeriod = end.format("a");
-    const range =
-      startPeriod === endPeriod
-        ? `${startHour}-${endHour}${endPeriod}`
-        : `${startHour}${startPeriod}-${endHour}${endPeriod}`;
-
-    return `${dayLabel}, ${range}`;
-  }
-
-  const startDate = voteStart.format("MMM D").toLowerCase();
-  const endDate = end.format("MMM D").toLowerCase();
-  const startTime = `${voteStart.format("h")}${voteStart.format("a")}`;
-  const endTime = `${end.format("h")}${end.format("a")}`;
-
-  if (startTime === endTime) {
-    return `${startDate} - ${endDate}, ${startTime}`;
-  }
-
-  return `${startDate}, ${startTime} - ${endDate}, ${endTime}`;
 };
 
 const formatCountdown = (duration: moment.Duration): string => {
@@ -94,14 +64,9 @@ export const getContestTiming = (contest: ProcessedContest): ContestTimingData |
     };
   }
 
-  const isThisWeek = voteStart.isSame(now, "week");
-  const isSameDay = voteStart.isSame(end, "day");
-  const zoneAbbr = getTimeZoneAbbreviation(voteStart);
-
   return {
-    format: isSameDay && isThisWeek ? "weekday" : "date",
-    display: formatScheduleWindow(voteStart, end, isThisWeek),
-    timeZoneAbbr: zoneAbbr,
+    format: "upcoming",
+    display: `opens ${voteStart.format("MMM D").toLowerCase()}`,
   };
 };
 

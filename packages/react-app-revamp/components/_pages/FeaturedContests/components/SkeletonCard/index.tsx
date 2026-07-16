@@ -2,7 +2,7 @@ import Skeleton from "react-loading-skeleton";
 
 const SkeletonCard = () => {
   return (
-    <div className="flex flex-col gap-4 p-4 w-full md:w-80 rounded-2xl border border-[#323232] bg-[#141414]">
+    <div className="flex flex-col gap-4 p-4 w-full md:w-80 rounded-2xl border border-[#323232] bg-[#0C0C0C]">
       {/* CardHeader skeleton: 48x48 thumb + two title lines */}
       <div className="flex items-center gap-3 min-h-12">
         <Skeleton width={48} height={48} borderRadius={8} baseColor="#212121" highlightColor="#100816" />

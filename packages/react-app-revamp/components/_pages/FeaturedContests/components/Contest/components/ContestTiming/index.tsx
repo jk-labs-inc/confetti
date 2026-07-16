@@ -40,10 +40,7 @@ const ContestTiming: FC<ContestTimingProps> = ({ contest }) => {
     <div className="flex items-baseline gap-1 shrink-0">
       {/* fixed size so only the text scales when the footer shrinks to fit */}
       <span className="text-base">{getEmoji(timing.format)}</span>
-      <p className={`whitespace-nowrap ${textColorClass}`}>
-        {timing.display}
-        {timing.timeZoneAbbr && <span className="uppercase"> {timing.timeZoneAbbr}</span>}
-      </p>
+      <p className={`whitespace-nowrap ${textColorClass}`}>{timing.display}</p>
     </div>
   );
 };

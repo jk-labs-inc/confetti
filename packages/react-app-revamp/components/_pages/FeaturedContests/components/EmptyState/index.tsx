@@ -3,7 +3,7 @@ import { ROUTE_CREATE_CONTEST } from "@config/routes";
 
 const FeaturedContestsEmptyState = () => {
   return (
-    <div className="flex flex-col items-center justify-center gap-3 w-full lx:w-(--landing-content-max-width) min-h-[220px] md:min-h-[280px] px-6 py-12 rounded-2xl border border-neutral-7 bg-[#141414] animate-appear">
+    <div className="flex flex-col items-center justify-center gap-3 w-full lx:w-(--landing-content-max-width) min-h-[220px] md:min-h-[280px] px-6 py-12 rounded-2xl border border-neutral-7 bg-[#0C0C0C] animate-appear">
       <p className="font-sabo-filled italic text-[20px] md:text-[24px] text-neutral-9 text-center">
         no featured contests right now
       </p>

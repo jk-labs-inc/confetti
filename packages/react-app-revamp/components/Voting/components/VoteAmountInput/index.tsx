@@ -87,8 +87,6 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
     }
   };
 
-  const hasPrice = parseFloat(costToVote) > 0;
-  const isGhost = !displayValue && hasPrice;
   // Strip digit grouping so the placeholder is always typeable as shown.
   const placeholder = (pricePerVoteDisplay || "0").replace(/,/g, "");
   const valueString = displayValue || placeholder;
@@ -110,7 +108,10 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
   const textColor = hasError ? "text-negative-11" : "text-neutral-11";
   const borderColor = hasError ? "border-negative-11" : styleConfig.borderColor;
 
-  const votesText = isGhost ? "1 vote" : `${formatNumberWithCommas(totalVotes)} ${totalVotes === 1 ? "vote" : "votes"}`;
+  // The placeholder is only sample text, so no vote count until something is actually typed;
+  // "1 vote" stays mounted invisibly as a spacer so the row height doesn't jump on first input.
+  const hasInput = displayValue.length > 0;
+  const votesText = hasInput ? `${formatNumberWithCommas(totalVotes)} ${totalVotes === 1 ? "vote" : "votes"}` : "1 vote";
 
   const showPresets = hasBalance && isConnected;
 
@@ -203,7 +204,7 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
               })}
             </div>
           )}
-          <span className="text-[16px] text-neutral-9 font-bold">{votesText}</span>
+          <span className={`text-[16px] text-neutral-9 font-bold ${hasInput ? "" : "invisible"}`}>{votesText}</span>
         </div>
       </div>
       {isBelowMinimum && (

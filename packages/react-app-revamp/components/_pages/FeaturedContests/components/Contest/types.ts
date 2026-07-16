@@ -9,10 +9,9 @@ export interface CardEntry {
   image?: string;
 }
 
-export type ContestTimingFormat = "countdown" | "weekday" | "date" | "ended" | "canceled";
+export type ContestTimingFormat = "countdown" | "upcoming" | "ended" | "canceled";
 
 export interface ContestTimingData {
   format: ContestTimingFormat;
   display: string;
-  timeZoneAbbr?: string;
 }

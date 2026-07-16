@@ -1,4 +1,3 @@
-import { getTimeZoneAbbreviation } from "@helpers/dates";
 import { useContestStore } from "@hooks/useContest/store";
 import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
 import { useCountdownTimer } from "@hooks/useTimer";
@@ -51,30 +50,17 @@ const getCountdownSegments = (totalSeconds: number, compact = false): CountdownS
   return [{ value: seconds, unit: s }];
 };
 
-const formatScheduleWindow = (voteStart: moment.Moment, end: moment.Moment, useWeekdayFormat: boolean): string => {
-  const isSameDay = voteStart.isSame(end, "day");
-
-  if (isSameDay) {
-    const dayLabel = useWeekdayFormat ? voteStart.format("ddd").toLowerCase() : voteStart.format("MMM D").toLowerCase();
-    const startHour = voteStart.format("h");
-    const startPeriod = voteStart.format("a");
-    const endHour = end.format("h");
-    const endPeriod = end.format("a");
-    const range =
-      startPeriod === endPeriod
-        ? `${startHour}-${endHour}${endPeriod}`
-        : `${startHour}${startPeriod}-${endHour}${endPeriod}`;
-
-    return `${dayLabel}, ${range}`;
-  }
-
+const formatScheduleWindow = (voteStart: moment.Moment, end: moment.Moment): string => {
   const startDate = voteStart.format("MMM D").toLowerCase();
   const endDate = end.format("MMM D").toLowerCase();
   const startTime = `${voteStart.format("h")}${voteStart.format("a")}`;
   const endTime = `${end.format("h")}${end.format("a")}`;
 
-  if (startTime === endTime) {
-    return `${startDate} - ${endDate}, ${startTime}`;
+  if (voteStart.isSame(end, "day")) {
+    const samePeriod = voteStart.format("a") === end.format("a");
+    const range = samePeriod ? `${voteStart.format("h")}-${endTime}` : `${startTime}-${endTime}`;
+
+    return `${startDate}, ${range}`;
   }
 
   return `${startDate}, ${startTime} - ${endDate}, ${endTime}`;
@@ -108,15 +94,8 @@ const ContestTiming: FC = () => {
       return { content, dimmed: false };
     }
 
-    const isThisWeek = voteStart.isSame(now, "week");
-    const zoneAbbr = getTimeZoneAbbreviation(voteStart);
-
     return {
-      content: (
-        <>
-          {formatScheduleWindow(voteStart, end, isThisWeek)} <span className="uppercase">{zoneAbbr}</span>
-        </>
-      ),
+      content: formatScheduleWindow(voteStart, end),
       dimmed: false,
     };
   }, [isCanceled, votesOpen, votesClose, votingTimeLeft, isMobile]);
