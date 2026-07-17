@@ -1,6 +1,6 @@
 import CustomLink from "@components/UI/Link";
 import Logo from "@components/UI/Logo";
-import { ROUTE_HOW_IT_WORKS, ROUTE_VIEW_LIVE_CONTESTS } from "@config/routes";
+import { ROUTE_HOW_IT_WORKS } from "@config/routes";
 import { motion, useReducedMotion, Variants } from "motion/react";
 
 const containerVariants: Variants = {
@@ -64,8 +64,8 @@ const LandingHeaderMobileHero = () => {
       <div className="mt-8 flex flex-col items-center gap-4 short:mt-4">
         <motion.div variants={itemVariants}>
           <CustomLink
-            prefetch={true}
-            href={ROUTE_VIEW_LIVE_CONTESTS}
+            prefetch={false}
+            href="#featured-contests"
             className="flex h-10 w-[210px] items-center justify-center rounded-2xl bg-positive-18 text-base text-true-black"
           >
             play in contests and earn
@@ -73,7 +73,7 @@ const LandingHeaderMobileHero = () => {
         </motion.div>
         <motion.div variants={itemVariants}>
           <CustomLink href={ROUTE_HOW_IT_WORKS} className="block py-1 text-base text-positive-9">
-            or learn about how it works
+            or learn how it works
           </CustomLink>
         </motion.div>
       </div>

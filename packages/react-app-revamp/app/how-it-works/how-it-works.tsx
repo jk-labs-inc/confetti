@@ -4,7 +4,7 @@ import LandingPageHowItWorks from "@components/_pages/Landing/components/HowItWo
 
 const HowItWorks = () => {
   return (
-    <div className="px-4 mt-6 lx:mt-12 pb-24 md:pb-12">
+    <div className="px-4 mt-4 md:mt-6 lx:mt-12 pb-24 md:pb-12">
       <div className="max-w-(--landing-content-max-width) mx-auto">
         <LandingPageHowItWorks />
       </div>
