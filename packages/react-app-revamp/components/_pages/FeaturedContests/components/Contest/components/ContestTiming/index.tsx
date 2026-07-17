@@ -12,6 +12,10 @@ const getTextColorClass = (format: ContestTimingFormat): string => {
   return "text-neutral-11";
 };
 
+const getEmoji = (format: ContestTimingFormat): string => {
+  return format === "countdown" ? "🔥" : "⏱️";
+};
+
 const ContestTiming: FC<ContestTimingProps> = ({ contest }) => {
   const [timing, setTiming] = useState<ContestTimingData | null>(() => getContestTiming(contest));
 
@@ -33,12 +37,10 @@ const ContestTiming: FC<ContestTimingProps> = ({ contest }) => {
   const textColorClass = getTextColorClass(timing.format);
 
   return (
-    <div className="flex items-baseline gap-1">
-      ⏱️
-      <p className={`text-xs ${textColorClass}`}>
-        {timing.display}
-        {timing.timeZoneAbbr && <span className="uppercase"> {timing.timeZoneAbbr}</span>}
-      </p>
+    <div className="flex items-baseline gap-1 shrink-0">
+      {/* fixed size so only the text scales when the footer shrinks to fit */}
+      <span className="text-base">{getEmoji(timing.format)}</span>
+      <p className={`whitespace-nowrap ${textColorClass}`}>{timing.display}</p>
     </div>
   );
 };

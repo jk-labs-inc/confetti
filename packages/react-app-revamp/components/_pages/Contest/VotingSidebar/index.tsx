@@ -1,6 +1,6 @@
 import AddFunds from "@components/AddFunds";
 import VotingWidget, { VotingWidgetStyle } from "@components/Voting";
-import EntryPreviewHeader from "./components/EntryPreviewHeader";
+import EntryPreviewHeader from "@components/Voting/components/EntryPreviewHeader";
 import VotingSidebarVoters from "./components/Voters";
 import { verifyEntryPreviewPrompt } from "@components/_pages/DialogModalSendProposal/utils";
 import useCastVotes from "@hooks/useCastVotes";

@@ -118,13 +118,22 @@ export function buildWidthSrcSet(
 }
 
 export const CONTEST_IMAGE_PRESETS = {
-  /** Landing-page contest cards. Rendered as a CSS background, 320×256 on desktop. */
-  landingCard: { width: 320, height: 256, quality: 90, fit: "cover" },
+  /** Landing-page card header thumbnail. Rendered as a 48×48 `<img object-cover>`. */
+  landingCardThumb: { width: 48, height: 48, quality: 82, fit: "cover", sharpen: 1 },
   /** Contest-page header thumbnail. Rendered as a 64×40 `<img object-cover>`. */
   headerThumb: { width: 64, height: 40, quality: 82, fit: "cover", sharpen: 1 },
   /** Smaller 40×30 thumbnail variant (e.g. voting sidebar). */
   headerThumbSmall: { width: 40, height: 30, quality: 82, fit: "cover", sharpen: 1 },
 } satisfies Record<string, CloudflareImageOptions>;
+
+/** Landing-page card entry-row thumbnail. Rendered as a 36×36 `<img object-cover>`. */
+export const ENTRY_ROW_THUMB_PRESET = {
+  width: 36,
+  height: 36,
+  quality: 82,
+  fit: "cover",
+  sharpen: 1,
+} satisfies CloudflareImageOptions;
 
 export type ContestImagePreset = keyof typeof CONTEST_IMAGE_PRESETS;
 
