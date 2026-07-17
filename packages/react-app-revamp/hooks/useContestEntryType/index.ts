@@ -9,7 +9,7 @@ import { Abi } from "viem";
 import { useReadContract } from "wagmi";
 import { useShallow } from "zustand/shallow";
 
-const ENTRY_TYPE_TOKEN_TO_PREVIEW: Record<string, EntryPreview> = {
+export const ENTRY_TYPE_TOKEN_TO_PREVIEW: Record<string, EntryPreview> = {
   TEXT: EntryPreview.TITLE,
   IMAGE: EntryPreview.IMAGE_AND_TITLE,
   TWEET: EntryPreview.TWEET_AND_TITLE,

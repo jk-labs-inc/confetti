@@ -1,5 +1,7 @@
 import { Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
 import { FC } from "react";
+import DialogModalV4Plain from "./components/Plain";
+import { dialogModalV4BackdropClassName, getDialogModalV4PanelClassName } from "./styles";
 
 interface DialogModalV4Props {
   isOpen: boolean;
@@ -7,6 +9,7 @@ interface DialogModalV4Props {
   onClose: (value: boolean) => void;
   width?: string;
   lgWidth?: string;
+  allowsExternalOverlays?: boolean;
 }
 
 const DialogModalV4: FC<DialogModalV4Props> = ({
@@ -15,20 +18,23 @@ const DialogModalV4: FC<DialogModalV4Props> = ({
   children,
   width = "w-full",
   lgWidth = "lg:max-w-[1024px]",
+  allowsExternalOverlays,
 }) => {
+  if (allowsExternalOverlays) {
+    return (
+      <DialogModalV4Plain isOpen={isOpen} onClose={() => onClose(false)} width={width} lgWidth={lgWidth}>
+        {children}
+      </DialogModalV4Plain>
+    );
+  }
+
   return (
     <Dialog open={isOpen} onClose={onClose} className="relative z-50">
-      <DialogBackdrop
-        transition
-        className="fixed inset-0 bg-neutral-8/40 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-leave:duration-200 data-enter:ease-out data-leave:ease-in"
-      />
+      <DialogBackdrop transition className={dialogModalV4BackdropClassName} />
 
       <div className="fixed inset-0 z-50 w-screen overflow-y-auto">
         <div className="flex min-h-full items-end justify-center text-center lg:items-center p-0">
-          <DialogPanel
-            transition
-            className={`relative ${width} transform overflow-hidden rounded-t-[40px] border-t border-neutral-9 bg-true-black text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-leave:duration-200 data-enter:ease-out data-leave:ease-in lg:my-8 ${lgWidth} lg:rounded-[10px] lg:border-none data-closed:lg:translate-y-0 data-closed:lg:scale-95`}
-          >
+          <DialogPanel transition className={getDialogModalV4PanelClassName(width, lgWidth)}>
             <div className="lg:pb-0 lg:p-6">{children}</div>
           </DialogPanel>
         </div>

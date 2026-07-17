@@ -28,10 +28,12 @@ const STYLE_CONFIG = {
   colored: {
     background: "bg-[#40096A]",
     borderColor: "border-[#84679B]",
+    placeholderColor: "placeholder-neutral-9",
   },
   classic: {
     background: "bg-transparent",
-    borderColor: "border-secondary-14",
+    borderColor: "border-secondary-11",
+    placeholderColor: "placeholder-neutral-9/50",
   },
 } as const;
 
@@ -85,8 +87,6 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
     }
   };
 
-  const hasPrice = parseFloat(costToVote) > 0;
-  const isGhost = !displayValue && hasPrice;
   // Strip digit grouping so the placeholder is always typeable as shown.
   const placeholder = (pricePerVoteDisplay || "0").replace(/,/g, "");
   const valueString = displayValue || placeholder;
@@ -108,7 +108,10 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
   const textColor = hasError ? "text-negative-11" : "text-neutral-11";
   const borderColor = hasError ? "border-negative-11" : styleConfig.borderColor;
 
-  const votesText = isGhost ? "1 vote" : `${formatNumberWithCommas(totalVotes)} ${totalVotes === 1 ? "vote" : "votes"}`;
+  // The placeholder is only sample text, so no vote count until something is actually typed;
+  // "1 vote" stays mounted invisibly as a spacer so the row height doesn't jump on first input.
+  const hasInput = displayValue.length > 0;
+  const votesText = hasInput ? `${formatNumberWithCommas(totalVotes)} ${totalVotes === 1 ? "vote" : "votes"}` : "1 vote";
 
   const showPresets = hasBalance && isConnected;
 
@@ -149,7 +152,7 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
                 onBlur={() => setIsFocused(false)}
                 placeholder={placeholder}
                 onKeyDown={onKeyDown}
-                className="bg-transparent text-right outline-none placeholder-neutral-9 min-w-0 transition-[font-size] duration-150"
+                className={`bg-transparent text-right outline-none ${styleConfig.placeholderColor} min-w-0 transition-[font-size] duration-150`}
                 style={{ fontSize: `${inputFontSize}px`, width: `${charCount || 1}ch`, maxWidth: "100%" }}
               />
               {displaySymbol !== "$" && (
@@ -201,7 +204,7 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
               })}
             </div>
           )}
-          <span className="text-[16px] text-neutral-9 font-bold">{votesText}</span>
+          <span className={`text-[16px] text-neutral-9 font-bold ${hasInput ? "" : "invisible"}`}>{votesText}</span>
         </div>
       </div>
       {isBelowMinimum && (

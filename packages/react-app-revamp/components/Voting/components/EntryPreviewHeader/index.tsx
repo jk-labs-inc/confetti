@@ -1,7 +1,7 @@
 import ContestImage from "@components/_pages/Contest/components/ContestImage";
 import { FC } from "react";
 
-interface EntryPreviewHeaderProps {
+export interface EntryPreviewHeaderProps {
   image?: string;
   title?: string;
   contestName?: string;
