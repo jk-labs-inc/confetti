@@ -59,7 +59,7 @@
     "date-fns": "4.4.0",
     "eslint": "10.7.0",
     "eslint-config-next": "15.5.20",
-    "fuse.js": "7.4.2",
+    "fuse.js": "7.5.0",
     "html2canvas": "1.4.1",
     "interweave": "13.1.1",
     "interweave-autolink": "5.1.2",
