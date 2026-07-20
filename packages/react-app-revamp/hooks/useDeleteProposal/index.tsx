@@ -4,8 +4,10 @@ import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import { getChainFromId } from "@helpers/getChainFromId";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import { ContestStatus } from "@hooks/useContestStatus/store";
+import useEntryTitleResolver from "@hooks/useEntryTitleResolver";
 import { useError } from "@hooks/useError";
 import useProposal from "@hooks/useProposal";
+import { useProposalStore } from "@hooks/useProposal/store";
 import { useWallet } from "@hooks/useWallet";
 import { simulateContract, waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { compareVersions } from "compare-versions";
@@ -29,6 +31,8 @@ export function useDeleteProposal() {
   const chain = getChainFromId(contestConfig.chainId);
   const contestChainBlockExplorer = chain?.blockExplorers?.default?.url;
   const { removeProposal } = useProposal();
+  const listProposalsData = useProposalStore(state => state.listProposalsData);
+  const resolveEntryTitle = useEntryTitleResolver();
   const {
     isLoading,
     error,
@@ -90,7 +94,10 @@ export function useDeleteProposal() {
           userAddress,
           contestConfig.address,
           contestConfig.chainName,
-          proposalIds,
+          proposalIds.map(proposalId => ({
+            proposal_id: proposalId,
+            proposal_name: resolveEntryTitle(listProposalsData.find(proposal => proposal.id === proposalId)),
+          })),
         );
       } catch (error: any) {
         console.error("Error saving updated proposals status to analytics", error.message);

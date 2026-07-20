@@ -10,6 +10,7 @@ import useCurrentPricePerVote from "@hooks/useCurrentPricePerVote";
 import { Charge } from "@hooks/useDeployContest/types";
 import { useEmailSend } from "@hooks/useEmailSend";
 import useEmailSignup from "@hooks/useEmailSignup";
+import useEntryTitleResolver from "@hooks/useEntryTitleResolver";
 import usePhoneNumberSignup from "@hooks/usePhoneNumberSignup";
 import { useError } from "@hooks/useError";
 import { useFetchUserVotesOnProposal } from "@hooks/useFetchUserVotesOnProposal";
@@ -49,6 +50,7 @@ export function useCastVotes({ charge, votesClose }: UseCastVotesProps) {
   const { castPositiveAmountOfVotes, pickedProposal, setTransactionData, resetStore } = useCastVotesStore(
     state => state,
   );
+  const resolveEntryTitle = useEntryTitleResolver();
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [error, setError] = useState("");
@@ -141,6 +143,7 @@ export function useCastVotes({ charge, votesClose }: UseCastVotesProps) {
         userAddress,
         chainName: contestConfig.chainName,
         pickedProposal,
+        pickedProposalName: resolveEntryTitle(listProposalsData.find(proposal => proposal.id === pickedProposal)),
         amountOfVotes,
         costToVote: estimatedCost,
         charge,

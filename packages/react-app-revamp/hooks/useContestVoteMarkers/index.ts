@@ -77,6 +77,7 @@ export function useContestVoteMarkers({
         uuid: event.uuid,
         userAddress: event.userAddress,
         proposalId: event.proposalId,
+        proposalName: event.proposalName,
         voteAmount: event.voteAmount,
         amountSent: event.amountSent,
         createdAt: event.createdAt,

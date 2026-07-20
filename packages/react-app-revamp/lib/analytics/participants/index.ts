@@ -6,6 +6,7 @@ interface SaveToAnalyticsContestParticipantsOptions {
   network_name: string;
   created_at?: number;
   proposal_id?: string;
+  proposal_name?: string;
   vote_amount?: number;
   deleted?: boolean;
   amount_sent?: number | null;
@@ -38,30 +39,36 @@ export const addUserActionForAnalytics = async (options: SaveToAnalyticsContestP
   await saveToAnalyticsContestParticipantsV3(options);
 };
 
+export interface DeletedProposalAnalytics {
+  proposal_id: string;
+  proposal_name?: string;
+}
+
 export const saveUpdatedProposalsStatusToAnalyticsV3 = async (
   userAddress: string,
   contestAddress: string,
   chainName: string,
-  proposal_ids: string[],
+  proposals: DeletedProposalAnalytics[],
 ) => {
   if (isSupabaseConfigured) {
     try {
       const config = await import("@config/supabase");
       const supabase = config.supabase;
 
-      for (let proposal_id of proposal_ids) {
+      for (let proposal of proposals) {
         const { error } = await supabase.from("analytics_contest_participants_v3").insert([
           {
             user_address: userAddress?.toLowerCase(),
             contest_address: contestAddress.toLowerCase(),
             network_name: chainName,
-            proposal_id: proposal_id,
+            proposal_id: proposal.proposal_id,
+            proposal_name: proposal.proposal_name,
             deleted: true,
           },
         ]);
 
         if (error) {
-          console.error("Error inserting analytics for proposal:", proposal_id, "; Error:", error.message);
+          console.error("Error inserting analytics for proposal:", proposal.proposal_id, "; Error:", error.message);
         }
       }
     } catch (e) {

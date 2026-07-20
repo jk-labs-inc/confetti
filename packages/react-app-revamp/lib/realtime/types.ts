@@ -26,6 +26,7 @@ export interface AnalyticsContestParticipantRow {
   user_address: string;
   network_name: string;
   proposal_id: string | null;
+  proposal_name: string | null;
   vote_amount: number | null;
   created_at: number | null;
   deleted: boolean | null;
@@ -40,6 +41,7 @@ export type ContestParticipantEvent =
       uuid: string;
       contestAddress: string;
       proposalId: string;
+      proposalName: string | null;
       userAddress: string;
       networkName: string | null;
       voteAmount: number | null;

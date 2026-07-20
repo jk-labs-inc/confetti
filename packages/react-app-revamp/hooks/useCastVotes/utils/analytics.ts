@@ -8,6 +8,7 @@ interface UserAnalyticsParams {
   userAddress: `0x${string}` | undefined;
   chainName: string;
   pickedProposal: string | null;
+  pickedProposalName?: string;
   amountOfVotes: number;
   costToVote: bigint | undefined;
   charge: Charge;
@@ -36,6 +37,7 @@ export const addUserActionAnalytics = async (params: UserAnalyticsParams) => {
       user_address: params.userAddress,
       network_name: params.chainName,
       proposal_id: params.pickedProposal !== null ? params.pickedProposal : undefined,
+      proposal_name: params.pickedProposalName,
       vote_amount: params.amountOfVotes,
       created_at: Math.floor(Date.now() / 1000),
       amount_sent: params.costToVote ? formatChargeAmount(parseFloat(params.costToVote.toString())) : null,

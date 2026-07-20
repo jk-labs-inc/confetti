@@ -67,16 +67,34 @@ const PriceCurveWrapper = ({
     }),
   );
 
-  const votedProposalIds = useMemo(() => voteEvents.map(event => event.proposalId), [voteEvents]);
-  const { titlesById: entryTitlesById, resolvedIds } = useContestEntryTitles({
+  const storedTitlesById = useMemo(() => {
+    const map = new Map<string, string>();
+    for (const event of voteEvents) {
+      if (event.proposalName) map.set(event.proposalId, event.proposalName);
+    }
+    return map;
+  }, [voteEvents]);
+
+  const unresolvedProposalIds = useMemo(
+    () => voteEvents.filter(event => !storedTitlesById.has(event.proposalId)).map(event => event.proposalId),
+    [voteEvents, storedTitlesById],
+  );
+  const { titlesById: fetchedTitlesById, resolvedIds } = useContestEntryTitles({
     contestConfig,
-    proposalIds: votedProposalIds,
-    enabled: !!contestConfig.address && voteEvents.length > 0,
+    proposalIds: unresolvedProposalIds,
+    enabled: !!contestConfig.address && unresolvedProposalIds.length > 0,
   });
 
+  const entryTitlesById = useMemo(() => {
+    if (storedTitlesById.size === 0) return fetchedTitlesById;
+    const merged = new Map(fetchedTitlesById);
+    for (const [id, title] of storedTitlesById) merged.set(id, title);
+    return merged;
+  }, [fetchedTitlesById, storedTitlesById]);
+
   const resolvedVoteEvents = useMemo(
-    () => voteEvents.filter(event => resolvedIds.has(event.proposalId)),
-    [voteEvents, resolvedIds],
+    () => voteEvents.filter(event => storedTitlesById.has(event.proposalId) || resolvedIds.has(event.proposalId)),
+    [voteEvents, storedTitlesById, resolvedIds],
   );
 
   const endTime = useMemo(() => new Date(endTimeMs), [endTimeMs]);
@@ -124,7 +142,11 @@ const PriceCurveWrapper = ({
   if (isLoading) {
     const skeletonHeight = isExpanded === false ? HEADER_HEIGHT : height;
     return (
-      <div ref={parentRef} style={{ height: skeletonHeight }} className="w-full animate-pulse rounded-lg bg-neutral-2" />
+      <div
+        ref={parentRef}
+        style={{ height: skeletonHeight }}
+        className="w-full animate-pulse rounded-lg bg-neutral-2"
+      />
     );
   }
 
