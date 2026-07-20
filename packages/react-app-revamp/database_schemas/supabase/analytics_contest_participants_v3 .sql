@@ -5,6 +5,7 @@ create table
     user_address character varying not null,
     network_name character varying not null,
     proposal_id character varying null,
+    proposal_name character varying null,
     vote_amount numeric null,
     created_at integer null,
     deleted boolean null default false,

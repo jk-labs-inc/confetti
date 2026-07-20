@@ -7,6 +7,7 @@ import { generateEntryPreviewHTML, processFieldInputs } from "@helpers/metadata"
 import { useContestStore } from "@hooks/useContest/store";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import { Charge } from "@hooks/useDeployContest/types";
+import useEntryTitleResolver from "@hooks/useEntryTitleResolver";
 import { useError } from "@hooks/useError";
 import { useMetadataStore } from "@hooks/useMetadataFields/store";
 import useProposal from "@hooks/useProposal";
@@ -27,6 +28,7 @@ interface UserAnalyticsParams {
   userAddress: `0x${string}` | undefined;
   chainName: string;
   proposalId: string;
+  proposalName?: string;
   charge: Charge;
 }
 
@@ -42,6 +44,7 @@ export function useSubmitProposal() {
   const { isLoading, isSuccess, error, setIsLoading, setIsSuccess, setError, setTransactionData } =
     useSubmitProposalStore(state => state);
   const { fields: metadataFields, setFields: setMetadataFields } = useMetadataStore(state => state);
+  const resolveEntryTitle = useEntryTitleResolver();
 
   const getContractConfig = () => {
     return {
@@ -116,6 +119,10 @@ export function useSubmitProposal() {
           userAddress,
           chainName: contestConfig.chainName,
           proposalId,
+          proposalName: resolveEntryTitle({
+            description,
+            fieldsMetadata: metadataFields.length > 0 ? { stringArray: [metadataFields[0].inputValue] } : undefined,
+          }),
           charge,
         });
 
@@ -153,6 +160,7 @@ export function useSubmitProposal() {
         user_address: params.userAddress,
         network_name: params.chainName,
         proposal_id: params.proposalId,
+        proposal_name: params.proposalName,
         created_at: Math.floor(Date.now() / 1000),
         percentage_to_rewards: params.charge.percentageToRewards,
       });
