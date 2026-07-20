@@ -4,6 +4,7 @@ import { FC } from "react";
 import FeaturedContestCard from "./components/Contest";
 import FeaturedContestsEmptyState from "./components/EmptyState";
 import FeaturedContestsErrorState from "./components/ErrorState";
+import PeekCard from "./components/PeekCard";
 import SkeletonCard from "./components/SkeletonCard";
 
 interface FeaturedContestsProps {
@@ -34,15 +35,21 @@ const FeaturedContests: FC<FeaturedContestsProps> = ({
         <FeaturedContestsEmptyState />
       ) : (
         <div className="flex flex-col md:grid md:grid-cols-(--grid-featured-contests) gap-6 pb-4">
-          {contestData?.map((contest, index) => (
-            <div key={`contest-${index}`}>
+          {contestData?.map((contest, index) => {
+            const card = (
               <FeaturedContestCard
                 contestData={contest}
                 rewardsData={rewardsData?.[index]}
                 isRewardsFetching={isRewardsFetching}
               />
-            </div>
-          ))}
+            );
+
+            return index === 0 ? (
+              <PeekCard key={`contest-${index}`}>{card}</PeekCard>
+            ) : (
+              <div key={`contest-${index}`}>{card}</div>
+            );
+          })}
 
           {isContestDataFetching &&
             Array.from({

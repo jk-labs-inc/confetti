@@ -37,13 +37,13 @@ const lineVariants: Variants = {
 const LandingPageHowItWorksProcessFlow = () => {
   return (
     <motion.div
-      className="hidden lg:flex flex-col gap-6"
+      className="flex flex-col gap-6"
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, margin: "-50px" }}
       variants={containerVariants}
     >
-      <div className="flex items-center gap-4">
+      <div className="flex flex-col items-start gap-3 lg:flex-row lg:items-center lg:gap-4">
         <motion.div variants={itemVariants} style={{ willChange: "transform" }}>
           <LandingPageHowItWorksProcessStepContainer>
             <img src="/landing/bubbles-ballot.png" alt="step 1" width={120} height={120} />
@@ -54,8 +54,9 @@ const LandingPageHowItWorksProcessFlow = () => {
         </motion.div>
         <motion.img
           src="/landing/arrow-right.png"
-          alt="arrow right"
+          alt=""
           variants={itemVariants}
+          className="w-8 rotate-90 my-3 ml-11 lg:w-auto lg:rotate-0 lg:my-0 lg:ml-0"
           style={{ willChange: "transform" }}
         />
         <motion.div variants={itemVariants} style={{ willChange: "transform" }}>
@@ -69,8 +70,9 @@ const LandingPageHowItWorksProcessFlow = () => {
         </motion.div>
         <motion.img
           src="/landing/arrow-right.png"
-          alt="arrow right"
+          alt=""
           variants={itemVariants}
+          className="w-8 rotate-90 my-3 ml-11 lg:w-auto lg:rotate-0 lg:my-0 lg:ml-0"
           style={{ willChange: "transform" }}
         />
         <motion.div variants={itemVariants} style={{ willChange: "transform" }}>

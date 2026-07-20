@@ -86,7 +86,10 @@ const LandingPage = () => {
     <div className="px-4 mt-6 lx:mt-12 pb-12">
       <div className="flex flex-col gap-12 md:gap-20 max-w-(--landing-content-max-width) mx-auto">
         {isSupabaseConfigured ? (
-          <div className="flex flex-col gap-8 w-full lx:w-fit">
+          <div
+            id="featured-contests"
+            className="flex flex-col gap-8 w-full lx:w-fit scroll-mt-6 max-md:motion-safe:animate-fade-in max-md:motion-safe:[animation-delay:0.85s]"
+          >
             <FeaturedContests
               status={status}
               contestData={contestData}
@@ -118,7 +121,10 @@ const LandingPage = () => {
             for contest chain and address information!
           </div>
         )}
-        <LandingPageHowItWorks />
+        {/* mobile gets the dedicated /how-it-works page instead (linked from the hero) */}
+        <div className="hidden md:block">
+          <LandingPageHowItWorks />
+        </div>
       </div>
     </div>
   );
