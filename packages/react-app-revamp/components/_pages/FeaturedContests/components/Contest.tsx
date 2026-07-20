@@ -1,14 +1,15 @@
-import CustomLink from "@components/UI/Link";
-import ContestNotifyButton from "@components/_pages/Contest/components/ContestNotifyButton";
 import { ROUTE_VIEW_CONTEST_BASE_PATH } from "@config/routes";
+import { useQueryClient } from "@tanstack/react-query";
 import { ContestWithTotalRewards, ProcessedContest } from "lib/contests/types";
 import { FC, useEffect, useState } from "react";
-import ContestCardContainer from "./Contest/components/Container";
-import ContestRewards from "./Contest/components/ContestRewards";
-import ContestState from "./Contest/components/ContestState";
-import ContestTiming from "./Contest/components/ContestTiming";
-import ContestTitle from "./Contest/components/ContestTitle";
-import { getContestState, getContestTitleState, getUpdateInterval } from "./Contest/helpers";
+import CalendarButton from "./Contest/components/CalendarButton";
+import CardFooter from "./Contest/components/CardFooter";
+import CardHeader from "./Contest/components/CardHeader";
+import EntriesList from "./Contest/components/EntriesList";
+import { getCardState, getTimingUpdateInterval } from "./Contest/helpers";
+import useContestCardEntries from "./Contest/hooks/useContestCardEntries";
+import { CardEntry } from "./Contest/types";
+import FeaturedContestVoteOnEntry from "./VoteOnEntry";
 
 interface FeaturedContestCardProps {
   contestData: ProcessedContest;
@@ -17,60 +18,85 @@ interface FeaturedContestCardProps {
 }
 
 const FeaturedContestCard: FC<FeaturedContestCardProps> = ({ contestData, rewardsData, isRewardsFetching }) => {
-  const [contestState, setContestState] = useState(getContestState(contestData));
-  const [titleState, setTitleState] = useState(getContestTitleState(contestData));
+  const [cardState, setCardState] = useState(() => getCardState(contestData));
+  const [voteEntry, setVoteEntry] = useState<CardEntry | null>(null);
+  const [isVoteOpen, setIsVoteOpen] = useState(false);
+  const queryClient = useQueryClient();
 
   useEffect(() => {
-    const updateStatus = () => {
-      setContestState(getContestState(contestData));
-      setTitleState(getContestTitleState(contestData));
-    };
+    const updateCardState = () => setCardState(getCardState(contestData));
 
-    updateStatus();
+    updateCardState();
 
-    const intervalTime = getUpdateInterval(contestData);
-    const interval = setInterval(() => {
-      updateStatus();
-    }, intervalTime);
-
+    const interval = setInterval(updateCardState, getTimingUpdateInterval(contestData));
     return () => clearInterval(interval);
   }, [contestData]);
 
-  const getContestUrl = (network_name: string, address: string) => {
-    return ROUTE_VIEW_CONTEST_BASE_PATH.replace("[chain]", network_name).replace("[address]", address);
+  const { entries, totalEntries, hasEntryImages, isLoading, isExpanded, loadAll, config } = useContestCardEntries(
+    contestData,
+    cardState,
+  );
+
+  const contestUrl = ROUTE_VIEW_CONTEST_BASE_PATH.replace("[chain]", contestData.network_name ?? "").replace(
+    "[address]",
+    contestData.address ?? "",
+  );
+
+  const handleVoteClick = (entry: CardEntry) => {
+    setVoteEntry(entry);
+    setIsVoteOpen(true);
   };
 
-  const votesOpen = new Date(contestData.vote_start_at);
-  const votesClose = new Date(contestData.end_at);
-  const showNotify = votesOpen > new Date();
+  const handleVoteSuccess = () => {
+    if (!config) return;
+    queryClient.invalidateQueries({
+      queryKey: ["contestEntriesVotes", contestData.address.toLowerCase(), config.chainId],
+    });
+    queryClient.invalidateQueries({ queryKey: ["totalRewards"] });
+  };
+
+  const isEnded = cardState === "ended" || cardState === "canceled";
 
   return (
-    <div className="relative animate-appear">
-      <CustomLink
-        className="flex flex-col gap-2"
-        prefetch={true}
-        href={getContestUrl(contestData.network_name ?? "", contestData.address ?? "")}
-      >
-        <ContestCardContainer prompt={contestData.prompt}>
-          <ContestState state={contestState} />
-          <ContestTitle title={contestData.title} state={titleState} />
-        </ContestCardContainer>
-        <div className="px-4 flex items-center gap-24 md:gap-4">
-          <div className="min-w-28 max-w-full shrink-0">
-            <ContestTiming contest={contestData} />
-          </div>
-          <ContestRewards contestData={contestData} rewardsData={rewardsData} isRewardsFetching={isRewardsFetching} />
-        </div>
-      </CustomLink>
-      {showNotify && (
-        <ContestNotifyButton
-          contestName={contestData.title}
-          contestAddress={contestData.address}
-          chainName={contestData.network_name}
-          votesOpen={votesOpen}
-          votesClose={votesClose}
-          size="sm"
-          className="absolute top-2 right-2 z-10 transition-[box-shadow,filter] duration-200 hover:brightness-110 hover:shadow-[0_0_14px_rgba(187,101,255,0.7),0_0_6px_rgba(102,222,255,0.5)]"
+    <div className="relative flex flex-col gap-4 p-4 w-full md:w-80 rounded-2xl border border-neutral-7 bg-[#0C0C0C] hover:border-neutral-10 transition-colors duration-200 animate-appear">
+      <CardHeader
+        prompt={contestData.prompt}
+        title={contestData.title}
+        contestUrl={contestUrl}
+        isEnded={isEnded}
+        action={
+          cardState === "upcoming" ? (
+            <CalendarButton
+              contestName={contestData.title}
+              contestAddress={contestData.address}
+              chainName={contestData.network_name}
+              votesOpen={new Date(contestData.vote_start_at)}
+              votesClose={new Date(contestData.end_at)}
+            />
+          ) : null
+        }
+      />
+      <EntriesList
+        contestUrl={contestUrl}
+        entries={entries}
+        totalEntries={totalEntries}
+        cardState={cardState}
+        hasEntryImages={hasEntryImages}
+        isLoading={isLoading}
+        isExpanded={isExpanded}
+        onLoadAll={loadAll}
+        onVoteClick={handleVoteClick}
+      />
+      <CardFooter contest={contestData} rewardsData={rewardsData} isRewardsFetching={isRewardsFetching} />
+      {voteEntry && config && (
+        <FeaturedContestVoteOnEntry
+          contest={contestData}
+          config={config}
+          entry={voteEntry}
+          submissionsCount={totalEntries}
+          isOpen={isVoteOpen}
+          onClose={() => setIsVoteOpen(false)}
+          onVoteSuccess={handleVoteSuccess}
         />
       )}
     </div>

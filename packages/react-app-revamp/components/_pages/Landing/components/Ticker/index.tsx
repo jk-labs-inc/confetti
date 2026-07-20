@@ -21,7 +21,7 @@ const LandingPageTicker = () => {
           >
             $
           </span>
-          1,750,000 GENERATED FOR VOTERS
+          1,892,000 GENERATED FOR VOTERS
         </TickerText>,
         <img src="/landing/snake.svg" alt="" className="h-8" />,
       ]}

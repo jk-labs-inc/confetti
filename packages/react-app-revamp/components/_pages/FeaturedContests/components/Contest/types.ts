@@ -1,29 +1,17 @@
-export interface ContestStatus {
-  status: string;
-  timeLeft: string;
+export type CardState = "upcoming" | "live" | "ended" | "canceled";
+
+export interface CardEntry {
+  id: string;
+  votes: number | null;
+  percent: number | null;
+  isTitlePending: boolean;
+  title?: string;
+  image?: string;
 }
 
-export type ContestStateType = "live" | "accepting-entries" | null;
-
-export type ContestTitleStateType = "active" | "finished" | "canceled";
-
-export type ContestTimingFormat = "countdown" | "weekday" | "date" | "ended" | "canceled";
+export type ContestTimingFormat = "countdown" | "upcoming" | "ended" | "canceled";
 
 export interface ContestTimingData {
   format: ContestTimingFormat;
   display: string;
-  timeZoneAbbr?: string;
-}
-
-export interface RewardDisplayData {
-  amount: bigint;
-  decimals: number;
-  symbol: string;
-  formatted: string;
-  isNative: boolean;
-}
-
-export interface TimeWindowResult {
-  display: string;
-  spansMultipleDays: boolean;
 }

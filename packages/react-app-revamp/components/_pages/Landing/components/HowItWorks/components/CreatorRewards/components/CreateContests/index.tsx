@@ -1,5 +1,6 @@
 import { ROUTE_CREATE_CONTEST } from "@config/routes";
 import CustomLink from "@components/UI/Link";
+import BulletList from "../../../BulletList";
 import FundsDistribution from "../FundsDistribution";
 
 const CreateContests = () => {
@@ -13,7 +14,7 @@ const CreateContests = () => {
           earn by <span className="text-positive-11 font-bold">creating contests.</span>
         </p>
         <div className="flex flex-col gap-8 lg:gap-8 2xl:gap-12">
-          <div className="flex flex-col gap-4 text-base lg:text-lg 2xl:text-xl text-neutral-11 max-w-[400px]">
+          <BulletList className="flex flex-col gap-4 text-base lg:text-lg 2xl:text-xl text-neutral-11 max-w-[400px]">
             <p>create a contest on any subjective question you like.</p>
             <p>
               who was best player in a game? best <br className="hidden 2xl:block" />
@@ -22,7 +23,7 @@ const CreateContests = () => {
             <p>
               opt in to earn 5% of <span className="font-bold text-true-white">all volume</span> on the contest.
             </p>
-          </div>
+          </BulletList>
           <div className="block 2xl:hidden">
             <FundsDistribution />
           </div>

@@ -1,6 +1,6 @@
 import { Group } from "@visx/group";
 import { Pie } from "@visx/shape";
-import { ParentSize } from "@visx/responsive";
+import { useParentSize } from "@visx/responsive";
 import { useMediaQuery } from "react-responsive";
 
 type FundData = {
@@ -124,10 +124,12 @@ const PieChart = ({ width, height }: PieChartProps) => {
 };
 
 const FundsDistribution = () => {
+  const { parentRef, width, height } = useParentSize({ debounceTime: 150 });
+
   return (
     <div className="flex w-full pt-12 lg:pt-24 lg:pb-6 2xl:pb-0 2xl:pt-[105px]">
-      <div className="w-full max-w-52 lg:max-w-60 2xl:max-w-[270px] aspect-square">
-        <ParentSize>{({ width, height }) => <PieChart width={width} height={height} />}</ParentSize>
+      <div ref={parentRef} className="w-full max-w-52 lg:max-w-60 2xl:max-w-[270px] aspect-square">
+        <PieChart width={width} height={height} />
       </div>
     </div>
   );

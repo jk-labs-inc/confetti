@@ -1,4 +1,5 @@
 export const ROUTE_LANDING = "/";
+export const ROUTE_HOW_IT_WORKS = "/how-it-works";
 export const ROUTE_CREATE_CONTEST = "/contest/new";
 export const ROUTE_VIEW_CONTESTS = "/contests";
 export const ROUTE_VIEW_USER = `/user/[address]`;

@@ -1,4 +1,5 @@
 import { LINK_ROI_CALCULATOR } from "@config/links";
+import BulletList from "../../../BulletList";
 import InteractivePriceCurve from "./components/InteractivePriceCurve";
 
 const EarnForConviction = () => {
@@ -9,7 +10,7 @@ const EarnForConviction = () => {
           earn more for <span className="text-positive-18 font-bold">your conviction</span>
         </p>
         <div className="flex flex-col flex-1 gap-8 lg:gap-8 2xl:gap-12">
-          <div className="flex flex-col gap-4 text-base lg:text-lg 2xl:text-xl text-neutral-11 max-w-[400px]">
+          <BulletList className="flex flex-col gap-4 text-base lg:text-lg 2xl:text-xl text-neutral-11 max-w-[400px]">
             <p className="normal-case">
               confetti's innovation is a <span className="font-bold text-true-white">price curve.</span>
             </p>
@@ -18,7 +19,7 @@ const EarnForConviction = () => {
               but be careful. if you wait too long, you <br className="hidden 2xl:block" />
               might lose money... even if you vote on winners.
             </p>
-          </div>
+          </BulletList>
           <a
             href={LINK_ROI_CALCULATOR}
             rel="noopener noreferrer"
