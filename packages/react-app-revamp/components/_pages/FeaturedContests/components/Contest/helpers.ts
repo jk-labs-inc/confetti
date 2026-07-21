@@ -91,6 +91,13 @@ export const isContestInEntryPeriod = (contest: ProcessedContest): boolean => {
   return now.isSameOrAfter(moment(contest.start_at)) && now.isBefore(moment(contest.vote_start_at));
 };
 
+export const isContestInVotingPeriod = (contest: ProcessedContest): boolean => {
+  if (contest.isCanceled) return false;
+
+  const now = moment();
+  return now.isSameOrAfter(moment(contest.vote_start_at)) && now.isBefore(moment(contest.end_at));
+};
+
 export const isContestActive = (contest: ProcessedContest): boolean => {
   if (contest.isCanceled) return false;
 
