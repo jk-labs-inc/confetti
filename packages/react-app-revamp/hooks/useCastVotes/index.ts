@@ -197,6 +197,7 @@ export function useCastVotes({ charge, votesClose }: UseCastVotesProps) {
         id: "vote_submitted",
         dataAttributes: {
           "data-vote_revenue_generated": jkLabsRevenueUsd.toFixed(6),
+          "data-user_address": userAddress ?? "",
         },
       });
 
