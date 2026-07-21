@@ -2,7 +2,7 @@ import { formatBalance } from "@helpers/formatBalance";
 import useTotalRewardsUsd, { TokenItem } from "@hooks/useCurrency/useTotalRewardsUsd";
 import { ContestWithTotalRewards, ProcessedContest } from "lib/contests/types";
 import { FC, useMemo } from "react";
-import { isContestActive } from "../../helpers";
+import { isContestActive, isContestInEntryPeriod } from "../../helpers";
 
 interface ContestRewardsProps {
   contestData: ProcessedContest;
@@ -34,6 +34,7 @@ const ContestRewards: FC<ContestRewardsProps> = ({ contestData, rewardsData, isR
 
   const totalUsd = useTotalRewardsUsd(tokenItems, rewardsData?.chain ?? "");
   const contestIsActive = isContestActive(contestData);
+  const contestIsInEntryPeriod = isContestInEntryPeriod(contestData);
   const hasRewards = tokenItems.length > 0;
 
   if (isRewardsFetching && !rewardsData) {
@@ -62,7 +63,7 @@ const ContestRewards: FC<ContestRewardsProps> = ({ contestData, rewardsData, isR
             {formatBalance(tokenItems[0].value)} <span className="uppercase">${tokenItems[0].symbol}</span>
           </>
         )}
-        {contestIsActive && <span className="font-normal text-[0.75em]"> (and climbing)</span>}
+        {contestIsInEntryPeriod && <sup>+</sup>}
       </p>
     </div>
   );
