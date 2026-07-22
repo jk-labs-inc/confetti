@@ -20,7 +20,7 @@ export function useContestEntriesPreviews({ config, proposalIds, enabled = true 
   const distinctIds = useMemo(() => Array.from(new Set(proposalIds)).sort(), [proposalIds]);
 
   const combine = useCallback(
-    (results: UseQueryResult<FetchedEntry | null>[]) => {
+    (results: UseQueryResult<FetchedEntry>[]) => {
       const byId = new Map<string, FetchedEntry>();
 
       const pendingIds = new Set<string>();
@@ -36,9 +36,11 @@ export function useContestEntriesPreviews({ config, proposalIds, enabled = true 
   const { byId, pendingIds, isLoading } = useQueries({
     queries: distinctIds.map(id => ({
       queryKey: ["contestEntryTitle", config?.address.toLowerCase(), config?.chainId, id],
-      queryFn: async (): Promise<FetchedEntry | null> => {
-        if (!config) return null;
-        const [result] = await readContracts(getWagmiConfig(), {
+
+      queryFn: async (): Promise<FetchedEntry> => {
+        if (!config) throw new Error(`missing card config for entry ${id}`);
+        const [proposal] = await readContracts(getWagmiConfig(), {
+          allowFailure: false,
           contracts: [
             {
               address: config.address,
@@ -49,8 +51,8 @@ export function useContestEntriesPreviews({ config, proposalIds, enabled = true 
             },
           ],
         });
-        if (result.status !== "success" || !result.result) return null;
-        const data = result.result as FetchedEntry;
+        if (!proposal) throw new Error(`getProposal(${id}) returned no data for ${config.address}`);
+        const data = proposal as FetchedEntry;
         return {
           description: data.description,
           fieldsMetadata: data.fieldsMetadata ?? (data.description ? { stringArray: [data.description] } : undefined),
