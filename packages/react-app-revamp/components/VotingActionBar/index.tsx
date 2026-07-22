@@ -224,6 +224,7 @@ const VotingActionBar = () => {
           </div>
 
           <button
+            id="vote_button"
             onClick={handleClick}
             // Keep the input focused through the tap so the keyboard doesn't
             // collapse and shift the bar mid-press.
