@@ -32,11 +32,9 @@ const CalendarButton: FC<CalendarButtonProps> = ({ contestName, contestAddress, 
       id="add_to_calendar_button_click"
       onClick={handleClick}
       aria-label="Remind me when voting opens"
-      className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-calendar cursor-pointer shrink-0 self-start"
+      className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-calendar cursor-pointer shrink-0 self-start after:content-[''] after:w-4 after:h-4 after:bg-[url('/contest/reminder.svg')] after:bg-contain after:bg-center after:bg-no-repeat"
       whileTap={{ scale: 0.97 }}
-    >
-      <img src="/contest/reminder.svg" alt="" width={16} height={16} />
-    </motion.button>
+    />
   );
 };
 

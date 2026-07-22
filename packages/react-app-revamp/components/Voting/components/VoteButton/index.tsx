@@ -83,7 +83,7 @@ const VoteButton: FC<VoteButtonProps> = ({ isDisabled, isInvalidBalance, isConne
         size={ButtonSize.FULL}
         onClick={handleClick}
       >
-        <span className="w-full text-center">buy votes</span>
+        buy votes
       </ButtonV3>
     </div>
     </div>
