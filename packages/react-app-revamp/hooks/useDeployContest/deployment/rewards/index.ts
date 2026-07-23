@@ -1,7 +1,7 @@
 import { DeploymentPhase, TransactionState } from "../../types";
 import { attachRewardsModule, deployRewardsModule, fundPoolTokens } from "./operations";
 import { RewardPoolData } from "../../slices/contestCreateRewards";
-import { FundPoolToken } from "@components/_pages/Create/pages/ContestRewards/components/FundPool/store";
+import { FundPoolToken } from "@components/_pages/Create/sections/Rewards/components/FundPool/store";
 
 interface DeployRewardsParams {
   contestAddress: string;

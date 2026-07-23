@@ -33,7 +33,7 @@ const Search: React.FC<SearchProps> = ({ onSearchChange }) => {
         />
       </span>
       <input
-        className="bg-transparent text-true-white ml-3 outline-none placeholder-neutral-10 w-[220px]"
+        className="bg-transparent text-true-white ml-3 outline-none w-[220px]"
         type="text"
         placeholder="search contests"
         value={searchValue}

@@ -53,7 +53,7 @@ const Subscribe = () => {
       <div className="flex w-full md:w-[500px]">
         <div className="relative w-full">
           <input
-            className="bg-true-black w-full pl-4 py-2 text-[16px] md:text-[18px] placeholder-neutral-10 placeholder-bold rounded-[8px] border border-true-white transition-opacity focus:outline-none"
+            className="bg-true-black w-full pl-4 py-2 text-[16px] md:text-[18px] placeholder-bold rounded-[8px] border border-true-white transition-opacity focus:outline-none"
             type="email"
             value={email}
             onChange={handleEmailChange}

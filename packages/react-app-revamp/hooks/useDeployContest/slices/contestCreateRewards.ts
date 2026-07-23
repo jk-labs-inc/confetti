@@ -1,5 +1,5 @@
 // https://github.com/pmndrs/zustand/discussions/821#discussioncomment-8548182
-import { useFundPoolStore } from "@components/_pages/Create/pages/ContestRewards/components/FundPool/store";
+import { useFundPoolStore } from "@components/_pages/Create/sections/Rewards/components/FundPool/store";
 
 type ReactStyleStateSetter<T> = T | ((prev: T) => T);
 

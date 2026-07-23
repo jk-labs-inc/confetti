@@ -1,4 +1,4 @@
-import { useFundPoolStore } from "@components/_pages/Create/pages/ContestRewards/components/FundPool/store";
+import { useFundPoolStore } from "@components/_pages/Create/sections/Rewards/components/FundPool/store";
 import useDisplayPrice from "@hooks/useCurrency/useDisplayPrice";
 import { DeploymentProcessState } from "@hooks/useDeployContest/types";
 import { motion } from "motion/react";

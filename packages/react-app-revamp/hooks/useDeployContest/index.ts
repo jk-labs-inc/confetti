@@ -1,4 +1,4 @@
-import { useFundPoolStore } from "@components/_pages/Create/pages/ContestRewards/components/FundPool/store";
+import { useFundPoolStore } from "@components/_pages/Create/sections/Rewards/components/FundPool/store";
 import { toastLoading } from "@components/UI/Toast";
 import { isSupabaseConfigured } from "@helpers/database";
 import useEmailSignup from "@hooks/useEmailSignup";
@@ -42,7 +42,6 @@ export function useDeployContest() {
     priceCurve,
     setIsLoading,
     setIsSuccess,
-    rewardPoolData,
     addFundsToRewards,
     setDeploymentPhase,
     setTransactionState,
@@ -67,7 +66,6 @@ export function useDeployContest() {
       priceCurve: state.priceCurve,
       setIsLoading: state.setIsLoading,
       setIsSuccess: state.setIsSuccess,
-      rewardPoolData: state.rewardPoolData,
       addFundsToRewards: state.addFundsToRewards,
       setDeploymentPhase: state.setDeploymentPhase,
       setTransactionState: state.setTransactionState,
@@ -80,7 +78,6 @@ export function useDeployContest() {
   );
   const { handleError } = useError();
   const { userAddress, chain } = useWallet();
-  const { tokenWidgets } = useFundPoolStore(useShallow(state => ({ tokenWidgets: state.tokenWidgets })));
 
   const votingOpen = getVotingOpenDate();
   const votingClose = getVotingCloseDate();
@@ -158,12 +155,17 @@ export function useDeployContest() {
 
       await indexContestInDatabase(contestData);
 
+      // read at call time, not from the render closure — the submit handler strips
+      // empty reward rows in the same tick it invokes deployContest
+      const { rewardPoolData: currentRewardPoolData } = useDeployContestStore.getState();
+      const { tokenWidgets: currentTokenWidgets } = useFundPoolStore.getState();
+
       await orchestrateRewardsDeployment({
         contestAddress: contractAddress,
         chainId: validatedChain.id,
         userAddress: validatedAddress,
-        rewardPoolData,
-        tokenWidgets,
+        rewardPoolData: currentRewardPoolData,
+        tokenWidgets: currentTokenWidgets,
         addFundsToRewards,
         onPhaseChange: setDeploymentPhase,
         onTransactionUpdate: setTransactionState,

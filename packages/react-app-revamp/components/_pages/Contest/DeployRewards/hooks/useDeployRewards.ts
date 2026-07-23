@@ -1,4 +1,4 @@
-import { useFundPoolStore } from "@components/_pages/Create/pages/ContestRewards/components/FundPool/store";
+import { useFundPoolStore } from "@components/_pages/Create/sections/Rewards/components/FundPool/store";
 import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import { orchestrateRewardsDeployment } from "@hooks/useDeployContest/deployment/process/orchestrator";

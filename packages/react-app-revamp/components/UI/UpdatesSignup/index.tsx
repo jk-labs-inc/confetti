@@ -47,12 +47,7 @@ const UpdatesSignup: FC<UpdatesSignupProps> = ({
           error={phoneNumberError}
           message={phoneNumberMessage}
         >
-          <PhoneNumberInput
-            id={phoneInputId}
-            value={phoneNumber}
-            onChange={onPhoneNumberChange}
-            inputClassName="placeholder-neutral-10"
-          />
+          <PhoneNumberInput id={phoneInputId} value={phoneNumber} onChange={onPhoneNumberChange} />
         </UpdatesSignupField>
 
         <UpdatesSignupField label="email (optional)" htmlFor={emailInputId} error={emailError} message={emailMessage}>
@@ -61,7 +56,7 @@ const UpdatesSignup: FC<UpdatesSignupProps> = ({
             type="email"
             value={email}
             onChange={event => onEmailChange(event.target.value)}
-            className="bg-transparent text-[16px] outline-none text-neutral-11 placeholder-neutral-10"
+            className="bg-transparent text-[16px] outline-none text-neutral-11"
             placeholder="myemail@email.com"
           />
         </UpdatesSignupField>

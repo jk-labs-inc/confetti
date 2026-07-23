@@ -75,7 +75,7 @@ const DialogModalSendProposalEntryPreviewTweetAndTitleLayout: FC<
         type="text"
         value={title}
         onChange={handleTitleChange}
-        className="w-full text-[16px] bg-secondary-1 outline-none rounded-[10px] border border-neutral-17 placeholder-neutral-10 h-12 indent-4 focus:outline-none"
+        className="w-full text-[16px] bg-secondary-1 outline-none rounded-[10px] border border-neutral-17 h-12 indent-4 focus:outline-none"
         placeholder="this is my entry..."
         maxLength={MAX_TITLE_LENGTH}
       />
@@ -88,7 +88,7 @@ const DialogModalSendProposalEntryPreviewTweetAndTitleLayout: FC<
           type="text"
           value={tweetUrl}
           onChange={handleTweetChange}
-          className="w-full text-[16px] bg-secondary-1 outline-none rounded-[10px] border border-neutral-17 placeholder-neutral-10 h-12 indent-4 focus:outline-none pr-10"
+          className="w-full text-[16px] bg-secondary-1 outline-none rounded-[10px] border border-neutral-17 h-12 indent-4 focus:outline-none pr-10"
           placeholder="www.x.com/me/status/18431..."
         />
         <div className="absolute right-3 top-1/2 transform -translate-y-1/2">

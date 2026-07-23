@@ -16,6 +16,7 @@ interface DropdownProps {
   menuButtonWidth?: string;
   menuItemsWidth?: string;
   menuItemsMaxHeight?: string;
+  menuButtonTextColor?: string;
   onChange?: (option: string) => void;
 }
 
@@ -25,6 +26,7 @@ const Dropdown: FC<DropdownProps> = ({
   menuButtonWidth = "w-52",
   menuItemsWidth = "w-52",
   menuItemsMaxHeight = "max-h-60",
+  menuButtonTextColor = "text-neutral-11",
   onChange,
 }) => {
   const [selectedOption, setSelectedOption] = useState<string>(defaultValue);
@@ -78,7 +80,7 @@ const Dropdown: FC<DropdownProps> = ({
         return (
           <>
             <MenuButton
-              className={`${menuButtonWidth} flex items-center gap-2 justify-between rounded-lg bg-secondary-1 p-4 h-10 text-xl text-neutral-11 font-bold border border-neutral-17 focus:not-data-focus:outline-none data-focus:outline data-focus:outline-white data-hover:border-neutral-9 transition-all duration-200 ease-in-out`}
+              className={`${menuButtonWidth} ${menuButtonTextColor} flex items-center gap-2 justify-between rounded-lg bg-secondary-1 p-4 h-10 text-xl font-bold border border-neutral-17 focus:not-data-focus:outline-none data-focus:outline data-focus:outline-white data-hover:border-neutral-9 transition-all duration-200 ease-in-out`}
             >
               <div className="flex items-center gap-2">
                 {selectedImage && (
@@ -92,7 +94,7 @@ const Dropdown: FC<DropdownProps> = ({
                 </span>
               </div>
               <ChevronDownIcon
-                className={`text-neutral-11 w-6 h-5 mt-1 transition-transform duration-200 ease-out ${
+                className={`w-6 h-5 mt-1 transition-transform duration-200 ease-out ${
                   open ? "rotate-180" : "rotate-0"
                 }`}
               />

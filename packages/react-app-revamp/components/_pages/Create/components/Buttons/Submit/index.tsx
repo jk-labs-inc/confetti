@@ -1,18 +1,16 @@
 import AddFundsModal from "@components/AddFunds/components/Modal";
 import ButtonV3, { ButtonSize, ButtonType } from "@components/UI/ButtonV3";
-import { usePreviousStep } from "@components/_pages/Create/hooks/usePreviousStep";
-import { isWalletForbidden } from "@components/_pages/Create/pages/ContestConfirm/utils";
-import { useDeployContestStore } from "@hooks/useDeployContest/store";
+import { isWalletForbidden } from "@components/_pages/Create/utils/wallet";
 import { useWallet } from "@hooks/useWallet";
+import { useRouter } from "next/navigation";
 import { FC, MouseEventHandler, useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useBalance } from "wagmi";
 import MobileBottomButton from "../Mobile";
 
 interface CreateContestButtonProps {
-  step: number;
   onClick?: MouseEventHandler<HTMLButtonElement>;
-  isDisabled?: boolean;
+  errorShakeSignal?: number;
 }
 
 enum CreateButtonText {
@@ -21,11 +19,10 @@ enum CreateButtonText {
   ADD_FUNDS = "add funds to create",
 }
 
-const CreateContestButton: FC<CreateContestButtonProps> = ({ step, onClick, isDisabled }) => {
-  const { errors } = useDeployContestStore(state => state);
+const CreateContestButton: FC<CreateContestButtonProps> = ({ onClick, errorShakeSignal = 0 }) => {
+  const router = useRouter();
   const { isConnected, userAddress, chain, connector } = useWallet();
   const [shake, setShake] = useState(false);
-  const onPreviousStep = usePreviousStep();
   const isMobileOrTablet = useMediaQuery({ maxWidth: 1024 });
   const [showAddFunds, setShowAddFunds] = useState(false);
   const { data: balance } = useBalance({
@@ -50,24 +47,26 @@ const CreateContestButton: FC<CreateContestButtonProps> = ({ step, onClick, isDi
   }, [insufficientBalance, isConnected, isUnsupportedWallet]);
 
   useEffect(() => {
-    // If there's an error for the current step, shake the button
-    if (errors.find(error => error.step === step - 1)) {
-      setShake(true);
-    } else {
-      setShake(false);
-    }
-  }, [errors, step]);
+    if (!errorShakeSignal) return;
+
+    setShake(true);
+    const timeout = setTimeout(() => setShake(false), 600);
+    return () => clearTimeout(timeout);
+  }, [errorShakeSignal]);
 
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    // If there's an error, shake the button
-    if (errors.find(error => error.step === step - 1)) {
-      setShake(true);
-    }
-
     if (createButtonText === CreateButtonText.ADD_FUNDS) {
       setShowAddFunds(true);
     } else if (onClick) {
       onClick(e);
+    }
+  };
+
+  const handleBack = () => {
+    if (window.history.length > 1) {
+      router.back();
+    } else {
+      router.push("/");
     }
   };
 
@@ -76,13 +75,16 @@ const CreateContestButton: FC<CreateContestButtonProps> = ({ step, onClick, isDi
       <>
         <MobileBottomButton>
           <div className={`flex flex-row items-center h-12 justify-between border-t-neutral-2 border-t-2   px-8`}>
-            <p className="text-[20px] text-neutral-11" onClick={onPreviousStep}>
+            <p className="text-[20px] text-neutral-11" onClick={handleBack}>
               back
             </p>
             <ButtonV3
               id="create_flow_deploy"
               onClick={handleClick}
-              colorClass="text-[20px] bg-gradient-create rounded-[15px] font-bold text-true-black hover:scale-105 transition-transform duration-200 ease-in-out"
+              type={ButtonType.TX_ACTION}
+              colorClass={`text-[20px] bg-gradient-create rounded-[15px] font-bold text-true-black hover:scale-105 transition-transform duration-200 ease-in-out ${
+                shake ? "animate-shake-top" : ""
+              }`}
             >
               {!isConnected
                 ? "sign in"
@@ -106,7 +108,6 @@ const CreateContestButton: FC<CreateContestButtonProps> = ({ step, onClick, isDi
       <div className={`flex flex-col items-center gap-4`}>
         <ButtonV3
           id="create_flow_deploy"
-          isDisabled={isDisabled}
           colorClass={`bg-gradient-create text-[20px] rounded-[10px] font-bold ${
             shake ? "animate-shake-top" : ""
           }  text-true-black`}
@@ -117,10 +118,7 @@ const CreateContestButton: FC<CreateContestButtonProps> = ({ step, onClick, isDi
           {createButtonText}
         </ButtonV3>
 
-        <div
-          className="hidden lg:flex items-center gap-[2px] md:-ml-[15px] cursor-pointer group"
-          onClick={onPreviousStep}
-        >
+        <div className="hidden lg:flex items-center gap-[2px] md:-ml-[15px] cursor-pointer group" onClick={handleBack}>
           <div className="transition-transform duration-200 group-hover:-translate-x-1">
             <img src="/create-flow/back.svg" alt="back" width={15} height={15} className="mt-px" />
           </div>

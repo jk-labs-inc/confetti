@@ -1,4 +1,4 @@
-import { FundPoolToken } from "@components/_pages/Create/pages/ContestRewards/components/FundPool/store";
+import { FundPoolToken } from "@components/_pages/Create/sections/Rewards/components/FundPool/store";
 import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import VotingModuleContract from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.sol/VoterRewardsModule.json";
