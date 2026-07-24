@@ -34,7 +34,7 @@ const TokenSearchModalSearchInput: FC<TokenSearchModalSearchInputProps> = ({ cha
         />
       </span>
       <input
-        className="text-[20px] bg-transparent text-neutral-11 ml-3 outline-none placeholder-neutral-14 w-full"
+        className="text-[20px] bg-transparent text-neutral-11 ml-3 outline-none w-full"
         type="text"
         placeholder={isChainSupportedBySearch ? "search token name or paste address" : "paste token address"}
         value={searchValue}

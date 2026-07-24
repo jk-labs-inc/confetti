@@ -182,7 +182,7 @@ const VotingActionBar = () => {
               onBlur={() => setIsFocused(false)}
               placeholder={placeholder}
               aria-label="amount to spend"
-              className="min-w-0 bg-transparent text-right font-bold text-neutral-11 placeholder-neutral-9 outline-none"
+              className="min-w-0 bg-transparent text-right font-bold text-neutral-11 outline-none"
               style={{ fontSize: `${inputFontSize}px`, width: `${charCount || 1}ch`, maxWidth: "64px" }}
             />
             {displaySymbol !== "$" && (

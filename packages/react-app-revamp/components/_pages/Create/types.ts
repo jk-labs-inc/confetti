@@ -1,33 +1,8 @@
-import { PriceCurve } from "@hooks/useDeployContest/types";
+export type FormSection = "duration" | "description" | "parameters" | "priceCurve" | "rewards";
 
-export enum StepTitle {
-  Entries = "Entries",
-  Voting = "Voting",
-  Timing = "Timing",
-  Rewards = "Rewards",
-  Rules = "Rules",
-  Confirm = "Confirm!",
-}
+export type CreateFormErrorLocation = "title" | FormSection | "signup";
 
-export const getStepNumber = (stepTitle: StepTitle): number => {
-  const stepMap: Record<StepTitle, number> = {
-    [StepTitle.Entries]: 0,
-    [StepTitle.Voting]: 1,
-    [StepTitle.Timing]: 2,
-    [StepTitle.Rewards]: 3,
-    [StepTitle.Rules]: 4,
-    [StepTitle.Confirm]: 5,
-  };
-  return stepMap[stepTitle];
-};
-
-export interface ContestDataForType {
-  submissionOpen: Date;
-  votingOpen: Date;
-  votingClose: Date;
-  priceCurve: PriceCurve;
-}
-
-export interface ContestTypeConfig {
-  data: ContestDataForType;
+export interface CreateFormError {
+  location: CreateFormErrorLocation;
+  message: string;
 }

@@ -16,6 +16,20 @@ export const DEFAULT_MULTIPLIERS: Record<PriceCurveType, number> = {
   [PriceCurveType.Logarithmic]: DEFAULT_MULTIPLER_LOGARITHMIC,
 };
 
+export const validateMultiplier = (value: number, type: PriceCurveType): string => {
+  const { min, max } = MULTIPLIER_RANGES[type];
+
+  if (value < min) {
+    return `multiplier must be at least ${min}x`;
+  }
+
+  if (value > max) {
+    return `multiplier cannot exceed ${max}x`;
+  }
+
+  return "";
+};
+
 export interface MonetizationSliceState {
   charge: Charge;
   prevChainRefInCharge: string;

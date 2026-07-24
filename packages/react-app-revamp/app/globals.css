@@ -629,6 +629,11 @@ li {
     font-weight: bold;
   }
 
+  /* single source of truth for placeholder color — don't override this per-input */
+  ::placeholder {
+    color: var(--color-primary-3);
+  }
+
   :is(
     ::-webkit-calendar-picker-indicator,
     ::-webkit-clear-button,

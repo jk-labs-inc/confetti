@@ -1,5 +1,5 @@
 // https://github.com/pmndrs/zustand/discussions/821#discussioncomment-8548182
-import { useFundPoolStore } from "@components/_pages/Create/pages/ContestRewards/components/FundPool/store";
+import { useFundPoolStore } from "@components/_pages/Create/sections/Rewards/components/FundPool/store";
 
 type ReactStyleStateSetter<T> = T | ((prev: T) => T);
 
@@ -133,7 +133,7 @@ export const createCreateRewardsSlice = (set: any, get: any): CreateRewardsSlice
         };
       }
 
-      const hasZeroAmountToken = tokenWidgets.some(token => token.amount === "0" || token.amount === "");
+      const hasZeroAmountToken = tokenWidgets.some(token => !(parseFloat(token.amount) > 0));
       if (hasZeroAmountToken) {
         return {
           isValid: false,

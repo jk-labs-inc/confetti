@@ -89,28 +89,22 @@ export const canNavigateToContest = (state: DeploymentProcessState, addFundsToRe
     return false;
   }
 
-  const fundTokenEntries = Object.entries(state.transactions.fundTokens);
-  const hasFundingTransactions = fundTokenEntries.length > 0;
-  const anyFundingFailed =
-    hasFundingTransactions && fundTokenEntries.some(([_, txState]) => txState.status === "error");
-
-  // If ANY reward phase fails, navigate immediately to contest page
-  if (rewardsDeployFailed || rewardsAttachFailed || anyFundingFailed) {
+  // if a core reward phase fails, navigate immediately to contest page
+  if (rewardsDeployFailed || rewardsAttachFailed) {
     return true;
   }
 
-  // All core reward phases must succeed before checking funding
+  // all core reward phases must succeed before checking funding
   if (!rewardsDeployed || !rewardsAttached) {
     return false;
   }
 
-  // If funding is enabled, wait for funding transactions to appear AND all succeed
+  // funding is optional, so we only need to check if all funding transactions have succeeded or failed
   if (addFundsToRewards) {
-    const allFundingSucceeded =
-      hasFundingTransactions && fundTokenEntries.every(([_, txState]) => txState.status === "success");
-    return allFundingSucceeded;
+    const fundTokenEntries = Object.entries(state.transactions.fundTokens);
+    return fundTokenEntries.every(([_, txState]) => txState.status === "success" || txState.status === "error");
   }
 
-  // If funding is not enabled, navigate as soon as core transactions succeed
+  // if funding is not enabled, navigate as soon as core transactions succeed
   return true;
 };

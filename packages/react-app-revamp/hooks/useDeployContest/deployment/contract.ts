@@ -6,17 +6,20 @@ import { prepareConstructorArgs } from "../helpers/constructorArgs";
 export const deployContractToChain = async (
   constructorArgs: ReturnType<typeof prepareConstructorArgs>,
   address: `0x${string}`,
+  chainId: number,
 ) => {
   const contractDeploymentHash = await deployContract(getWagmiConfig(), {
     abi: DeployedContestContract.abi,
     bytecode: DeployedContestContract.bytecode.object as `0x${string}`,
     args: [constructorArgs],
     account: address,
+    chainId,
   });
 
   const receipt = await waitForTransactionReceipt(getWagmiConfig(), {
     hash: contractDeploymentHash,
     confirmations: 2,
+    chainId,
   });
 
   const contractAddress = receipt?.contractAddress;
