@@ -82,7 +82,7 @@
     "react": "19.2.7",
     "react-aria": "3.50.0",
     "react-device-detect": "2.2.3",
-    "react-dom": "19.2.7",
+    "react-dom": "19.2.8",
     "react-error-boundary": "6.1.2",
     "react-headless-pagination": "1.1.6",
     "react-html-props": "2.1.1",
