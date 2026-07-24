@@ -1,4 +1,5 @@
 import { toastDismiss } from "@components/UI/Toast";
+import { useFundPoolStore } from "@components/_pages/Create/sections/Rewards/components/FundPool/store";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { canNavigateToContest } from "@hooks/useDeployContest/types";
 import { useRouter } from "next/navigation";
@@ -17,18 +18,20 @@ const CreateContestDeploying = () => {
       isSuccess: state.isSuccess,
     })),
   );
+  const resetFundPool = useFundPoolStore(state => state.reset);
   const hasNavigatedRef = useRef(false);
 
   useEffect(() => {
     return () => {
       if (isSuccess) {
         resetStore();
+        resetFundPool();
       }
     };
-  }, [resetStore, isSuccess]);
+  }, [resetStore, resetFundPool, isSuccess]);
 
   useEffect(() => {
-    const shouldNavigate = canNavigateToContest(deploymentProcess, addFundsToRewards);
+    const shouldNavigate = isSuccess && canNavigateToContest(deploymentProcess, addFundsToRewards);
     const hasContestData = deployContestData && deployContestData.address;
 
     if (shouldNavigate && hasContestData && !hasNavigatedRef.current) {
@@ -42,7 +45,7 @@ const CreateContestDeploying = () => {
 
       router.push(contestPath);
     }
-  }, [deploymentProcess, deployContestData, router, addFundsToRewards]);
+  }, [deploymentProcess, deployContestData, router, addFundsToRewards, isSuccess]);
 
   return (
     <div className="flex flex-col gap-8 mt-12 lg:mt-[100px] animate-appear">

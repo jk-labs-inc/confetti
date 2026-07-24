@@ -37,11 +37,10 @@ export const useDeployRewards = () => {
       resetStore: state.resetStore,
     })),
   );
-  const { tokenWidgets, setTokenWidgets, setIsError } = useFundPoolStore(
+  const { tokenWidgets, resetFundPool } = useFundPoolStore(
     useShallow(state => ({
       tokenWidgets: state.tokenWidgets,
-      setTokenWidgets: state.setTokenWidgets,
-      setIsError: state.setIsError,
+      resetFundPool: state.reset,
     })),
   );
   const [isDeploying, setIsDeploying] = useState(false);
@@ -76,16 +75,14 @@ export const useDeployRewards = () => {
           setIsDeploying(false);
           refetchRewardsModule();
           resetStore();
-          setTokenWidgets([]);
-          setIsError(false);
+          resetFundPool();
         },
       });
     } catch (error) {
       handleError(error, "Rewards deployment failed");
       setIsDeploying(false);
       resetStore();
-      setTokenWidgets([]);
-      setIsError(false);
+      resetFundPool();
       throw error;
     }
   };

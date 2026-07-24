@@ -6,7 +6,7 @@ import MotionSpinner from "@components/UI/MotionSpinner";
 import { motion } from "motion/react";
 import Skeleton from "react-loading-skeleton";
 import { DeploymentProcessState, TransactionState } from "@hooks/useDeployContest/types";
-import { useFundPoolStore } from "@components/_pages/Create/sections/Rewards/components/FundPool/store";
+import { getFundTokenKey, useFundPoolStore } from "@components/_pages/Create/sections/Rewards/components/FundPool/store";
 
 const FundingLabel: FC<{ amount: string; symbol: string }> = ({ amount, symbol }) => {
   const { displayValue, displaySymbol, isLoading } = useDisplayPrice(amount, symbol);
@@ -77,7 +77,7 @@ export const RewardsDeploymentStatus: FC<RewardsDeploymentStatusProps> = ({ depl
   const tokenTransactions: Transaction[] = tokenWidgets
     .filter(token => parseFloat(token.amount) > 0)
     .map(token => ({
-      key: `fund_${token.symbol}` as TransactionKey,
+      key: getFundTokenKey(token),
       label: <FundingLabel amount={token.amount} symbol={token.symbol} />,
     }));
 

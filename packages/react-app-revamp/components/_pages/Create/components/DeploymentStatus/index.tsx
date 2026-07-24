@@ -1,4 +1,4 @@
-import { useFundPoolStore } from "@components/_pages/Create/sections/Rewards/components/FundPool/store";
+import { getFundTokenKey, useFundPoolStore } from "@components/_pages/Create/sections/Rewards/components/FundPool/store";
 import useDisplayPrice from "@hooks/useCurrency/useDisplayPrice";
 import { DeploymentProcessState } from "@hooks/useDeployContest/types";
 import { motion } from "motion/react";
@@ -48,7 +48,7 @@ export const DeploymentStatus: React.FC<DeploymentStatusProps> = ({
   const tokenTransactions: Transaction[] = tokenWidgets
     .filter(token => parseFloat(token.amount) > 0)
     .map(token => ({
-      key: `fund_${token.symbol}` as TransactionKey,
+      key: getFundTokenKey(token),
       label: <FundingLabel amount={token.amount} symbol={token.symbol} />,
     }));
 

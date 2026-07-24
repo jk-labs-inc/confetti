@@ -38,11 +38,7 @@ export const deployRewardsPool = async (params: DeployRewardsParams): Promise<vo
     userAddress,
     rewardPoolData,
     onStatusUpdate: (status, hash, error) => {
-      onTransactionUpdate("deployRewards", {
-        status: status === "loading" ? "loading" : status === "success" ? "success" : "error",
-        hash,
-        error,
-      });
+      onTransactionUpdate("deployRewards", { status, hash, error });
     },
   });
 
@@ -55,11 +51,7 @@ export const deployRewardsPool = async (params: DeployRewardsParams): Promise<vo
     chainId,
     rewardsModuleAddress,
     onStatusUpdate: (status, hash, error) => {
-      onTransactionUpdate("attachRewards", {
-        status: status === "loading" ? "loading" : status === "success" ? "success" : "error",
-        hash,
-        error,
-      });
+      onTransactionUpdate("attachRewards", { status, hash, error });
     },
   });
 
@@ -72,11 +64,7 @@ export const deployRewardsPool = async (params: DeployRewardsParams): Promise<vo
       rewardsModuleAddress,
       tokenWidgets,
       onTokenStatusUpdate: (tokenKey, status, hash, error) => {
-        onFundTokenUpdate(tokenKey, {
-          status: status === "loading" ? "loading" : status === "success" ? "success" : "error",
-          hash,
-          error,
-        });
+        onFundTokenUpdate(tokenKey, { status, hash, error });
       },
     });
   }

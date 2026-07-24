@@ -13,12 +13,6 @@ interface CreateContestButtonProps {
   errorShakeSignal?: number;
 }
 
-enum CreateButtonText {
-  CREATE = "create contest",
-  CONNECT_WALLET = "sign in",
-  ADD_FUNDS = "add funds to create",
-}
-
 const CreateContestButton: FC<CreateContestButtonProps> = ({ onClick, errorShakeSignal = 0 }) => {
   const router = useRouter();
   const { isConnected, userAddress, chain, connector } = useWallet();
@@ -32,19 +26,9 @@ const CreateContestButton: FC<CreateContestButtonProps> = ({ onClick, errorShake
   const chainCurrencyDecimals = chain?.nativeCurrency.decimals || 18;
   const DUST_THRESHOLD = BigInt(10) ** BigInt(chainCurrencyDecimals - 6);
   const insufficientBalance = balance && (balance.value === BigInt(0) || balance.value < DUST_THRESHOLD);
-  const [createButtonText, setCreateButtonText] = useState(CreateButtonText.CREATE);
   const chainNativeCurrency = chain?.nativeCurrency.symbol;
   const isUnsupportedWallet = connector && isWalletForbidden(connector.id);
-
-  useEffect(() => {
-    if (!isConnected) {
-      setCreateButtonText(CreateButtonText.CONNECT_WALLET);
-    } else if (insufficientBalance && !isUnsupportedWallet) {
-      setCreateButtonText(CreateButtonText.ADD_FUNDS);
-    } else {
-      setCreateButtonText(CreateButtonText.CREATE);
-    }
-  }, [insufficientBalance, isConnected, isUnsupportedWallet]);
+  const needsFunds = Boolean(isConnected && insufficientBalance && !isUnsupportedWallet);
 
   useEffect(() => {
     if (!errorShakeSignal) return;
@@ -55,7 +39,7 @@ const CreateContestButton: FC<CreateContestButtonProps> = ({ onClick, errorShake
   }, [errorShakeSignal]);
 
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    if (createButtonText === CreateButtonText.ADD_FUNDS) {
+    if (needsFunds) {
       setShowAddFunds(true);
     } else if (onClick) {
       onClick(e);
@@ -86,11 +70,7 @@ const CreateContestButton: FC<CreateContestButtonProps> = ({ onClick, errorShake
                 shake ? "animate-shake-top" : ""
               }`}
             >
-              {!isConnected
-                ? "sign in"
-                : insufficientBalance && !isUnsupportedWallet
-                  ? "add funds to create"
-                  : "create"}
+              create
             </ButtonV3>
           </div>
         </MobileBottomButton>
@@ -111,11 +91,11 @@ const CreateContestButton: FC<CreateContestButtonProps> = ({ onClick, errorShake
           colorClass={`bg-gradient-create text-[20px] rounded-[10px] font-bold ${
             shake ? "animate-shake-top" : ""
           }  text-true-black`}
-          size={createButtonText === CreateButtonText.ADD_FUNDS ? ButtonSize.EXTRA_LARGE : ButtonSize.LARGE}
+          size={ButtonSize.LARGE}
           type={ButtonType.TX_ACTION}
           onClick={handleClick}
         >
-          {createButtonText}
+          create contest
         </ButtonV3>
 
         <div className="hidden lg:flex items-center gap-[2px] md:-ml-[15px] cursor-pointer group" onClick={handleBack}>

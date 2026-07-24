@@ -133,7 +133,7 @@ export const createCreateRewardsSlice = (set: any, get: any): CreateRewardsSlice
         };
       }
 
-      const hasZeroAmountToken = tokenWidgets.some(token => token.amount === "0" || token.amount === "");
+      const hasZeroAmountToken = tokenWidgets.some(token => !(parseFloat(token.amount) > 0));
       if (hasZeroAmountToken) {
         return {
           isValid: false,

@@ -49,7 +49,6 @@ export function useDeployContest() {
     setRewardsModuleAddress,
     setContestAddress,
     setChainId,
-    deploymentProcess,
   } = useDeployContestStore(
     useShallow(state => ({
       title: state.title,
@@ -73,7 +72,6 @@ export function useDeployContest() {
       setRewardsModuleAddress: state.setRewardsModuleAddress,
       setContestAddress: state.setContestAddress,
       setChainId: state.setChainId,
-      deploymentProcess: state.deploymentProcess,
     })),
   );
   const { handleError } = useError();
@@ -115,6 +113,7 @@ export function useDeployContest() {
       const { contractDeploymentHash, contractAddress } = await deployContractToChain(
         deploymentData.constructorArgs,
         validatedAddress,
+        validatedChain.id,
       );
 
       setTransactionState("deployContest", { status: "success", hash: contractDeploymentHash });
@@ -177,12 +176,17 @@ export function useDeployContest() {
         },
       });
     } catch (error) {
-      const contestDeployed = deploymentProcess.transactions.deployContest.status === "success";
+      const contestDeployed =
+        useDeployContestStore.getState().deploymentProcess.transactions.deployContest.status === "success";
 
       if (contestDeployed) {
-        setIsSuccess(true);
+        setDeploymentPhase("failed");
         setIsLoading(false);
       } else {
+        setTransactionState("deployContest", {
+          status: "error",
+          error: error instanceof Error ? error.message : String(error),
+        });
         handleDeploymentError(error, handleError, setIsLoading);
       }
     }
