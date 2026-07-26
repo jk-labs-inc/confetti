@@ -57,7 +57,7 @@
     "class-variance-authority": "0.7.1",
     "compare-versions": "6.1.1",
     "date-fns": "4.4.0",
-    "eslint": "10.7.0",
+    "eslint": "10.8.0",
     "eslint-config-next": "15.5.22",
     "fuse.js": "7.5.0",
     "html2canvas": "1.4.1",
