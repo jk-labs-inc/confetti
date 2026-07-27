@@ -5,7 +5,7 @@ import useNativeRates from "@hooks/useCurrency/useNativeRates";
 import { FilteredToken } from "@hooks/useTokenList";
 import { useWallet } from "@hooks/useWallet";
 import { ChainWithIcon } from "@config/wagmi";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { FundPoolToken, useFundPoolStore } from "../../../store";
 import { generateNativeToken } from "../../../utils";
 
@@ -46,9 +46,12 @@ export type SecondaryDisplay = {
 interface UseTokenWidgetParams {
   tokenWidget: FundPoolToken;
   chain: ChainWithIcon;
+  // seed-rewards rows open in USD because creators budget in dollars ("recommended: ~$100").
+  // applied once, as soon as a rate exists, and never over a value the user already typed
+  preferredInputMode?: InputMode;
 }
 
-export const useTokenWidget = ({ tokenWidget, chain }: UseTokenWidgetParams) => {
+export const useTokenWidget = ({ tokenWidget, chain, preferredInputMode = "crypto" }: UseTokenWidgetParams) => {
   const { userAddress } = useWallet();
   const nativeCurrency = chain?.nativeCurrency;
   const chainNativeCurrencySymbol = nativeCurrency?.symbol;
@@ -91,6 +94,15 @@ export const useTokenWidget = ({ tokenWidget, chain }: UseTokenWidgetParams) => 
       setInputValue("");
     }
   }, [inputMode, hasRate]);
+
+  const hasAppliedPreferredMode = useRef(false);
+
+  useEffect(() => {
+    if (hasAppliedPreferredMode.current || preferredInputMode !== "usd" || !hasRate) return;
+
+    hasAppliedPreferredMode.current = true;
+    if (!inputValue) setInputMode("usd");
+  }, [preferredInputMode, hasRate, inputValue]);
 
   // --- derived values ---
 

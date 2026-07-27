@@ -1,7 +1,11 @@
+import { useFitTextToBox } from "@components/EntryCarousel/useFitTextToBox";
 import { formatBalance } from "@helpers/formatBalance";
 import { ArrowsUpDownIcon } from "@heroicons/react/24/outline";
-import { FC } from "react";
+import { FC, useEffect, useRef } from "react";
 import { InputMode, SecondaryDisplay } from "./useTokenWidget";
+
+const MIN_FONT_PX = 12;
+const MAX_FONT_PX = 32;
 
 interface TokenAmountInputProps {
   inputValue: string;
@@ -25,25 +29,51 @@ const TokenAmountInput: FC<TokenAmountInputProps> = ({
   onToggleMode,
 }) => {
   const displayValue = isMaxPressed ? formatBalance(inputValue) : inputValue;
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const isUsdMode = inputMode === "usd";
 
+  const valueString = displayValue || "0";
+  const dotCount = (valueString.match(/\./g) || []).length;
+  const charCount = valueString.length - dotCount * 0.5;
+  const mirrorText = isUsdMode ? `$${valueString}` : valueString;
+  const { ref: inputFitRef, fontSize } = useFitTextToBox<HTMLSpanElement>(mirrorText, MIN_FONT_PX, MAX_FONT_PX);
+
+  useEffect(() => {
+    inputRef.current?.focus({ preventScroll: true });
+  }, []);
+
   return (
     <div className="flex flex-col w-2/3">
-      <div className="flex items-baseline">
+      <div className="relative flex min-w-0 items-baseline overflow-hidden">
+        <span
+          ref={inputFitRef}
+          aria-hidden="true"
+          className="invisible absolute left-0 top-0 block w-full overflow-hidden whitespace-nowrap pr-2"
+        >
+          {mirrorText}
+        </span>
         {isUsdMode ? (
-          <span className={`text-[32px] ${isExceedingBalance ? "text-negative-11" : "text-neutral-11"}`}>$</span>
+          <span
+            className={`transition-[font-size] duration-150 ${
+              isExceedingBalance ? "text-negative-11" : "text-neutral-11"
+            }`}
+            style={{ fontSize: `${fontSize}px` }}
+          >
+            $
+          </span>
         ) : null}
         <input
+          ref={inputRef}
           min={0}
           type="number"
-          className={`text-[32px] placeholder-bold bg-transparent border-none focus:outline-none ${
+          className={`placeholder-bold bg-transparent border-none focus:outline-none min-w-0 transition-[font-size] duration-150 ${
             isExceedingBalance ? "text-negative-11" : "text-neutral-11"
           }`}
+          style={{ fontSize: `${fontSize}px`, width: `${charCount || 1}ch`, maxWidth: "100%" }}
           placeholder="0"
           onChange={onChange}
           value={displayValue}
-          autoFocus
           aria-label={isUsdMode ? "USD amount" : "Token amount"}
         />
       </div>

@@ -1,6 +1,6 @@
 export type FormSection = "duration" | "description" | "parameters" | "priceCurve" | "rewards";
 
-export type CreateFormErrorLocation = "title" | FormSection | "signup";
+export type CreateFormErrorLocation = "title" | "seedRewards" | FormSection | "signup";
 
 export interface CreateFormError {
   location: CreateFormErrorLocation;

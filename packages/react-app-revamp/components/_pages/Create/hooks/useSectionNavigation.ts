@@ -3,6 +3,7 @@ import { CreateFormErrorLocation, FormSection } from "../types";
 
 export const TITLE_FIELD_ID = "create-contest-title";
 export const TITLE_INPUT_ID = "create-contest-title-input";
+export const SEED_REWARDS_BLOCK_ID = "create-contest-seed-rewards";
 export const SIGNUP_BLOCK_ID = "create-contest-signup";
 
 export const sectionElementId = (section: FormSection) => `create-section-${section}`;
@@ -23,6 +24,8 @@ export const useSectionNavigation = () => {
     if (location === "title") {
       document.getElementById(TITLE_INPUT_ID)?.focus({ preventScroll: true });
       scrollToElement(TITLE_FIELD_ID);
+    } else if (location === "seedRewards") {
+      scrollToElement(SEED_REWARDS_BLOCK_ID);
     } else if (location === "signup") {
       scrollToElement(SIGNUP_BLOCK_ID);
     } else {

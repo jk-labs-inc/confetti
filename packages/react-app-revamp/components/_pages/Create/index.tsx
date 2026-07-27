@@ -42,7 +42,19 @@ const CreateFlow = () => {
     return <Loader />;
   }
 
-  return <div className="px-4">{isLoading || isSuccess ? <CreateContestDeploying /> : <CreateContestForm />}</div>;
+  if (isLoading || isSuccess) {
+    return (
+      <div className="px-4 lg:px-12">
+        <CreateContestDeploying />
+      </div>
+    );
+  }
+
+  return (
+    <div className="px-4">
+      <CreateContestForm />
+    </div>
+  );
 };
 
 export default CreateFlow;

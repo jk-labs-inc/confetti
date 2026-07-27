@@ -1,21 +1,25 @@
 import TokenSearchModal from "@components/TokenSearchModal";
 import { ChainWithIcon } from "@config/wagmi";
+import { useWallet } from "@hooks/useWallet";
 import { FC } from "react";
 import { FundPoolToken } from "../../../store";
 import BalanceDisplay from "./BalanceDisplay";
+import ConnectRow from "./ConnectRow";
 import TokenAmountInput from "./TokenAmountInput";
 import TokenSelector from "./TokenSelector";
 import WidgetHeader from "./WidgetHeader";
-import { useTokenWidget } from "./useTokenWidget";
+import { InputMode, useTokenWidget } from "./useTokenWidget";
 
 interface TokenWidgetProps {
   tokenWidget: FundPoolToken;
   index: number;
   chain: ChainWithIcon;
+  preferredInputMode?: InputMode;
 }
 
-const TokenWidget: FC<TokenWidgetProps> = ({ tokenWidget, index, chain }) => {
-  const { input, token, balance, modal, handlers } = useTokenWidget({ tokenWidget, chain });
+const TokenWidget: FC<TokenWidgetProps> = ({ tokenWidget, index, chain, preferredInputMode }) => {
+  const { input, token, balance, modal, handlers } = useTokenWidget({ tokenWidget, chain, preferredInputMode });
+  const { isConnected } = useWallet();
 
   const isEtherChainNativeCurrency = token.chainNativeCurrencySymbol === "ETH";
 
@@ -51,13 +55,17 @@ const TokenWidget: FC<TokenWidgetProps> = ({ tokenWidget, index, chain }) => {
                       onOpen={handlers.onOpenModal}
                     />
                   </div>
-                  <BalanceDisplay
-                    balanceDisplay={balance.display}
-                    balanceSymbol={balance.symbol}
-                    balanceValue={balance.data?.value ?? ""}
-                    onMax={handlers.onMaxBalance}
-                    onRefresh={handlers.onRefreshBalance}
-                  />
+                  {isConnected ? (
+                    <BalanceDisplay
+                      balanceDisplay={balance.display}
+                      balanceSymbol={balance.symbol}
+                      balanceValue={balance.data?.value ?? ""}
+                      onMax={handlers.onMaxBalance}
+                      onRefresh={handlers.onRefreshBalance}
+                    />
+                  ) : (
+                    <ConnectRow />
+                  )}
                 </div>
               </div>
             </div>

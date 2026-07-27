@@ -5,12 +5,14 @@ import { useShallow } from "zustand/shallow";
 import { useFundPoolStore } from "../../store";
 import { generateNativeToken } from "../../utils";
 import TokenWidget from "./components";
+import { InputMode } from "./components/useTokenWidget";
 
 interface TokenWidgetsProps {
   chain: ChainWithIcon;
+  preferredInputMode?: InputMode;
 }
 
-const TokenWidgets: FC<TokenWidgetsProps> = ({ chain }) => {
+const TokenWidgets: FC<TokenWidgetsProps> = ({ chain, preferredInputMode }) => {
   const { tokenWidgets, setTokenWidgets } = useFundPoolStore(
     useShallow(state => ({
       tokenWidgets: state.tokenWidgets,
@@ -45,7 +47,13 @@ const TokenWidgets: FC<TokenWidgetsProps> = ({ chain }) => {
     <div className="flex flex-col gap-2">
       <div className="flex flex-col gap-8">
         {tokenWidgets.map((widget, index) => (
-          <TokenWidget key={index} tokenWidget={widget} index={index} chain={chain} />
+          <TokenWidget
+            key={index}
+            tokenWidget={widget}
+            index={index}
+            chain={chain}
+            preferredInputMode={preferredInputMode}
+          />
         ))}
       </div>
       <button

@@ -9,7 +9,7 @@ const CreateContestDurationSection = () => {
     <div className="flex flex-col gap-8">
       <CreateContestTimingVotingOpens />
       <CreateContestTimingDuration />
-      <p className="text-[16px] text-neutral-9">time zone: {TIME_ZONE_CITY}</p>
+      <p className="text-[20px] text-neutral-9">time zone: {TIME_ZONE_CITY}</p>
     </div>
   );
 };

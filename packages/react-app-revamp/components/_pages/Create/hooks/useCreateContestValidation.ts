@@ -22,6 +22,11 @@ export const getCreateContestErrors = (
     errors.push({ location: "title", message: "must add a title" });
   }
 
+  const funding = state.validateRewardsFunding();
+  if (!funding.isValid && funding.error) {
+    errors.push({ location: "seedRewards", message: funding.error });
+  }
+
   const timing = state.validateTiming();
   if (!timing.isValid && timing.error) {
     errors.push({ location: "duration", message: timing.error });
@@ -48,9 +53,9 @@ export const getCreateContestErrors = (
     }
   }
 
-  const rewards = state.validateRewards();
-  if (!rewards.isValid && rewards.error) {
-    errors.push({ location: "rewards", message: rewards.error });
+  const distribution = state.validateRewardsDistribution();
+  if (!distribution.isValid && distribution.error) {
+    errors.push({ location: "rewards", message: distribution.error });
   }
 
   if (deps.emailError) {
@@ -90,9 +95,7 @@ export const useCreateContestValidation = (deps: CreateContestValidationDeps) =>
   );
   // validateRewards reads the fund-pool store imperatively; subscribe so errors recompute live
   const fundPoolInputs = useFundPoolStore(
-    useShallow(state =>
-      submitAttempted ? { tokenWidgets: state.tokenWidgets, isError: state.isError } : EMPTY,
-    ),
+    useShallow(state => (submitAttempted ? { tokenWidgets: state.tokenWidgets, isError: state.isError } : EMPTY)),
   );
 
   // submitCount (not just the boolean) is a dependency so every create-click revalidates

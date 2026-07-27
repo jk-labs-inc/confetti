@@ -24,7 +24,7 @@ import { displayWalletWarning, isWalletForbidden } from "../../utils/wallet";
 import CreateContestButton from "../Buttons/Submit";
 import CreateContestIntroBlurb from "../IntroBlurb";
 import CreateFormSection from "../Section";
-import CreateSeedRewardsToggle from "../SeedRewardsToggle";
+import CreateSeedRewards from "../SeedRewards";
 import CreateContestTitleField from "../TitleField";
 
 const CreateContestForm = () => {
@@ -46,7 +46,7 @@ const CreateContestForm = () => {
   );
   const incrementSubmitCount = useCreateContestFormStore(useShallow(state => state.incrementSubmitCount));
   const { deployContest } = useDeployContest();
-  const { scrollToError, openAndScrollTo } = useSectionNavigation();
+  const { scrollToError } = useSectionNavigation();
   const [isTestnetDeploymentModalOpen, setIsTestnetDeploymentModalOpen] = useState(false);
   const [shakeSignal, setShakeSignal] = useState(0);
 
@@ -108,7 +108,7 @@ const CreateContestForm = () => {
       </GradientText>
       <CreateContestIntroBlurb />
       <CreateContestTitleField errorMessage={errorFor("title")} />
-      <CreateSeedRewardsToggle onCheckedChange={checked => checked && openAndScrollTo("rewards")} />
+      <CreateSeedRewards errorMessage={errorFor("seedRewards")} />
 
       <div className="flex flex-col border-y border-primary-3 divide-y divide-primary-3 mt-2">
         <CreateFormSection id="duration" title="duration" errorMessage={errorFor("duration")}>

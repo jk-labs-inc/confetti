@@ -1,15 +1,7 @@
-import { ChainWithIcon } from "@config/wagmi";
-import { useDeployContestStore } from "@hooks/useDeployContest/store";
-import { useWallet } from "@hooks/useWallet";
-import { useShallow } from "zustand/shallow";
 import CreateTextContainer from "../../components/TextContainer";
 import CreateRewardsPool from "./components/CreatePool";
-import TokenWidgets from "./components/FundPool/components/TokenWidgets";
 
 const CreateContestRewardsSection = () => {
-  const { chain } = useWallet();
-  const addFundsToRewards = useDeployContestStore(useShallow(state => state.addFundsToRewards));
-
   return (
     <div className="flex flex-col gap-8">
       <CreateTextContainer>
@@ -20,7 +12,6 @@ const CreateContestRewardsSection = () => {
         <p>we recommend adding rewards for multiple ranks if the contest will likely get more than 3 entries.</p>
       </CreateTextContainer>
       <CreateRewardsPool />
-      {addFundsToRewards ? <TokenWidgets chain={chain as ChainWithIcon} /> : null}
     </div>
   );
 };
