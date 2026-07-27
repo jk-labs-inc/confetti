@@ -1,3 +1,4 @@
+import CountryFlagPolyfill from "@components/CountryFlagPolyfill";
 import "@getpara/react-sdk-lite/styles.css";
 import LayoutBase from "@layouts/LayoutBase";
 import { GoogleTagManager } from "@next/third-parties/google";
@@ -86,6 +87,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang="en" className={`${lato.variable} ${saboRegular.variable} ${saboFilled.variable} antialiased`}>
       <body className={lato.className}>
+        <CountryFlagPolyfill />
         <div id="__next">
           <NextTopLoader color="#BB65FF" shadow="0 0 10px #BB65FF, 0 0 5px #78FFC6" showSpinner={false} />
           <Providers>
