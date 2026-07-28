@@ -1,6 +1,6 @@
 import { toFixedString } from "@helpers/formatBalance";
 import { emailRegex } from "@helpers/regex";
-import { e164PhoneRegex } from "lib/phone";
+import { e164PhoneRegex } from "lib/phone/constants";
 import { create } from "zustand";
 
 interface VotingStore {
