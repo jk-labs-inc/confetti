@@ -2,21 +2,19 @@ import { chains } from "@config/wagmi";
 import useChargeDetails from "@hooks/useChargeDetails";
 import { useWallet } from "@hooks/useWallet";
 import { useMediaQuery } from "react-responsive";
-import CreateConnectPrompt from "../../components/ConnectPrompt";
 import CreateTextContainer from "../../components/TextContainer";
 import PriceCurveMultiplerPreview from "./components/PriceCurveMultiplerPreview";
 import PriceCurveTypeSelector from "./components/PriceCurveTypeSelector";
 
+const defaultChain = chains[0];
+
 const CreateContestPriceCurveSection = () => {
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const { isConnected, chain } = useWallet();
-  const chainName = chain?.name.toLowerCase() ?? "";
-  const chainUnitLabel = chains.find(c => c.name.toLowerCase() === chainName)?.nativeCurrency.symbol;
+  const pricingChain = isConnected && chain ? chain : defaultChain;
+  const chainName = pricingChain.name.toLowerCase();
+  const chainUnitLabel = pricingChain.nativeCurrency.symbol;
   const { isError, refetch: refetchChargeDetails, isLoading } = useChargeDetails(chainName);
-
-  if (!isConnected) {
-    return <CreateConnectPrompt />;
-  }
 
   if (isError) {
     return (

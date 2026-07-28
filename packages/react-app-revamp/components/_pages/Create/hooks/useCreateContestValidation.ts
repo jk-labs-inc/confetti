@@ -7,7 +7,6 @@ import { useCreateContestFormStore } from "../store";
 import { CreateFormError, CreateFormErrorLocation } from "../types";
 
 interface CreateContestValidationDeps {
-  isConnected: boolean;
   emailError: string | null;
   phoneNumberError: string | null;
 }
@@ -39,17 +38,14 @@ export const getCreateContestErrors = (
     errors.push({ location: "description", message: "must explain how voters should evaluate entries" });
   }
 
-  // skipped while disconnected: pricing can't load without a chain, and the CTA handles sign-in
-  if (deps.isConnected) {
-    if (state.charge.error) {
-      errors.push({ location: "priceCurve", message: "couldn't load vote pricing — open this section to retry" });
-    } else if (state.charge.costToVote <= 0) {
-      errors.push({ location: "priceCurve", message: "still loading vote pricing — try again in a moment" });
-    } else {
-      const multiplierError = validateMultiplier(state.priceCurve.multipler, state.priceCurve.type);
-      if (multiplierError) {
-        errors.push({ location: "priceCurve", message: multiplierError });
-      }
+  if (state.charge.error) {
+    errors.push({ location: "priceCurve", message: "couldn't load vote pricing — open this section to retry" });
+  } else if (state.charge.costToVote <= 0) {
+    errors.push({ location: "priceCurve", message: "still loading vote pricing — try again in a moment" });
+  } else {
+    const multiplierError = validateMultiplier(state.priceCurve.multipler, state.priceCurve.type);
+    if (multiplierError) {
+      errors.push({ location: "priceCurve", message: multiplierError });
     }
   }
 
@@ -102,7 +98,7 @@ export const useCreateContestValidation = (deps: CreateContestValidationDeps) =>
   // time-dependent checks like validateTiming even when no subscribed input changed
   const errors = useMemo(
     () => (submitAttempted ? getCreateContestErrors(useDeployContestStore.getState(), deps) : []),
-    [submitCount, validationInputs, fundPoolInputs, deps.isConnected, deps.emailError, deps.phoneNumberError],
+    [submitCount, validationInputs, fundPoolInputs, deps.emailError, deps.phoneNumberError],
   );
 
   const errorFor = (location: CreateFormErrorLocation) =>

@@ -28,7 +28,7 @@ import CreateSeedRewards from "../SeedRewards";
 import CreateContestTitleField from "../TitleField";
 
 const CreateContestForm = () => {
-  const { chain, connector, isConnected } = useWallet();
+  const { chain, connector } = useWallet();
   const {
     emailSubscriptionAddress,
     phoneNumberForSubscription,
@@ -59,7 +59,7 @@ const CreateContestForm = () => {
       ? null
       : "Invalid phone number.";
 
-  const { errorFor, validate } = useCreateContestValidation({ isConnected, emailError, phoneNumberError });
+  const { errorFor, validate } = useCreateContestValidation({ emailError, phoneNumberError });
 
   const handleChangeChain = async () => {
     const defaultChain = chains[0];
