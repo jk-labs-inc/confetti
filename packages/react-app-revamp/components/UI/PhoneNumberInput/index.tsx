@@ -1,7 +1,12 @@
-import { formatNationalPhoneNumber, parseNationalDigits } from "lib/phone";
-import { getPhoneCountry } from "lib/phone/countries";
-import { PhoneNumberValue } from "lib/phone/types";
+import {
+  formatNationalPhoneNumber,
+  getPhonePlaceholder,
+  isPhoneNumberTooLong,
+  resolvePhoneNumberInput,
+} from "lib/phone";
+import { PhoneCountryCode, PhoneNumberValue } from "lib/phone/types";
 import { FC, useLayoutEffect, useRef } from "react";
+import CountrySelect from "./components/CountrySelect";
 
 interface PhoneNumberInputProps {
   value: PhoneNumberValue;
@@ -28,7 +33,6 @@ const caretPositionForDigitCount = (formatted: string, digitCount: number) => {
 };
 
 const PhoneNumberInput: FC<PhoneNumberInputProps> = ({ value, id, inputClassName, onChange }) => {
-  const country = getPhoneCountry(value.countryCode);
   const inputRef = useRef<HTMLInputElement>(null);
   const caretDigitCountRef = useRef<number | null>(null);
   const selectionBeforeEditRef = useRef<{ start: number; end: number } | null>(null);
@@ -55,6 +59,11 @@ const PhoneNumberInput: FC<PhoneNumberInputProps> = ({ value, id, inputClassName
         : { start: input.selectionStart, end: input.selectionEnd };
   };
 
+  const handleCountryChange = (countryCode: PhoneCountryCode) => {
+    onChange({ countryCode, nationalNumber: value.nationalNumber });
+    inputRef.current?.focus();
+  };
+
   const handleNumberChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const input = event.target;
     const raw = input.value;
@@ -64,14 +73,20 @@ const PhoneNumberInput: FC<PhoneNumberInputProps> = ({ value, id, inputClassName
     const wasCaretEdit = selectionBeforeEdit === null || selectionBeforeEdit.start === selectionBeforeEdit.end;
     selectionBeforeEditRef.current = null;
     let digitsBeforeCaret = countDigits(raw.slice(0, caret));
-    let nationalNumber = parseNationalDigits(raw, value.countryCode);
+    const resolved = resolvePhoneNumberInput(raw, value.countryCode);
+    let nationalNumber = resolved.nationalNumber;
 
-    // the number is already full — reject the edit instead of silently dropping trailing digits
-    if (nationalNumber.length > country.nationalNumberLength) {
+    if (isPhoneNumberTooLong(resolved) && nationalNumber.length > value.nationalNumber.length) {
       const digitsAdded = nationalNumber.length - value.nationalNumber.length;
       const restoredCaret = caretPositionForDigitCount(formattedValue, Math.max(digitsBeforeCaret - digitsAdded, 0));
       input.value = formattedValue;
       input.setSelectionRange(restoredCaret, restoredCaret);
+      return;
+    }
+
+    if (resolved.countryCode !== value.countryCode) {
+      caretDigitCountRef.current = nationalNumber.length;
+      onChange(resolved);
       return;
     }
 
@@ -92,10 +107,7 @@ const PhoneNumberInput: FC<PhoneNumberInputProps> = ({ value, id, inputClassName
 
   return (
     <div className="flex items-center gap-2 w-full">
-      <span className="flex items-center gap-1 text-[16px] text-neutral-11 shrink-0">
-        <span>{country.flag}</span>
-        <span>{country.dialCode}</span>
-      </span>
+      <CountrySelect value={value.countryCode} onChange={handleCountryChange} />
       <input
         ref={inputRef}
         id={id}
@@ -106,7 +118,7 @@ const PhoneNumberInput: FC<PhoneNumberInputProps> = ({ value, id, inputClassName
         onBeforeInput={handleBeforeInput}
         onChange={handleNumberChange}
         className={`w-full bg-transparent text-[16px] outline-none text-ellipsis text-neutral-11 ${inputClassName ?? ""}`}
-        placeholder={country.placeholder}
+        placeholder={getPhonePlaceholder(value.countryCode)}
       />
     </div>
   );

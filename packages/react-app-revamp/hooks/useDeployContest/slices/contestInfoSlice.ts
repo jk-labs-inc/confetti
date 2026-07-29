@@ -1,4 +1,4 @@
-import { EMPTY_PHONE_NUMBER } from "lib/phone";
+import { EMPTY_PHONE_NUMBER } from "lib/phone/constants";
 import { PhoneNumberValue } from "lib/phone/types";
 
 export type Prompt = {

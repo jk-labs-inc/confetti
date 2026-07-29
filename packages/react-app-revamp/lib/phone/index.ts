@@ -1,61 +1,57 @@
-import { DEFAULT_PHONE_COUNTRY, getPhoneCountry } from "./countries";
-import { PhoneNumberValue } from "./types";
+import {
+  AsYouType,
+  getCountryCallingCode,
+  getExampleNumber,
+  parsePhoneNumberFromString,
+  phoneExamples,
+  validatePhoneNumberLength,
+} from "./engine";
+import { PhoneCountryCode, PhoneNumberValue } from "./types";
 
-export const EMPTY_PHONE_NUMBER: PhoneNumberValue = {
-  countryCode: DEFAULT_PHONE_COUNTRY.code,
-  nationalNumber: "",
-};
-
-export const e164PhoneRegex = /^\+[1-9]\d{1,14}$/;
-
-/**
- * Extracts the national digits from arbitrary user input (typing or paste),
- * dropping formatting characters and a leading dial code if present.
- * May return more digits than the country allows — callers decide how to handle overflow.
- */
-export const parseNationalDigits = (input: string, countryCode: PhoneNumberValue["countryCode"]): string => {
-  const country = getPhoneCountry(countryCode);
-  const dialCodeDigits = country.dialCode.replace(/\D/g, "");
-  let digits = input.replace(/\D/g, "");
-
-  const hasDialCodePrefix = digits.startsWith(dialCodeDigits) && digits.length > country.nationalNumberLength;
-  if ((input.trim().startsWith("+") || hasDialCodePrefix) && digits.startsWith(dialCodeDigits)) {
-    digits = digits.slice(dialCodeDigits.length);
-  }
-
-  return digits;
-};
+export { DEFAULT_PHONE_COUNTRY_CODE, EMPTY_PHONE_NUMBER, e164PhoneRegex } from "./constants";
 
 export const formatNationalPhoneNumber = (value: PhoneNumberValue): string => {
-  const country = getPhoneCountry(value.countryCode);
-  const digits = value.nationalNumber;
+  if (!value.nationalNumber) return "";
 
-  if (!digits) return "";
-
-  let formatted = "";
-  let digitIndex = 0;
-
-  for (const char of country.formatPattern) {
-    if (digitIndex >= digits.length) break;
-
-    if (char === "#") {
-      formatted += digits[digitIndex];
-      digitIndex++;
-    } else {
-      formatted += char;
-    }
-  }
-
-  // append any overflow digits so nothing the user typed disappears
-  formatted += digits.slice(digitIndex);
-
-  return formatted.replace(/[^\d]+$/, "");
+  return new AsYouType(value.countryCode).input(value.nationalNumber).replace(/[^\d]+$/, "");
 };
 
 export const isPhoneNumberEmpty = (value: PhoneNumberValue): boolean => value.nationalNumber.length === 0;
 
 export const isValidPhoneNumber = (value: PhoneNumberValue): boolean =>
-  getPhoneCountry(value.countryCode).validationRegex.test(value.nationalNumber);
+  parsePhoneNumberFromString(value.nationalNumber, value.countryCode)?.isValid() ?? false;
+
+export const isPhoneNumberTooLong = (value: PhoneNumberValue): boolean =>
+  validatePhoneNumberLength(value.nationalNumber, value.countryCode) === "TOO_LONG";
 
 export const phoneNumberToE164 = (value: PhoneNumberValue): string =>
-  `${getPhoneCountry(value.countryCode).dialCode}${value.nationalNumber}`;
+  parsePhoneNumberFromString(value.nationalNumber, value.countryCode)?.number ?? "";
+
+export const resolvePhoneNumberInput = (input: string, currentCountry: PhoneCountryCode): PhoneNumberValue => {
+  const trimmed = input.trim();
+
+  if (!trimmed.includes("+")) {
+    return { countryCode: currentCountry, nationalNumber: input.replace(/\D/g, "") };
+  }
+
+  const parsed = parsePhoneNumberFromString(trimmed);
+  if (parsed) {
+    const keepCurrent = parsed.countryCallingCode === getCountryCallingCode(currentCountry);
+    return {
+      countryCode: keepCurrent ? currentCountry : (parsed.country ?? currentCountry),
+      nationalNumber: parsed.nationalNumber,
+    };
+  }
+
+  // partial international input ("+49 15…") that doesn't parse as a complete number yet
+  const formatter = new AsYouType();
+  formatter.input(trimmed);
+  const partial = formatter.getNumber();
+  return {
+    countryCode: partial?.country ?? currentCountry,
+    nationalNumber: partial?.nationalNumber ?? "",
+  };
+};
+
+export const getPhonePlaceholder = (countryCode: PhoneCountryCode): string =>
+  getExampleNumber(countryCode, phoneExamples)?.formatNational() ?? "";

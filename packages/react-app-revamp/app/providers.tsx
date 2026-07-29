@@ -1,7 +1,7 @@
 "use client";
 
 import { chains, transports } from "@config/wagmi";
-import ParaWeb, { Environment, TExternalWallet } from "@getpara/react-sdk-lite";
+import ParaWeb, { AuthLayout, Environment, TExternalWallet } from "@getpara/react-sdk-lite";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { FC, ReactNode } from "react";
 import { ParaProvider } from "@getpara/react-sdk-lite";
@@ -40,15 +40,19 @@ const Providers: FC<ProvidersProps> = ({ children }) => {
         }}
         paraModalConfig={{
           theme: {
-            darkForegroundColor: "#e5e5e5",
-            darkBackgroundColor: "#1A1F2B",
+            foregroundColor: "#e5e5e5",
+            backgroundColor: "#1A1F2B",
             mode: "dark",
             borderRadius: "lg",
             font: "Lato",
           },
           logo: "/confetti/loader/frame-1.svg",
           oAuthMethods: ["GOOGLE", "TWITTER", "DISCORD", "TELEGRAM"],
-          disableAddFundsPrompt: true,
+        }}
+        configOverrides={{
+          modalConfig: {
+            disableAddFundsPrompt: true,
+          },
         }}
         externalWalletConfig={{
           wallets: EXTERNAL_WALLETS,
