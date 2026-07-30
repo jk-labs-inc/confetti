@@ -33,7 +33,7 @@ const PHASE_COPY: Record<
       sub: "please don't close this screen",
     },
     [TransactionOverlayPhase.INDEXING]: {
-      title: "locking in your votes",
+      title: "saving your votes",
       sub: "please don't close this screen",
     },
   },
