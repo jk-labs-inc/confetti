@@ -1,4 +1,5 @@
 import { toastDismiss, toastError, toastWarning } from "@components/UI/Toast";
+import { txOverlay } from "@components/UI/TransactionOverlay/store";
 import { chains } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import { useWallet } from "@hooks/useWallet";
@@ -15,6 +16,7 @@ export function useError() {
   const handleError = (e: any, defaultMessage: string) => {
     if (didUserReject(e)) {
       toastDismiss();
+      txOverlay.dismiss();
       return;
     }
 
@@ -23,6 +25,11 @@ export function useError() {
     const handledError = handleUtilityError(e, chainName);
 
     setError(handledError.message);
+
+    if (txOverlay.isActive()) {
+      txOverlay.fail(handledError.isWarning || handledError.codeFound ? handledError.message : defaultMessage);
+      return;
+    }
 
     if (handledError.isWarning) {
       return toastWarning({

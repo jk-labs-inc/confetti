@@ -3,7 +3,6 @@ import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
 import { type GetBalanceReturnType } from "@wagmi/core";
 import { FC, useState } from "react";
 import SendProposalMobileLayoutConfirmInitialContent from "./components/InitialContent";
-import SendProposalMobileLayoutConfirmLoadingContent from "./components/LoadingContent";
 
 interface DialogModalSendProposalMobileLayoutConfirmProps {
   chainName: string;
@@ -30,7 +29,7 @@ const DialogModalSendProposalMobileLayoutConfirm: FC<DialogModalSendProposalMobi
   if (!isOpen) return null;
 
   const renderContent = () => {
-    if (isLoading) return <SendProposalMobileLayoutConfirmLoadingContent />;
+    if (isLoading) return null;
     return (
       <SendProposalMobileLayoutConfirmInitialContent
         onConfirm={onConfirm}
