@@ -3167,27 +3167,27 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
-"@lifi/sdk@^4.1.0":
-  version "4.1.0"
-  resolved "https://registry.yarnpkg.com/@lifi/sdk/-/sdk-4.1.0.tgz#4ed20b2c9df69eaf7a4c33bb654d136fd779ccb0"
-  integrity sha512-rLjP/JXBC7syLimGNZfZmjPUxMpXozhX250IP0UwqnUB7K1lunvQA0NTGC4n6KcsMAHU210XkiTqpbjtFG4q3g==
+"@lifi/sdk@^4.3.0":
+  version "4.3.0"
+  resolved "https://registry.yarnpkg.com/@lifi/sdk/-/sdk-4.3.0.tgz#7f379e69beca8eabdbb85bf3b991e8da3dbae450"
+  integrity sha512-0aycnDxit39VcFqAy6OijQdaR5p7NqfnfIhc93XyEwXBb/vDiNy41Jl9YrF2DEMA3Jjw1yQfxw2ZuF3OfIHbdg==
   dependencies:
-    "@lifi/types" "17.85.0"
+    "@lifi/types" "17.86.0"
 
-"@lifi/types@17.85.0":
-  version "17.85.0"
-  resolved "https://registry.yarnpkg.com/@lifi/types/-/types-17.85.0.tgz#7c1940fa42fc63cd0193f4c3bd6108c45e7a8c60"
-  integrity sha512-EueQyqhyvZbHygkyxj9EPAhUwn69ViRn9zJ56UnZlXsHlOZ/NdNVWxUwrVFVuRt/8qkdZH35R/1vE+SOxFHCNw==
+"@lifi/types@17.86.0":
+  version "17.86.0"
+  resolved "https://registry.yarnpkg.com/@lifi/types/-/types-17.86.0.tgz#f651db8f59d53dc89a1c87d4641e65168386caff"
+  integrity sha512-VkEK2c7pL2P49cVZfSW76pbMJNCrWC4ge2FmyexyZW71XA56bv+AAj9zL8zeEQVQUnMnekQVC1EHVBlx5uBwdg==
 
-"@lifi/wallet-management@4.1.2":
-  version "4.1.2"
-  resolved "https://registry.yarnpkg.com/@lifi/wallet-management/-/wallet-management-4.1.2.tgz#b8427088f851f0ae52e01498c804cdbfd1e13147"
-  integrity sha512-CaE3dhhRVHZJr5/IG1M8l+v1P8C1umDSmhB9kULQpy1hHAnUEU1QfSOB6NGvXSs9B3tGdw1uvBE1q+O3E+DQQQ==
+"@lifi/wallet-management@4.1.3":
+  version "4.1.3"
+  resolved "https://registry.yarnpkg.com/@lifi/wallet-management/-/wallet-management-4.1.3.tgz#a18e41fd973021de5696baf61c3a6bb0cfe5e303"
+  integrity sha512-EQATeodRIaqaWcWkb3yRS0PUVvnALorKVuRTszsIYrgHjxPz6kO5gGgvPcr1f1MhWr+qafjsZkVuvkuLpLV1CA==
   dependencies:
     "@emotion/react" "^11.14.0"
     "@emotion/styled" "^11.14.1"
-    "@lifi/sdk" "^4.1.0"
-    "@lifi/widget-provider" "4.3.0"
+    "@lifi/sdk" "^4.3.0"
+    "@lifi/widget-provider" "4.3.1"
     "@mui/icons-material" "^9.2.0"
     "@mui/material" "^9.2.0"
     "@mui/system" "^9.2.0"
@@ -3196,24 +3196,24 @@
     react-i18next "^17.0.9"
     zustand "^5.0.14"
 
-"@lifi/widget-provider@4.3.0":
-  version "4.3.0"
-  resolved "https://registry.yarnpkg.com/@lifi/widget-provider/-/widget-provider-4.3.0.tgz#525f349f02f0e7813ad48555a97126d5e0f37980"
-  integrity sha512-LLVabAwFpoO5oMApeWWlG2xGeOJkj47V/8hlfPU5jFNg+kWi5MpMpBp2Pn1zERt8RpxZNWqcTud2t5sHYFNiaQ==
+"@lifi/widget-provider@4.3.1":
+  version "4.3.1"
+  resolved "https://registry.yarnpkg.com/@lifi/widget-provider/-/widget-provider-4.3.1.tgz#d36c30da91da5137eecab5c43dcedee3a2ee3f7d"
+  integrity sha512-Ht8N0O6sz7RMekm61hwPHnokkH4TXzZWCrRQD4YH4OYwFiPUonXfAV9qZMvl6jTEzd/l9GCRxoIsiYKClQIFzw==
   dependencies:
-    "@lifi/sdk" "^4.1.0"
+    "@lifi/sdk" "^4.3.0"
     zustand "^5.0.12"
 
-"@lifi/widget@4.4.0":
-  version "4.4.0"
-  resolved "https://registry.yarnpkg.com/@lifi/widget/-/widget-4.4.0.tgz#657665c7d6bef3676971c819128028f530eb32e3"
-  integrity sha512-/K/0DVwfYRXx+N/mB/J2gdlgQCtCpqf8/ZIztqodoa3ac0Hn8h8Nx9ZedyqumU7O2gIauKePO5BguzQ2GqmFJw==
+"@lifi/widget@4.5.0":
+  version "4.5.0"
+  resolved "https://registry.yarnpkg.com/@lifi/widget/-/widget-4.5.0.tgz#9711606d3bd8149d9a7057905a4d032929ba165e"
+  integrity sha512-/GLIN1/t4DHyI3nGcYbBct+2RnAtmjWX0BBGsBr14DrD9cdPYargOrr5mbhJnRQ9Bk/dnV7RvK5BNAJdJoHXxA==
   dependencies:
     "@emotion/react" "^11.14.0"
     "@emotion/styled" "^11.14.1"
-    "@lifi/sdk" "^4.1.0"
-    "@lifi/wallet-management" "4.1.2"
-    "@lifi/widget-provider" "4.3.0"
+    "@lifi/sdk" "^4.3.0"
+    "@lifi/wallet-management" "4.1.3"
+    "@lifi/widget-provider" "4.3.1"
     "@mui/icons-material" "^9.2.0"
     "@mui/material" "^9.2.0"
     "@mui/system" "^9.2.0"
