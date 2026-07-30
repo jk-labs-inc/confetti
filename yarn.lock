@@ -1803,14 +1803,14 @@
     "@babel/helper-string-parser" "^8.0.0"
     "@babel/helper-validator-identifier" "^8.0.0"
 
-"@bigmi/client@0.10.0":
-  version "0.10.0"
-  resolved "https://registry.yarnpkg.com/@bigmi/client/-/client-0.10.0.tgz#804d6e69e093b43e851a4066162aea9f4c152f3c"
-  integrity sha512-fjswLQdq9jXgtZn6cBtzbxk+S6QN1ajXN2OzEOkgY4dE7hRPsanvSs3H3s3hmmTnS+QleVEcD+s5+raHZqwnuQ==
+"@bigmi/client@0.10.1":
+  version "0.10.1"
+  resolved "https://registry.yarnpkg.com/@bigmi/client/-/client-0.10.1.tgz#b3e5a7cdedfeff6228350d9c19bb68e63cfef436"
+  integrity sha512-oU5IzogIVS8QQiV+ZjyWgTnhN16qiGWQfQRbvqhAeFJGuQ/mdEqOBRrFoTqUEmGah/xZnrAbNskC13a+tTAiFg==
   dependencies:
     "@bigmi/core" "0.9.0"
-    "@wallet-standard/app" "^1.1.0"
-    "@wallet-standard/base" "^1.1.0"
+    "@wallet-standard/app" "^1.1.1"
+    "@wallet-standard/base" "^1.1.1"
     eventemitter3 "^5.0.4"
     zustand "^5.0.14"
 
@@ -1826,12 +1826,12 @@
     eventemitter3 "^5.0.4"
     zustand "^5.0.14"
 
-"@bigmi/react@0.9.0":
-  version "0.9.0"
-  resolved "https://registry.yarnpkg.com/@bigmi/react/-/react-0.9.0.tgz#9cc9653b4393e415e17f23c808e736b0fc6cf244"
-  integrity sha512-d+9RiAmZWhZzIApEt3bJWZE7O5truCkkuga2Zci+igCwegNwKcKrBZPT9hZTuloKpU8tMH7MT/GfkO57kO+Ajw==
+"@bigmi/react@0.9.1":
+  version "0.9.1"
+  resolved "https://registry.yarnpkg.com/@bigmi/react/-/react-0.9.1.tgz#8d5ea4c226952329683552798799ef1824631359"
+  integrity sha512-1OmTsaK1ewgnrxHrhBjjpREtPteoCVRUtfk/Rn/Rl/DuRiy2W86iP1W5ceYNU8lAwewEeOJ+iU7iD02TU7Xo5Q==
   dependencies:
-    "@bigmi/client" "0.10.0"
+    "@bigmi/client" "0.10.1"
     "@bigmi/core" "0.9.0"
 
 "@bytecodealliance/preview2-shim@0.17.6":
@@ -6365,10 +6365,22 @@
   dependencies:
     "@wallet-standard/base" "^1.1.0"
 
+"@wallet-standard/app@^1.1.1":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@wallet-standard/app/-/app-1.1.1.tgz#b81e524781fd916ac44e5a08ee64465a610b8cac"
+  integrity sha512-WDGwoByhP5gwHH01r5EaLgQdLVkACPCdOMQhmhn8rsm10h/siSgTorShzBxrn0ExSPof+Lu+C3TfgqBrPa1xoQ==
+  dependencies:
+    "@wallet-standard/base" "^1.1.1"
+
 "@wallet-standard/base@^1.0.1", "@wallet-standard/base@^1.1.0":
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@wallet-standard/base/-/base-1.1.0.tgz#214093c0597a1e724ee6dbacd84191dfec62bb33"
   integrity sha512-DJDQhjKmSNVLKWItoKThJS+CsJQjR9AOBOirBVT1F9YpRyC9oYHE+ZnSf8y8bxUphtKqdQMPVQ2mHohYdRvDVQ==
+
+"@wallet-standard/base@^1.1.1":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@wallet-standard/base/-/base-1.1.1.tgz#29ee1071bb96ddfe3f27d99f3be84b63f803f37d"
+  integrity sha512-gggIHTtxicF9XFMQ12DkfS6NAG92Ak795JeSA7f2whAQ6Y3AkMWWuCMxSZXG2NIPN42kEaZSNVjqMsJRaJRxMQ==
 
 "@wallet-standard/core@1.1.1", "@wallet-standard/core@^1.1.1":
   version "1.1.1"
