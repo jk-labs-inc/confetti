@@ -1,4 +1,4 @@
-import { FundPoolToken } from "@components/_pages/Create/pages/ContestRewards/components/FundPool/store";
+import { FundPoolToken } from "@components/_pages/Create/sections/Rewards/components/FundPool/store";
 import { chains } from "@config/wagmi";
 import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import { extractPathSegments } from "@helpers/extractPath";

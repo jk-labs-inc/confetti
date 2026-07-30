@@ -17,9 +17,9 @@
   --breakpoint-3xl: 1500px;
   --breakpoint-4xl: 1660px;
 
-  --font-sabo-regular: var(--font-family-sabo-regular), sans-serif;
-  --font-sabo-filled: var(--font-family-sabo-filled), sans-serif;
-  --font-sans: var(--font-family-lato), sans-serif;
+  --font-sabo-regular: "Twemoji Country Flags", var(--font-family-sabo-regular), sans-serif;
+  --font-sabo-filled: "Twemoji Country Flags", var(--font-family-sabo-filled), sans-serif;
+  --font-sans: "Twemoji Country Flags", var(--font-family-lato), sans-serif;
   --font-mono: monospace;
 
   /* Font Sizes */
@@ -627,6 +627,11 @@ li {
 
   .placeholder-bold::placeholder {
     font-weight: bold;
+  }
+
+  /* single source of truth for placeholder color — don't override this per-input */
+  ::placeholder {
+    color: var(--color-primary-3);
   }
 
   :is(

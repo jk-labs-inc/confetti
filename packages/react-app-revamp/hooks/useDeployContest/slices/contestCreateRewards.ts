@@ -1,5 +1,5 @@
 // https://github.com/pmndrs/zustand/discussions/821#discussioncomment-8548182
-import { useFundPoolStore } from "@components/_pages/Create/pages/ContestRewards/components/FundPool/store";
+import { useFundPoolStore } from "@components/_pages/Create/sections/Rewards/components/FundPool/store";
 
 type ReactStyleStateSetter<T> = T | ((prev: T) => T);
 
@@ -38,12 +38,21 @@ export interface CreateRewardsSliceState {
   addFundsToRewards: boolean;
 }
 
+export interface RewardsValidationResult {
+  isValid: boolean;
+  error: string | null;
+}
+
 export interface CreateRewardsSliceActions {
   setRewardPoolData: (data: ReactStyleStateSetter<RewardPoolData>) => void;
   setAddFundsToRewards: (addFundsToRewards: boolean) => void;
-  validateRewards: () => { isValid: boolean; error: string | null };
+  validateRewardsDistribution: () => RewardsValidationResult;
+  validateRewardsFunding: () => RewardsValidationResult;
+  validateRewards: () => RewardsValidationResult;
   reset: () => void;
 }
+
+const VALID: RewardsValidationResult = { isValid: true, error: null };
 
 export type CreateRewardsSlice = CreateRewardsSliceState & CreateRewardsSliceActions;
 
@@ -84,10 +93,8 @@ export const createCreateRewardsSlice = (set: any, get: any): CreateRewardsSlice
 
   setAddFundsToRewards: addFundsToRewards => set({ addFundsToRewards }),
 
-  validateRewards: () => {
-    const state = get();
-    const { recipients } = state.rewardPoolData;
-    const { addFundsToRewards } = state;
+  validateRewardsDistribution: () => {
+    const { recipients } = get().rewardPoolData;
 
     if (recipients.length === 0) {
       return {
@@ -108,44 +115,52 @@ export const createCreateRewardsSlice = (set: any, get: any): CreateRewardsSlice
       };
     }
 
-    if (addFundsToRewards) {
-      const { tokenWidgets, isError } = useFundPoolStore.getState();
+    return VALID;
+  },
 
-      if (isError) {
-        return {
-          isValid: false,
-          error: "There is an error with the token widgets",
-        };
-      }
+  validateRewardsFunding: () => {
+    if (!get().addFundsToRewards) return VALID;
 
-      if (tokenWidgets.length === 0) {
-        return {
-          isValid: false,
-          error: "At least one token widget is required when funding rewards",
-        };
-      }
+    const { tokenWidgets, isError } = useFundPoolStore.getState();
 
-      const uniqueAddresses = new Set(tokenWidgets.map(token => token.address));
-      if (tokenWidgets.length !== uniqueAddresses.size) {
-        return {
-          isValid: false,
-          error: "All tokens must be unique",
-        };
-      }
-
-      const hasZeroAmountToken = tokenWidgets.some(token => token.amount === "0" || token.amount === "");
-      if (hasZeroAmountToken) {
-        return {
-          isValid: false,
-          error: "Token amounts cannot be zero or empty",
-        };
-      }
+    if (isError) {
+      return {
+        isValid: false,
+        error: "There is an error with the token widgets",
+      };
     }
 
-    return {
-      isValid: true,
-      error: null,
-    };
+    if (tokenWidgets.length === 0) {
+      return {
+        isValid: false,
+        error: "At least one token widget is required when funding rewards",
+      };
+    }
+
+    const uniqueAddresses = new Set(tokenWidgets.map(token => token.address));
+    if (tokenWidgets.length !== uniqueAddresses.size) {
+      return {
+        isValid: false,
+        error: "All tokens must be unique",
+      };
+    }
+
+    const hasZeroAmountToken = tokenWidgets.some(token => !(parseFloat(token.amount) > 0));
+    if (hasZeroAmountToken) {
+      return {
+        isValid: false,
+        error: "Token amounts cannot be zero or empty",
+      };
+    }
+
+    return VALID;
+  },
+
+  validateRewards: () => {
+    const distribution = get().validateRewardsDistribution();
+    if (!distribution.isValid) return distribution;
+
+    return get().validateRewardsFunding();
   },
 
   reset: () =>

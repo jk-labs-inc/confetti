@@ -53,7 +53,7 @@ const DialogModalSendProposalEntryPreviewTweetLayout: FC<DialogModalSendProposal
         <input
           type="text"
           onChange={handleInputChange}
-          className="w-full text-[16px] bg-secondary-1 outline-none rounded-[10px] border border-neutral-17 placeholder-neutral-10 h-12 indent-4 focus:outline-none pr-10"
+          className="w-full text-[16px] bg-secondary-1 outline-none rounded-[10px] border border-neutral-17 h-12 indent-4 focus:outline-none pr-10"
           placeholder="www.x.com/me/status/18431..."
         />
         <div className="absolute right-3 top-1/2 transform -translate-y-1/2">

@@ -41,7 +41,7 @@ const CreateFlowMonetizationInput: FC<CreateFlowMonetizationInputProps> = ({ val
           onInput={handleInput}
           placeholder="10"
           style={{ width: `${width}ch` }}
-          className="bg-transparent box-content font-bold border-b outline-none text-neutral-11 placeholder:text-neutral-9 text-[40px]"
+          className="bg-transparent box-content font-bold border-b outline-none text-neutral-11 text-[40px]"
         />
         <span className="text-neutral-10 text-[40px] font-bold">x</span>
       </div>
