@@ -629,7 +629,7 @@ li {
     font-weight: bold;
   }
 
-  /* single source of truth for placeholder color — don't override this per-input */
+  /* default placeholder color — override per-input only when a surface needs its own (e.g. the vote inputs) */
   ::placeholder {
     color: var(--color-primary-3);
   }
