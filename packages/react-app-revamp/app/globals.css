@@ -629,6 +629,11 @@ li {
     font-weight: bold;
   }
 
+  /* default placeholder color — override per-input only when a surface needs its own (e.g. the vote inputs) */
+  ::placeholder {
+    color: var(--color-primary-3);
+  }
+
   :is(
     ::-webkit-calendar-picker-indicator,
     ::-webkit-clear-button,

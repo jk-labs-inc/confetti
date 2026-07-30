@@ -1,6 +1,6 @@
-import CreateRewardsPool from "@components/_pages/Create/pages/ContestRewards/components/CreatePool";
-import CreateRewardsFundPool from "@components/_pages/Create/pages/ContestRewards/components/FundPool";
-import { useFundPoolStore } from "@components/_pages/Create/pages/ContestRewards/components/FundPool/store";
+import CreateRewardsPool from "@components/_pages/Create/sections/Rewards/components/CreatePool";
+import CreateRewardsFundPool from "@components/_pages/Create/sections/Rewards/components/FundPool";
+import { useFundPoolStore } from "@components/_pages/Create/sections/Rewards/components/FundPool/store";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { FC } from "react";
 import { useMediaQuery } from "react-responsive";

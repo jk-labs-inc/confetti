@@ -1,7 +1,7 @@
 import { DeploymentPhase, TransactionState } from "../../types";
 import { deployRewardsPool } from "../rewards";
 import { RewardPoolData } from "../../slices/contestCreateRewards";
-import { FundPoolToken } from "@components/_pages/Create/pages/ContestRewards/components/FundPool/store";
+import { FundPoolToken } from "@components/_pages/Create/sections/Rewards/components/FundPool/store";
 import { insertContestWithOfficialModule } from "lib/rewards/database";
 import { getChainFromId } from "@helpers/getChainFromId";
 

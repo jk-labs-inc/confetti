@@ -82,7 +82,7 @@ export const SearchBar: FC<SearchBarProps> = ({ isInline, onSearch }) => {
             autoFocus
             onChange={e => handleQueryChange(e.target.value)}
             name="query"
-            className="w-[250px] sm:w-[500px] bg-transparent text-[14px] sm:text-[16px] outline-none placeholder-neutral-9 pr-2"
+            className="w-[250px] sm:w-[500px] bg-transparent text-[14px] sm:text-[16px] outline-none pr-2"
             placeholder={currentPlaceholder}
           />
           <Dropdown

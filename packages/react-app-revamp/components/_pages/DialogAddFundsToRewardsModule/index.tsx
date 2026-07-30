@@ -12,8 +12,8 @@ import { switchChain } from "@wagmi/core";
 import { usePathname } from "next/navigation";
 import { useRef } from "react";
 import { toast } from "react-toastify";
-import TokenWidgets from "../Create/pages/ContestRewards/components/FundPool/components/TokenWidgets";
-import { useFundPoolStore } from "../Create/pages/ContestRewards/components/FundPool/store";
+import TokenWidgets from "../Create/sections/Rewards/components/FundPool/components/TokenWidgets";
+import { useFundPoolStore } from "../Create/sections/Rewards/components/FundPool/store";
 interface DialogAddFundsToRewardsModuleProps {
   isOpen: boolean;
   setIsOpen: (value: boolean) => void;
