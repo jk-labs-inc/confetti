@@ -1,4 +1,4 @@
-import { useFundPoolStore } from "@components/_pages/Create/pages/ContestRewards/components/FundPool/store";
+import { useFundPoolStore } from "@components/_pages/Create/sections/Rewards/components/FundPool/store";
 import { toastLoading } from "@components/UI/Toast";
 import { isSupabaseConfigured } from "@helpers/database";
 import useEmailSignup from "@hooks/useEmailSignup";
@@ -42,7 +42,6 @@ export function useDeployContest() {
     priceCurve,
     setIsLoading,
     setIsSuccess,
-    rewardPoolData,
     addFundsToRewards,
     setDeploymentPhase,
     setTransactionState,
@@ -50,7 +49,6 @@ export function useDeployContest() {
     setRewardsModuleAddress,
     setContestAddress,
     setChainId,
-    deploymentProcess,
   } = useDeployContestStore(
     useShallow(state => ({
       title: state.title,
@@ -67,7 +65,6 @@ export function useDeployContest() {
       priceCurve: state.priceCurve,
       setIsLoading: state.setIsLoading,
       setIsSuccess: state.setIsSuccess,
-      rewardPoolData: state.rewardPoolData,
       addFundsToRewards: state.addFundsToRewards,
       setDeploymentPhase: state.setDeploymentPhase,
       setTransactionState: state.setTransactionState,
@@ -75,12 +72,10 @@ export function useDeployContest() {
       setRewardsModuleAddress: state.setRewardsModuleAddress,
       setContestAddress: state.setContestAddress,
       setChainId: state.setChainId,
-      deploymentProcess: state.deploymentProcess,
     })),
   );
   const { handleError } = useError();
   const { userAddress, chain } = useWallet();
-  const { tokenWidgets } = useFundPoolStore(useShallow(state => ({ tokenWidgets: state.tokenWidgets })));
 
   const votingOpen = getVotingOpenDate();
   const votingClose = getVotingCloseDate();
@@ -118,6 +113,7 @@ export function useDeployContest() {
       const { contractDeploymentHash, contractAddress } = await deployContractToChain(
         deploymentData.constructorArgs,
         validatedAddress,
+        validatedChain.id,
       );
 
       setTransactionState("deployContest", { status: "success", hash: contractDeploymentHash });
@@ -158,12 +154,17 @@ export function useDeployContest() {
 
       await indexContestInDatabase(contestData);
 
+      // read at call time, not from the render closure — the submit handler strips
+      // empty reward rows in the same tick it invokes deployContest
+      const { rewardPoolData: currentRewardPoolData } = useDeployContestStore.getState();
+      const { tokenWidgets: currentTokenWidgets } = useFundPoolStore.getState();
+
       await orchestrateRewardsDeployment({
         contestAddress: contractAddress,
         chainId: validatedChain.id,
         userAddress: validatedAddress,
-        rewardPoolData,
-        tokenWidgets,
+        rewardPoolData: currentRewardPoolData,
+        tokenWidgets: currentTokenWidgets,
         addFundsToRewards,
         onPhaseChange: setDeploymentPhase,
         onTransactionUpdate: setTransactionState,
@@ -175,12 +176,17 @@ export function useDeployContest() {
         },
       });
     } catch (error) {
-      const contestDeployed = deploymentProcess.transactions.deployContest.status === "success";
+      const contestDeployed =
+        useDeployContestStore.getState().deploymentProcess.transactions.deployContest.status === "success";
 
       if (contestDeployed) {
-        setIsSuccess(true);
+        setDeploymentPhase("failed");
         setIsLoading(false);
       } else {
+        setTransactionState("deployContest", {
+          status: "error",
+          error: error instanceof Error ? error.message : String(error),
+        });
         handleDeploymentError(error, handleError, setIsLoading);
       }
     }

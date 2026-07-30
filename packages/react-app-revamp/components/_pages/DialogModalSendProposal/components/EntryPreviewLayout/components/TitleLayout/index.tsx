@@ -24,7 +24,7 @@ const DialogModalSendProposalEntryPreviewTitleLayout: FC<DialogModalSendProposal
         type="text"
         value={inputValue}
         onChange={handleInputChange}
-        className="w-full text-[16px] bg-secondary-1 outline-none rounded-[10px] border border-neutral-17 placeholder-neutral-10 h-12 indent-4 focus:outline-none"
+        className="w-full text-[16px] bg-secondary-1 outline-none rounded-[10px] border border-neutral-17 h-12 indent-4 focus:outline-none"
         placeholder="this is my entry..."
         maxLength={MAX_TITLE_LENGTH}
       />

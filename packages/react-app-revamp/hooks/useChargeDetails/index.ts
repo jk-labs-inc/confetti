@@ -39,22 +39,24 @@ const useChargeDetails = (chainName: string) => {
         costToVoteEndPrice: 0,
         error: true,
       });
-    } else {
-      setCharge({
-        percentageToRewards: PERCENTAGE_TO_REWARDS_DEFAULT,
-        creatorSplitEnabled: charge.creatorSplitEnabled,
-        costToVote: chargeDetails.costToVote,
-        costToVoteEndPrice: chargeDetails.costToVote * priceCurve.multipler,
-        error: false,
-      });
+      // don't record the chain on failure — a later successful refetch must still be able to write
+      return;
     }
 
+    setCharge({
+      percentageToRewards: PERCENTAGE_TO_REWARDS_DEFAULT,
+      creatorSplitEnabled: charge.creatorSplitEnabled,
+      costToVote: chargeDetails.costToVote,
+      costToVoteEndPrice: chargeDetails.costToVote * priceCurve.multipler,
+      error: false,
+    });
     setPrevChainRefInCharge(chainName);
   }, [chargeDetails, chainName, prevChainRefInCharge, setCharge, setPrevChainRefInCharge]);
 
   return {
     isLoading,
-    isError,
+    // fetchChargeDetails never rejects — failures come back as data with isError set
+    isError: isError || Boolean(chargeDetails?.isError),
     refetch,
     data: chargeDetails,
   };

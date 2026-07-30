@@ -1,4 +1,4 @@
-import { FundPoolToken } from "@components/_pages/Create/pages/ContestRewards/components/FundPool/store";
+import { FundPoolToken, getFundTokenKey } from "@components/_pages/Create/sections/Rewards/components/FundPool/store";
 import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import VotingModuleContract from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.sol/VoterRewardsModule.json";
@@ -14,20 +14,21 @@ import {
 import { updateRewardAnalytics } from "lib/analytics/rewards";
 import { erc20Abi, parseUnits } from "viem";
 import { RewardPoolData } from "../../slices/contestCreateRewards";
+import { TransactionStatus } from "../../types";
 
 interface DeployRewardsModuleParams {
   contestAddress: string;
   chainId: number;
   userAddress: `0x${string}`;
   rewardPoolData: RewardPoolData;
-  onStatusUpdate: (status: "loading" | "success" | "error", hash?: string, error?: string) => void;
+  onStatusUpdate: (status: TransactionStatus, hash?: string, error?: string) => void;
 }
 
 interface AttachRewardsModuleParams {
   contestAddress: string;
   chainId: number;
   rewardsModuleAddress: string;
-  onStatusUpdate: (status: "loading" | "success" | "error", hash?: string, error?: string) => void;
+  onStatusUpdate: (status: TransactionStatus, hash?: string, error?: string) => void;
 }
 
 interface FundPoolTokensParams {
@@ -35,12 +36,7 @@ interface FundPoolTokensParams {
   chainId: number;
   rewardsModuleAddress: string;
   tokenWidgets: FundPoolToken[];
-  onTokenStatusUpdate: (
-    tokenKey: string,
-    status: "loading" | "success" | "error",
-    hash?: string,
-    error?: string,
-  ) => void;
+  onTokenStatusUpdate: (tokenKey: string, status: TransactionStatus, hash?: string, error?: string) => void;
 }
 
 export const deployRewardsModule = async (params: DeployRewardsModuleParams): Promise<string> => {
@@ -61,6 +57,7 @@ export const deployRewardsModule = async (params: DeployRewardsModuleParams): Pr
     const receipt = await waitForTransactionReceipt(getWagmiConfig(), {
       hash: contractRewardsModuleHash,
       confirmations: 2,
+      chainId,
     });
 
     const contractRewardsModuleAddress = receipt?.contractAddress;
@@ -94,8 +91,8 @@ export const attachRewardsModule = async (params: AttachRewardsModuleParams): Pr
       args: [rewardsModuleAddress as `0x${string}`],
     });
 
-    const hash = await writeContract(getWagmiConfig(), request!);
-    await waitForTransactionReceipt(getWagmiConfig(), { hash, confirmations: 2 });
+    const hash = await writeContract(getWagmiConfig(), request);
+    await waitForTransactionReceipt(getWagmiConfig(), { hash, confirmations: 2, chainId });
 
     onStatusUpdate("success", hash);
   } catch (error: any) {
@@ -116,7 +113,11 @@ export const fundPoolTokens = async (params: FundPoolTokensParams): Promise<void
   }
 
   for (const token of validTokens) {
-    const transactionKey = `fund_${token.symbol}`;
+    onTokenStatusUpdate(getFundTokenKey(token), "pending");
+  }
+
+  for (const token of validTokens) {
+    const transactionKey = getFundTokenKey(token);
     onTokenStatusUpdate(transactionKey, "loading");
 
     try {
