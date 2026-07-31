@@ -83,7 +83,7 @@ const VoteButton: FC<VoteButtonProps> = ({ isDisabled, isInvalidBalance, isConne
         size={ButtonSize.FULL}
         onClick={handleClick}
       >
-        buy votes
+        back this entry
       </ButtonV3>
     </div>
     </div>

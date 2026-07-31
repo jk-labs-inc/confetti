@@ -6,7 +6,12 @@ const fitCache = new Map<string, number>();
 
 const fontsLoaded = () => typeof document !== "undefined" && document.fonts?.status === "loaded";
 
-export function useFitTextToBox<T extends HTMLElement>(text: string, min = 14, max = 32) {
+/**
+ * `cap` bounds the applied size without affecting the measured fit — the returned
+ * fontSize stays the natural fit so FitTextGroup members can report it and shrink
+ * together to the group's smallest.
+ */
+export function useFitTextToBox<T extends HTMLElement>(text: string, min = 14, max = 32, cap: number | null = null) {
   const ref = useRef<T>(null);
   const [fontSize, setFontSize] = useState(max);
 
@@ -22,7 +27,7 @@ export function useFitTextToBox<T extends HTMLElement>(text: string, min = 14, m
     };
 
     const apply = (px: number) => {
-      el.style.fontSize = `${px}px`;
+      el.style.fontSize = `${cap === null ? px : Math.min(px, cap)}px`;
       setFontSize(px);
     };
 
@@ -76,7 +81,7 @@ export function useFitTextToBox<T extends HTMLElement>(text: string, min = 14, m
       cancelAnimationFrame(raf);
       ro.disconnect();
     };
-  }, [text, min, max]);
+  }, [text, min, max, cap]);
 
   return { ref, fontSize };
 }

@@ -1,3 +1,4 @@
+import CompactAmount from "@components/UI/CompactAmount";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import { motion } from "motion/react";
 import { FC } from "react";
@@ -19,7 +20,9 @@ const PriceCurveHeader: FC<PriceCurveHeaderProps> = ({ headerPrice, intervalText
       <div className="flex justify-between items-start gap-2">
         <div className="flex flex-col">
           <div className="flex items-center gap-1.5">
-            <span className="text-[16px] text-neutral-9 tracking-wide">{headerPrice} per vote</span>
+            <span className="text-[16px] text-neutral-9 tracking-wide">
+              <CompactAmount value={headerPrice} /> per vote
+            </span>
             <InfoButton />
           </div>
           <span className="text-[12px] text-neutral-9 mt-0.5">{intervalText}</span>

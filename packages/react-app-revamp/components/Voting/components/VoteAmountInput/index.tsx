@@ -1,7 +1,7 @@
 import { useFitTextToBox } from "@components/EntryCarousel/useFitTextToBox";
 import { VotingWidgetStyle } from "@components/Voting";
 import { useVotingStore } from "@components/Voting/store";
-import { formatNumberWithCommas } from "@helpers/formatNumber";
+import { formatVoteCount } from "@helpers/formatNumber";
 import useDisplayPrice from "@hooks/useCurrency/useDisplayPrice";
 import { useVotesFromInput } from "@hooks/useVotesFromInput";
 import { FC, RefObject } from "react";
@@ -111,7 +111,7 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
   // The placeholder is only sample text, so no vote count until something is actually typed;
   // "1 vote" stays mounted invisibly as a spacer so the row height doesn't jump on first input.
   const hasInput = displayValue.length > 0;
-  const votesText = hasInput ? `${formatNumberWithCommas(totalVotes)} ${totalVotes === 1 ? "vote" : "votes"}` : "1 vote";
+  const votesText = formatVoteCount(hasInput ? totalVotes : 1);
 
   const showPresets = hasBalance && isConnected;
 
