@@ -15,7 +15,8 @@ import {
   useTransitionStyles,
   type Placement,
 } from "@floating-ui/react";
-import { useRef, useState } from "react";
+import { useId, useRef } from "react";
+import { useActiveTooltipStore } from "./store";
 
 export type TooltipSurface = "default" | "dark" | "panel";
 
@@ -44,12 +45,20 @@ export function useTooltip({
   enableClick = false,
   strategy = "fixed",
 }: UseTooltipOptions = {}) {
-  const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
-  const open = controlledOpen ?? uncontrolledOpen;
+  const id = useId();
+  const isActive = useActiveTooltipStore(state => state.activeId === id);
+  const openActive = useActiveTooltipStore(state => state.open);
+  const closeActive = useActiveTooltipStore(state => state.close);
+  const open = controlledOpen ?? isActive;
 
   const setOpen = (next: boolean) => {
     onOpenChange?.(next);
-    if (controlledOpen === undefined) setUncontrolledOpen(next);
+    if (controlledOpen !== undefined) return;
+    if (next) {
+      openActive(id);
+    } else {
+      closeActive(id);
+    }
   };
 
   const arrowRef = useRef<SVGSVGElement>(null);
@@ -65,11 +74,17 @@ export function useTooltip({
     placement,
     strategy,
     whileElementsMounted: autoUpdate,
-    middleware: [offset(offsetPx), flip(), shift({ padding: 8 }), arrow({ element: arrowRef })],
+    middleware: [
+      offset(offsetPx),
+      flip({ fallbackAxisSideDirection: "start" }),
+      shift({ padding: 8 }),
+      arrow({ element: arrowRef }),
+    ],
   });
 
   const hover = useHover(context, {
     move: false,
+    mouseOnly: enableClick,
     delay: { open: openDelay, close: closeDelay ?? (interactive ? 0 : 150) },
     handleClose: interactive ? safePolygon({ requireIntent, buffer: 1 }) : null,
   });

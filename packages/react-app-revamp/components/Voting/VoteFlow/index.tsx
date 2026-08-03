@@ -43,11 +43,7 @@ const VoteFlow: FC<VoteFlowProps> = ({
   const resetVotingInput = useVotingStore(state => state.reset);
   const { castVotes, isLoading } = useCastVotes({ charge, votesClose });
   const [showAddFunds, setShowAddFunds] = useState(false);
-  const {
-    currentPricePerVote,
-    currentPricePerVoteRaw,
-    isLoading: isCurrentPricePerVoteLoading,
-  } = useCurrentPricePerVote({
+  const { currentPricePerVote, isLoading: isCurrentPricePerVoteLoading } = useCurrentPricePerVote({
     address: contestConfig.address,
     abi: contestConfig.abi,
     chainId: contestConfig.chainId,
@@ -92,7 +88,6 @@ const VoteFlow: FC<VoteFlowProps> = ({
           {entryPreview && <EntryPreviewHeader {...entryPreview} />}
           <VotingWidget
             costToVote={currentPricePerVote}
-            costToVoteRaw={currentPricePerVoteRaw}
             isLoading={isCurrentPricePerVoteLoading || isLoading}
             isVotingClosed={isVotingClosed}
             isContestCanceled={isContestCanceled}

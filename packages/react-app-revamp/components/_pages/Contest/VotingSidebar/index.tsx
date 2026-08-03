@@ -42,11 +42,7 @@ const VotingSidebar: FC = () => {
   const pickedProposal = useCastVotesStore(state => state.pickedProposal);
   const { castVotes, isLoading } = useCastVotes({ charge: contestCharge, votesClose: votingClose });
   const [showAddFunds, setShowAddFunds] = useState(false);
-  const {
-    currentPricePerVote,
-    currentPricePerVoteRaw,
-    isLoading: isCurrentPricePerVoteLoading,
-  } = useCurrentPricePerVote({
+  const { currentPricePerVote, isLoading: isCurrentPricePerVoteLoading } = useCurrentPricePerVote({
     address: contestConfig.address,
     abi: contestConfig.abi,
     chainId: contestConfig.chainId,
@@ -92,7 +88,6 @@ const VotingSidebar: FC = () => {
             <VotingWidget
               key={pickedProposal}
               costToVote={currentPricePerVote}
-              costToVoteRaw={currentPricePerVoteRaw}
               style={VotingWidgetStyle.colored}
               isLoading={isCurrentPricePerVoteLoading || isLoading}
               isVotingClosed={false}

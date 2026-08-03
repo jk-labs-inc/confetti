@@ -12,6 +12,7 @@ interface HoverInfoTooltipProps {
   contentClassName?: string;
   tooltipClassName?: string;
   tooltipStyle?: CSSProperties;
+  iconClassName?: string;
 }
 
 const HoverInfoTooltip: FC<HoverInfoTooltipProps> = ({
@@ -22,6 +23,7 @@ const HoverInfoTooltip: FC<HoverInfoTooltipProps> = ({
   contentClassName = "text-[12px] text-true-black",
   tooltipClassName,
   tooltipStyle,
+  iconClassName = "w-5 h-5",
 }) => {
   const tooltip = useTooltip({ interactive: true, placement: place, enableClick: true });
 
@@ -34,7 +36,7 @@ const HoverInfoTooltip: FC<HoverInfoTooltipProps> = ({
         aria-label={ariaLabel}
         className={`flex items-center justify-center transition-colors ${buttonClassName}`}
       >
-        <InformationCircleIcon className="w-5 h-5" />
+        <InformationCircleIcon className={iconClassName} />
       </button>
       <FloatingSurface tooltip={tooltip} surface="default" className={tooltipClassName} style={tooltipStyle}>
         <div className={contentClassName}>{children}</div>

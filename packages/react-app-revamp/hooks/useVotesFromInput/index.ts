@@ -1,3 +1,5 @@
+import { votesFromSpend } from "lib/voteProjections";
+
 interface UseVotesFromInputProps {
   inputValue: string;
   costToVote: string;
@@ -8,12 +10,5 @@ interface UseVotesFromInputProps {
  * @returns number of votes user will get for their input
  */
 export const useVotesFromInput = ({ inputValue, costToVote }: UseVotesFromInputProps): number => {
-  const inputValueNum = parseFloat(inputValue);
-  const costToVoteNum = parseFloat(costToVote);
-
-  if (isNaN(inputValueNum) || costToVoteNum <= 0) {
-    return 0;
-  }
-
-  return Math.floor(inputValueNum / costToVoteNum);
+  return votesFromSpend(inputValue, costToVote);
 };
