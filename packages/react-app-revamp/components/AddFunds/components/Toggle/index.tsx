@@ -19,8 +19,8 @@ const EtherIcon: FC<{ className?: string }> = ({ className }) => (
 );
 
 const TOGGLE_OPTIONS = [
-  { id: AddFundsProviderType.BRIDGE, label: "use crypto", Icon: EtherIcon },
   { id: AddFundsProviderType.ONRAMP, label: "use cash", Icon: CurrencyDollarIcon },
+  { id: AddFundsProviderType.BRIDGE, label: "use crypto", Icon: EtherIcon },
 ];
 
 const AddFundsToggle: FC<AddFundsToggleProps> = ({ value, onChange }) => {
