@@ -15,9 +15,15 @@ import {
   useTransitionStyles,
   type Placement,
 } from "@floating-ui/react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export type TooltipSurface = "default" | "dark" | "panel";
+
+interface ActiveTooltip {
+  close: () => void;
+}
+
+let activeTooltip: ActiveTooltip | null = null;
 
 interface UseTooltipOptions {
   interactive?: boolean;
@@ -51,6 +57,28 @@ export function useTooltip({
     onOpenChange?.(next);
     if (controlledOpen === undefined) setUncontrolledOpen(next);
   };
+
+  const closeRef = useRef<() => void>(() => {});
+  closeRef.current = () => setOpen(false);
+
+  const selfRef = useRef<ActiveTooltip | null>(null);
+  if (!selfRef.current) selfRef.current = { close: () => closeRef.current() };
+
+  useEffect(() => {
+    const self = selfRef.current!;
+
+    if (!open) {
+      if (activeTooltip === self) activeTooltip = null;
+      return;
+    }
+
+    if (activeTooltip && activeTooltip !== self) activeTooltip.close();
+    activeTooltip = self;
+
+    return () => {
+      if (activeTooltip === self) activeTooltip = null;
+    };
+  }, [open]);
 
   const arrowRef = useRef<SVGSVGElement>(null);
 
