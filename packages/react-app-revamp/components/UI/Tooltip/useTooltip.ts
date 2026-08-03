@@ -15,15 +15,10 @@ import {
   useTransitionStyles,
   type Placement,
 } from "@floating-ui/react";
-import { useEffect, useRef, useState } from "react";
+import { useId, useRef } from "react";
+import { useActiveTooltipStore } from "./store";
 
 export type TooltipSurface = "default" | "dark" | "panel";
-
-interface ActiveTooltip {
-  close: () => void;
-}
-
-let activeTooltip: ActiveTooltip | null = null;
 
 interface UseTooltipOptions {
   interactive?: boolean;
@@ -50,35 +45,21 @@ export function useTooltip({
   enableClick = false,
   strategy = "fixed",
 }: UseTooltipOptions = {}) {
-  const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
-  const open = controlledOpen ?? uncontrolledOpen;
+  const id = useId();
+  const isActive = useActiveTooltipStore(state => state.activeId === id);
+  const openActive = useActiveTooltipStore(state => state.open);
+  const closeActive = useActiveTooltipStore(state => state.close);
+  const open = controlledOpen ?? isActive;
 
   const setOpen = (next: boolean) => {
     onOpenChange?.(next);
-    if (controlledOpen === undefined) setUncontrolledOpen(next);
-  };
-
-  const closeRef = useRef<() => void>(() => {});
-  closeRef.current = () => setOpen(false);
-
-  const selfRef = useRef<ActiveTooltip | null>(null);
-  if (!selfRef.current) selfRef.current = { close: () => closeRef.current() };
-
-  useEffect(() => {
-    const self = selfRef.current!;
-
-    if (!open) {
-      if (activeTooltip === self) activeTooltip = null;
-      return;
+    if (controlledOpen !== undefined) return;
+    if (next) {
+      openActive(id);
+    } else {
+      closeActive(id);
     }
-
-    if (activeTooltip && activeTooltip !== self) activeTooltip.close();
-    activeTooltip = self;
-
-    return () => {
-      if (activeTooltip === self) activeTooltip = null;
-    };
-  }, [open]);
+  };
 
   const arrowRef = useRef<SVGSVGElement>(null);
 
@@ -103,6 +84,7 @@ export function useTooltip({
 
   const hover = useHover(context, {
     move: false,
+    mouseOnly: enableClick,
     delay: { open: openDelay, close: closeDelay ?? (interactive ? 0 : 150) },
     handleClose: interactive ? safePolygon({ requireIntent, buffer: 1 }) : null,
   });

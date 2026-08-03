@@ -1,8 +1,7 @@
 import HoverInfoTooltip from "@components/UI/HoverInfoTooltip";
 import { type Placement } from "@floating-ui/react";
 import { FC } from "react";
-
-const LINK_MATH_DOCS = "https://docs.confetti.win/calculating-roi";
+import VotingWidgetRewardsProjectionTooltipContent from "../TooltipContent";
 
 interface VotingWidgetRewardsProjectionTooltipProps {
   iconClassName?: string;
@@ -20,20 +19,7 @@ const VotingWidgetRewardsProjectionTooltip: FC<VotingWidgetRewardsProjectionTool
       iconClassName={iconClassName}
       place={place}
     >
-      <p>
-        <b>this is the most you could make</b> in an <br />
-        ideal outcome.{" "}
-        <a
-          className="italic underline underline-offset-3 decoration-positive-11"
-          href={LINK_MATH_DOCS}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          read here{" "}
-        </a>
-        about math <br />
-        calculations to estimate your earnings
-      </p>
+      <VotingWidgetRewardsProjectionTooltipContent />
     </HoverInfoTooltip>
   );
 };

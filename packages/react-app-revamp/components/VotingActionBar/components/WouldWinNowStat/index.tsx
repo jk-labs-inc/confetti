@@ -1,6 +1,8 @@
-import WouldWinNowTooltip from "@components/Voting/components/RewardsProjection/components/WouldWinNowTooltip";
+import WouldWinNowTooltipContent from "@components/Voting/components/RewardsProjection/components/WouldWinNowTooltipContent";
+import StatTooltipTrigger from "@components/VotingActionBar/components/StatTooltipTrigger";
 import { WIN_GRADIENT } from "@components/VotingActionBar/constants";
 import FitText from "@components/VotingActionBar/FitText";
+import { InformationCircleIcon } from "@heroicons/react/24/outline";
 import useNativeDisplayPrice from "@hooks/useCurrency/useNativeDisplayPrice";
 import { FC } from "react";
 
@@ -13,10 +15,14 @@ const WouldWinNowStat: FC<WouldWinNowStatProps> = ({ amount, isBelowSpend }) => 
   const { formatted } = useNativeDisplayPrice(amount);
 
   return (
-    <div className="flex min-w-0 flex-[1.4] flex-col items-center leading-tight">
+    <StatTooltipTrigger
+      content={<WouldWinNowTooltipContent isBelowSpend={isBelowSpend} />}
+      tooltipClassName="max-w-[250px]"
+      className="flex min-w-0 flex-[1.4] flex-col items-center leading-tight"
+    >
       <span className="flex items-center gap-0.5 whitespace-nowrap text-[11px] text-neutral-9">
         would win now
-        <WouldWinNowTooltip isBelowSpend={isBelowSpend} iconClassName="w-3 h-3" place="top" />
+        <InformationCircleIcon aria-hidden="true" className="w-3 h-3" />
       </span>
       <FitText
         text={formatted}
@@ -29,7 +35,7 @@ const WouldWinNowStat: FC<WouldWinNowStatProps> = ({ amount, isBelowSpend }) => 
         }`}
         style={isBelowSpend ? undefined : { backgroundImage: WIN_GRADIENT }}
       />
-    </div>
+    </StatTooltipTrigger>
   );
 };
 
