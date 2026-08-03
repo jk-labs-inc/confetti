@@ -26,7 +26,7 @@ const PushToFirstStat: FC<PushToFirstStatProps> = ({ remainingToFirst, onFill })
         max={20}
         group
         compactZeros
-        className="block w-full overflow-hidden whitespace-nowrap text-center font-bold text-secondary-11"
+        className="block w-full overflow-hidden whitespace-nowrap text-center font-bold text-neutral-11"
       />
     </button>
   );

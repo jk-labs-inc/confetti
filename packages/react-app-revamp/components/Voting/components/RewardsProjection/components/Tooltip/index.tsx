@@ -1,18 +1,24 @@
 import HoverInfoTooltip from "@components/UI/HoverInfoTooltip";
+import { type Placement } from "@floating-ui/react";
 import { FC } from "react";
 
 const LINK_MATH_DOCS = "https://docs.confetti.win/calculating-roi";
 
 interface VotingWidgetRewardsProjectionTooltipProps {
   iconClassName?: string;
+  place?: Placement;
 }
 
-const VotingWidgetRewardsProjectionTooltip: FC<VotingWidgetRewardsProjectionTooltipProps> = ({ iconClassName }) => {
+const VotingWidgetRewardsProjectionTooltip: FC<VotingWidgetRewardsProjectionTooltipProps> = ({
+  iconClassName,
+  place,
+}) => {
   return (
     <HoverInfoTooltip
       ariaLabel="how rewards projection works"
       buttonClassName="text-neutral-14 hover:text-neutral-11"
       iconClassName={iconClassName}
+      place={place}
     >
       <p>
         <b>this is the most you could make</b> in an <br />

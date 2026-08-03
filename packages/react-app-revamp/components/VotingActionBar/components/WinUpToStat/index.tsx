@@ -15,7 +15,7 @@ const WinUpToStat: FC<WinUpToStatProps> = ({ amount }) => {
     <div className="flex min-w-0 flex-1 flex-col items-center leading-tight">
       <span className="flex items-center gap-0.5 whitespace-nowrap text-[11px] text-neutral-9">
         win up to
-        <VotingWidgetRewardsProjectionTooltip iconClassName="w-3 h-3" />
+        <VotingWidgetRewardsProjectionTooltip iconClassName="w-3 h-3" place="top" />
       </span>
       <FitText
         text={formatted}

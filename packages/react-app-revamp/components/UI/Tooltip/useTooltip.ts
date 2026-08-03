@@ -65,7 +65,12 @@ export function useTooltip({
     placement,
     strategy,
     whileElementsMounted: autoUpdate,
-    middleware: [offset(offsetPx), flip(), shift({ padding: 8 }), arrow({ element: arrowRef })],
+    middleware: [
+      offset(offsetPx),
+      flip({ fallbackAxisSideDirection: "start" }),
+      shift({ padding: 8 }),
+      arrow({ element: arrowRef }),
+    ],
   });
 
   const hover = useHover(context, {

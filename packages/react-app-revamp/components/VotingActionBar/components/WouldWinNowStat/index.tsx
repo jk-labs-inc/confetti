@@ -16,7 +16,7 @@ const WouldWinNowStat: FC<WouldWinNowStatProps> = ({ amount, isBelowSpend }) => 
     <div className="flex min-w-0 flex-[1.4] flex-col items-center leading-tight">
       <span className="flex items-center gap-0.5 whitespace-nowrap text-[11px] text-neutral-9">
         would win now
-        <WouldWinNowTooltip isBelowSpend={isBelowSpend} iconClassName="w-3 h-3" />
+        <WouldWinNowTooltip isBelowSpend={isBelowSpend} iconClassName="w-3 h-3" place="top" />
       </span>
       <FitText
         text={formatted}
