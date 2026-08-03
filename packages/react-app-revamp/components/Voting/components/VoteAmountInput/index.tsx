@@ -64,12 +64,10 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
   );
   const formattedPricePerVote =
     pricePerVoteSymbol === "$" ? `$${pricePerVoteDisplay}` : `${pricePerVoteDisplay} ${pricePerVoteSymbol}`;
-  const { displayValue: pushToFirstDisplay } = useDisplayPrice(pushToFirstAmount ?? "0", symbol, undefined, undefined, {
-    ceilingPrecision: true,
-  });
-  const { inputValue, setSliderValue } = useVotingStore(
+  const { inputValue, setInputValue, setSliderValue } = useVotingStore(
     useShallow(state => ({
       inputValue: state.inputValue,
+      setInputValue: state.setInputValue,
       setSliderValue: state.setSliderValue,
     })),
   );
@@ -83,10 +81,10 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
     }
   };
 
-  // Fill as-if-typed so the input shows exactly the amount the push-to-1st block displays.
+  // Fill the raw native amount, not the display string — display can be abbreviated ("1.5m") or rate-rounded.
   const handlePushToFirst = () => {
     if (pushToFirstAmount) {
-      handleDisplayChange(pushToFirstDisplay.replace(/,/g, ""));
+      setInputValue(pushToFirstAmount, maxBalance);
     }
   };
 

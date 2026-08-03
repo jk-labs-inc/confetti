@@ -40,7 +40,9 @@ const VotingActionBar = () => {
   const pickedProposal = useCastVotesStore(useShallow(state => state.pickedProposal));
   const { isConnected } = useWallet();
   const { openModal } = useModal();
-  const inputValue = useVotingStore(state => state.inputValue);
+  const { inputValue, setInputValue } = useVotingStore(
+    useShallow(state => ({ inputValue: state.inputValue, setInputValue: state.setInputValue })),
+  );
 
   const { castVotes, isLoading: isCastLoading } = useCastVotes({ charge, votesClose });
   const { currentPriceNative } = usePriceCurveData();
@@ -129,17 +131,10 @@ const VotingActionBar = () => {
 
   const votesText = formatVoteCount(isGhost ? 1 : totalVotes);
 
-  const { displayValue: pushToFirstFillDisplay } = useDisplayPrice(
-    projections.pushToFirstFillAmount ?? "0",
-    contestConfig.chainNativeCurrencySymbol,
-    undefined,
-    undefined,
-    { ceilingPrecision: true },
-  );
-
+  // Fill the raw native amount, not the display string — display can be abbreviated ("1.5m") or rate-rounded.
   const handlePushToFirstFill = () => {
     if (!projections.pushToFirstFillAmount) return;
-    handleDisplayChange(pushToFirstFillDisplay.replace(/,/g, ""));
+    setInputValue(projections.pushToFirstFillAmount, maxBalance);
   };
 
   if (!slot) return null;
@@ -156,13 +151,13 @@ const VotingActionBar = () => {
         <div className="flex items-center gap-1.5 rounded-[14.5px] bg-neutral-2 px-3 py-2.5">
           {/* amount input + votes it buys */}
           <div
-            className="relative flex h-12 w-[96px] shrink-0 cursor-text flex-col items-center justify-center rounded-[24px] border border-neutral-9 px-2"
+            className="relative flex h-12 w-[88px] shrink-0 cursor-text flex-col items-center justify-center rounded-[24px] border border-neutral-9 px-2"
             onClick={() => inputRef.current?.focus({ preventScroll: true })}
           >
             <span
               ref={inputFitRef}
               aria-hidden="true"
-              className="invisible absolute left-0 top-0 block w-[64px] overflow-hidden whitespace-nowrap font-bold"
+              className="invisible absolute left-0 top-0 block w-[56px] overflow-hidden whitespace-nowrap font-bold"
             >
               {valueString}
             </span>
@@ -190,7 +185,7 @@ const VotingActionBar = () => {
                 placeholder={placeholder}
                 aria-label="amount to spend"
                 className="min-w-0 bg-transparent text-right font-bold text-neutral-11 placeholder-neutral-9 outline-none"
-                style={{ fontSize: `${inputFontSize}px`, width: `${charCount || 1}ch`, maxWidth: "64px" }}
+                style={{ fontSize: `${inputFontSize}px`, width: `${charCount || 1}ch`, maxWidth: "56px" }}
               />
               {displaySymbol !== "$" && (
                 <span className="shrink-0 text-[11px] font-bold uppercase text-neutral-9">{displaySymbol}</span>
@@ -201,7 +196,7 @@ const VotingActionBar = () => {
 
           {/* push to 1st / would win now + win up to */}
           <FitTextGroup>
-            <div className="flex min-w-0 flex-1 items-center justify-center gap-1">
+            <div className="flex min-w-0 flex-1 items-center justify-center gap-1.5">
               {entryProjection?.kind === "pushToFirst" ? (
                 <PushToFirstStat remainingToFirst={entryProjection.remainingToFirst} onFill={handlePushToFirstFill} />
               ) : entryProjection?.kind === "wouldWinNow" ? (

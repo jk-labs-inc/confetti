@@ -101,9 +101,9 @@ export const useVoteProjections = ({
       })
     : 0;
 
+  // push-to-1st needs only standings and a price — rewards-gating it would hide the preset on non-rewards contests
   const price = parseFloat(pricePerVoteNative);
-  const standing =
-    projectionsAvailable && proposalId && price > 0 ? getEntryStanding(initialMappedProposalIds, proposalId) : null;
+  const standing = proposalId && price > 0 ? getEntryStanding(initialMappedProposalIds, proposalId) : null;
 
   let entryProjection: EntryProjection | null = null;
   let pushToFirstFillAmount: string | null = null;
@@ -117,7 +117,7 @@ export const useVoteProjections = ({
         kind: "pushToFirst",
         remainingToFirst: toFixedString(pushToFirstResult.remainingToFirst),
       };
-    } else {
+    } else if (projectionsAvailable) {
       const result = calculateWouldWinNow({
         myExistingVotes,
         entryVotes: standing.entryVotes,

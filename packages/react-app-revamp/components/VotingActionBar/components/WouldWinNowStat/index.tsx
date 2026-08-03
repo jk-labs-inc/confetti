@@ -13,14 +13,9 @@ const WouldWinNowStat: FC<WouldWinNowStatProps> = ({ amount, isBelowSpend }) => 
   const { formatted } = useNativeDisplayPrice(amount);
 
   return (
-    <div className="flex min-w-0 flex-[1.25] flex-col items-center leading-tight">
-      <span className="flex w-full min-w-0 items-center justify-center gap-0.5 text-neutral-9">
-        <FitText
-          text="would win now"
-          min={8}
-          max={11}
-          className="block min-w-0 overflow-hidden whitespace-nowrap text-center"
-        />
+    <div className="flex min-w-0 flex-[1.4] flex-col items-center leading-tight">
+      <span className="flex items-center gap-0.5 whitespace-nowrap text-[11px] text-neutral-9">
+        would win now
         <WouldWinNowTooltip isBelowSpend={isBelowSpend} iconClassName="w-3 h-3" />
       </span>
       <FitText
