@@ -40,9 +40,7 @@ const VotingActionBar = () => {
   const pickedProposal = useCastVotesStore(useShallow(state => state.pickedProposal));
   const { isConnected } = useWallet();
   const { openModal } = useModal();
-  const { inputValue, setInputValue } = useVotingStore(
-    useShallow(state => ({ inputValue: state.inputValue, setInputValue: state.setInputValue })),
-  );
+  const inputValue = useVotingStore(state => state.inputValue);
 
   const { castVotes, isLoading: isCastLoading } = useCastVotes({ charge, votesClose });
   const { currentPriceNative } = usePriceCurveData();
@@ -131,9 +129,17 @@ const VotingActionBar = () => {
 
   const votesText = formatVoteCount(isGhost ? 1 : totalVotes);
 
+  const { displayValue: pushToFirstFillDisplay } = useDisplayPrice(
+    projections.pushToFirstFillAmount ?? "0",
+    contestConfig.chainNativeCurrencySymbol,
+    undefined,
+    undefined,
+    { ceilingPrecision: true },
+  );
+
   const handlePushToFirstFill = () => {
     if (!projections.pushToFirstFillAmount) return;
-    setInputValue(projections.pushToFirstFillAmount, maxBalance);
+    handleDisplayChange(pushToFirstFillDisplay.replace(/,/g, ""));
   };
 
   if (!slot) return null;

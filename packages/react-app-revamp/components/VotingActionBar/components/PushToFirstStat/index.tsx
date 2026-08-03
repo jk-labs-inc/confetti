@@ -8,7 +8,7 @@ interface PushToFirstStatProps {
 }
 
 const PushToFirstStat: FC<PushToFirstStatProps> = ({ remainingToFirst, onFill }) => {
-  const { formatted } = useNativeDisplayPrice(remainingToFirst);
+  const { formatted } = useNativeDisplayPrice(remainingToFirst, { ceilingPrecision: true });
 
   return (
     <button

@@ -9,7 +9,7 @@ interface PushToFirstBlockProps {
 }
 
 const PushToFirstBlock: FC<PushToFirstBlockProps> = ({ remainingToFirst }) => {
-  const { formatted, isLoading } = useNativeDisplayPrice(remainingToFirst);
+  const { formatted, isLoading } = useNativeDisplayPrice(remainingToFirst, { ceilingPrecision: true });
 
   return (
     <div className="flex flex-col">

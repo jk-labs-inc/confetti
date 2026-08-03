@@ -64,11 +64,13 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
   );
   const formattedPricePerVote =
     pricePerVoteSymbol === "$" ? `$${pricePerVoteDisplay}` : `${pricePerVoteDisplay} ${pricePerVoteSymbol}`;
-  const { inputValue, setSliderValue, setInputValue } = useVotingStore(
+  const { displayValue: pushToFirstDisplay } = useDisplayPrice(pushToFirstAmount ?? "0", symbol, undefined, undefined, {
+    ceilingPrecision: true,
+  });
+  const { inputValue, setSliderValue } = useVotingStore(
     useShallow(state => ({
       inputValue: state.inputValue,
       setSliderValue: state.setSliderValue,
-      setInputValue: state.setInputValue,
     })),
   );
   const totalVotes = useVotesFromInput({ inputValue, costToVote });
@@ -81,9 +83,10 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
     }
   };
 
+  // Fill as-if-typed so the input shows exactly the amount the push-to-1st block displays.
   const handlePushToFirst = () => {
     if (pushToFirstAmount) {
-      setInputValue(pushToFirstAmount, maxBalance);
+      handleDisplayChange(pushToFirstDisplay.replace(/,/g, ""));
     }
   };
 
@@ -113,7 +116,8 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
   const hasInput = displayValue.length > 0;
   const votesText = formatVoteCount(hasInput ? totalVotes : 1);
 
-  const showPresets = hasBalance && isConnected;
+  const showPercentPresets = hasBalance && isConnected;
+  const showPushToFirst = Boolean(pushToFirstAmount);
 
   return (
     <div className="flex flex-col gap-2">
@@ -163,9 +167,9 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
         </div>
 
         <div className="flex flex-col items-end gap-3 ml-auto shrink-0">
-          {showPresets && (
+          {(showPushToFirst || showPercentPresets) && (
             <div className="flex items-center gap-1">
-              {pushToFirstAmount && (
+              {showPushToFirst && (
                 <motion.button
                   onClick={e => {
                     e.stopPropagation();
@@ -178,30 +182,31 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
                   <span className="text-[12px] whitespace-nowrap">push to 1st</span>
                 </motion.button>
               )}
-              {[25, 50, 75, 100].map(percent => {
-                const isMax = percent === 100;
-                return (
-                  <motion.button
-                    key={percent}
-                    onClick={e => {
-                      e.stopPropagation();
-                      handlePreset(percent);
-                    }}
-                    className={`w-8 h-4 px-2 rounded-[40px] border border-[#84679B] font-bold flex items-center justify-center hover:bg-positive-11/10 transition-colors duration-150 ${isMax ? "text-positive-11" : "text-neutral-9"}`}
-                    style={{ willChange: "transform" }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    {isMax ? (
-                      <span className="text-[12px]">max</span>
-                    ) : (
-                      <>
-                        <span className="text-[12px]">{percent}</span>
-                        <span className="text-[10px]">%</span>
-                      </>
-                    )}
-                  </motion.button>
-                );
-              })}
+              {showPercentPresets &&
+                [25, 50, 75, 100].map(percent => {
+                  const isMax = percent === 100;
+                  return (
+                    <motion.button
+                      key={percent}
+                      onClick={e => {
+                        e.stopPropagation();
+                        handlePreset(percent);
+                      }}
+                      className={`w-8 h-4 px-2 rounded-[40px] border border-[#84679B] font-bold flex items-center justify-center hover:bg-positive-11/10 transition-colors duration-150 ${isMax ? "text-positive-11" : "text-neutral-9"}`}
+                      style={{ willChange: "transform" }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      {isMax ? (
+                        <span className="text-[12px]">max</span>
+                      ) : (
+                        <>
+                          <span className="text-[12px]">{percent}</span>
+                          <span className="text-[10px]">%</span>
+                        </>
+                      )}
+                    </motion.button>
+                  );
+                })}
             </div>
           )}
           <span className={`text-[16px] text-neutral-9 font-bold ${hasInput ? "" : "invisible"}`}>{votesText}</span>
