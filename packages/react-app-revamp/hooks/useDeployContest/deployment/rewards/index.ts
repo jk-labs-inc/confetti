@@ -2,6 +2,7 @@ import { DeploymentPhase, TransactionState } from "../../types";
 import { attachRewardsModule, deployRewardsModule, fundPoolTokens } from "./operations";
 import { RewardPoolData } from "../../slices/contestCreateRewards";
 import { FundPoolToken } from "@components/_pages/Create/sections/Rewards/components/FundPool/store";
+import { WALLET_RPC_SYNC_CHAIN_IDS, WALLET_RPC_SYNC_DELAY_MS } from "./constants";
 
 interface DeployRewardsParams {
   contestAddress: string;
@@ -43,6 +44,10 @@ export const deployRewardsPool = async (params: DeployRewardsParams): Promise<vo
   });
 
   onRewardsModuleAddress(rewardsModuleAddress);
+
+  if (WALLET_RPC_SYNC_CHAIN_IDS.has(chainId)) {
+    await new Promise(resolve => setTimeout(resolve, WALLET_RPC_SYNC_DELAY_MS));
+  }
 
   onPhaseChange("attaching-rewards");
 

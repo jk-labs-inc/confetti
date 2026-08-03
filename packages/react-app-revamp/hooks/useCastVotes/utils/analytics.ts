@@ -72,8 +72,7 @@ export const updateRewardAnalyticsIfNeeded = async (
 
 export const performAnalytics = async (params: CombinedAnalyticsParams, refetchTotalRewards: () => void) => {
   try {
-    await addUserActionAnalytics(params);
-    await updateRewardAnalyticsIfNeeded(params, refetchTotalRewards);
+    await Promise.all([addUserActionAnalytics(params), updateRewardAnalyticsIfNeeded(params, refetchTotalRewards)]);
   } catch (error) {
     console.error("Error in performAnalytics:", error);
   }

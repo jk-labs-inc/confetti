@@ -21,6 +21,17 @@ export function formatNumberWithCommas(num: number): string {
 }
 
 /**
+ * formats a whole vote count with its unit, e.g. "1,238 votes" / "1 vote";
+ * counts from 10k abbreviate ("1.32b votes") so the tight vote inputs don't overflow
+ * @param totalVotes - the vote count
+ * @return the formatted count with a pluralized unit
+ */
+export function formatVoteCount(totalVotes: number): string {
+  const { value, symbol } = getNumberWithSymbol(totalVotes);
+  return `${value}${symbol} ${totalVotes === 1 ? "vote" : "votes"}`;
+}
+
+/**
  * breaks down a number into a value and symbol for abbreviation
  * @param num - the number to format
  * @return an object with the formatted value and symbol

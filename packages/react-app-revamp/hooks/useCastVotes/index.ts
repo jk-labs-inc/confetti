@@ -1,5 +1,7 @@
 import { toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
 import { LoadingToastMessageType } from "@components/UI/Toast/components/Loading";
+import { txOverlay } from "@components/UI/TransactionOverlay/store";
+import { TransactionOverlayFlow, TransactionOverlayPhase } from "@components/UI/TransactionOverlay/types";
 import { useVotingStore } from "@components/Voting/store";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
@@ -24,6 +26,7 @@ import { useVoteBalance } from "@hooks/useVoteBalance";
 import { useWallet } from "@hooks/useWallet";
 import { useQueryClient } from "@tanstack/react-query";
 import { readContract, simulateContract, waitForTransactionReceipt, writeContract } from "@wagmi/core";
+import { isMobileViewport } from "@helpers/isMobileViewport";
 import moment from "moment";
 import { useState } from "react";
 import { checkAndMarkPriceChangeError } from "utils/error";
@@ -104,10 +107,16 @@ export function useCastVotes({ charge, votesClose }: UseCastVotesProps) {
   });
 
   async function castVotes(amountOfVotes: number) {
-    toastLoading({
-      message: "votes are deploying...",
-      additionalMessageType: LoadingToastMessageType.KEEP_BROWSER_OPEN,
-    });
+    const isMobile = isMobileViewport();
+
+    if (isMobile) {
+      txOverlay.start(TransactionOverlayFlow.VOTE);
+    } else {
+      toastLoading({
+        message: "votes are deploying...",
+        additionalMessageType: LoadingToastMessageType.KEEP_BROWSER_OPEN,
+      });
+    }
     setIsLoading(true);
     setIsSuccess(false);
     setError("");
@@ -132,11 +141,13 @@ export function useCastVotes({ charge, votesClose }: UseCastVotesProps) {
       });
 
       const hash = await writeContract(getWagmiConfig(), request);
+      txOverlay.setPhase(TransactionOverlayPhase.MINING);
       const receipt = await waitForTransactionReceipt(getWagmiConfig(), {
         chainId: contestConfig.chainId,
         hash,
         confirmations: 2,
       });
+      txOverlay.setPhase(TransactionOverlayPhase.INDEXING);
 
       const analyticsParams: CombinedAnalyticsParams = {
         contestAddress: contestConfig.address,
@@ -152,28 +163,35 @@ export function useCastVotes({ charge, votesClose }: UseCastVotesProps) {
         operation: "deposit",
         token_address: null,
       };
-      void performAnalytics(analyticsParams, refetchTotalRewards);
+      const voteCountPromise = readContract(getWagmiConfig(), {
+        address: contestConfig.address as `0x${string}`,
+        abi: DeployedContestContract.abi,
+        functionName: "proposalVotes",
+        args: [pickedProposal],
+      }).catch((voteReadError: unknown) => {
+        console.error("Error reading proposal votes after casting:", voteReadError);
+        return null;
+      });
+
+      await performAnalytics(analyticsParams, refetchTotalRewards);
 
       setTransactionData({
         hash: receipt.transactionHash,
       });
 
       try {
-        const voteCount = (await readContract(getWagmiConfig(), {
-          address: contestConfig.address as `0x${string}`,
-          abi: DeployedContestContract.abi,
-          functionName: "proposalVotes",
-          args: [pickedProposal],
-        })) as bigint;
+        const voteCount = (await voteCountPromise) as bigint | null;
 
-        const votes = Number(formatEther(voteCount));
-        const existingProposal = listProposalsData.find(proposal => proposal.id === pickedProposal);
+        if (voteCount !== null) {
+          const votes = Number(formatEther(voteCount));
+          const existingProposal = listProposalsData.find(proposal => proposal.id === pickedProposal);
 
-        if (existingProposal) {
-          updateProposal({
-            ...existingProposal,
-            netVotes: votes,
-          });
+          if (existingProposal) {
+            updateProposal({
+              ...existingProposal,
+              netVotes: votes,
+            });
+          }
         }
       } catch (voteUpdateError) {
         console.error("Error updating proposal votes after casting:", voteUpdateError);
@@ -192,14 +210,22 @@ export function useCastVotes({ charge, votesClose }: UseCastVotesProps) {
         isCreatorSplitEnabled: creatorSplitEnabled === 1,
       });
 
-      toastSuccess({
-        message: "your votes have been deployed successfully",
+      const successMeta = {
         id: "vote_submitted",
         dataAttributes: {
           "data-vote_revenue_generated": jkLabsRevenueUsd.toFixed(6),
           "data-user_address": userAddress ?? "",
         },
-      });
+      };
+
+      if (isMobile) {
+        txOverlay.success(successMeta);
+      } else {
+        toastSuccess({
+          message: "your votes have been deployed successfully",
+          ...successMeta,
+        });
+      }
 
       refetchTotalVotesCastOnContest();
       refetchCurrentUserVotesOnProposal();

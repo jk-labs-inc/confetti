@@ -1,5 +1,7 @@
 import { toastLoading, toastSuccess } from "@components/UI/Toast";
 import { LoadingToastMessageType } from "@components/UI/Toast/components/Loading";
+import { txOverlay } from "@components/UI/TransactionOverlay/store";
+import { TransactionOverlayFlow, TransactionOverlayPhase } from "@components/UI/TransactionOverlay/types";
 import { TransactionResponse } from "@ethersproject/abstract-provider";
 import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import { getProposalId } from "@helpers/getProposalId";
@@ -17,8 +19,8 @@ import { simulateContract, waitForTransactionReceipt, writeContract } from "@wag
 import { compareVersions } from "compare-versions";
 import { safeCompareVersions } from "@helpers/versions";
 import { CONTEST_ENTRY_TYPE_VERSION } from "constants/versions";
+import { isMobileViewport } from "@helpers/isMobileViewport";
 import { addUserActionForAnalytics } from "lib/analytics/participants";
-import { useMediaQuery } from "react-responsive";
 import { useShallow } from "zustand/shallow";
 import { useSubmitProposalStore } from "./store";
 import { safeMetadata, targetMetadata } from "./constants";
@@ -35,8 +37,6 @@ interface UserAnalyticsParams {
 export function useSubmitProposal() {
   const { userAddress, chain } = useWallet();
   const { contestConfig } = useContestConfigStore(state => state);
-  const isMobile = useMediaQuery({ maxWidth: "768px" });
-  const showToast = !isMobile;
   const charge = useContestStore(useShallow(state => state.charge));
   const { error: errorMessage, handleError } = useError();
   const { fetchSingleProposal } = useProposal();
@@ -55,11 +55,16 @@ export function useSubmitProposal() {
   };
 
   async function sendProposal(proposalContent: string): Promise<{ tx: TransactionResponse; proposalId: string }> {
-    if (showToast)
+    const showToast = !isMobileViewport();
+
+    if (showToast) {
       toastLoading({
         message: "proposal is deploying...",
         additionalMessageType: LoadingToastMessageType.KEEP_BROWSER_OPEN,
       });
+    } else {
+      txOverlay.start(TransactionOverlayFlow.ENTRY);
+    }
     setIsLoading(true);
     setIsSuccess(false);
     setError("");
@@ -95,12 +100,14 @@ export function useSubmitProposal() {
           args: [proposalCore],
         });
         hash = await writeContract(getWagmiConfig(), request);
+        txOverlay.setPhase(TransactionOverlayPhase.MINING);
 
         const receipt = await waitForTransactionReceipt(getWagmiConfig(), {
           chainId: contestConfig.chainId,
           hash: hash,
           confirmations: 2,
         });
+        txOverlay.setPhase(TransactionOverlayPhase.INDEXING);
 
         const txSendProposal = {
           hash: receipt.transactionHash,
@@ -130,10 +137,13 @@ export function useSubmitProposal() {
 
         setIsLoading(false);
         setIsSuccess(true);
-        if (showToast)
+        if (showToast) {
           toastSuccess({
             message: "proposal submitted successfully!",
           });
+        } else {
+          txOverlay.success();
+        }
         setSubmissionsCount(submissionsCount + 1);
 
         if (metadataFields.length > 0) {

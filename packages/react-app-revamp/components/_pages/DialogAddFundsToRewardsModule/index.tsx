@@ -1,6 +1,8 @@
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import DialogModalV3 from "@components/UI/DialogModalV3";
 import MultiStepToast, { ToastMessage } from "@components/UI/MultiStepToast";
+import { txOverlay } from "@components/UI/TransactionOverlay/store";
+import { TransactionOverlayFlow } from "@components/UI/TransactionOverlay/types";
 import { chains, ChainWithIcon } from "@config/wagmi";
 import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import { extractPathSegments } from "@helpers/extractPath";
@@ -9,6 +11,7 @@ import { useFundRewardsStore } from "@hooks/useFundRewards/store";
 import useRewardsModule from "@hooks/useRewards";
 import { useWallet } from "@hooks/useWallet";
 import { switchChain } from "@wagmi/core";
+import { isMobileViewport } from "@helpers/isMobileViewport";
 import { usePathname } from "next/navigation";
 import { useRef } from "react";
 import { toast } from "react-toastify";
@@ -60,8 +63,28 @@ export const DialogAddFundsToRewardsModule = (props: DialogAddFundsToRewardsModu
       return;
     }
 
-    const statusMessages: ToastMessage[] = populatedRewards.map((reward, index) => ({
-      message: `funding reward ${index + 1}/${populatedRewards.length}...`,
+    const stepLabels = populatedRewards.map((_, index) => `funding reward ${index + 1}/${populatedRewards.length}`);
+
+    if (isMobileViewport()) {
+      txOverlay.start(TransactionOverlayFlow.REWARDS, { steps: stepLabels });
+
+      for (let i = 0; i < promises.length; i++) {
+        txOverlay.setActiveStep(i);
+        try {
+          await promises[i]();
+        } catch {
+          // the hook already routed the error to the overlay (or dismissed it on user rejection)
+          return;
+        }
+      }
+
+      txOverlay.success();
+      props.setIsOpen(false);
+      return;
+    }
+
+    const statusMessages: ToastMessage[] = stepLabels.map((label, index) => ({
+      message: `${label}...`,
       successMessage: `funded reward ${index + 1}!`,
       status: "pending" as "pending",
     }));

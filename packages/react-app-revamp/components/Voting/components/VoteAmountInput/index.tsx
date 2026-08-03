@@ -1,7 +1,7 @@
 import { useFitTextToBox } from "@components/EntryCarousel/useFitTextToBox";
 import { VotingWidgetStyle } from "@components/Voting";
 import { useVotingStore } from "@components/Voting/store";
-import { formatNumberWithCommas } from "@helpers/formatNumber";
+import { formatVoteCount } from "@helpers/formatNumber";
 import useDisplayPrice from "@hooks/useCurrency/useDisplayPrice";
 import { useVotesFromInput } from "@hooks/useVotesFromInput";
 import { FC, RefObject } from "react";
@@ -64,11 +64,11 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
   );
   const formattedPricePerVote =
     pricePerVoteSymbol === "$" ? `$${pricePerVoteDisplay}` : `${pricePerVoteDisplay} ${pricePerVoteSymbol}`;
-  const { inputValue, setSliderValue, setInputValue } = useVotingStore(
+  const { inputValue, setInputValue, setSliderValue } = useVotingStore(
     useShallow(state => ({
       inputValue: state.inputValue,
-      setSliderValue: state.setSliderValue,
       setInputValue: state.setInputValue,
+      setSliderValue: state.setSliderValue,
     })),
   );
   const totalVotes = useVotesFromInput({ inputValue, costToVote });
@@ -81,6 +81,7 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
     }
   };
 
+  // Fill the raw native amount, not the display string — display can be abbreviated ("1.5m") or rate-rounded.
   const handlePushToFirst = () => {
     if (pushToFirstAmount) {
       setInputValue(pushToFirstAmount, maxBalance);
@@ -111,9 +112,10 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
   // The placeholder is only sample text, so no vote count until something is actually typed;
   // "1 vote" stays mounted invisibly as a spacer so the row height doesn't jump on first input.
   const hasInput = displayValue.length > 0;
-  const votesText = hasInput ? `${formatNumberWithCommas(totalVotes)} ${totalVotes === 1 ? "vote" : "votes"}` : "1 vote";
+  const votesText = formatVoteCount(hasInput ? totalVotes : 1);
 
-  const showPresets = hasBalance && isConnected;
+  const showPercentPresets = hasBalance && isConnected;
+  const showPushToFirst = Boolean(pushToFirstAmount);
 
   return (
     <div className="flex flex-col gap-2">
@@ -163,9 +165,9 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
         </div>
 
         <div className="flex flex-col items-end gap-3 ml-auto shrink-0">
-          {showPresets && (
+          {(showPushToFirst || showPercentPresets) && (
             <div className="flex items-center gap-1">
-              {pushToFirstAmount && (
+              {showPushToFirst && (
                 <motion.button
                   onClick={e => {
                     e.stopPropagation();
@@ -178,30 +180,31 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
                   <span className="text-[12px] whitespace-nowrap">push to 1st</span>
                 </motion.button>
               )}
-              {[25, 50, 75, 100].map(percent => {
-                const isMax = percent === 100;
-                return (
-                  <motion.button
-                    key={percent}
-                    onClick={e => {
-                      e.stopPropagation();
-                      handlePreset(percent);
-                    }}
-                    className={`w-8 h-4 px-2 rounded-[40px] border border-[#84679B] font-bold flex items-center justify-center hover:bg-positive-11/10 transition-colors duration-150 ${isMax ? "text-positive-11" : "text-neutral-9"}`}
-                    style={{ willChange: "transform" }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    {isMax ? (
-                      <span className="text-[12px]">max</span>
-                    ) : (
-                      <>
-                        <span className="text-[12px]">{percent}</span>
-                        <span className="text-[10px]">%</span>
-                      </>
-                    )}
-                  </motion.button>
-                );
-              })}
+              {showPercentPresets &&
+                [25, 50, 75, 100].map(percent => {
+                  const isMax = percent === 100;
+                  return (
+                    <motion.button
+                      key={percent}
+                      onClick={e => {
+                        e.stopPropagation();
+                        handlePreset(percent);
+                      }}
+                      className={`w-8 h-4 px-2 rounded-[40px] border border-[#84679B] font-bold flex items-center justify-center hover:bg-positive-11/10 transition-colors duration-150 ${isMax ? "text-positive-11" : "text-neutral-9"}`}
+                      style={{ willChange: "transform" }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      {isMax ? (
+                        <span className="text-[12px]">max</span>
+                      ) : (
+                        <>
+                          <span className="text-[12px]">{percent}</span>
+                          <span className="text-[10px]">%</span>
+                        </>
+                      )}
+                    </motion.button>
+                  );
+                })}
             </div>
           )}
           <span className={`text-[16px] text-neutral-9 font-bold ${hasInput ? "" : "invisible"}`}>{votesText}</span>

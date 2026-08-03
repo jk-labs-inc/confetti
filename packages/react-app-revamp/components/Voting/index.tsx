@@ -1,7 +1,8 @@
+import { useCastVotesStore } from "@hooks/useCastVotes/store";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import usePriceCurveData from "@hooks/usePriceCurveData";
 import { useVoteBalance } from "@hooks/useVoteBalance";
-import { useVotesFromInput } from "@hooks/useVotesFromInput";
+import { useVoteProjections } from "@hooks/useVoteProjections";
 import { useWallet } from "@hooks/useWallet";
 import { FC, RefObject, useEffect, useRef, useCallback } from "react";
 import { useMediaQuery } from "react-responsive";
@@ -11,7 +12,6 @@ import VotingWidgetSignup from "./components/Signup";
 import VoteAmountInput from "./components/VoteAmountInput";
 import VoteButton from "./components/VoteButton";
 import VoteInfoBlocks from "./components/VoteInfoBlocks";
-import { usePushToFirst } from "./hooks/usePushToFirst";
 import { useVoteExecution } from "./hooks/useVoteExecution";
 import { useVotingStore } from "./store";
 
@@ -22,7 +22,6 @@ export enum VotingWidgetStyle {
 
 interface VotingWidgetProps {
   costToVote: string;
-  costToVoteRaw: bigint;
   isLoading: boolean;
   isVotingClosed: boolean;
   isContestCanceled: boolean;
@@ -34,7 +33,6 @@ interface VotingWidgetProps {
 
 const VotingWidget: FC<VotingWidgetProps> = ({
   costToVote,
-  costToVoteRaw,
   isLoading,
   isVotingClosed,
   isContestCanceled,
@@ -73,7 +71,13 @@ const VotingWidget: FC<VotingWidgetProps> = ({
     isVotingClosed,
     onVote,
   });
-  const pushToFirstAmount = usePushToFirst({ costToVote: effectiveCostToVote });
+  const pickedProposal = useCastVotesStore(useShallow(state => state.pickedProposal));
+  const projections = useVoteProjections({
+    proposalId: pickedProposal,
+    spendNative: inputValue,
+    pricePerVoteNative: effectiveCostToVote,
+    submissionsCount,
+  });
 
   useEffect(() => {
     if (isMobile) return;
@@ -84,7 +88,7 @@ const VotingWidget: FC<VotingWidgetProps> = ({
   }, [isMobile]);
 
   const hasBalance = parseFloat(balance?.formatted || "0") > 0;
-  const totalVotes = useVotesFromInput({ inputValue, costToVote: effectiveCostToVote });
+  const totalVotes = projections.votes;
   const isZeroValue = !inputValue || parseFloat(inputValue) === 0;
   const isBelowMinimum = isConnected && !isZeroValue && totalVotes === 0;
   const voteDisabled = isBalanceLoading || isLoading || isInvalid || isZeroValue || isBelowMinimum;
@@ -106,7 +110,7 @@ const VotingWidget: FC<VotingWidgetProps> = ({
             costToVote={effectiveCostToVote}
             isConnected={isConnected}
             isBelowMinimum={isBelowMinimum}
-            pushToFirstAmount={pushToFirstAmount}
+            pushToFirstAmount={projections.pushToFirstFillAmount}
             style={style}
             autoFocus={!isMobile}
             inputRef={inputRef as RefObject<HTMLInputElement>}
@@ -123,12 +127,7 @@ const VotingWidget: FC<VotingWidgetProps> = ({
       </div>
 
       <div className="flex flex-col gap-4">
-        <VotingWidgetRewardsProjection
-          currentPricePerVote={costToVoteRaw}
-          inputValue={inputValue}
-          submissionsCount={submissionsCount}
-          placeholderSpend={effectiveCostToVote}
-        />
+        <VotingWidgetRewardsProjection projections={projections} />
         <VotingWidgetSignup />
         <VoteButton
           isDisabled={voteDisabled}
