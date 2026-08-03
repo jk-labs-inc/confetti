@@ -12,9 +12,11 @@ import {
   writeContract,
 } from "@wagmi/core";
 import { updateRewardAnalytics } from "lib/analytics/rewards";
+import { didUserReject } from "utils/error";
 import { erc20Abi, parseUnits } from "viem";
 import { RewardPoolData } from "../../slices/contestCreateRewards";
 import { TransactionStatus } from "../../types";
+import { ATTACH_RETRY_DELAY_MS, MAX_ATTACH_ATTEMPTS } from "./constants";
 
 interface DeployRewardsModuleParams {
   contestAddress: string;
@@ -85,13 +87,31 @@ export const attachRewardsModule = async (params: AttachRewardsModuleParams): Pr
       abi: DeployedContestContract.abi,
     };
 
-    const { request } = await simulateContract(getWagmiConfig(), {
-      ...contractConfig,
-      functionName: "setOfficialRewardsModule",
-      args: [rewardsModuleAddress as `0x${string}`],
-    });
+    let hash: `0x${string}` | undefined;
 
-    const hash = await writeContract(getWagmiConfig(), request);
+    for (let attempt = 1; attempt <= MAX_ATTACH_ATTEMPTS; attempt++) {
+      try {
+        const { request } = await simulateContract(getWagmiConfig(), {
+          ...contractConfig,
+          functionName: "setOfficialRewardsModule",
+          args: [rewardsModuleAddress as `0x${string}`],
+        });
+
+        hash = await writeContract(getWagmiConfig(), request);
+        break;
+      } catch (error) {
+        if (didUserReject(error) || attempt === MAX_ATTACH_ATTEMPTS) {
+          throw error;
+        }
+
+        await new Promise(resolve => setTimeout(resolve, ATTACH_RETRY_DELAY_MS * attempt));
+      }
+    }
+
+    if (!hash) {
+      throw new Error("Failed to submit attach rewards module transaction");
+    }
+
     await waitForTransactionReceipt(getWagmiConfig(), { hash, confirmations: 2, chainId });
 
     onStatusUpdate("success", hash);
