@@ -19,7 +19,7 @@
     "@floating-ui/react": "0.27.20",
     "@getbrevo/brevo": "6.0.2",
     "@getpara/evm-wallet-connectors": "3.12.0",
-    "@getpara/react-sdk-lite": "3.11.0",
+    "@getpara/react-sdk-lite": "3.12.0",
     "@headlessui/react": "2.2.10",
     "@heroicons/react": "2.2.0",
     "@lifi/widget": "4.5.0",
