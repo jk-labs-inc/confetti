@@ -58,7 +58,7 @@
     "compare-versions": "6.1.1",
     "country-flag-emoji-polyfill": "0.1.10",
     "date-fns": "4.4.0",
-    "eslint": "10.8.0",
+    "eslint": "10.8.1",
     "eslint-config-next": "15.5.23",
     "fuse.js": "7.5.0",
     "html2canvas": "1.4.1",
