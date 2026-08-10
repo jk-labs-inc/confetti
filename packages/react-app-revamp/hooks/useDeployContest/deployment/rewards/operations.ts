@@ -16,7 +16,7 @@ import { didUserReject } from "utils/error";
 import { erc20Abi, parseUnits } from "viem";
 import { RewardPoolData } from "../../slices/contestCreateRewards";
 import { TransactionStatus } from "../../types";
-import { ATTACH_RETRY_DELAY_MS, MAX_ATTACH_ATTEMPTS } from "./constants";
+import { ATTACH_RETRY_DELAY_MS, DEPLOY_RETRY_DELAY_MS, MAX_ATTACH_ATTEMPTS, MAX_DEPLOY_ATTEMPTS } from "./constants";
 
 interface DeployRewardsModuleParams {
   contestAddress: string;
@@ -48,13 +48,30 @@ export const deployRewardsModule = async (params: DeployRewardsModuleParams): Pr
     onStatusUpdate("loading");
     const baseParams = [rewardPoolData.rankings, rewardPoolData.shareAllocations, contestAddress];
 
-    const contractRewardsModuleHash = await deployContract(getWagmiConfig(), {
-      abi: VotingModuleContract.abi,
-      bytecode: VotingModuleContract.bytecode.object as `0x${string}`,
-      args: [...baseParams],
-      account: userAddress,
-      chainId,
-    });
+    let contractRewardsModuleHash: `0x${string}` | undefined;
+
+    for (let attempt = 1; attempt <= MAX_DEPLOY_ATTEMPTS; attempt++) {
+      try {
+        contractRewardsModuleHash = await deployContract(getWagmiConfig(), {
+          abi: VotingModuleContract.abi,
+          bytecode: VotingModuleContract.bytecode.object as `0x${string}`,
+          args: [...baseParams],
+          account: userAddress,
+          chainId,
+        });
+        break;
+      } catch (error) {
+        if (didUserReject(error) || attempt === MAX_DEPLOY_ATTEMPTS) {
+          throw error;
+        }
+
+        await new Promise(resolve => setTimeout(resolve, DEPLOY_RETRY_DELAY_MS * attempt));
+      }
+    }
+
+    if (!contractRewardsModuleHash) {
+      throw new Error("Failed to submit rewards module deployment transaction");
+    }
 
     const receipt = await waitForTransactionReceipt(getWagmiConfig(), {
       hash: contractRewardsModuleHash,

@@ -33,6 +33,10 @@ export const deployRewardsPool = async (params: DeployRewardsParams): Promise<vo
 
   onPhaseChange("deploying-rewards");
 
+  if (WALLET_RPC_SYNC_CHAIN_IDS.has(chainId)) {
+    await new Promise(resolve => setTimeout(resolve, WALLET_RPC_SYNC_DELAY_MS));
+  }
+
   const rewardsModuleAddress = await deployRewardsModule({
     contestAddress,
     chainId,
