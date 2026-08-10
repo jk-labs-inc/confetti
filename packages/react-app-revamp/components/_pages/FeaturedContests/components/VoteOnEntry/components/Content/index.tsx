@@ -4,6 +4,8 @@ import VoteFlowShell from "@components/Voting/VoteFlow/components/Shell";
 import { useCastVotesStore } from "@hooks/useCastVotes/store";
 import useCharge from "@hooks/useCharge";
 import useContestConfigStore from "@hooks/useContestConfig/store";
+import { ContestEntryVotes } from "@hooks/useContestEntriesVotes";
+import { useProposalStore } from "@hooks/useProposal/store";
 import { FC, useEffect } from "react";
 import Skeleton from "react-loading-skeleton";
 import { useShallow } from "zustand/shallow";
@@ -11,6 +13,7 @@ import { useShallow } from "zustand/shallow";
 interface VoteOnEntryContentProps {
   proposalId: string;
   entryPreview: EntryPreviewHeaderProps;
+  entryVotes?: ContestEntryVotes[];
   submissionsCount: number;
   votesClose: Date;
   isCanceled: boolean;
@@ -22,6 +25,7 @@ interface VoteOnEntryContentProps {
 const VoteOnEntryContent: FC<VoteOnEntryContentProps> = ({
   proposalId,
   entryPreview,
+  entryVotes,
   submissionsCount,
   votesClose,
   isCanceled,
@@ -31,6 +35,7 @@ const VoteOnEntryContent: FC<VoteOnEntryContentProps> = ({
 }) => {
   const { contestConfig } = useContestConfigStore(useShallow(state => state));
   const setPickedProposal = useCastVotesStore(state => state.setPickedProposal);
+  const setInitialMappedProposalIds = useProposalStore(state => state.setInitialMappedProposalIds);
   const { charge, isLoading: isChargeLoading } = useCharge({
     address: contestConfig.address,
     abi: contestConfig.abi,
@@ -42,6 +47,11 @@ const VoteOnEntryContent: FC<VoteOnEntryContentProps> = ({
   useEffect(() => {
     setPickedProposal(isOpen ? proposalId : null);
   }, [isOpen, proposalId, setPickedProposal]);
+
+  useEffect(() => {
+    if (!entryVotes) return;
+    setInitialMappedProposalIds(entryVotes.map(({ id, votes }) => ({ id, votes: votes ?? 0 })));
+  }, [entryVotes, setInitialMappedProposalIds]);
 
   const isVotingClosed = new Date() >= votesClose;
 
