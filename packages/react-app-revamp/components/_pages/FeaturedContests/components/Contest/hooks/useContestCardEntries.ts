@@ -68,6 +68,7 @@ export function useContestCardEntries(contest: ProcessedContest, cardState: Card
 
   return {
     entries,
+    entryVotes: votedEntries,
     totalEntries: sortedEntries.length,
     hasVoteData,
     hasEntryImages,

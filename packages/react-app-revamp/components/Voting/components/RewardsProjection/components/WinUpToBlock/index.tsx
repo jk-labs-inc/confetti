@@ -7,13 +7,14 @@ import VotingWidgetRewardsProjectionTooltip from "../Tooltip";
 
 interface WinUpToBlockProps {
   amount: string;
+  centered?: boolean;
 }
 
-const WinUpToBlock: FC<WinUpToBlockProps> = ({ amount }) => {
+const WinUpToBlock: FC<WinUpToBlockProps> = ({ amount, centered }) => {
   const { formatted, isLoading } = useNativeDisplayPrice(amount);
 
   return (
-    <div className="ml-auto flex flex-col items-end">
+    <div className={centered ? "mx-auto flex flex-col items-center" : "ml-auto flex flex-col items-end"}>
       <div className="flex items-center gap-2">
         <GradientText textSizeClassName="text-[16px]" isFontSabo={false}>
           win up to

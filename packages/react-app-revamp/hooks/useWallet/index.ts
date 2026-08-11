@@ -24,7 +24,7 @@ interface WalletHookReturn {
  */
 export function useWallet(): WalletHookReturn {
   // Para SDK hooks for wallet state
-  const { connectionType, external, isConnected } = useAccount();
+  const { connectionType, external, isConnected: isAccountConnected } = useAccount();
   const { data: paraWallet } = useParaWallet(); // Only available for embedded wallets
   const { logout: paraLogout } = useLogout();
   const { openModal } = useModal();
@@ -47,6 +47,10 @@ export function useWallet(): WalletHookReturn {
     // Embedded wallet address comes from Para wallet
     return paraWallet?.address as `0x${string}` | undefined;
   }, [connectionType, external?.evm?.address, paraWallet?.address]);
+
+  // wagmi connection with an expired Para session reports
+  // isConnected without a resolvable address — treat that as signed out
+  const isConnected = isAccountConnected && !!userAddress;
 
   // Connection handler - returns existing promise if already connected
   const connect = async () => {

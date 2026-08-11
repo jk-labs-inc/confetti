@@ -1,5 +1,28 @@
-import { FC, useCallback } from "react";
+import { FC, useCallback, useEffect } from "react";
 import { Drawer as VaulDrawer } from "vaul";
+
+const VAUL_EXIT_ANIMATION_MS = 500;
+const BODY_LOCK_CLEANUP_DELAY_MS = VAUL_EXIT_ANIMATION_MS + 200;
+
+// vaul/radix own these body locks while a drawer is open, but can leak them on
+// close (mobile-only freeze); once no drawer is open, none of them may remain.
+const clearLeftoverBodyLock = () => {
+  if (document.querySelector('[data-vaul-drawer][data-state="open"]')) return;
+
+  const { style } = document.body;
+  style.removeProperty("pointer-events");
+
+  if (style.position === "fixed") {
+    const scrollY = -parseInt(style.top, 10) || 0;
+    const scrollX = -parseInt(style.left, 10) || 0;
+    for (const property of ["position", "top", "left", "right", "height"]) {
+      style.removeProperty(property);
+    }
+    window.scrollTo(scrollX, scrollY);
+  }
+
+  document.body.removeAttribute("data-scroll-locked");
+};
 
 interface DrawerProps {
   isOpen: boolean;
@@ -29,6 +52,18 @@ const Drawer: FC<DrawerProps> = ({ isOpen, children, className, onClose, isHandl
     if (shouldPreventDismiss(e)) {
       e.preventDefault();
     }
+  }, []);
+
+  useEffect(() => {
+    if (isOpen) return;
+    const cleanupTimeout = setTimeout(clearLeftoverBodyLock, BODY_LOCK_CLEANUP_DELAY_MS);
+    return () => clearTimeout(cleanupTimeout);
+  }, [isOpen]);
+
+  useEffect(() => {
+    return () => {
+      setTimeout(clearLeftoverBodyLock, BODY_LOCK_CLEANUP_DELAY_MS);
+    };
   }, []);
 
   return (

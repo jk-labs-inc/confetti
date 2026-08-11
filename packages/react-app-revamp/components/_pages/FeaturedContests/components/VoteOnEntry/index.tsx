@@ -3,6 +3,7 @@ import { CastVotesWrapper } from "@hooks/useCastVotes/store";
 import { ContestWrapper } from "@hooks/useContest/store";
 import { ContestCardConfig } from "@hooks/useContestCardConfig";
 import { ContestConfigStoreProvider } from "@hooks/useContestConfig/store";
+import { ContestEntryVotes } from "@hooks/useContestEntriesVotes";
 import { ProposalWrapper } from "@hooks/useProposal/store";
 import { ProcessedContest } from "lib/contests/types";
 import { FC, useEffect, useState } from "react";
@@ -13,6 +14,7 @@ interface FeaturedContestVoteOnEntryProps {
   contest: ProcessedContest;
   config: ContestCardConfig;
   entry: CardEntry;
+  entryVotes?: ContestEntryVotes[];
   submissionsCount: number;
   isOpen: boolean;
   onClose: () => void;
@@ -23,6 +25,7 @@ const FeaturedContestVoteOnEntry: FC<FeaturedContestVoteOnEntryProps> = ({
   contest,
   config,
   entry,
+  entryVotes,
   submissionsCount,
   isOpen,
   onClose,
@@ -53,6 +56,7 @@ const FeaturedContestVoteOnEntry: FC<FeaturedContestVoteOnEntryProps> = ({
             <VoteOnEntryContent
               proposalId={entry.id}
               entryPreview={{ image: entry.image, title: entry.title, contestName: contest.title }}
+              entryVotes={entryVotes}
               submissionsCount={submissionsCount}
               votesClose={new Date(contest.end_at)}
               isCanceled={contest.isCanceled}

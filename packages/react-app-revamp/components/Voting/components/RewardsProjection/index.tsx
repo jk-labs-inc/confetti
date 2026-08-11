@@ -21,7 +21,7 @@ const VotingWidgetRewardsProjection: FC<VotingWidgetRewardsProjectionProps> = ({
       ) : entryProjection?.kind === "wouldWinNow" ? (
         <WouldWinNowBlock amount={entryProjection.amount} isBelowSpend={entryProjection.isBelowSpend} />
       ) : null}
-      <WinUpToBlock amount={winUpTo.amount} />
+      <WinUpToBlock amount={winUpTo.amount} centered={entryProjection === null} />
     </VotingWidgetRewardsProjectionContainer>
   );
 };
