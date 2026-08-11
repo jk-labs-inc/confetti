@@ -32,10 +32,8 @@ const FeaturedContestCard: FC<FeaturedContestCardProps> = ({ contestData, reward
     return () => clearInterval(interval);
   }, [contestData]);
 
-  const { entries, totalEntries, hasEntryImages, isLoading, isExpanded, loadAll, config } = useContestCardEntries(
-    contestData,
-    cardState,
-  );
+  const { entries, entryVotes, totalEntries, hasVoteData, hasEntryImages, isLoading, isExpanded, loadAll, config } =
+    useContestCardEntries(contestData, cardState);
 
   const contestUrl = ROUTE_VIEW_CONTEST_BASE_PATH.replace("[chain]", contestData.network_name ?? "").replace(
     "[address]",
@@ -93,6 +91,7 @@ const FeaturedContestCard: FC<FeaturedContestCardProps> = ({ contestData, reward
           contest={contestData}
           config={config}
           entry={voteEntry}
+          entryVotes={hasVoteData ? entryVotes : undefined}
           submissionsCount={totalEntries}
           isOpen={isVoteOpen}
           onClose={() => setIsVoteOpen(false)}
