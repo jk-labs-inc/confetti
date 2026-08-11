@@ -2704,10 +2704,10 @@
   resolved "https://registry.yarnpkg.com/@floating-ui/utils/-/utils-0.2.12.tgz#afefe785949f16ac4cdd1e695935a321572dd56a"
   integrity sha512-HpCo8tmWzLVad5s2d19EhAz5zqrrQ6s69qd6moPMQvkOuSwDT1YgRfWSVuc4ennqrgv3OHppiOGMQ7oC13yIww==
 
-"@getbrevo/brevo@6.0.2":
-  version "6.0.2"
-  resolved "https://registry.yarnpkg.com/@getbrevo/brevo/-/brevo-6.0.2.tgz#943246578be2780ae5b13f56e6f854b9ef2fca08"
-  integrity sha512-yxyacx4wkuWcCbFDdFE3RxklaHSGXEP3d0gZaxPy+9aBquvl4ksr7IQgbRCcF8crx5aRvpStVBLeh5iCbWHJrg==
+"@getbrevo/brevo@6.0.3":
+  version "6.0.3"
+  resolved "https://registry.yarnpkg.com/@getbrevo/brevo/-/brevo-6.0.3.tgz#efa71d246d6f6eabe6dfb2238ee82fdaa0ecb2e2"
+  integrity sha512-yWBLKoHC8P5HLZ8z6iRuqDYLpCRKPTUETnZOLZzNDWGFYL78y4SHOTxQVrKH5ROX7f4q+SQ19LD3GWtJlIuNXA==
 
 "@getpara/core-sdk@3.13.0":
   version "3.13.0"
