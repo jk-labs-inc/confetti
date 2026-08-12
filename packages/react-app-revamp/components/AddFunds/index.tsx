@@ -1,6 +1,6 @@
 import { getChainLogo } from "@helpers/getChainLogo";
 import Image from "next/image";
-import { FC } from "react";
+import { FC, memo } from "react";
 import { useShallow } from "zustand/shallow";
 import AddFundsToggle from "./components/Toggle";
 import AddFundsProviders from "./providers";
@@ -74,4 +74,4 @@ const AddFunds: FC<AddFundsProps> = ({
   );
 };
 
-export default AddFunds;
+export default memo(AddFunds);

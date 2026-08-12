@@ -1,6 +1,6 @@
 import { useModal } from "@getpara/react-sdk-lite";
 import { LiFiWidget, useWidgetEvents, WidgetEvent } from "@lifi/widget";
-import { FC, useEffect } from "react";
+import { FC, useEffect, useMemo } from "react";
 import { createJumperWidgetConfig } from "./config";
 
 interface AddFundsJumperWidgetProps {
@@ -14,7 +14,7 @@ const BRIDGE_SUCCESS_REDIRECT_DELAY_MS = 1500;
 const AddFundsJumperWidget: FC<AddFundsJumperWidgetProps> = ({ chainId, asset, onBridgeSuccess }) => {
   const { openModal } = useModal();
   const widgetEvents = useWidgetEvents();
-  const widgetConfig = createJumperWidgetConfig(chainId, asset, () => openModal());
+  const widgetConfig = useMemo(() => createJumperWidgetConfig(chainId, asset, () => openModal()), [chainId, asset, openModal]);
 
   useEffect(() => {
     if (!onBridgeSuccess) return;

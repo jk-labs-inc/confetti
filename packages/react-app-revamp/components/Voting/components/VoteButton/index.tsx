@@ -1,6 +1,5 @@
 import usePriceCurveChartStore from "@components/PriceCurve/store";
 import ButtonV3, { ButtonSize, ButtonType } from "@components/UI/ButtonV3";
-import { useModal } from "@getpara/react-sdk-lite";
 import { motion } from "motion/react";
 import { FC, useState, useMemo, memo } from "react";
 
@@ -16,12 +15,10 @@ interface VoteButtonProps {
   isDisabled: boolean;
   isInvalidBalance: boolean;
   isConnected: boolean;
-  onVote?: () => void;
-  onAddFunds?: () => void;
+  onClick?: () => void;
 }
 
-const VoteButton: FC<VoteButtonProps> = ({ isDisabled, isInvalidBalance, isConnected, onVote, onAddFunds }) => {
-  const { openModal } = useModal();
+const VoteButton: FC<VoteButtonProps> = ({ isDisabled, isInvalidBalance, isConnected, onClick }) => {
   const [isHovered, setIsHovered] = useState(false);
   const showPriceUpdateWarning = usePriceCurveChartStore(state => state.showPriceUpdateWarning);
 
@@ -35,16 +32,6 @@ const VoteButton: FC<VoteButtonProps> = ({ isDisabled, isInvalidBalance, isConne
       })),
     [],
   );
-
-  const handleClick = () => {
-    if (isInvalidBalance) {
-      onAddFunds?.();
-    } else if (!isConnected) {
-      openModal();
-    } else {
-      onVote?.();
-    }
-  };
 
   const showConfetti = isConnected && !isInvalidBalance && !isDisabled;
 
@@ -77,11 +64,11 @@ const VoteButton: FC<VoteButtonProps> = ({ isDisabled, isInvalidBalance, isConne
       <ButtonV3
         id={isInvalidBalance ? "voting_add_funds_button" : isConnected ? "vote_button" : undefined}
         ariaLabel={isInvalidBalance ? "add funds to vote" : undefined}
-        type={ButtonType.TX_ACTION}
-        isDisabled={isInvalidBalance || !isConnected ? false : isDisabled}
+        type={ButtonType.DEFAULT}
+        isDisabled={isDisabled}
         colorClass="px-[20px] text-[24px] font-bold bg-gradient-purple rounded-[40px] w-full"
         size={ButtonSize.FULL}
-        onClick={handleClick}
+        onClick={onClick}
       >
         back this entry
       </ButtonV3>

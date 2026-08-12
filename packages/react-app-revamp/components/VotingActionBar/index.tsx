@@ -111,7 +111,7 @@ const VotingActionBar = () => {
   });
 
   const isZeroValue = !inputValue || parseFloat(inputValue) === 0;
-  const isBelowMinimum = isConnected && !isZeroValue && totalVotes === 0;
+  const isBelowMinimum = !isZeroValue && totalVotes === 0;
   const voteDisabled =
     !pickedProposal || isBalanceLoading || isPriceLoading || isCastLoading || isZeroValue || isBelowMinimum;
 
@@ -220,7 +220,7 @@ const VotingActionBar = () => {
             // Keep the input focused through the tap so the keyboard doesn't
             // collapse and shift the bar mid-press.
             onPointerDown={e => e.preventDefault()}
-            disabled={isConnected && !insufficientBalance && voteDisabled}
+            disabled={isConnected && insufficientBalance ? false : voteDisabled}
             aria-label="back entry"
             className="flex h-10 shrink-0 items-center justify-center whitespace-nowrap rounded-full px-3 text-[14px] font-bold text-true-black transition-opacity disabled:opacity-50"
             style={{ backgroundImage: UPVOTE_GRADIENT }}

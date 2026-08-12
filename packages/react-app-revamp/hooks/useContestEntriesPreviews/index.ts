@@ -1,4 +1,4 @@
-import { EntryPreviewInfo, getEntryPreview } from "@components/_pages/Contest/VotingSidebar/getEntryPreview";
+import { EntryPreviewInfo, getEntryPreview } from "@components/Voting/utils/getEntryPreview";
 import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import { ContestCardConfig } from "@hooks/useContestCardConfig";
 import { useQueries, type UseQueryResult } from "@tanstack/react-query";

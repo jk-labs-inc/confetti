@@ -24,9 +24,15 @@ interface UseVoteBalanceProps {
   chainId: number;
   costToVote: string;
   inputValue?: string;
+  refetchIntervalMs?: number;
 }
 
-export const useVoteBalance = ({ chainId, costToVote, inputValue = "" }: UseVoteBalanceProps): UseVoteBalanceReturn => {
+export const useVoteBalance = ({
+  chainId,
+  costToVote,
+  inputValue = "",
+  refetchIntervalMs,
+}: UseVoteBalanceProps): UseVoteBalanceReturn => {
   const { userAddress } = useWallet();
   const chainCurrencyDecimals = getChainFromId(chainId)?.nativeCurrency?.decimals ?? 18;
 
@@ -38,6 +44,9 @@ export const useVoteBalance = ({ chainId, costToVote, inputValue = "" }: UseVote
   } = useBalance({
     address: userAddress as `0x${string}`,
     chainId,
+    query: {
+      refetchInterval: refetchIntervalMs,
+    },
   });
 
   const { data: gasPrice, isLoading: isGasPriceLoading, isError: isGasPriceError } = useGasPrice({ chainId });

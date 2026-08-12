@@ -105,7 +105,7 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
 
   const hasBalance = parseFloat(maxBalance) > 0;
   const styleConfig = STYLE_CONFIG[style];
-  const hasError = isConnected && isBelowMinimum;
+  const hasError = isBelowMinimum;
   const textColor = hasError ? "text-negative-11" : "text-neutral-11";
   const borderColor = hasError ? "border-negative-11" : styleConfig.borderColor;
 
