@@ -3169,7 +3169,15 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
-"@lifi/sdk@^4.3.0":
+"@lifi/sdk-provider-ethereum@^4.0.8":
+  version "4.0.8"
+  resolved "https://registry.yarnpkg.com/@lifi/sdk-provider-ethereum/-/sdk-provider-ethereum-4.0.8.tgz#d85e7c6ff196cb117bce5e67d4aeacd4deb1b584"
+  integrity sha512-Ytvr+qaWCTzyno84qJ6fGaobN+Ey6sRvUJUrlgMvA1ajn5z7Hmefu/bTpXpTfckjP8nwgRx9MVJq09MTdHUYsg==
+  dependencies:
+    "@lifi/sdk" "4.3.0"
+    viem "^2.55.8"
+
+"@lifi/sdk@4.3.0", "@lifi/sdk@^4.3.0":
   version "4.3.0"
   resolved "https://registry.yarnpkg.com/@lifi/sdk/-/sdk-4.3.0.tgz#7f379e69beca8eabdbb85bf3b991e8da3dbae450"
   integrity sha512-0aycnDxit39VcFqAy6OijQdaR5p7NqfnfIhc93XyEwXBb/vDiNy41Jl9YrF2DEMA3Jjw1yQfxw2ZuF3OfIHbdg==
@@ -3197,6 +3205,16 @@
     i18next "^26.3.6"
     react-i18next "^17.0.9"
     zustand "^5.0.14"
+
+"@lifi/widget-provider-ethereum@4.1.3":
+  version "4.1.3"
+  resolved "https://registry.yarnpkg.com/@lifi/widget-provider-ethereum/-/widget-provider-ethereum-4.1.3.tgz#16d4f15465c08950bc51a1471cd04abee6b6dcaf"
+  integrity sha512-TIroNADEg60cXrElUQNPnq7q1u5O+eytauRZZ4tybco4Iuc01Tw9mnzcCCyAkKAgURYaIGNBDvplE0uZm/AvHg==
+  dependencies:
+    "@lifi/sdk" "^4.3.0"
+    "@lifi/sdk-provider-ethereum" "^4.0.8"
+    "@lifi/widget-provider" "4.3.1"
+    viem ">=2.52.0"
 
 "@lifi/widget-provider@4.3.1":
   version "4.3.1"
@@ -11061,6 +11079,20 @@ ox@0.14.30:
     abitype "^1.2.3"
     eventemitter3 "5.0.1"
 
+ox@0.14.33:
+  version "0.14.33"
+  resolved "https://registry.yarnpkg.com/ox/-/ox-0.14.33.tgz#977ab8c0692fa9240444d7db88ca026f19f81e28"
+  integrity sha512-rooA/4o7bBof4Ge2VH/eovfNPb/AEEYyrNj03wggc55g5HZD8Pjs/OeWhttgjic3dDcqn0r29bDuvQEdTiUemQ==
+  dependencies:
+    "@adraffy/ens-normalize" "^1.11.0"
+    "@noble/ciphers" "^1.3.0"
+    "@noble/curves" "1.9.1"
+    "@noble/hashes" "^1.8.0"
+    "@scure/bip32" "^1.7.0"
+    "@scure/bip39" "^1.6.0"
+    abitype "^1.2.3"
+    eventemitter3 "5.0.1"
+
 ox@0.14.7:
   version "0.14.7"
   resolved "https://registry.yarnpkg.com/ox/-/ox-0.14.7.tgz#efe6770f7a138f823fb2df26001b679c2565b0a4"
@@ -13331,6 +13363,20 @@ viem@>=2.37.9, viem@^2.23.15, viem@^2.27.2:
     isows "1.0.7"
     ox "0.14.7"
     ws "8.18.3"
+
+viem@>=2.52.0, viem@^2.55.8:
+  version "2.55.13"
+  resolved "https://registry.yarnpkg.com/viem/-/viem-2.55.13.tgz#2a3c139ad66671dabde492ce2f3e7437ed15e4b7"
+  integrity sha512-Rt1NAsdtTdvJgqaCxsv2TuO55xv2d2dKEuRuzrg34xMGxvTSFOX0iIFvEfymPvh+fwN2tbgEU2JwN0YHOVM+Bg==
+  dependencies:
+    "@noble/curves" "1.9.1"
+    "@noble/hashes" "1.8.0"
+    "@scure/bip32" "1.7.0"
+    "@scure/bip39" "1.6.0"
+    abitype "1.2.3"
+    isows "1.0.7"
+    ox "0.14.33"
+    ws "8.21.0"
 
 void-elements@3.1.0:
   version "3.1.0"
