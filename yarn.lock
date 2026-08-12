@@ -3169,7 +3169,15 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
-"@lifi/sdk@^4.3.0":
+"@lifi/sdk-provider-ethereum@^4.0.8":
+  version "4.0.8"
+  resolved "https://registry.yarnpkg.com/@lifi/sdk-provider-ethereum/-/sdk-provider-ethereum-4.0.8.tgz#d85e7c6ff196cb117bce5e67d4aeacd4deb1b584"
+  integrity sha512-Ytvr+qaWCTzyno84qJ6fGaobN+Ey6sRvUJUrlgMvA1ajn5z7Hmefu/bTpXpTfckjP8nwgRx9MVJq09MTdHUYsg==
+  dependencies:
+    "@lifi/sdk" "4.3.0"
+    viem "^2.55.8"
+
+"@lifi/sdk@4.3.0", "@lifi/sdk@^4.3.0":
   version "4.3.0"
   resolved "https://registry.yarnpkg.com/@lifi/sdk/-/sdk-4.3.0.tgz#7f379e69beca8eabdbb85bf3b991e8da3dbae450"
   integrity sha512-0aycnDxit39VcFqAy6OijQdaR5p7NqfnfIhc93XyEwXBb/vDiNy41Jl9YrF2DEMA3Jjw1yQfxw2ZuF3OfIHbdg==
@@ -3197,6 +3205,16 @@
     i18next "^26.3.6"
     react-i18next "^17.0.9"
     zustand "^5.0.14"
+
+"@lifi/widget-provider-ethereum@4.1.3":
+  version "4.1.3"
+  resolved "https://registry.yarnpkg.com/@lifi/widget-provider-ethereum/-/widget-provider-ethereum-4.1.3.tgz#16d4f15465c08950bc51a1471cd04abee6b6dcaf"
+  integrity sha512-TIroNADEg60cXrElUQNPnq7q1u5O+eytauRZZ4tybco4Iuc01Tw9mnzcCCyAkKAgURYaIGNBDvplE0uZm/AvHg==
+  dependencies:
+    "@lifi/sdk" "^4.3.0"
+    "@lifi/sdk-provider-ethereum" "^4.0.8"
+    "@lifi/widget-provider" "4.3.1"
+    viem ">=2.52.0"
 
 "@lifi/widget-provider@4.3.1":
   version "4.3.1"
@@ -5075,17 +5093,17 @@
     "@wallet-standard/app" "^1.1.0"
     "@wallet-standard/base" "^1.1.0"
 
-"@supabase/auth-js@2.112.2":
-  version "2.112.2"
-  resolved "https://registry.yarnpkg.com/@supabase/auth-js/-/auth-js-2.112.2.tgz#bf6137c3974de4f1bbdf31e82b808d04a47d6e77"
-  integrity sha512-l1InCp4j98d09LZ6+RgubgF4eVPGBGXcLEhFusLg1qUCHJ2IEkYu5FohKK+eaFmIOwEk0kqG/j/lycw5e15mcQ==
+"@supabase/auth-js@2.112.3":
+  version "2.112.3"
+  resolved "https://registry.yarnpkg.com/@supabase/auth-js/-/auth-js-2.112.3.tgz#a199658869af128052f1df737986b432bf44505b"
+  integrity sha512-NA0rsgAlWZPvbhw8aUdmgfpHVgUAcd8zK5ov43l++o1bLIPXZhRiAlRobhwF5AatQuovpqxsMH50F4oyyV4XZw==
   dependencies:
     tslib "2.8.1"
 
-"@supabase/functions-js@2.112.2":
-  version "2.112.2"
-  resolved "https://registry.yarnpkg.com/@supabase/functions-js/-/functions-js-2.112.2.tgz#415c16b15a09bf0147c520096e55254f28935110"
-  integrity sha512-oMuSWN0ERmrG9S6kOM0bwhHmESGVl3kMtkZl2dNCU/r89hMiziX4GfD1omNo9QcBDele4N0GwSZ7hdbpuiA35A==
+"@supabase/functions-js@2.112.3":
+  version "2.112.3"
+  resolved "https://registry.yarnpkg.com/@supabase/functions-js/-/functions-js-2.112.3.tgz#dcadb54b74314086f2f186ccea5ae2c276560f3e"
+  integrity sha512-gfv481mTOVWtZIJgXupxZpni2V2UWPf6jeF/jOK7HdMHdH+mt6sU0sHHwf0POsPip8ltlulu9OUHgwVzl5ddRw==
   dependencies:
     tslib "2.8.1"
 
@@ -5094,39 +5112,39 @@
   resolved "https://registry.yarnpkg.com/@supabase/phoenix/-/phoenix-0.4.5.tgz#28f6a0dc020f53f171899b9c6021eecfe2a112d1"
   integrity sha512-aAn9H9ovVyeApKy11OWOrrOGq8DV68yWeH4ud2lN9fzn4aO8Zb5GLL9m1pUg9nLqIcT+ZDfAcsZe0E/nqdv2lw==
 
-"@supabase/postgrest-js@2.112.2":
-  version "2.112.2"
-  resolved "https://registry.yarnpkg.com/@supabase/postgrest-js/-/postgrest-js-2.112.2.tgz#d8b1bdabdf58d3ff08f0d458a978f2e3ff2c3d4e"
-  integrity sha512-ewhhtRny/HFRGhUTTg/PsqIatsl8OhW8Eha/Tz4S+SRAXBnuhKei9ZpsQTgL/3XcH9UEwuPQyQgQ9itq7nRQeg==
+"@supabase/postgrest-js@2.112.3":
+  version "2.112.3"
+  resolved "https://registry.yarnpkg.com/@supabase/postgrest-js/-/postgrest-js-2.112.3.tgz#2ab2ee1d118b4c37798ec3f78fd0267c771920ae"
+  integrity sha512-+Mf6uCpzr00bqxwX8hTK2X2L9eAL/1vuOjdEjx6upz9ulb0RmQT16XeU/JkMUlVHw/B46ZnPa2busY4Kd9YCzw==
   dependencies:
     tslib "2.8.1"
 
-"@supabase/realtime-js@2.112.2":
-  version "2.112.2"
-  resolved "https://registry.yarnpkg.com/@supabase/realtime-js/-/realtime-js-2.112.2.tgz#c8a450a16d4a0a05aecf89bf309b4808379b1e3c"
-  integrity sha512-cd9/CEUJ6Go13FxtfiuC5rYELJtuQzVzTXlGG+XjSppjDS+anq+xo++WQe7ZRUNTuHOCeyKRwmx9Hw/OQJ04ig==
+"@supabase/realtime-js@2.112.3":
+  version "2.112.3"
+  resolved "https://registry.yarnpkg.com/@supabase/realtime-js/-/realtime-js-2.112.3.tgz#09bdda73e88dfc76212e4fc116890c9de607cc1a"
+  integrity sha512-E6wljXWs7DUOloyIB69i3YFInWE6IyCvgTAbQ0KYxOHv26FdA1KzEXTuzxrYEdf70t406Z9BRwUlGyclGF2FXA==
   dependencies:
     "@supabase/phoenix" "0.4.5"
     tslib "2.8.1"
 
-"@supabase/storage-js@2.112.2":
-  version "2.112.2"
-  resolved "https://registry.yarnpkg.com/@supabase/storage-js/-/storage-js-2.112.2.tgz#6b4b2dcf5e170f57411cd336a70a3ea4f5012b20"
-  integrity sha512-6jyBq/J1iXOHNpbjCZS7gFcDk49iM1MCJUVkDl71gLd/+XnLDzpUBs8icGebtwiHpl4kVszxIRDYAosbF4Rsig==
+"@supabase/storage-js@2.112.3":
+  version "2.112.3"
+  resolved "https://registry.yarnpkg.com/@supabase/storage-js/-/storage-js-2.112.3.tgz#824b595b1304cf069fb09ae56b05e24d213e30de"
+  integrity sha512-oSK61tzlUvg+BWPqpKQCu9qqonsO26btaoAR9D6Gest2aj7xUqToj9rKyaoYOJczkhg9BjqA1REbYy9tPI4bDA==
   dependencies:
     iceberg-js "^0.8.1"
     tslib "2.8.1"
 
-"@supabase/supabase-js@2.112.2":
-  version "2.112.2"
-  resolved "https://registry.yarnpkg.com/@supabase/supabase-js/-/supabase-js-2.112.2.tgz#1a5d18bbacaaef3fe5fe279f256c1c15b3b0fd5e"
-  integrity sha512-UyI1epU9B4X51HvNpkmlwTdF20fEcz2vyvrcDKVzFN4jZN41f5iQRqsiIQjAY5OVJD6ljqA/1g9JQeOTvFHpkA==
+"@supabase/supabase-js@2.112.3":
+  version "2.112.3"
+  resolved "https://registry.yarnpkg.com/@supabase/supabase-js/-/supabase-js-2.112.3.tgz#4b5b25ab607ecb59cba09b073cf8f3f19e6b62c9"
+  integrity sha512-Jv1bxVQmEJNkjvPEhFaKjPzsh+Ozyew6lWGD+SoYcsclDEP1z7yEvKvfUQfzy0DkxRIQnZNxmmWtAzw5XLTQoA==
   dependencies:
-    "@supabase/auth-js" "2.112.2"
-    "@supabase/functions-js" "2.112.2"
-    "@supabase/postgrest-js" "2.112.2"
-    "@supabase/realtime-js" "2.112.2"
-    "@supabase/storage-js" "2.112.2"
+    "@supabase/auth-js" "2.112.3"
+    "@supabase/functions-js" "2.112.3"
+    "@supabase/postgrest-js" "2.112.3"
+    "@supabase/realtime-js" "2.112.3"
+    "@supabase/storage-js" "2.112.3"
 
 "@surma/rollup-plugin-off-main-thread@^2.2.3":
   version "2.2.3"
@@ -6189,10 +6207,10 @@
   resolved "https://registry.yarnpkg.com/@vanilla-extract/recipes/-/recipes-0.5.7.tgz#6677a267ca278e2277ac8ab41b64e57e84c1150c"
   integrity sha512-Fvr+htdyb6LVUu+PhH61UFPhwkjgDEk8L4Zq9oIdte42sntpKrgFy90MyTRtGwjVALmrJ0pwRUVr8UoByYeW8A==
 
-"@vercel/build-utils@14.0.3":
-  version "14.0.3"
-  resolved "https://registry.yarnpkg.com/@vercel/build-utils/-/build-utils-14.0.3.tgz#41474b556e42295865a768d5b2331804a2a348c5"
-  integrity sha512-yfK9NmS/P9p7Sk5XebxwpIqIUQCj2qRdHMmlZ+r4mp45Xy4jJeLoCN5TsyZc3yUN7wJmJHcRYdTy421pCMA2PQ==
+"@vercel/build-utils@14.0.4":
+  version "14.0.4"
+  resolved "https://registry.yarnpkg.com/@vercel/build-utils/-/build-utils-14.0.4.tgz#d019a4aaaceb3adceca15baf87b914ec3a5aa42c"
+  integrity sha512-zpet7UYKXQcNVABvkvNv2MVgyug1zBMAyq/HnSiQE/UgTbQQMpNXw9R5tANuMafLlip4AzHZ8tBgvcjFIxyTNQ==
   dependencies:
     "@vercel/python-analysis" "0.13.1"
     cjs-module-lexer "1.2.3"
@@ -6221,16 +6239,16 @@
     picomatch "^4.0.2"
     resolve-from "^5.0.0"
 
-"@vercel/node@5.9.7":
-  version "5.9.7"
-  resolved "https://registry.yarnpkg.com/@vercel/node/-/node-5.9.7.tgz#463ccfcc7a2db46542b6e4843e76154f71e738ca"
-  integrity sha512-ekJSoPjuoeyCSsFm5Z7LEsFQoBXHCoBT4UMISjWIP5jLNKKTWxTSyTpwceLbPmBbc5q88iwMjhkIRRQWMm8LBQ==
+"@vercel/node@5.9.8":
+  version "5.9.8"
+  resolved "https://registry.yarnpkg.com/@vercel/node/-/node-5.9.8.tgz#b1a5c3b036c47b9f3dec1ac0da1f571bc30ebb01"
+  integrity sha512-P11Q6Hdvfb7sMJDya1bv51Cqnz6iqB12QC/dA7fdI5fHKTUQmbVYOOETzzFgMHz6i7ET0Uzg1c4OvjxJ+QVviQ==
   dependencies:
     "@edge-runtime/node-utils" "2.3.0"
     "@edge-runtime/primitives" "4.1.0"
     "@edge-runtime/vm" "3.2.0"
     "@types/node" "20.11.0"
-    "@vercel/build-utils" "14.0.3"
+    "@vercel/build-utils" "14.0.4"
     "@vercel/error-utils" "2.2.1"
     "@vercel/nft" "1.10.0"
     "@vercel/static-config" "3.4.1"
@@ -11061,6 +11079,20 @@ ox@0.14.30:
     abitype "^1.2.3"
     eventemitter3 "5.0.1"
 
+ox@0.14.33:
+  version "0.14.33"
+  resolved "https://registry.yarnpkg.com/ox/-/ox-0.14.33.tgz#977ab8c0692fa9240444d7db88ca026f19f81e28"
+  integrity sha512-rooA/4o7bBof4Ge2VH/eovfNPb/AEEYyrNj03wggc55g5HZD8Pjs/OeWhttgjic3dDcqn0r29bDuvQEdTiUemQ==
+  dependencies:
+    "@adraffy/ens-normalize" "^1.11.0"
+    "@noble/ciphers" "^1.3.0"
+    "@noble/curves" "1.9.1"
+    "@noble/hashes" "^1.8.0"
+    "@scure/bip32" "^1.7.0"
+    "@scure/bip39" "^1.6.0"
+    abitype "^1.2.3"
+    eventemitter3 "5.0.1"
+
 ox@0.14.7:
   version "0.14.7"
   resolved "https://registry.yarnpkg.com/ox/-/ox-0.14.7.tgz#efe6770f7a138f823fb2df26001b679c2565b0a4"
@@ -13331,6 +13363,20 @@ viem@>=2.37.9, viem@^2.23.15, viem@^2.27.2:
     isows "1.0.7"
     ox "0.14.7"
     ws "8.18.3"
+
+viem@>=2.52.0, viem@^2.55.8:
+  version "2.55.13"
+  resolved "https://registry.yarnpkg.com/viem/-/viem-2.55.13.tgz#2a3c139ad66671dabde492ce2f3e7437ed15e4b7"
+  integrity sha512-Rt1NAsdtTdvJgqaCxsv2TuO55xv2d2dKEuRuzrg34xMGxvTSFOX0iIFvEfymPvh+fwN2tbgEU2JwN0YHOVM+Bg==
+  dependencies:
+    "@noble/curves" "1.9.1"
+    "@noble/hashes" "1.8.0"
+    "@scure/bip32" "1.7.0"
+    "@scure/bip39" "1.6.0"
+    abitype "1.2.3"
+    isows "1.0.7"
+    ox "0.14.33"
+    ws "8.21.0"
 
 void-elements@3.1.0:
   version "3.1.0"
