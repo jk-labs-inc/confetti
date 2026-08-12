@@ -1,5 +1,6 @@
 import { chains } from "@config/wagmi";
 import { WidgetConfig } from "@lifi/widget";
+import { EthereumProvider } from "@lifi/widget-provider-ethereum";
 
 const NATIVE_TOKEN_ADDRESS = "0x0000000000000000000000000000000000000000";
 
@@ -55,6 +56,7 @@ export const createJumperWidgetConfig = (chainId: number, asset: string, onConne
 
   return {
     integrator: "Confetti",
+    providers: [EthereumProvider()],
     toChain: chainId,
     toToken: asset,
     variant: "compact",
