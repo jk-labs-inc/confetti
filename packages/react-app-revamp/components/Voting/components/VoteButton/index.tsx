@@ -75,7 +75,7 @@ const VoteButton: FC<VoteButtonProps> = ({ isDisabled, isInvalidBalance, isConne
           />
         ))}
       <ButtonV3
-        id={isInvalidBalance ? "voting_add_funds_button" : isConnected ? "vote_button" : undefined}
+        id={isInvalidBalance ? "voting_add_funds_button" : isConnected ? "vote_button" : "sign_in_button_click"}
         ariaLabel={isInvalidBalance ? "add funds to vote" : undefined}
         type={ButtonType.TX_ACTION}
         isDisabled={isInvalidBalance || !isConnected ? false : isDisabled}
