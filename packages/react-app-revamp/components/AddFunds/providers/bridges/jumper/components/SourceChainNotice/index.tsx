@@ -12,6 +12,7 @@ interface AddFundsJumperSourceChainNoticeProps {
 const SOURCE_SELECTION_ROUTE = `/${navigationRoutes.fromToken}`;
 const WIDGET_LIST_CLASS_NAME = "long-list";
 const PINNED_PLACEMENT = "pinned";
+const PINNED_FALLBACK_DELAY_MS = 500;
 
 interface InjectedNotice {
   host: HTMLElement;
@@ -55,11 +56,35 @@ const AddFundsJumperSourceChainNotice: FC<AddFundsJumperSourceChainNoticeProps> 
 
     if (!sourcePage || !container) return;
 
-    const injected = injectNoticeHost(container);
-    setPlacement(injected ?? PINNED_PLACEMENT);
+    let host: HTMLElement | null = null;
+
+    const inject = () => {
+      if (host?.isConnected) return;
+
+      host?.remove();
+      host = null;
+
+      const injected = injectNoticeHost(container);
+
+      if (!injected) return;
+
+      host = injected.host;
+      setPlacement(injected);
+    };
+
+    inject();
+
+    const observer = new MutationObserver(inject);
+    observer.observe(container, { childList: true, subtree: true });
+
+    const fallbackTimeout = setTimeout(() => {
+      if (!host?.isConnected) setPlacement(PINNED_PLACEMENT);
+    }, PINNED_FALLBACK_DELAY_MS);
 
     return () => {
-      injected?.host.remove();
+      observer.disconnect();
+      clearTimeout(fallbackTimeout);
+      host?.remove();
       setPlacement(null);
     };
   }, [sourcePage, containerRef]);
@@ -68,10 +93,14 @@ const AddFundsJumperSourceChainNotice: FC<AddFundsJumperSourceChainNoticeProps> 
     if (!placement || placement === PINNED_PLACEMENT) return;
 
     const { host, scrollBox } = placement;
+
+    if (scrollBox.dataset.jumperNoticeOffset) return;
+
     const noticeHeight = host.offsetHeight;
 
     if (!noticeHeight) return;
 
+    scrollBox.dataset.jumperNoticeOffset = "true";
     scrollBox.style.height = `${scrollBox.offsetHeight - noticeHeight}px`;
   }, [placement]);
 
