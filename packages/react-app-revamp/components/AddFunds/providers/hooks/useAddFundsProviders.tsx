@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import AddFundsJumperProvider from "../bridges/jumper";
-import AddFundsCoinbaseProvider from "../onramp/coinbase";
 import AddFundsParaProvider from "../onramp";
+import AddFundsUsOnrampPlaceholder from "../onramp/UsPlaceholder";
 import { AddFundsProviderType } from "../../types";
 
 interface UseAddFundsProvidersParams {
@@ -17,8 +17,8 @@ const useAddFundsProviders = ({ type, chain, asset, onCloseModal, onBridgeSucces
     switch (type) {
       case AddFundsProviderType.ONRAMP:
         return [
-          <AddFundsCoinbaseProvider key="coinbase" chain={chain} asset={asset} />,
           <AddFundsParaProvider key="para" chain={chain} onCloseModal={onCloseModal} />,
+          <AddFundsUsOnrampPlaceholder key="us-onramp" />,
         ];
       case AddFundsProviderType.BRIDGE:
         return [<AddFundsJumperProvider key="jumper" chain={chain} asset={asset} onBridgeSuccess={onBridgeSuccess} />];
