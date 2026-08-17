@@ -1,6 +1,6 @@
 import { getChainLogo } from "@helpers/getChainLogo";
 import Image from "next/image";
-import { FC } from "react";
+import { FC, memo } from "react";
 import { useShallow } from "zustand/shallow";
 import AddFundsToggle from "./components/Toggle";
 import AddFundsProviders from "./providers";
@@ -34,7 +34,7 @@ const AddFunds: FC<AddFundsProps> = ({
   );
 
   return (
-    <div className={`flex flex-col w-full h-full ${className}`}>
+    <div id="add_funds_modal" className={`flex flex-col w-full h-full ${className}`}>
       <div className="flex flex-col gap-4 md:gap-6 flex-1 min-h-0">
         <div className="flex items-start md:items-center justify-between w-full">
           <div className="flex items-center gap-3">
@@ -74,4 +74,4 @@ const AddFunds: FC<AddFundsProps> = ({
   );
 };
 
-export default AddFunds;
+export default memo(AddFunds);

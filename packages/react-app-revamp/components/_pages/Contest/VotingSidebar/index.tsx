@@ -1,8 +1,11 @@
 import AddFunds from "@components/AddFunds";
 import VotingWidget, { VotingWidgetStyle } from "@components/Voting";
 import EntryPreviewHeader from "@components/Voting/components/EntryPreviewHeader";
+import { usePickedEntryPreview } from "@components/Voting/hooks/usePickedEntryPreview";
+import { VoteFlowScreen } from "@components/Voting/types";
+import ConfirmVote from "@components/Voting/VoteFlow/components/ConfirmVote";
+import { useVoteFlowController } from "@components/Voting/VoteFlow/hooks/useVoteFlowController";
 import VotingSidebarVoters from "./components/Voters";
-import { verifyEntryPreviewPrompt } from "@components/_pages/DialogModalSendProposal/utils";
 import useCastVotes from "@hooks/useCastVotes";
 import { useCastVotesStore } from "@hooks/useCastVotes/store";
 import { useContestStore } from "@hooks/useContest/store";
@@ -10,30 +13,23 @@ import useContestConfigStore from "@hooks/useContestConfig/store";
 import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import useCurrentPricePerVote from "@hooks/useCurrentPricePerVote";
-import { useMetadataStore } from "@hooks/useMetadataFields/store";
 import { useProposalStore } from "@hooks/useProposal/store";
-import { FC, useState } from "react";
+import { FC, useEffect } from "react";
 import { useShallow } from "zustand/shallow";
-import { getEntryPreview } from "./getEntryPreview";
 import { useAutoPickFirstProposal } from "./useAutoPickFirstProposal";
 
 const VotingSidebar: FC = () => {
   useAutoPickFirstProposal();
   const { contestConfig } = useContestConfigStore(useShallow(state => state));
-  const { charge: contestCharge, votingClose, contestName } = useContestStore(
+  const { charge: contestCharge, votingClose } = useContestStore(
     useShallow(state => ({
       charge: state.charge,
       votingClose: state.votesClose,
-      contestName: state.contestName,
     })),
   );
-  const { listProposalsData, submissionsCount } = useProposalStore(
-    useShallow(state => ({
-      listProposalsData: state.listProposalsData,
-      submissionsCount: state.submissionsCount,
-    })),
-  );
-  const metadataFieldsConfig = useMetadataStore(state => state.fields);
+  const submissionsCount = useProposalStore(state => state.submissionsCount);
+  const entryPreview = usePickedEntryPreview();
+  const { image, title, contestName } = entryPreview;
   const contestStatus = useContestStatusStore(useShallow(state => state.contestStatus));
   const contestState = useContestStateStore(useShallow(state => state.contestState));
   const isContestCanceled = contestState === ContestStateEnum.Canceled;
@@ -41,7 +37,6 @@ const VotingSidebar: FC = () => {
   const isVotingClosed = contestStatus === ContestStatus.VotingClosed;
   const pickedProposal = useCastVotesStore(state => state.pickedProposal);
   const { castVotes, isLoading } = useCastVotes({ charge: contestCharge, votesClose: votingClose });
-  const [showAddFunds, setShowAddFunds] = useState(false);
   const { currentPricePerVote, isLoading: isCurrentPricePerVoteLoading } = useCurrentPricePerVote({
     address: contestConfig.address,
     abi: contestConfig.abi,
@@ -53,35 +48,63 @@ const VotingSidebar: FC = () => {
   const onVote = async (amount: number) => {
     try {
       await castVotes(amount);
+    } catch {
     } finally {
-      setShowAddFunds(false);
+      goToVote();
     }
   };
 
-  if (isContestCanceled || (!isVotingOpen && !isVotingClosed) || !pickedProposal) return null;
+  const {
+    screen,
+    effectiveCostToVote,
+    goToVote,
+    goToAddFunds,
+    requestConnectAndVote,
+    confirmVote,
+    handleBridgeSuccess,
+  } = useVoteFlowController({
+    isOpen: true,
+    costToVote: currentPricePerVote,
+    isVotingClosed: false,
+    isContestCanceled,
+    onVote,
+  });
 
-  const pickedProposalData = listProposalsData.find(p => p.id === pickedProposal);
-  const { enabledPreview } =
-    metadataFieldsConfig.length > 0
-      ? verifyEntryPreviewPrompt(metadataFieldsConfig[0].prompt)
-      : { enabledPreview: null };
-  const { image, title } = getEntryPreview(pickedProposalData, enabledPreview);
+  useEffect(() => {
+    goToVote();
+  }, [pickedProposal, goToVote]);
+
+  if (isContestCanceled || (!isVotingOpen && !isVotingClosed) || !pickedProposal) return null;
 
   return (
     <div className="bg-primary-1 rounded-4xl p-4 flex flex-col gap-4">
       {isVotingOpen && (
         <div
-          className={`px-6 py-4 rounded-4xl flex flex-col gap-4 ${showAddFunds ? "bg-primary-13" : "bg-gradient-voting-area-purple"}`}
+          className={`px-6 py-4 rounded-4xl flex flex-col gap-4 ${screen === VoteFlowScreen.AddFunds ? "bg-primary-13" : "bg-gradient-voting-area-purple"}`}
         >
-          {!showAddFunds && <EntryPreviewHeader image={image} title={title} contestName={contestName} />}
+          {screen === VoteFlowScreen.Vote && (
+            <EntryPreviewHeader image={image} title={title} contestName={contestName} />
+          )}
 
-          {showAddFunds ? (
+          {screen === VoteFlowScreen.AddFunds ? (
             <div className="animate-appear">
               <AddFunds
                 chain={contestConfig.chainName}
                 asset={contestConfig.chainNativeCurrencySymbol ?? ""}
-                onGoBack={() => setShowAddFunds(false)}
-                onBridgeSuccess={() => setShowAddFunds(false)}
+                onGoBack={goToVote}
+                onBridgeSuccess={handleBridgeSuccess}
+              />
+            </div>
+          ) : screen === VoteFlowScreen.Confirm ? (
+            <div className="animate-appear">
+              <ConfirmVote
+                entryPreview={entryPreview}
+                chainNativeCurrencySymbol={contestConfig.chainNativeCurrencySymbol ?? ""}
+                costToVote={effectiveCostToVote}
+                isVotingClosed={false}
+                isVoteLoading={isLoading}
+                onConfirm={confirmVote}
+                onGoBack={goToVote}
               />
             </div>
           ) : (
@@ -93,14 +116,15 @@ const VotingSidebar: FC = () => {
               isVotingClosed={false}
               isContestCanceled={isContestCanceled}
               onVote={onVote}
-              onAddFunds={() => setShowAddFunds(true)}
+              onAddFunds={goToAddFunds}
+              onConnectRequest={requestConnectAndVote}
               submissionsCount={submissionsCount}
             />
           )}
         </div>
       )}
 
-      {!showAddFunds && (
+      {screen === VoteFlowScreen.Vote && (
         <VotingSidebarVoters
           key={pickedProposal}
           proposalId={pickedProposal}

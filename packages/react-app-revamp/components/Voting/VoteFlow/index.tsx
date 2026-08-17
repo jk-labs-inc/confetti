@@ -1,15 +1,19 @@
 import AddFunds from "@components/AddFunds";
 import VotingWidget from "@components/Voting";
 import EntryPreviewHeader, { EntryPreviewHeaderProps } from "@components/Voting/components/EntryPreviewHeader";
+import { usePickedEntryPreview } from "@components/Voting/hooks/usePickedEntryPreview";
 import { useVotingStore } from "@components/Voting/store";
+import { VoteFlowScreen } from "@components/Voting/types";
 import useCastVotes from "@hooks/useCastVotes";
 import { useCastVotesStore } from "@hooks/useCastVotes/store";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import useCurrentPricePerVote from "@hooks/useCurrentPricePerVote";
 import { Charge } from "@hooks/useDeployContest/types";
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect } from "react";
 import { useShallow } from "zustand/shallow";
+import ConfirmVote from "./components/ConfirmVote";
 import VoteFlowShell, { VoteFlowPresentation } from "./components/Shell";
+import { useVoteFlowController } from "./hooks/useVoteFlowController";
 
 interface VoteFlowProps {
   isOpen: boolean;
@@ -42,7 +46,6 @@ const VoteFlow: FC<VoteFlowProps> = ({
   const pickedProposal = useCastVotesStore(state => state.pickedProposal);
   const resetVotingInput = useVotingStore(state => state.reset);
   const { castVotes, isLoading } = useCastVotes({ charge, votesClose });
-  const [showAddFunds, setShowAddFunds] = useState(false);
   const { currentPricePerVote, isLoading: isCurrentPricePerVoteLoading } = useCurrentPricePerVote({
     address: contestConfig.address,
     abi: contestConfig.abi,
@@ -56,7 +59,6 @@ const VoteFlow: FC<VoteFlowProps> = ({
 
   const handleClose = () => {
     onClose();
-    setShowAddFunds(false);
   };
 
   const onVote = async (amount: number) => {
@@ -69,18 +71,45 @@ const VoteFlow: FC<VoteFlowProps> = ({
     }
   };
 
-  const onAddFunds = () => {
-    setShowAddFunds(true);
-  };
+  const {
+    screen,
+    effectiveCostToVote,
+    goToVote,
+    goToAddFunds,
+    requestConnectAndVote,
+    confirmVote,
+    handleBridgeSuccess,
+  } = useVoteFlowController({
+    isOpen,
+    costToVote: currentPricePerVote,
+    isVotingClosed,
+    isContestCanceled,
+    onVote,
+  });
+  const fallbackEntryPreview = usePickedEntryPreview();
+  const resolvedEntryPreview = entryPreview ?? fallbackEntryPreview;
 
   return (
     <VoteFlowShell isOpen={isOpen} onClose={handleClose} presentation={presentation}>
-      {showAddFunds ? (
+      {screen === VoteFlowScreen.AddFunds ? (
         <div className="animate-appear">
           <AddFunds
             chain={contestConfig.chainName}
             asset={contestConfig.chainNativeCurrencySymbol ?? ""}
-            onGoBack={() => setShowAddFunds(false)}
+            onGoBack={goToVote}
+            onBridgeSuccess={handleBridgeSuccess}
+          />
+        </div>
+      ) : screen === VoteFlowScreen.Confirm ? (
+        <div className="animate-appear">
+          <ConfirmVote
+            entryPreview={resolvedEntryPreview}
+            chainNativeCurrencySymbol={contestConfig.chainNativeCurrencySymbol ?? ""}
+            costToVote={effectiveCostToVote}
+            isVotingClosed={isVotingClosed}
+            isVoteLoading={isLoading}
+            onConfirm={confirmVote}
+            onGoBack={goToVote}
           />
         </div>
       ) : (
@@ -92,7 +121,8 @@ const VoteFlow: FC<VoteFlowProps> = ({
             isVotingClosed={isVotingClosed}
             isContestCanceled={isContestCanceled}
             onVote={onVote}
-            onAddFunds={onAddFunds}
+            onAddFunds={goToAddFunds}
+            onConnectRequest={requestConnectAndVote}
             submissionsCount={submissionsCount}
           />
         </>
