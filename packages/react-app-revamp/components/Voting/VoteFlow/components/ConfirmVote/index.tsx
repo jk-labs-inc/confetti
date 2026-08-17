@@ -54,7 +54,6 @@ const ConfirmVote: FC<ConfirmVoteProps> = ({
             </p>
           )}
           <ButtonV3
-            id="vote_confirm_button"
             type={ButtonType.DEFAULT}
             isDisabled={isConfirmDisabled}
             colorClass="px-[20px] text-[24px] font-bold bg-gradient-purple rounded-[40px] w-full"

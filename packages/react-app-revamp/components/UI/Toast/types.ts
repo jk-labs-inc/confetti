@@ -35,6 +35,7 @@ export interface WarningToastConfig extends BaseToastConfig {
 
 export interface LoadingToastConfig extends BaseToastConfig {
   message: string;
+  id?: string;
   additionalMessageType?: LoadingToastMessageType;
 }
 

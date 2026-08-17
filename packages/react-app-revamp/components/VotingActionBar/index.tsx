@@ -213,9 +213,6 @@ const VotingActionBar = () => {
           </FitTextGroup>
 
           <button
-            id={isConnected
-                  ? (insufficientBalance ? "voting_add_funds_button" : "vote_button")
-                  : "sign_in_button_click"}
             onClick={handleClick}
             // Keep the input focused through the tap so the keyboard doesn't
             // collapse and shift the bar mid-press.

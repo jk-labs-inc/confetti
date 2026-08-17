@@ -1,3 +1,4 @@
+import SignInModalTracker from "@components/Analytics/SignInModalTracker";
 import CountryFlagPolyfill from "@components/CountryFlagPolyfill";
 import "@getpara/react-sdk-lite/styles.css";
 import LayoutBase from "@layouts/LayoutBase";
@@ -93,6 +94,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <Providers>
             <LayoutBase>{children}</LayoutBase>
             <DynamicPortal />
+            <SignInModalTracker />
             <GoogleTagManager gtmId="GTM-W2WHJ2QJ" />
           </Providers>
         </div>

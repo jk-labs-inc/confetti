@@ -9,7 +9,9 @@ import PendingView from "./components/PendingView";
 import SuccessView from "./components/SuccessView";
 import { SUCCESS_DISMISS_MS } from "./constants";
 import { txOverlay, useTransactionOverlayStore } from "./store";
-import { TransactionOverlayPhase } from "./types";
+import { TransactionOverlayFlow, TransactionOverlayPhase } from "./types";
+
+const VOTE_FLOW_TRACKING_ID = "votes_are_deploying_toast";
 
 const TransactionOverlay = () => {
   const { isOpen, flow, phase, errorMessage, steps, successMeta } = useTransactionOverlayStore(
@@ -43,6 +45,7 @@ const TransactionOverlay = () => {
     <AnimatePresence>
       {isOpen && (
         <motion.div
+          id={flow === TransactionOverlayFlow.VOTE ? VOTE_FLOW_TRACKING_ID : undefined}
           className="fixed inset-0 z-10000 flex flex-col bg-true-black"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
