@@ -6,7 +6,7 @@ import { useAddFundsStore } from "../../store";
 
 export interface AddFundsCardProps {
   name: string;
-  description: string;
+  description?: string;
   logo: string;
   logoBorderColor?: string;
   disabled?: boolean;
@@ -96,9 +96,9 @@ const AddFundsCard: FC<AddFundsCardProps> = ({
               <div className="py-1 px-2 bg-neutral-3 rounded-lg inline-block">
                 <p className="text-negative-11 font-bold text-[12px]">{disabledMessage}</p>
               </div>
-            ) : (
+            ) : description ? (
               <p className="text-neutral-9 font-bold normal-case text-base">{description}</p>
-            )}
+            ) : null}
           </div>
           <div className="ml-auto">{renderIcon()}</div>
         </div>
