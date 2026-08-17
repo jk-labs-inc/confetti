@@ -1,4 +1,4 @@
-import { getEntryPreview } from "@components/_pages/Contest/VotingSidebar/getEntryPreview";
+import { getEntryPreview } from "@components/Voting/utils/getEntryPreview";
 import { verifyEntryPreviewPrompt } from "@components/_pages/DialogModalSendProposal/utils";
 import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import { ContestConfig } from "@hooks/useContestConfig/store";

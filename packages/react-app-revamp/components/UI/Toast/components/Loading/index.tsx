@@ -9,10 +9,11 @@ export enum LoadingToastMessageType {
 
 interface LoadingToastProps {
   message: string;
+  id?: string;
   additionalMessageType?: LoadingToastMessageType;
 }
 
-const LoadingToast: FC<LoadingToastProps> = ({ message, additionalMessageType = LoadingToastMessageType.NONE }) => {
+const LoadingToast: FC<LoadingToastProps> = ({ message, id, additionalMessageType = LoadingToastMessageType.NONE }) => {
   const getAdditionalMessage = () => {
     switch (additionalMessageType) {
       case LoadingToastMessageType.WALLET_SIGNATURE:
@@ -25,7 +26,7 @@ const LoadingToast: FC<LoadingToastProps> = ({ message, additionalMessageType = 
   };
 
   return (
-    <div className="flex gap-4 items-center pl-4">
+    <div id={id} className="flex gap-4 items-center pl-4">
       <MotionSpinner theme="dark" size={32} />
       <div className="flex flex-col">
         <p className="font-bold text-[14px]">{message}</p>

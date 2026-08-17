@@ -113,6 +113,7 @@ export function useCastVotes({ charge, votesClose }: UseCastVotesProps) {
       txOverlay.start(TransactionOverlayFlow.VOTE);
     } else {
       toastLoading({
+        id: "votes_are_deploying_toast",
         message: "votes are deploying...",
         additionalMessageType: LoadingToastMessageType.KEEP_BROWSER_OPEN,
       });

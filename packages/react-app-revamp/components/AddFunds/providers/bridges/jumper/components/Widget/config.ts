@@ -28,12 +28,16 @@ const createRpcUrlsConfig = () => {
 
 /**
  * Creates filters for chains and tokens based on the target chain
+ * - Only allows app-supported chains in the "from" chain selector
  * - Only allows the target chain in the "to" chain selector
  * - Only allows native tokens for the target chain
  */
 const createFilters = (chainId: number) => {
   return {
     chains: {
+      from: {
+        allow: chains.map(chain => chain.id),
+      },
       to: {
         allow: [chainId],
       },

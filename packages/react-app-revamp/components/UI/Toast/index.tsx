@@ -58,9 +58,13 @@ export const toastError = (config: ErrorToastConfig) => {
 };
 
 export const toastLoading = (config: LoadingToastConfig) => {
-  createToast("info", <LoadingToast message={config.message} additionalMessageType={config.additionalMessageType} />, {
-    autoClose: false,
-  });
+  createToast(
+    "info",
+    <LoadingToast id={config.id} message={config.message} additionalMessageType={config.additionalMessageType} />,
+    {
+      autoClose: false,
+    },
+  );
 };
 
 export const toastDismiss = () => {

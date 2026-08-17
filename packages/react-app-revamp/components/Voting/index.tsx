@@ -1,10 +1,10 @@
+import { useModal } from "@getpara/react-sdk-lite";
 import { useCastVotesStore } from "@hooks/useCastVotes/store";
 import useContestConfigStore from "@hooks/useContestConfig/store";
-import usePriceCurveData from "@hooks/usePriceCurveData";
 import { useVoteBalance } from "@hooks/useVoteBalance";
 import { useVoteProjections } from "@hooks/useVoteProjections";
 import { useWallet } from "@hooks/useWallet";
-import { FC, RefObject, useEffect, useRef, useCallback } from "react";
+import { FC, RefObject, useEffect, useRef } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useShallow } from "zustand/shallow";
 import VotingWidgetRewardsProjection from "./components/RewardsProjection";
@@ -12,8 +12,10 @@ import VotingWidgetSignup from "./components/Signup";
 import VoteAmountInput from "./components/VoteAmountInput";
 import VoteButton from "./components/VoteButton";
 import VoteInfoBlocks from "./components/VoteInfoBlocks";
+import { useEffectiveCostToVote } from "./hooks/useEffectiveCostToVote";
 import { useVoteExecution } from "./hooks/useVoteExecution";
 import { useVotingStore } from "./store";
+import { AddFundsEntryReason } from "./types";
 
 export enum VotingWidgetStyle {
   classic = "classic",
@@ -28,7 +30,8 @@ interface VotingWidgetProps {
   submissionsCount: number;
   style?: VotingWidgetStyle;
   onVote?: (amountOfVotes: number) => void;
-  onAddFunds?: () => void;
+  onAddFunds?: (reason: AddFundsEntryReason) => void;
+  onConnectRequest?: () => void;
 }
 
 const VotingWidget: FC<VotingWidgetProps> = ({
@@ -40,22 +43,15 @@ const VotingWidget: FC<VotingWidgetProps> = ({
   style = VotingWidgetStyle.classic,
   onVote,
   onAddFunds,
+  onConnectRequest,
 }) => {
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const { isConnected } = useWallet();
+  const { openModal } = useModal();
   const contestConfig = useContestConfigStore(useShallow(state => state.contestConfig));
   const inputRef = useRef<HTMLInputElement>(null);
-  const { inputValue, isInvalid } = useVotingStore(
-    useShallow(state => ({
-      inputValue: state.inputValue,
-      isInvalid: state.isInvalid,
-    })),
-  );
-  // Use the chart-interpolated price (same value shown in the chart header) so that the
-  // input/threshold/execution stay in sync with what the user sees. Falls back to the
-  // contract-reported `costToVote` prop until the curve data is ready.
-  const { currentPriceNative } = usePriceCurveData();
-  const effectiveCostToVote = parseFloat(currentPriceNative) > 0 ? currentPriceNative : costToVote;
+  const inputValue = useVotingStore(state => state.inputValue);
+  const effectiveCostToVote = useEffectiveCostToVote(costToVote);
   const {
     balance,
     insufficientBalance,
@@ -87,15 +83,31 @@ const VotingWidget: FC<VotingWidgetProps> = ({
     }
   }, [isMobile]);
 
-  const hasBalance = parseFloat(balance?.formatted || "0") > 0;
   const totalVotes = projections.votes;
   const isZeroValue = !inputValue || parseFloat(inputValue) === 0;
-  const isBelowMinimum = isConnected && !isZeroValue && totalVotes === 0;
-  const voteDisabled = isBalanceLoading || isLoading || isInvalid || isZeroValue || isBelowMinimum;
+  const isBelowMinimum = !isZeroValue && totalVotes === 0;
+  const voteDisabled = isZeroValue || isBelowMinimum || isLoading || (isConnected && isBalanceLoading);
+
+  const handlePrimaryAction = () => {
+    if (voteDisabled) return;
+    if (!isConnected) {
+      if (onConnectRequest) {
+        onConnectRequest();
+      } else {
+        openModal();
+      }
+      return;
+    }
+    if (insufficientBalance) {
+      onAddFunds?.(AddFundsEntryReason.Shortfall);
+      return;
+    }
+    handleVote();
+  };
 
   const handleKeyDownInputWithVote = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
-      handleVote();
+      handlePrimaryAction();
     }
   };
 
@@ -122,7 +134,7 @@ const VotingWidget: FC<VotingWidgetProps> = ({
             symbol={contestConfig.chainNativeCurrencySymbol}
             insufficientBalance={insufficientBalance}
             isConnected={isConnected}
-            onAddFunds={onAddFunds}
+            onAddFunds={() => onAddFunds?.(AddFundsEntryReason.Manual)}
           />
       </div>
 
@@ -133,8 +145,7 @@ const VotingWidget: FC<VotingWidgetProps> = ({
           isDisabled={voteDisabled}
           isInvalidBalance={insufficientBalance && isConnected}
           isConnected={isConnected}
-          onVote={handleVote}
-          onAddFunds={onAddFunds}
+          onClick={handlePrimaryAction}
         />
       </div>
     </div>

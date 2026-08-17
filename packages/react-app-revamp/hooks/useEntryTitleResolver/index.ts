@@ -1,4 +1,4 @@
-import { getEntryPreview } from "@components/_pages/Contest/VotingSidebar/getEntryPreview";
+import { getEntryPreview } from "@components/Voting/utils/getEntryPreview";
 import { verifyEntryPreviewPrompt } from "@components/_pages/DialogModalSendProposal/utils";
 import { useMetadataStore } from "@hooks/useMetadataFields/store";
 import { useCallback } from "react";
