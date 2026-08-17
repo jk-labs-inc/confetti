@@ -1,6 +1,7 @@
 import { useModal } from "@getpara/react-sdk-lite";
 import { LiFiWidget, useWidgetEvents, WidgetEvent } from "@lifi/widget";
-import { FC, useEffect, useMemo } from "react";
+import { FC, useEffect, useMemo, useRef } from "react";
+import AddFundsJumperSourceChainNotice from "../SourceChainNotice";
 import { createJumperWidgetConfig } from "./config";
 
 interface AddFundsJumperWidgetProps {
@@ -14,7 +15,18 @@ const BRIDGE_SUCCESS_REDIRECT_DELAY_MS = 1500;
 const AddFundsJumperWidget: FC<AddFundsJumperWidgetProps> = ({ chainId, asset, onBridgeSuccess }) => {
   const { openModal } = useModal();
   const widgetEvents = useWidgetEvents();
-  const widgetConfig = useMemo(() => createJumperWidgetConfig(chainId, asset, () => openModal()), [chainId, asset, openModal]);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const openModalRef = useRef(openModal);
+
+  useEffect(() => {
+    openModalRef.current = openModal;
+  }, [openModal]);
+
+  const widgetConfig = useMemo(
+    () => createJumperWidgetConfig(chainId, asset, () => openModalRef.current()),
+    [chainId, asset],
+  );
+  const widget = useMemo(() => <LiFiWidget integrator="Confetti" config={widgetConfig} />, [widgetConfig]);
 
   useEffect(() => {
     if (!onBridgeSuccess) return;
@@ -33,8 +45,9 @@ const AddFundsJumperWidget: FC<AddFundsJumperWidgetProps> = ({ chainId, asset, o
   }, [widgetEvents, onBridgeSuccess]);
 
   return (
-    <div className="w-full max-w-full overflow-hidden">
-      <LiFiWidget integrator="Confetti" config={widgetConfig} />
+    <div ref={containerRef} className="relative w-full max-w-full overflow-hidden">
+      {widget}
+      <AddFundsJumperSourceChainNotice containerRef={containerRef} chainId={chainId} asset={asset} />
     </div>
   );
 };

@@ -1,5 +1,5 @@
 import { chains, ChainWithIcon } from "@config/wagmi/chains";
-import { useAccount, useLogout, useModal, useWallet as useParaWallet } from "@getpara/react-sdk-lite";
+import { useAccount, useLogout, useWallet as useParaWallet } from "@getpara/react-sdk-lite";
 import { useMemo } from "react";
 import { Connector, useChainId, useSwitchChain } from "wagmi";
 
@@ -8,7 +8,6 @@ interface WalletHookReturn {
   isConnected: boolean;
   chain: ChainWithIcon;
   connector: Connector | undefined;
-  connect: () => Promise<void>;
   disconnect: () => void;
   changeNetworks: (chainId: number) => void;
 }
@@ -27,7 +26,6 @@ export function useWallet(): WalletHookReturn {
   const { connectionType, external, isConnected: isAccountConnected } = useAccount();
   const { data: paraWallet } = useParaWallet(); // Only available for embedded wallets
   const { logout: paraLogout } = useLogout();
-  const { openModal } = useModal();
   const switchChain = useSwitchChain();
 
   // Wagmi hooks for external wallet support
@@ -52,14 +50,6 @@ export function useWallet(): WalletHookReturn {
   // isConnected without a resolvable address — treat that as signed out
   const isConnected = isAccountConnected && !!userAddress;
 
-  // Connection handler - returns existing promise if already connected
-  const connect = async () => {
-    if (isConnected) {
-      return Promise.resolve();
-    }
-    return openModal();
-  };
-
   // Disconnection always goes through Para SDK
   const disconnect = () => paraLogout();
 
@@ -74,7 +64,6 @@ export function useWallet(): WalletHookReturn {
     //TODO: test if we need an undefined here?
     chain: chain as ChainWithIcon,
     connector: external?.evm?.connector,
-    connect,
     disconnect,
     changeNetworks,
   };

@@ -77,8 +77,8 @@ export const createJumperWidgetConfig = (chainId: number, asset: string, onConne
               main: "#bb65ff",
             },
             background: {
-              default: "#0f0f12",
-              paper: "#0f0f12",
+              default: "#000000",
+              paper: "#000000",
             },
             success: {
               main: "#78ffc6",

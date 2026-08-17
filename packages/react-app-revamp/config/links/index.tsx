@@ -15,6 +15,7 @@ export const LINK_BRIDGE_DOCS = "https://docs.confetti.win/user-how-tos/bridging
 export const LINK_DOCS = "https://docs.confetti.win/";
 export const LINK_LINKTREE = "https://linktr.ee/confetti_win";
 export const LINK_ROI_CALCULATOR = "https://docs.confetti.win/calculating-roi";
+export const LINK_JUMPER = "https://jumper.exchange";
 
 export const FOOTER_LINKS = [
   {
