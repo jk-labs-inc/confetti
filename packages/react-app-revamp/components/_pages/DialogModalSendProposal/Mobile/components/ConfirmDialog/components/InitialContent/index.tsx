@@ -16,6 +16,7 @@ interface SendProposalMobileLayoutConfirmInitialContentProps {
   chainName: string;
   onConfirm?: () => void;
   onShowAddFunds?: (value: boolean) => void;
+  onAddFunds?: () => Promise<boolean>;
 }
 
 enum ButtonText {
@@ -29,6 +30,7 @@ const SendProposalMobileLayoutConfirmInitialContent: FC<SendProposalMobileLayout
   chainName,
   onConfirm,
   onShowAddFunds,
+  onAddFunds,
 }) => {
   const {
     emailForSubscription,
@@ -84,6 +86,11 @@ const SendProposalMobileLayoutConfirmInitialContent: FC<SendProposalMobileLayout
     onShowAddFunds?.(false);
   };
 
+  const handleAddFunds = async () => {
+    if (await onAddFunds?.()) return;
+    setShowAddFunds(true);
+  };
+
   return (
     <>
       {showAddFunds ? (
@@ -106,7 +113,7 @@ const SendProposalMobileLayoutConfirmInitialContent: FC<SendProposalMobileLayout
             <ButtonV3
               colorClass="bg-gradient-vote rounded-[40px]"
               size={ButtonSize.FULL}
-              onClick={buttonText === ButtonText.SUBMIT ? handleConfirm : () => setShowAddFunds(true)}
+              onClick={buttonText === ButtonText.SUBMIT ? handleConfirm : handleAddFunds}
             >
               {buttonText}
             </ButtonV3>

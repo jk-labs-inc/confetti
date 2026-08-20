@@ -1,5 +1,6 @@
 import SignInModalTracker from "@components/Analytics/SignInModalTracker";
 import CountryFlagPolyfill from "@components/CountryFlagPolyfill";
+import "@funkit/connect/styles.css";
 import "@getpara/react-sdk-lite/styles.css";
 import LayoutBase from "@layouts/LayoutBase";
 import { GoogleTagManager } from "@next/third-parties/google";
