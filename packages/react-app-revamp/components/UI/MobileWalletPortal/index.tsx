@@ -8,6 +8,7 @@ import SendFunds from "@components/SendFunds";
 import Drawer from "../Drawer";
 import ProfileSection from "@components/Connect/components/AccountDropdown/components/ProfileSection";
 import AdvancedOptions from "@components/Connect/components/AccountDropdown/components/AdvancedOptions";
+import { useAddFunds } from "@hooks/useAddFunds";
 import { useAddFundsChain } from "@hooks/useAddFundsChain";
 import { useWallet } from "@hooks/useWallet";
 import { chains } from "@config/wagmi";
@@ -45,6 +46,13 @@ export const MobileProfileDrawer: React.FC<MobileProfileDrawerProps> = ({ isOpen
   const { data: ensName } = useEnsName({ address: address as `0x${string}`, chainId: mainnet.id });
   const { data: ensAvatar } = useEnsAvatar({ name: ensName as string, chainId: mainnet.id });
   const { data: balance } = useBalance({ address: address as `0x${string}` });
+  const { openAddFunds } = useAddFunds({ chain: chainName });
+
+  const handleAddFunds = async () => {
+    onClose();
+    if (await openAddFunds()) return;
+    setIsAddFundsOpen(true);
+  };
 
   const displayName = `${address.slice(0, 6)}...${address.slice(-4)}`;
 
@@ -59,10 +67,7 @@ export const MobileProfileDrawer: React.FC<MobileProfileDrawerProps> = ({ isOpen
             displayName={displayName}
             balance={balance}
             currentChain={currentChain}
-            onAddFundsClick={() => {
-              onClose();
-              setIsAddFundsOpen(true);
-            }}
+            onAddFundsClick={handleAddFunds}
             onSendFundsClick={() => {
               onClose();
               setIsSendFundsOpen(true);
@@ -99,12 +104,7 @@ export const MobileProfileDrawer: React.FC<MobileProfileDrawerProps> = ({ isOpen
           </div>
         </div>
       </Drawer>
-      <AddFundsModal
-        chain={chainName}
-        asset={asset}
-        isOpen={isAddFundsOpen}
-        onClose={() => setIsAddFundsOpen(false)}
-      />
+      <AddFundsModal chain={chainName} asset={asset} isOpen={isAddFundsOpen} onClose={() => setIsAddFundsOpen(false)} />
       <SendFunds isOpen={isSendFundsOpen} onClose={() => setIsSendFundsOpen(false)} />
     </>
   );

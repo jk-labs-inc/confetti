@@ -5,6 +5,7 @@ import { chains } from "@config/wagmi";
 import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import { extractPathSegments } from "@helpers/extractPath";
 import { emailRegex } from "@helpers/regex";
+import { useAddFunds } from "@hooks/useAddFunds";
 import { useContestStore } from "@hooks/useContest/store";
 import { useEditorStore } from "@hooks/useEditor/store";
 import useEmailSignup from "@hooks/useEmailSignup";
@@ -56,13 +57,15 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
     setPhoneNumberAlreadyExists,
   } = useSubmitProposalStore(state => state);
   const { charge } = useContestStore(state => state);
-  const { data: accountData } = useBalance({
-    address: userAddress as `0x${string}`,
-  });
-  const { setRevertTextOption } = useEditorStore(state => state);
+  const { openAddFunds } = useAddFunds({ chain: chainName });
   const chainId = chains.filter(
     (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName,
   )?.[0]?.id;
+  const { data: accountData } = useBalance({
+    address: userAddress as `0x${string}`,
+    chainId,
+  });
+  const { setRevertTextOption } = useEditorStore(state => state);
   const [proposal, setProposal] = useState("");
   const isCorrectNetwork = chainId === chain?.id;
   const [isDragging, setIsDragging] = useState(false);
@@ -228,6 +231,7 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
           setIsOpen={setIsOpen}
           onSwitchNetwork={onSwitchNetwork}
           onSubmitProposal={onSubmitProposal}
+          onAddFunds={openAddFunds}
         />
       ) : (
         <DialogModalSendProposalDesktopLayout
@@ -247,6 +251,7 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
           handleDragLeave={handleDragLeave}
           onSwitchNetwork={onSwitchNetwork}
           onSubmitProposal={onSubmitProposal}
+          onAddFunds={openAddFunds}
         />
       )}
     </>

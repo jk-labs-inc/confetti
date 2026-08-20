@@ -7,7 +7,7 @@ const webpack = require("webpack");
 const nextConfig = {
   reactStrictMode: false,
   webpack: config => {
-    config.resolve.fallback = { fs: false, net: false, tls: false };
+    config.resolve.fallback = { fs: false, net: false, tls: false, tronweb: false };
     config.resolve.modules = [path.resolve(__dirname, "node_modules"), ...(config.resolve.modules || ["node_modules"])];
     config.externals.push("pino-pretty", "lokijs", "encoding");
     

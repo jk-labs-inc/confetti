@@ -542,7 +542,7 @@ li {
 }
 
 @layer base {
-  *:not(.normal-case, .uppercase, input, textarea) {
+  *:not(.normal-case, .uppercase, input, textarea, body > [data-rk], body > [data-rk] *) {
     text-transform: lowercase;
   }
 
@@ -1004,16 +1004,17 @@ li {
   }
 }
 
-[aria-labelledby="rk_chain_modal_title"] [tabindex="0"] ~ [role="document"] > div > div {
-  overflow-y: auto;
-  @media (min-width: 768px) {
-    max-height: unset;
-  }
-  max-height: calc(100vh - 60px);
-}
-
 cpsl-auth-modal {
   position: relative;
   z-index: 9999999999;
   pointer-events: auto;
+}
+
+/* funkit checkout portals mount as direct body children; drawers lock body pointer-events */
+body > [data-rk] {
+  pointer-events: auto;
+}
+
+body > [data-rk] ::placeholder {
+  color: inherit;
 }

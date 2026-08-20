@@ -8,6 +8,7 @@ const BODY_LOCK_CLEANUP_DELAY_MS = VAUL_EXIT_ANIMATION_MS + 200;
 // close (mobile-only freeze); once no drawer is open, none of them may remain.
 const clearLeftoverBodyLock = () => {
   if (document.querySelector('[data-vaul-drawer][data-state="open"]')) return;
+  if (document.querySelector("body > [data-rk]")) return;
 
   const { style } = document.body;
   style.removeProperty("pointer-events");
@@ -24,6 +25,10 @@ const clearLeftoverBodyLock = () => {
   document.body.removeAttribute("data-scroll-locked");
 };
 
+export const scheduleBodyLockCleanup = () => {
+  setTimeout(clearLeftoverBodyLock, BODY_LOCK_CLEANUP_DELAY_MS);
+};
+
 interface DrawerProps {
   isOpen: boolean;
   children: React.ReactNode;
@@ -38,7 +43,7 @@ const shouldPreventDismiss = (e: React.SyntheticEvent | Event | { detail?: { ori
   if (!target) return false;
 
   const el = target as HTMLElement;
-  return !!el.closest?.("cpsl-auth-modal") || !!el.closest?.(".Toastify");
+  return !!el.closest?.("cpsl-auth-modal") || !!el.closest?.(".Toastify") || !!el.closest?.("body > [data-rk]");
 };
 
 const Drawer: FC<DrawerProps> = ({ isOpen, children, className, onClose, isHandleHidden = false }) => {

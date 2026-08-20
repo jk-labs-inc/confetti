@@ -40,6 +40,7 @@ interface DialogModalSendProposalDesktopLayoutProps {
   handleDragLeave?: (event: React.DragEvent<HTMLDivElement>) => void;
   onSwitchNetwork?: () => void;
   onSubmitProposal?: () => void;
+  onAddFunds?: () => Promise<boolean>;
 }
 
 enum ButtonText {
@@ -64,6 +65,7 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
   handleDragLeave,
   onSwitchNetwork,
   onSubmitProposal,
+  onAddFunds,
 }) => {
   const { openModal: openWalletModal } = useModal();
   const { contestConfig } = useContestConfigStore(useShallow(state => state));
@@ -152,8 +154,19 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
     setShowAddFundsModal(false);
   };
 
+  const handleAddFunds = async () => {
+    if (await onAddFunds?.()) return;
+    setShowAddFundsModal(true);
+  };
+
   return (
-    <DialogModalV3 title="submission" isOpen={isOpen} setIsOpen={onCloseModal} disableFocusTrap className="w-full xl:w-[1100px]">
+    <DialogModalV3
+      title="submission"
+      isOpen={isOpen}
+      setIsOpen={onCloseModal}
+      disableFocusTrap
+      className="w-full xl:w-[1100px]"
+    >
       <div className="flex flex-col gap-4 md:pl-[50px] lg:pl-[100px] mt-[36px] mb-[36px]">
         {showAddFundsModal ? (
           <AddFunds
@@ -216,7 +229,7 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
                   <ButtonV3
                     colorClass="bg-gradient-purple rounded-[40px]"
                     size={ButtonSize.EXTRA_LARGE_LONG}
-                    onClick={buttonText === ButtonText.SUBMIT ? handleConfirm : () => setShowAddFundsModal(true)}
+                    onClick={buttonText === ButtonText.SUBMIT ? handleConfirm : handleAddFunds}
                     isDisabled={isLoading}
                   >
                     {buttonText}

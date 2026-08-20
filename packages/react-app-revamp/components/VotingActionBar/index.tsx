@@ -12,6 +12,7 @@ import { useVoteExecution } from "@components/Voting/hooks/useVoteExecution";
 import { useVotingStore } from "@components/Voting/store";
 import { useModal } from "@getpara/react-sdk-lite";
 import { formatVoteCount } from "@helpers/formatNumber";
+import { useAddFunds } from "@hooks/useAddFunds";
 import useCastVotes from "@hooks/useCastVotes";
 import { useCastVotesStore } from "@hooks/useCastVotes/store";
 import { useContestStore } from "@hooks/useContest/store";
@@ -54,11 +55,17 @@ const VotingActionBar = () => {
   });
   const effectiveCost = parseFloat(currentPriceNative) > 0 ? currentPriceNative : currentPricePerVote;
 
+  const { openAddFunds } = useAddFunds({ chain: contestConfig.chainName });
+
   const {
     balance,
     insufficientBalance,
     isLoading: isBalanceLoading,
-  } = useVoteBalance({ chainId: contestConfig.chainId, costToVote: effectiveCost, inputValue });
+  } = useVoteBalance({
+    chainId: contestConfig.chainId,
+    costToVote: effectiveCost,
+    inputValue,
+  });
   const maxBalance = balance?.formatted || "0";
 
   const { displayValue, displaySymbol, handleDisplayChange, setIsFocused } = useVotingInputDisplay({
@@ -115,9 +122,10 @@ const VotingActionBar = () => {
   const voteDisabled =
     !pickedProposal || isBalanceLoading || isPriceLoading || isCastLoading || isZeroValue || isBelowMinimum;
 
-  const handleClick = () => {
+  const handleClick = async () => {
     inputRef.current?.blur();
     if (isConnected && insufficientBalance) {
+      if (await openAddFunds()) return;
       setShowAddFunds(true);
       return;
     }
