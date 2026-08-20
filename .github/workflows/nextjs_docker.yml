@@ -52,6 +52,7 @@ jobs:
             NEXT_PUBLIC_PARA_API_KEY=${{ secrets.PROD_NEXT_PUBLIC_PARA_API_KEY }}
             NEXT_PUBLIC_BREVO_API_KEY=${{ secrets.PROD_NEXT_PUBLIC_BREVO_API_KEY }}
             NEXT_PUBLIC_ENVIRONMENT=${{ secrets.PROD_NEXT_PUBLIC_ENVIRONMENT }}
+            NEXT_PUBLIC_ENVIRONMENT=${{ secrets.PROD_NEXT_PUBLIC_FUNKIT_API_KEY }}
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
