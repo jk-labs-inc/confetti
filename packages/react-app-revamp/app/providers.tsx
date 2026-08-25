@@ -1,6 +1,8 @@
 "use client";
 
 import { chains, transports } from "@config/wagmi";
+import { funkitConfig, funkitTheme, isFunkitConfigured } from "@config/funkit";
+import { FunkitProvider } from "@funkit/connect";
 import ParaWeb, { AuthLayout, Environment, TExternalWallet } from "@getpara/react-sdk-lite";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { FC, ReactNode } from "react";
@@ -67,7 +69,13 @@ const Providers: FC<ProvidersProps> = ({ children }) => {
           },
         }}
       >
-        {children}
+        {isFunkitConfigured ? (
+          <FunkitProvider funkitConfig={funkitConfig} theme={funkitTheme} modalSize="medium" locale="en">
+            {children}
+          </FunkitProvider>
+        ) : (
+          children
+        )}
       </ParaProvider>
     </QueryClientProvider>
   );

@@ -1,6 +1,7 @@
 import AddFundsModal from "@components/AddFunds/components/Modal";
 import SendFunds from "@components/SendFunds";
 import { Menu, MenuItems } from "@headlessui/react";
+import { useAddFunds } from "@hooks/useAddFunds";
 import { useAddFundsChain } from "@hooks/useAddFundsChain";
 import { useWallet } from "@hooks/useWallet";
 import { chains } from "@config/wagmi";
@@ -28,46 +29,62 @@ const AccountDropdown: FC<AccountDropdownProps> = ({ address, displayName, onDis
   const { data: ensName } = useEnsName({ address: address as `0x${string}`, chainId: mainnet.id });
   const { data: ensAvatar } = useEnsAvatar({ name: ensName as string, chainId: mainnet.id });
   const { data: balance } = useBalance({ address: address as `0x${string}` });
+  const { openAddFunds } = useAddFunds({ chain: chainName });
+
+  const handleAddFunds = async () => {
+    if (await openAddFunds()) return;
+    setIsAddFundsOpen(true);
+  };
 
   return (
     <>
       <Menu>
-        <AccountButton
-          address={address}
-          ensName={ensName}
-          ensAvatar={ensAvatar}
-          displayName={displayName}
-          currentChain={currentChain}
-        />
-
-        <MenuItems
-          transition
-          anchor="bottom end"
-          className="z-50 w-[360px] origin-top-right rounded-2xl bg-secondary-1 text-[16px] text-neutral-11 transition duration-100 ease-out [--anchor-gap:--spacing(2)] focus:outline-none data-closed:scale-95 data-closed:opacity-0"
-        >
-          <div className="flex flex-col">
-            <ProfileSection
+        {({ close }) => (
+          <>
+            <AccountButton
               address={address}
-              ensAvatar={ensAvatar}
               ensName={ensName}
+              ensAvatar={ensAvatar}
               displayName={displayName}
-              balance={balance}
               currentChain={currentChain}
-              onAddFundsClick={() => setIsAddFundsOpen(true)}
-              onSendFundsClick={() => setIsSendFundsOpen(true)}
-              onAdvancedClick={() => setIsAdvancedOpen(prev => !prev)}
-              isAdvancedOpen={isAdvancedOpen}
             />
-            <AdvancedOptions
-              isOpen={isAdvancedOpen}
-              currentChain={currentChain}
-              availableChains={chains}
-              onChainSwitch={changeNetworks}
-            />
-            <NavigationLinks address={address} />
-            <DisconnectButton onDisconnect={onDisconnect} />
-          </div>
-        </MenuItems>
+
+            <MenuItems
+              transition
+              anchor="bottom end"
+              className="z-50 w-[360px] origin-top-right rounded-2xl bg-secondary-1 text-[16px] text-neutral-11 transition duration-100 ease-out [--anchor-gap:--spacing(2)] focus:outline-none data-closed:scale-95 data-closed:opacity-0"
+            >
+              <div className="flex flex-col">
+                <ProfileSection
+                  address={address}
+                  ensAvatar={ensAvatar}
+                  ensName={ensName}
+                  displayName={displayName}
+                  balance={balance}
+                  currentChain={currentChain}
+                  onAddFundsClick={() => {
+                    close();
+                    handleAddFunds();
+                  }}
+                  onSendFundsClick={() => {
+                    close();
+                    setIsSendFundsOpen(true);
+                  }}
+                  onAdvancedClick={() => setIsAdvancedOpen(prev => !prev)}
+                  isAdvancedOpen={isAdvancedOpen}
+                />
+                <AdvancedOptions
+                  isOpen={isAdvancedOpen}
+                  currentChain={currentChain}
+                  availableChains={chains}
+                  onChainSwitch={changeNetworks}
+                />
+                <NavigationLinks address={address} />
+                <DisconnectButton onDisconnect={onDisconnect} />
+              </div>
+            </MenuItems>
+          </>
+        )}
       </Menu>
 
       <AddFundsModal chain={chainName} asset={asset} isOpen={isAddFundsOpen} onClose={() => setIsAddFundsOpen(false)} />

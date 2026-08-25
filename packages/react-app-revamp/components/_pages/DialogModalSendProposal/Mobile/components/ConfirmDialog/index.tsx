@@ -11,6 +11,7 @@ interface DialogModalSendProposalMobileLayoutConfirmProps {
   accountData: GetBalanceReturnType | undefined;
   onConfirm?: () => void;
   onClose?: () => void;
+  onAddFunds?: () => Promise<boolean>;
 }
 
 const DialogModalSendProposalMobileLayoutConfirm: FC<DialogModalSendProposalMobileLayoutConfirmProps> = ({
@@ -20,6 +21,7 @@ const DialogModalSendProposalMobileLayoutConfirm: FC<DialogModalSendProposalMobi
   accountData,
   onConfirm,
   onClose,
+  onAddFunds,
 }) => {
   const { isLoading } = useSubmitProposalStore(state => state);
   const [showAddFunds, setShowAddFunds] = useState(false);
@@ -37,6 +39,7 @@ const DialogModalSendProposalMobileLayoutConfirm: FC<DialogModalSendProposalMobi
         accountData={accountData}
         chainName={chainName}
         onShowAddFunds={setShowAddFunds}
+        onAddFunds={onAddFunds}
       />
     );
   };

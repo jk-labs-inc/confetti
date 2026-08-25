@@ -3,13 +3,13 @@ import { useVoteExecution } from "@components/Voting/hooks/useVoteExecution";
 import { useVotingStore } from "@components/Voting/store";
 import { AddFundsEntryReason, VoteFlowScreen } from "@components/Voting/types";
 import { useModal } from "@getpara/react-sdk-lite";
+import { useAddFunds, DEPOSIT_ARRIVAL_POLL_INTERVAL_MS } from "@hooks/useAddFunds";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import { useVoteBalance } from "@hooks/useVoteBalance";
 import { useWallet } from "@hooks/useWallet";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useShallow } from "zustand/shallow";
 
-const FUNDS_ARRIVAL_POLL_INTERVAL_MS = 5_000;
 const CONNECT_RESOLUTION_GRACE_MS = 3_000;
 
 interface UseVoteFlowControllerParams {
@@ -47,6 +47,8 @@ export const useVoteFlowController = ({
   const contestConfig = useContestConfigStore(useShallow(state => state.contestConfig));
   const effectiveCostToVote = useEffectiveCostToVote(costToVote);
 
+  const { openAddFunds } = useAddFunds({ chain: contestConfig.chainName });
+
   const {
     balance,
     spendableBalance,
@@ -57,7 +59,7 @@ export const useVoteFlowController = ({
   } = useVoteBalance({
     chainId: contestConfig.chainId,
     costToVote: effectiveCostToVote,
-    refetchIntervalMs: screen === VoteFlowScreen.AddFunds ? FUNDS_ARRIVAL_POLL_INTERVAL_MS : undefined,
+    refetchIntervalMs: screen === VoteFlowScreen.AddFunds ? DEPOSIT_ARRIVAL_POLL_INTERVAL_MS : undefined,
   });
 
   const { handleVote } = useVoteExecution({
@@ -79,10 +81,16 @@ export const useVoteFlowController = ({
 
   const goToVote = useCallback(() => setScreen(VoteFlowScreen.Vote), []);
 
-  const goToAddFunds = useCallback((reason: AddFundsEntryReason) => {
-    setAddFundsEntryReason(reason);
-    setScreen(VoteFlowScreen.AddFunds);
-  }, []);
+  const goToAddFunds = useCallback(
+    (reason: AddFundsEntryReason) => {
+      openAddFunds().then(opened => {
+        if (opened) return;
+        setAddFundsEntryReason(reason);
+        setScreen(VoteFlowScreen.AddFunds);
+      });
+    },
+    [openAddFunds],
+  );
 
   const requestConnectAndVote = useCallback(() => {
     intentFiredRef.current = false;
@@ -111,8 +119,7 @@ export const useVoteFlowController = ({
     const typedAmount = parseFloat(useVotingStore.getState().inputValue);
     const isShortfall = insufficientBalance || (!isNaN(typedAmount) && typedAmount > parseFloat(spendableBalance));
     if (isShortfall) {
-      setAddFundsEntryReason(AddFundsEntryReason.Shortfall);
-      setScreen(VoteFlowScreen.AddFunds);
+      goToAddFunds(AddFundsEntryReason.Shortfall);
     } else {
       confirmVote();
     }
@@ -126,6 +133,7 @@ export const useVoteFlowController = ({
     balance,
     spendableBalance,
     insufficientBalance,
+    goToAddFunds,
     confirmVote,
   ]);
 
@@ -136,11 +144,7 @@ export const useVoteFlowController = ({
   }, [isConnectIntentPending, isParaModalOpen, isConnected]);
 
   useEffect(() => {
-    if (
-      !isOpen ||
-      screen !== VoteFlowScreen.AddFunds ||
-      addFundsEntryReason !== AddFundsEntryReason.Shortfall
-    ) {
+    if (!isOpen || screen !== VoteFlowScreen.AddFunds || addFundsEntryReason !== AddFundsEntryReason.Shortfall) {
       return;
     }
     if (!isConnected || isBalanceLoading || isBalanceError || balance === undefined) return;

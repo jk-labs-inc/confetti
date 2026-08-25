@@ -1,6 +1,7 @@
 import AddFundsModal from "@components/AddFunds/components/Modal";
 import ButtonV3, { ButtonSize, ButtonType } from "@components/UI/ButtonV3";
 import { isWalletForbidden } from "@components/_pages/Create/utils/wallet";
+import { useAddFunds } from "@hooks/useAddFunds";
 import { useWallet } from "@hooks/useWallet";
 import { useRouter } from "next/navigation";
 import { FC, MouseEventHandler, useEffect, useState } from "react";
@@ -19,6 +20,7 @@ const CreateContestButton: FC<CreateContestButtonProps> = ({ onClick, errorShake
   const [shake, setShake] = useState(false);
   const isMobileOrTablet = useMediaQuery({ maxWidth: 1024 });
   const [showAddFunds, setShowAddFunds] = useState(false);
+  const { openAddFunds } = useAddFunds({ chain: chain?.name ?? "" });
   const { data: balance } = useBalance({
     address: userAddress,
     chainId: chain?.id,
@@ -38,8 +40,9 @@ const CreateContestButton: FC<CreateContestButtonProps> = ({ onClick, errorShake
     return () => clearTimeout(timeout);
   }, [errorShakeSignal]);
 
-  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
     if (needsFunds) {
+      if (await openAddFunds()) return;
       setShowAddFunds(true);
     } else if (onClick) {
       onClick(e);
