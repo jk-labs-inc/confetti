@@ -1,6 +1,7 @@
 import AddFundsModal from "@components/AddFunds/components/Modal";
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import { formatNumberWithCommas } from "@helpers/formatNumber";
+import { useAddFunds } from "@hooks/useAddFunds";
 import { useContestStore } from "@hooks/useContest/store";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import useDisplayPrice from "@hooks/useCurrency/useDisplayPrice";
@@ -20,10 +21,11 @@ const BalanceOrSkeleton = ({
   userBalance: string;
   nativeCurrencySymbol?: string;
 }) => {
-  const { displayValue, displaySymbol, isLoading: isPriceLoading } = useDisplayPrice(
-    userBalance,
-    nativeCurrencySymbol ?? "",
-  );
+  const {
+    displayValue,
+    displaySymbol,
+    isLoading: isPriceLoading,
+  } = useDisplayPrice(userBalance, nativeCurrencySymbol ?? "");
 
   if (isUserBalanceLoading || isPriceLoading) {
     return (
@@ -65,6 +67,7 @@ const VotingQualifierAnyoneCanVoteBalance: FC<VotingQualifierAnyoneCanVoteBalanc
     chainId: contestConfig.chainId,
     votingClose,
   });
+  const { openAddFunds } = useAddFunds({ chain: contestConfig.chainName });
   const {
     spendableBalance,
     insufficientBalance,
@@ -79,6 +82,11 @@ const VotingQualifierAnyoneCanVoteBalance: FC<VotingQualifierAnyoneCanVoteBalanc
     costToVote: currentPricePerVote,
   });
   const [isAddFundsOpen, setIsAddFundsOpen] = useState(false);
+
+  const handleAddFunds = async () => {
+    if (await openAddFunds()) return;
+    setIsAddFundsOpen(true);
+  };
 
   // add error handling for native balance
   if (isErrorCurrentPricePerVote || isErrorSpendableBalance) {
@@ -98,7 +106,7 @@ const VotingQualifierAnyoneCanVoteBalance: FC<VotingQualifierAnyoneCanVoteBalanc
           size={ButtonSize.DEFAULT_LONG}
           colorClass="bg-true-black border border-neutral-11 rounded-[40px] hover:bg-neutral-11 hover:text-true-black transition-all duration-300"
           textColorClass="text-neutral-11"
-          onClick={() => setIsAddFundsOpen(true)}
+          onClick={handleAddFunds}
         >
           add funds to vote
         </ButtonV3>

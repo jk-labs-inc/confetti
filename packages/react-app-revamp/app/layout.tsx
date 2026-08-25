@@ -1,5 +1,7 @@
+import AddFundsModalTracker from "@components/Analytics/AddFundsModalTracker";
 import SignInModalTracker from "@components/Analytics/SignInModalTracker";
 import CountryFlagPolyfill from "@components/CountryFlagPolyfill";
+import "@funkit/connect/styles.css";
 import "@getpara/react-sdk-lite/styles.css";
 import LayoutBase from "@layouts/LayoutBase";
 import { GoogleTagManager } from "@next/third-parties/google";
@@ -95,6 +97,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <LayoutBase>{children}</LayoutBase>
             <DynamicPortal />
             <SignInModalTracker />
+            <AddFundsModalTracker />
             <GoogleTagManager gtmId="GTM-W2WHJ2QJ" />
           </Providers>
         </div>

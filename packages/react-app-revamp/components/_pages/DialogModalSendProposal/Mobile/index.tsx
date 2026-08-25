@@ -28,6 +28,7 @@ interface DialogModalSendProposalMobileLayoutProps {
   setIsOpen: (isOpen: boolean) => void;
   onSwitchNetwork?: () => void;
   onSubmitProposal?: () => void;
+  onAddFunds?: () => Promise<boolean>;
 }
 
 const DialogModalSendProposalMobileLayout: FC<DialogModalSendProposalMobileLayoutProps> = ({
@@ -43,6 +44,7 @@ const DialogModalSendProposalMobileLayout: FC<DialogModalSendProposalMobileLayou
   setIsOpen,
   onSwitchNetwork,
   onSubmitProposal,
+  onAddFunds,
 }) => {
   const { openModal: openWalletModal } = useModal();
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
@@ -117,16 +119,10 @@ const DialogModalSendProposalMobileLayout: FC<DialogModalSendProposalMobileLayou
             >
               submit
             </ButtonV3>
-            {validationError && (
-              <p className="text-negative-11 font-bold text-[12px] text-center">{validationError}</p>
-            )}
+            {validationError && <p className="text-negative-11 font-bold text-[12px] text-center">{validationError}</p>}
           </>
         ) : (
-          <ButtonV3
-            colorClass="bg-gradient-create rounded-[40px]"
-            size={ButtonSize.FULL}
-            onClick={onSwitchNetwork}
-          >
+          <ButtonV3 colorClass="bg-gradient-create rounded-[40px]" size={ButtonSize.FULL} onClick={onSwitchNetwork}>
             switch network
           </ButtonV3>
         )}
@@ -138,6 +134,7 @@ const DialogModalSendProposalMobileLayout: FC<DialogModalSendProposalMobileLayou
         accountData={accountData}
         onConfirm={() => onSubmitProposal?.()}
         onClose={() => setIsConfirmModalOpen(false)}
+        onAddFunds={onAddFunds}
       />
     </Drawer>
   );
