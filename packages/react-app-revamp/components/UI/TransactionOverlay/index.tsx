@@ -3,47 +3,34 @@
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect } from "react";
 import { useShallow } from "zustand/shallow";
-import AmbientParticles from "./components/AmbientParticles";
-import ErrorView from "./components/ErrorView";
-import PendingView from "./components/PendingView";
-import SuccessView from "./components/SuccessView";
-import { SUCCESS_DISMISS_MS } from "./constants";
-import { txOverlay, useTransactionOverlayStore } from "./store";
-import { TransactionOverlayFlow, TransactionOverlayPhase } from "./types";
-
-const VOTE_FLOW_TRACKING_ID = "votes_are_deploying_toast";
+import OverlayScene from "./components/OverlayScene";
+import { VOTE_FLOW_TRACKING_ID } from "./constants";
+import { useTransactionOverlayStore } from "./store";
+import { TransactionOverlayFlow, TransactionOverlayPlacement } from "./types";
+import { useOverlayLifecycle } from "./useOverlayLifecycle";
 
 const TransactionOverlay = () => {
-  const { isOpen, flow, phase, errorMessage, steps, successMeta } = useTransactionOverlayStore(
+  const { isOpen, placement, flow, phase, errorMessage, steps, successMeta } = useTransactionOverlayStore(
     useShallow(state => state),
   );
+  const isVisible = isOpen && placement === TransactionOverlayPlacement.FULLSCREEN;
 
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isVisible) return;
 
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
 
-    // warm the success mascot so it doesn't pop in late on first success
-    const mascot = new window.Image();
-    mascot.src = "/landing/bubbles-money.png";
-
     return () => {
       document.body.style.overflow = previousOverflow;
     };
-  }, [isOpen]);
+  }, [isVisible]);
 
-  useEffect(() => {
-    if (!isOpen || phase !== TransactionOverlayPhase.SUCCESS) return;
-
-    const timeout = setTimeout(() => txOverlay.dismiss(), SUCCESS_DISMISS_MS);
-
-    return () => clearTimeout(timeout);
-  }, [isOpen, phase]);
+  useOverlayLifecycle(isVisible, phase);
 
   return (
     <AnimatePresence>
-      {isOpen && (
+      {isVisible && (
         <motion.div
           id={flow === TransactionOverlayFlow.VOTE ? VOTE_FLOW_TRACKING_ID : undefined}
           className="fixed inset-0 z-10000 flex flex-col bg-true-black"
@@ -55,20 +42,15 @@ const TransactionOverlay = () => {
           aria-modal="true"
           aria-live="polite"
         >
-          <div
-            className="absolute inset-0 bg-[radial-gradient(55%_40%_at_50%_42%,#16101b_0%,#000000_100%)]"
-            aria-hidden="true"
+          <OverlayScene
+            flow={flow}
+            phase={phase}
+            errorMessage={errorMessage}
+            steps={steps}
+            successMeta={successMeta}
+            placement={TransactionOverlayPlacement.FULLSCREEN}
+            contentClassName="px-10 pb-[env(safe-area-inset-bottom)] pt-[env(safe-area-inset-top)]"
           />
-          {phase !== TransactionOverlayPhase.ERROR && <AmbientParticles />}
-          <div className="relative flex flex-1 flex-col items-center justify-center px-10 pb-[env(safe-area-inset-bottom)] pt-[env(safe-area-inset-top)]">
-            {phase === TransactionOverlayPhase.ERROR ? (
-              <ErrorView errorMessage={errorMessage} />
-            ) : phase === TransactionOverlayPhase.SUCCESS ? (
-              <SuccessView flow={flow} meta={successMeta} />
-            ) : (
-              <PendingView flow={flow} phase={phase} steps={steps} />
-            )}
-          </div>
         </motion.div>
       )}
     </AnimatePresence>

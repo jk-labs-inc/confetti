@@ -1,5 +1,7 @@
 import { toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
 import { LoadingToastMessageType } from "@components/UI/Toast/components/Loading";
+import { VOTE_FLOW_TRACKING_ID } from "@components/UI/TransactionOverlay/constants";
+import { resolveOverlayPlacement } from "@components/UI/TransactionOverlay/placement";
 import { txOverlay } from "@components/UI/TransactionOverlay/store";
 import { TransactionOverlayFlow, TransactionOverlayPhase } from "@components/UI/TransactionOverlay/types";
 import { useVotingStore } from "@components/Voting/store";
@@ -26,7 +28,6 @@ import { useVoteBalance } from "@hooks/useVoteBalance";
 import { useWallet } from "@hooks/useWallet";
 import { useQueryClient } from "@tanstack/react-query";
 import { readContract, simulateContract, waitForTransactionReceipt, writeContract } from "@wagmi/core";
-import { isMobileViewport } from "@helpers/isMobileViewport";
 import moment from "moment";
 import { useState } from "react";
 import { checkAndMarkPriceChangeError } from "utils/error";
@@ -42,9 +43,10 @@ import { usePriceTracking } from "./utils/priceTracking";
 interface UseCastVotesProps {
   charge: Charge;
   votesClose: Date;
+  inlineOverlay?: boolean;
 }
 
-export function useCastVotes({ charge, votesClose }: UseCastVotesProps) {
+export function useCastVotes({ charge, votesClose, inlineOverlay }: UseCastVotesProps) {
   const queryClient = useQueryClient();
   const { contestConfig } = useContestConfigStore(useShallow(state => state));
   const { data: rewards } = useRewardsModule();
@@ -107,13 +109,13 @@ export function useCastVotes({ charge, votesClose }: UseCastVotesProps) {
   });
 
   async function castVotes(amountOfVotes: number) {
-    const isMobile = isMobileViewport();
+    const overlayPlacement = resolveOverlayPlacement(inlineOverlay);
 
-    if (isMobile) {
-      txOverlay.start(TransactionOverlayFlow.VOTE);
+    if (overlayPlacement) {
+      txOverlay.start(TransactionOverlayFlow.VOTE, { placement: overlayPlacement });
     } else {
       toastLoading({
-        id: "votes_are_deploying_toast",
+        id: VOTE_FLOW_TRACKING_ID,
         message: "votes are deploying...",
         additionalMessageType: LoadingToastMessageType.KEEP_BROWSER_OPEN,
       });
@@ -219,7 +221,7 @@ export function useCastVotes({ charge, votesClose }: UseCastVotesProps) {
         },
       };
 
-      if (isMobile) {
+      if (overlayPlacement && txOverlay.isShowing(TransactionOverlayFlow.VOTE)) {
         txOverlay.success(successMeta);
       } else {
         toastSuccess({
@@ -268,7 +270,9 @@ export function useCastVotes({ charge, votesClose }: UseCastVotesProps) {
 
       const processedError = checkAndMarkPriceChangeError(e, initialPrice, currentPrice);
 
-      handleError(processedError, "something went wrong while casting your votes");
+      handleError(processedError, "something went wrong while casting your votes", {
+        overlayFlow: TransactionOverlayFlow.VOTE,
+      });
       setError(errorMessage);
       setIsLoading(false);
       throw processedError;

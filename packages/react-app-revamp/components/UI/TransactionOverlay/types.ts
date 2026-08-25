@@ -6,6 +6,11 @@ export enum TransactionOverlayFlow {
   REWARDS = "rewards",
 }
 
+export enum TransactionOverlayPlacement {
+  FULLSCREEN = "fullscreen",
+  INLINE = "inline",
+}
+
 export enum TransactionOverlayPhase {
   SIGNING = "signing",
   MINING = "mining",

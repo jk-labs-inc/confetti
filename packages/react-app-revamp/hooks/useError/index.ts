@@ -1,5 +1,6 @@
 import { toastDismiss, toastError, toastWarning } from "@components/UI/Toast";
 import { txOverlay } from "@components/UI/TransactionOverlay/store";
+import { TransactionOverlayFlow } from "@components/UI/TransactionOverlay/types";
 import { chains } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import { useWallet } from "@hooks/useWallet";
@@ -13,10 +14,14 @@ export function useError() {
   const { chain: chainFromAccount } = useWallet();
   const [error, setError] = useState<string>("");
 
-  const handleError = (e: any, defaultMessage: string) => {
+  const handleError = (e: any, defaultMessage: string, options?: { overlayFlow?: TransactionOverlayFlow }) => {
+    const ownsOverlay = options?.overlayFlow !== undefined && txOverlay.isShowing(options.overlayFlow);
+
     if (didUserReject(e)) {
       toastDismiss();
-      txOverlay.dismiss();
+      if (ownsOverlay) {
+        txOverlay.dismiss();
+      }
       return;
     }
 
@@ -26,7 +31,7 @@ export function useError() {
 
     setError(handledError.message);
 
-    if (txOverlay.isActive()) {
+    if (ownsOverlay) {
       txOverlay.fail(handledError.isWarning || handledError.codeFound ? handledError.message : defaultMessage);
       return;
     }

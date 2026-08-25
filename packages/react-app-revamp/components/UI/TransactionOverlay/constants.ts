@@ -9,6 +9,8 @@ export const PARTICLE_SVGS = [
 
 export const SUCCESS_DISMISS_MS = 2400;
 
+export const VOTE_FLOW_TRACKING_ID = "votes_are_deploying_toast";
+
 // Deterministic PRNG (same shape as VoteFeedback/particles.ts) so particle
 // layouts are stable across renders without threading state around.
 export function rand(seed: number, index: number, salt: number): number {
