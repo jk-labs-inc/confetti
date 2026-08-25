@@ -6,6 +6,7 @@ import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import { useWallet } from "@hooks/useWallet";
 import { useQueryClient } from "@tanstack/react-query";
 import { getAccount, switchChain } from "@wagmi/core";
+import { hideAddFundsMarker, showAddFundsMarker } from "lib/analytics/addFundsMarker";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useBalance } from "wagmi";
 
@@ -61,6 +62,7 @@ export const useAddFunds = ({ chain }: UseAddFundsParams) => {
     onClose: ({ isNewDeposit, isSoftHidden }) => {
       scheduleBodyLockCleanup();
       if (isNewDeposit || isSoftHidden) return;
+      hideAddFundsMarker();
       if (!hasConfirmedDepositRef.current || !funkitChain) return;
       const wagmiConfig = getWagmiConfig();
       const { chainId } = getAccount(wagmiConfig);
@@ -93,6 +95,7 @@ export const useAddFunds = ({ chain }: UseAddFundsParams) => {
     if (!isConnected || !checkoutConfig) return false;
     hasConfirmedDepositRef.current = false;
     const { isActivated } = await beginCheckout(checkoutConfig);
+    if (isActivated) showAddFundsMarker();
     return isActivated;
   }, [chain, isConnected, beginCheckout]);
 
