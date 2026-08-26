@@ -48,7 +48,7 @@ const Providers: FC<ProvidersProps> = ({ children }) => {
             borderRadius: "lg",
             font: "Lato",
           },
-          logo: "/confetti/loader/frame-1.svg",
+          logo: "/confetti-logo-high-res.png",
           oAuthMethods: ["GOOGLE", "TWITTER", "DISCORD", "TELEGRAM"],
         }}
         configOverrides={{
