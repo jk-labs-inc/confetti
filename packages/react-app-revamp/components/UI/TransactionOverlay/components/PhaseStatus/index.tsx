@@ -1,15 +1,16 @@
 import { AnimatePresence, motion } from "motion/react";
 import { FC } from "react";
 import { getPendingPhaseCopy } from "../../copy";
-import { TransactionOverlayFlow, TransactionOverlayPendingPhase } from "../../types";
+import { TransactionOverlayFlow, TransactionOverlayPendingPhase, TransactionOverlayPlacement } from "../../types";
 
 interface PhaseStatusProps {
   flow: TransactionOverlayFlow;
   phase: TransactionOverlayPendingPhase;
+  placement: TransactionOverlayPlacement;
 }
 
-const PhaseStatus: FC<PhaseStatusProps> = ({ flow, phase }) => {
-  const copy = getPendingPhaseCopy(flow, phase);
+const PhaseStatus: FC<PhaseStatusProps> = ({ flow, phase, placement }) => {
+  const copy = getPendingPhaseCopy(flow, phase, placement);
 
   return (
     <AnimatePresence mode="wait">

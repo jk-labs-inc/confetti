@@ -10,6 +10,7 @@ const LINK_MEDIA_KIT = "https://drive.google.com/drive/folders/10BVM0YtoyCuCG8y7
 const LINK_PRIVACY_POLICY = "https://github.com/jk-labs-inc/confetti/blob/staging/PrivacyPolicy.md";
 const LINK_HOW_IT_WORKS = "/#how-it-works";
 
+export const LINK_TELEGRAM = "https://t.me/+rW5X0MqnTXBkOGIx";
 export const LINK_FAQ = "https://docs.confetti.win/faq";
 export const LINK_DOCS = "https://docs.confetti.win/";
 export const LINK_LINKTREE = "https://linktr.ee/confetti_win";

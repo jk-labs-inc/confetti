@@ -1,4 +1,5 @@
 import AddFunds from "@components/AddFunds";
+import { useRunAfterOverlayDismissed } from "@components/UI/TransactionOverlay/useRunAfterOverlayDismissed";
 import VotingWidget from "@components/Voting";
 import EntryPreviewHeader, { EntryPreviewHeaderProps } from "@components/Voting/components/EntryPreviewHeader";
 import { usePickedEntryPreview } from "@components/Voting/hooks/usePickedEntryPreview";
@@ -12,7 +13,7 @@ import { Charge } from "@hooks/useDeployContest/types";
 import { FC, useEffect } from "react";
 import { useShallow } from "zustand/shallow";
 import ConfirmVote from "./components/ConfirmVote";
-import VoteFlowShell, { VoteFlowPresentation } from "./components/Shell";
+import VoteFlowShell, { VoteFlowPresentation, useVoteFlowPresentation } from "./components/Shell";
 import { useVoteFlowController } from "./hooks/useVoteFlowController";
 
 interface VoteFlowProps {
@@ -45,7 +46,8 @@ const VoteFlow: FC<VoteFlowProps> = ({
   const { contestConfig } = useContestConfigStore(useShallow(state => state));
   const pickedProposal = useCastVotesStore(state => state.pickedProposal);
   const resetVotingInput = useVotingStore(state => state.reset);
-  const { castVotes, isLoading } = useCastVotes({ charge, votesClose });
+  const { usesDrawer } = useVoteFlowPresentation(presentation);
+  const { castVotes, isLoading } = useCastVotes({ charge, votesClose, inlineOverlay: !usesDrawer });
   const { currentPricePerVote, isLoading: isCurrentPricePerVoteLoading } = useCurrentPricePerVote({
     address: contestConfig.address,
     abi: contestConfig.abi,
@@ -57,17 +59,15 @@ const VoteFlow: FC<VoteFlowProps> = ({
     if (isOpen && resetInputOnOpen) resetVotingInput();
   }, [isOpen, resetInputOnOpen, resetVotingInput]);
 
-  const handleClose = () => {
-    onClose();
-  };
+  const runAfterOverlayDismissed = useRunAfterOverlayDismissed();
 
   const onVote = async (amount: number) => {
     try {
       await castVotes(amount);
       if (pickedProposal) onVoteSuccess?.({ proposalId: pickedProposal, amountOfVotes: amount });
-      handleClose();
     } catch {
-      handleClose();
+    } finally {
+      runAfterOverlayDismissed(onClose);
     }
   };
 
@@ -90,7 +90,7 @@ const VoteFlow: FC<VoteFlowProps> = ({
   const resolvedEntryPreview = entryPreview ?? fallbackEntryPreview;
 
   return (
-    <VoteFlowShell isOpen={isOpen} onClose={handleClose} presentation={presentation}>
+    <VoteFlowShell isOpen={isOpen} onClose={onClose} presentation={presentation}>
       {screen === VoteFlowScreen.AddFunds ? (
         <div className="animate-appear">
           <AddFunds

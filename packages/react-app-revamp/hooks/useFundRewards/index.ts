@@ -1,4 +1,5 @@
 import { FundPoolToken } from "@components/_pages/Create/sections/Rewards/components/FundPool/store";
+import { TransactionOverlayFlow } from "@components/UI/TransactionOverlay/types";
 import { chains } from "@config/wagmi";
 import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import { extractPathSegments } from "@helpers/extractPath";
@@ -62,7 +63,9 @@ export function useFundRewardsModule() {
             setTransactionData((prevData: any) => [...prevData, result]);
           })
           .catch(e => {
-            handleError(e, `Something went wrong while sending funds for reward ${reward}.`);
+            handleError(e, `Something went wrong while sending funds for reward ${reward}.`, {
+              overlayFlow: TransactionOverlayFlow.REWARDS,
+            });
             setError(errorMessage);
             setIsSuccess(false);
             setIsLoading(false);
