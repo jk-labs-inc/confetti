@@ -2,12 +2,14 @@ import { create } from "zustand";
 import {
   TransactionOverlayFlow,
   TransactionOverlayPhase,
+  TransactionOverlayPlacement,
   TransactionOverlayStep,
   TransactionOverlaySuccessMeta,
 } from "./types";
 
-interface TransactionOverlayState {
+export interface TransactionOverlayState {
   isOpen: boolean;
+  placement: TransactionOverlayPlacement;
   flow: TransactionOverlayFlow;
   phase: TransactionOverlayPhase;
   errorMessage: string;
@@ -17,6 +19,7 @@ interface TransactionOverlayState {
 
 export const useTransactionOverlayStore = create<TransactionOverlayState>(() => ({
   isOpen: false,
+  placement: TransactionOverlayPlacement.FULLSCREEN,
   flow: TransactionOverlayFlow.ENTRY,
   phase: TransactionOverlayPhase.SIGNING,
   errorMessage: "",
@@ -34,12 +37,19 @@ const setIfOpen = (update: TransactionOverlayUpdate) => {
   }
 };
 
-export const txOverlay = {
-  isActive: () => useTransactionOverlayStore.getState().isOpen,
+export const isInlineOverlayShowing = (state: TransactionOverlayState): boolean =>
+  state.isOpen && state.placement === TransactionOverlayPlacement.INLINE;
 
-  start: (flow: TransactionOverlayFlow, options?: { steps?: string[] }) => {
+export const txOverlay = {
+  isShowing: (flow: TransactionOverlayFlow) => {
+    const state = useTransactionOverlayStore.getState();
+    return state.isOpen && state.flow === flow;
+  },
+
+  start: (flow: TransactionOverlayFlow, options?: { steps?: string[]; placement?: TransactionOverlayPlacement }) => {
     useTransactionOverlayStore.setState({
       isOpen: true,
+      placement: options?.placement ?? TransactionOverlayPlacement.FULLSCREEN,
       flow,
       phase: TransactionOverlayPhase.SIGNING,
       errorMessage: "",

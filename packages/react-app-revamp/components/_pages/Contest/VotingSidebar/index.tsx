@@ -1,4 +1,6 @@
 import AddFunds from "@components/AddFunds";
+import InlineTransactionOverlay from "@components/UI/TransactionOverlay/Inline";
+import { useRunAfterOverlayDismissed } from "@components/UI/TransactionOverlay/useRunAfterOverlayDismissed";
 import VotingWidget, { VotingWidgetStyle } from "@components/Voting";
 import EntryPreviewHeader from "@components/Voting/components/EntryPreviewHeader";
 import { usePickedEntryPreview } from "@components/Voting/hooks/usePickedEntryPreview";
@@ -36,7 +38,11 @@ const VotingSidebar: FC = () => {
   const isVotingOpen = contestStatus === ContestStatus.VotingOpen;
   const isVotingClosed = contestStatus === ContestStatus.VotingClosed;
   const pickedProposal = useCastVotesStore(state => state.pickedProposal);
-  const { castVotes, isLoading } = useCastVotes({ charge: contestCharge, votesClose: votingClose });
+  const { castVotes, isLoading } = useCastVotes({
+    charge: contestCharge,
+    votesClose: votingClose,
+    inlineOverlay: true,
+  });
   const { currentPricePerVote, isLoading: isCurrentPricePerVoteLoading } = useCurrentPricePerVote({
     address: contestConfig.address,
     abi: contestConfig.abi,
@@ -45,12 +51,14 @@ const VotingSidebar: FC = () => {
     enabled: isVotingOpen,
   });
 
+  const runAfterOverlayDismissed = useRunAfterOverlayDismissed();
+
   const onVote = async (amount: number) => {
     try {
       await castVotes(amount);
     } catch {
     } finally {
-      goToVote();
+      runAfterOverlayDismissed(goToVote);
     }
   };
 
@@ -80,7 +88,7 @@ const VotingSidebar: FC = () => {
     <div className="bg-primary-1 rounded-4xl p-4 flex flex-col gap-4">
       {isVotingOpen && (
         <div
-          className={`px-6 py-4 rounded-4xl flex flex-col gap-4 ${screen === VoteFlowScreen.AddFunds ? "bg-primary-13" : "bg-gradient-voting-area-purple"}`}
+          className={`relative px-6 py-4 rounded-4xl flex flex-col gap-4 ${screen === VoteFlowScreen.AddFunds ? "bg-primary-13" : "bg-gradient-voting-area-purple"}`}
         >
           {screen === VoteFlowScreen.Vote && (
             <EntryPreviewHeader image={image} title={title} contestName={contestName} />
@@ -121,6 +129,8 @@ const VotingSidebar: FC = () => {
               submissionsCount={submissionsCount}
             />
           )}
+
+          <InlineTransactionOverlay className="rounded-4xl" />
         </div>
       )}
 

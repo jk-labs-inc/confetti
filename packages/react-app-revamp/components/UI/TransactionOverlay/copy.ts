@@ -1,14 +1,26 @@
-import { TransactionOverlayFlow, TransactionOverlayPendingPhase, TransactionOverlayPhase } from "./types";
+import {
+  TransactionOverlayFlow,
+  TransactionOverlayPendingPhase,
+  TransactionOverlayPhase,
+  TransactionOverlayPlacement,
+} from "./types";
 
 export interface TransactionOverlayPhaseCopy {
   title: string;
   sub: string;
 }
 
-const PHASE_COPY: Record<
-  TransactionOverlayFlow,
-  Record<TransactionOverlayPendingPhase, TransactionOverlayPhaseCopy>
-> = {
+const KEEP_OPEN_SUB: Record<TransactionOverlayPlacement, string> = {
+  [TransactionOverlayPlacement.FULLSCREEN]: "please don't close this screen",
+  [TransactionOverlayPlacement.INLINE]: "please don't close your browser",
+};
+
+interface PhaseCopyEntry {
+  title: string;
+  sub: string | Record<TransactionOverlayPlacement, string>;
+}
+
+const PHASE_COPY: Record<TransactionOverlayFlow, Record<TransactionOverlayPendingPhase, PhaseCopyEntry>> = {
   [TransactionOverlayFlow.ENTRY]: {
     [TransactionOverlayPhase.SIGNING]: {
       title: "check your wallet",
@@ -16,11 +28,11 @@ const PHASE_COPY: Record<
     },
     [TransactionOverlayPhase.MINING]: {
       title: "deploying your entry",
-      sub: "please don't close this screen",
+      sub: KEEP_OPEN_SUB,
     },
     [TransactionOverlayPhase.INDEXING]: {
       title: "saving your entry",
-      sub: "please don't close this screen",
+      sub: KEEP_OPEN_SUB,
     },
   },
   [TransactionOverlayFlow.VOTE]: {
@@ -30,11 +42,11 @@ const PHASE_COPY: Record<
     },
     [TransactionOverlayPhase.MINING]: {
       title: "deploying your votes",
-      sub: "please don't close this screen",
+      sub: KEEP_OPEN_SUB,
     },
     [TransactionOverlayPhase.INDEXING]: {
       title: "saving your votes",
-      sub: "please don't close this screen",
+      sub: KEEP_OPEN_SUB,
     },
   },
   [TransactionOverlayFlow.REWARDS]: {
@@ -44,11 +56,11 @@ const PHASE_COPY: Record<
     },
     [TransactionOverlayPhase.MINING]: {
       title: "funding rewards",
-      sub: "please don't close this screen",
+      sub: KEEP_OPEN_SUB,
     },
     [TransactionOverlayPhase.INDEXING]: {
       title: "funding rewards",
-      sub: "please don't close this screen",
+      sub: KEEP_OPEN_SUB,
     },
   },
 };
@@ -62,6 +74,11 @@ const SUCCESS_COPY: Record<TransactionOverlayFlow, string> = {
 export const getPendingPhaseCopy = (
   flow: TransactionOverlayFlow,
   phase: TransactionOverlayPendingPhase,
-): TransactionOverlayPhaseCopy => PHASE_COPY[flow][phase];
+  placement: TransactionOverlayPlacement,
+): TransactionOverlayPhaseCopy => {
+  const { title, sub } = PHASE_COPY[flow][phase];
+
+  return { title, sub: typeof sub === "string" ? sub : sub[placement] };
+};
 
 export const getSuccessCopy = (flow: TransactionOverlayFlow): string => SUCCESS_COPY[flow];

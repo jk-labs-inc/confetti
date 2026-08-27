@@ -1,5 +1,7 @@
 import DialogModalV4 from "@components/UI/DialogModalV4";
 import Drawer from "@components/UI/Drawer";
+import InlineTransactionOverlay from "@components/UI/TransactionOverlay/Inline";
+import { MOBILE_MAX_WIDTH_PX } from "@helpers/isMobileViewport";
 import { FC, ReactNode } from "react";
 import { useMediaQuery } from "react-responsive";
 
@@ -8,6 +10,14 @@ export enum VoteFlowPresentation {
   Modal = "modal",
   Drawer = "drawer",
 }
+
+export const useVoteFlowPresentation = (presentation: VoteFlowPresentation = VoteFlowPresentation.Auto) => {
+  const isMobile = useMediaQuery({ query: `(max-width: ${MOBILE_MAX_WIDTH_PX}px)` });
+  const usesDrawer =
+    presentation === VoteFlowPresentation.Drawer || (presentation === VoteFlowPresentation.Auto && isMobile);
+
+  return { isMobile, usesDrawer };
+};
 
 interface VoteFlowShellProps {
   isOpen: boolean;
@@ -22,11 +32,9 @@ const VoteFlowShell: FC<VoteFlowShellProps> = ({
   presentation = VoteFlowPresentation.Auto,
   children,
 }) => {
-  const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
-  const useDrawer =
-    presentation === VoteFlowPresentation.Drawer || (presentation === VoteFlowPresentation.Auto && isMobile);
+  const { isMobile, usesDrawer } = useVoteFlowPresentation(presentation);
 
-  if (useDrawer) {
+  if (usesDrawer) {
     return (
       <Drawer
         isHandleHidden={!isMobile}
@@ -51,6 +59,7 @@ const VoteFlowShell: FC<VoteFlowShellProps> = ({
           onClick={onClose}
         />
         {children}
+        <InlineTransactionOverlay />
       </div>
     </DialogModalV4>
   );

@@ -156,7 +156,9 @@ export function useSubmitProposal() {
 
         resolve({ tx: txSendProposal, proposalId });
       } catch (e) {
-        handleError(e, `Something went wrong while submitting your proposal.`);
+        handleError(e, `Something went wrong while submitting your proposal.`, {
+          overlayFlow: TransactionOverlayFlow.ENTRY,
+        });
         setError(errorMessage);
         setIsLoading(false);
       }

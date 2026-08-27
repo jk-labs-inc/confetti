@@ -1,9 +1,10 @@
 import { motion, useReducedMotion } from "motion/react";
-import { memo } from "react";
+import { memo, useLayoutEffect, useRef, useState } from "react";
 import { lerp, pickParticleSvg, rand } from "../../constants";
 
 const PARTICLE_COUNT = 16;
 const SEED = 7;
+const TRAVEL_OVERSHOOT = 1.15;
 
 interface AmbientParticle {
   index: number;
@@ -38,41 +39,51 @@ const AMBIENT_PARTICLES = buildAmbientParticles();
 
 const AmbientParticles = () => {
   const reduceMotion = useReducedMotion();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [travel, setTravel] = useState<number | null>(null);
+
+  useLayoutEffect(() => {
+    const node = containerRef.current;
+    if (!node) return;
+
+    setTravel(-Math.ceil(node.offsetHeight * TRAVEL_OVERSHOOT));
+  }, [reduceMotion]);
 
   if (reduceMotion) return null;
 
   return (
-    <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
-      {AMBIENT_PARTICLES.map(particle => (
-        <motion.img
-          key={particle.index}
-          src={particle.src}
-          width={particle.size}
-          height={particle.size}
-          alt=""
-          draggable={false}
-          className="absolute block"
-          style={{ left: `${particle.leftPct}%`, top: "104%", willChange: "transform, opacity" }}
-          initial={{ y: "0vh", x: 0, rotate: 0, opacity: 0 }}
-          animate={{
-            y: ["0vh", "-115vh"],
-            x: [0, particle.swayX, 0],
-            rotate: [0, particle.spinDeg],
-            opacity: [0, particle.maxOpacity, particle.maxOpacity, 0],
-          }}
-          transition={{
-            y: { duration: particle.duration, delay: particle.delay, repeat: Infinity, ease: "linear" },
-            x: { duration: particle.duration, delay: particle.delay, repeat: Infinity, ease: "easeInOut" },
-            rotate: { duration: particle.duration, delay: particle.delay, repeat: Infinity, ease: "linear" },
-            opacity: {
-              duration: particle.duration,
-              delay: particle.delay,
-              repeat: Infinity,
-              times: [0, 0.08, 0.9, 1],
-            },
-          }}
-        />
-      ))}
+    <div ref={containerRef} className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+      {travel !== null &&
+        AMBIENT_PARTICLES.map(particle => (
+          <motion.img
+            key={particle.index}
+            src={particle.src}
+            width={particle.size}
+            height={particle.size}
+            alt=""
+            draggable={false}
+            className="absolute block"
+            style={{ left: `${particle.leftPct}%`, top: "104%", willChange: "transform, opacity" }}
+            initial={{ y: 0, x: 0, rotate: 0, opacity: 0 }}
+            animate={{
+              y: [0, travel],
+              x: [0, particle.swayX, 0],
+              rotate: [0, particle.spinDeg],
+              opacity: [0, particle.maxOpacity, particle.maxOpacity, 0],
+            }}
+            transition={{
+              y: { duration: particle.duration, delay: particle.delay, repeat: Infinity, ease: "linear" },
+              x: { duration: particle.duration, delay: particle.delay, repeat: Infinity, ease: "easeInOut" },
+              rotate: { duration: particle.duration, delay: particle.delay, repeat: Infinity, ease: "linear" },
+              opacity: {
+                duration: particle.duration,
+                delay: particle.delay,
+                repeat: Infinity,
+                times: [0, 0.08, 0.9, 1],
+              },
+            }}
+          />
+        ))}
     </div>
   );
 };
