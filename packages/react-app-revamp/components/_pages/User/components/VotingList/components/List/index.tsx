@@ -17,7 +17,7 @@ const UserVotesList: FC<UserVotesListProps> = ({ submission }) => {
       <p>
         The user cast <span className="text-positive-11 font-bold">{formatNumber(submission.vote_amount)}</span> vote
         {submission.vote_amount > 1 ? "s" : ""} for Proposal {submission.proposal_id.slice(0, 5)} in the{" "}
-        {submission.contest.title} contest.
+        {submission.contest.title || "an unnamed"} contest.
       </p>
     </div>
   );

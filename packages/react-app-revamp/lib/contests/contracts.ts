@@ -71,9 +71,9 @@ export async function getContestContractData(
       ],
     });
 
-    const title = results[0].result as string;
-    const state = results[1].result;
-    const prompt = results[2].result as string;
+    const title = results[0].status === "success" ? (results[0].result as string) : null;
+    const state = results[1].status === "success" ? results[1].result : undefined;
+    const prompt = results[2].status === "success" ? (results[2].result as string) : null;
     const isCanceled = state === ContestStateEnum.Canceled;
 
     return { title, isCanceled, prompt };
