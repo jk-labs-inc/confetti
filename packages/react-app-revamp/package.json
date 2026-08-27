@@ -16,7 +16,7 @@
     "@clustersxyz/sdk": "1.0.2",
     "@coinbase/wallet-sdk": "4.3.7",
     "@floating-ui/react": "0.27.20",
-    "@funkit/connect": "11.4.0",
+    "@funkit/connect": "11.7.0",
     "@getbrevo/brevo": "6.0.3",
     "@getpara/evm-wallet-connectors": "3.15.0",
     "@getpara/react-sdk-lite": "3.15.0",
