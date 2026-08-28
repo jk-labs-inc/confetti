@@ -11,12 +11,14 @@ interface UserVotesListProps {
 const UserVotesList: FC<UserVotesListProps> = ({ submission }) => {
   if (!submission.vote_amount) return null;
 
+  const entryLabel = submission.proposal_name || `Proposal ${submission.proposal_id.slice(0, 5)}`;
+
   return (
     <div className="flex items-center gap-6 border-t border-neutral-9 py-4 p-3 text-[16px]">
       <img src={chainsImages[submission.network_name]} width={32} height={32} alt={""} />
       <p>
         The user cast <span className="text-positive-11 font-bold">{formatNumber(submission.vote_amount)}</span> vote
-        {submission.vote_amount > 1 ? "s" : ""} for Proposal {submission.proposal_id.slice(0, 5)} in the{" "}
+        {submission.vote_amount > 1 ? "s" : ""} for <span className="font-bold">{entryLabel}</span> in the{" "}
         {submission.contest.title} contest.
       </p>
     </div>
