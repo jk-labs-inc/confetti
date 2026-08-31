@@ -73,7 +73,7 @@ export const getContestTiming = (contest: ProcessedContest): ContestTimingData |
     const duration = moment.duration(end.diff(now));
     return {
       format: "countdown",
-      display: formatCountdown(duration),
+      display: `live for ${formatCountdown(duration)}`,
     };
   }
 
