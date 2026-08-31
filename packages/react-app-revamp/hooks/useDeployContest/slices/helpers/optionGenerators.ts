@@ -59,13 +59,17 @@ const HOUR_DURATION_OPTIONS: TimingOption[] = Array.from({ length: 6 }, (_, i) =
   value: (i + 1).toString(),
 }));
 
-const SEVEN_DAYS_IN_HOURS = 7 * 24;
+const ONE_DAY_IN_HOURS = 24;
+const SEVEN_DAYS_IN_HOURS = 7 * ONE_DAY_IN_HOURS;
 
 export const DURATION_OPTIONS: TimingOption[] = [
   ...HOUR_DURATION_OPTIONS,
   {
+    label: "1 day",
+    value: ONE_DAY_IN_HOURS.toString(),
+  },
+  {
     label: "7 days",
-    description: "(not recommended)",
     value: SEVEN_DAYS_IN_HOURS.toString(),
   },
 ];
