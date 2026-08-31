@@ -63,6 +63,7 @@ export const saveUpdatedProposalsStatusToAnalyticsV3 = async (
             network_name: chainName,
             proposal_id: proposal.proposal_id,
             proposal_name: proposal.proposal_name,
+            created_at: Math.floor(Date.now() / 1000),
             deleted: true,
           },
         ]);
