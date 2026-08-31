@@ -2,6 +2,8 @@ import { ProcessedContest } from "lib/contests/types";
 import moment from "moment";
 import { CardState, ContestTimingData } from "./types";
 
+const HOURS_IN_DAY = 24;
+
 export const getCardState = (contest: ProcessedContest): CardState => {
   if (contest.isCanceled) return "canceled";
 
@@ -10,6 +12,11 @@ export const getCardState = (contest: ProcessedContest): CardState => {
   if (now.isSameOrAfter(moment(contest.vote_start_at))) return "live";
 
   return "upcoming";
+};
+
+const formatUnits = (units: [number, string][], fallback: string): string => {
+  const parts = units.filter(([value]) => value > 0).map(([value, unit]) => `${value}${unit}`);
+  return parts.length > 0 ? parts.join(" ") : fallback;
 };
 
 const formatCountdown = (duration: moment.Duration): string => {
@@ -32,11 +39,17 @@ const formatCountdown = (duration: moment.Duration): string => {
           [seconds, "s"],
         ];
 
-  // A zero segment is never printed — "3d 0h" reads as "3d". If every segment is zero we're on
-  // the last tick of the final minute, so fall back to seconds rather than rendering nothing.
-  const parts = units.filter(([value]) => value > 0).map(([value, unit]) => `${value}${unit}`);
-  return parts.length > 0 ? parts.join(" ") : `${seconds}s`;
+  return formatUnits(units, `${seconds}s`);
 };
+
+const formatTimeUntilOpen = (duration: moment.Duration): string =>
+  formatUnits(
+    [
+      [duration.hours(), "h"],
+      [duration.minutes(), "m"],
+    ],
+    "<1m",
+  );
 
 export const getContestTiming = (contest: ProcessedContest): ContestTimingData | null => {
   // Canceled takes priority
@@ -64,9 +77,14 @@ export const getContestTiming = (contest: ProcessedContest): ContestTimingData |
     };
   }
 
+  const untilOpen = moment.duration(voteStart.diff(now));
+  const opensWithinDay = untilOpen.asHours() < HOURS_IN_DAY;
+
   return {
     format: "upcoming",
-    display: `opens ${voteStart.format("MMM D").toLowerCase()}`,
+    display: opensWithinDay
+      ? `opens in ${formatTimeUntilOpen(untilOpen)}`
+      : `opens ${voteStart.format("MMM D").toLowerCase()}`,
   };
 };
 
