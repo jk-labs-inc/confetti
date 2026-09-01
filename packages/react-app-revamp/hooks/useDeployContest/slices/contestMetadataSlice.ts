@@ -47,7 +47,7 @@ export type MetadataSlice = MetadataSliceState & MetadataSliceActions;
 export const createMetadataSlice = (set: any): MetadataSlice => ({
   entryPreviewConfig: {
     preview: EntryPreview.TITLE,
-    isAnyoneCanSubmit: EntryPermission.ANYONE_CAN_SUBMIT,
+    isAnyoneCanSubmit: EntryPermission.ONLY_CREATOR,
   },
 
   setEntryPreviewConfig: (data: ReactStyleStateSetter<EntryPreviewConfig>) =>

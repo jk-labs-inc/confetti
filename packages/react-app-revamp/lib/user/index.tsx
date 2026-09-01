@@ -23,73 +23,28 @@ async function fetchSubmissions(
   criteria: SubmissionCriteria,
   range: { from: number; to: number },
 ): Promise<{ data: any[]; count: number }> {
-  try {
-    const executeQuery = async (useIlike: boolean) => {
-      let dataQuery;
-      let countQuery;
+  const isEntries = criteria.vote_amount === null;
+  const columns = isEntries
+    ? "network_name, contest_address, proposal_id, proposal_name, created_at"
+    : "network_name, contest_address, proposal_id, proposal_name, created_at, vote_amount";
 
-      const baseQuery = (query: any) => {
-        if (useIlike) {
-          return query.ilike("user_address", criteria.user_address);
-        } else {
-          return query.eq("user_address", criteria.user_address);
-        }
-      };
+  const applyFilters = (query: any) => {
+    const scoped = query.ilike("user_address", criteria.user_address);
+    return isEntries ? scoped.is("vote_amount", null).is("comment_id", null) : scoped.not("vote_amount", "is", null);
+  };
 
-      if (criteria.vote_amount === null) {
-        dataQuery = baseQuery(
-          supabase
-            .from("analytics_contest_participants_v3")
-            .select("network_name, contest_address, proposal_id, created_at"),
-        )
-          .is("vote_amount", criteria.vote_amount)
-          .is("comment_id", null)
-          .order("created_at", { ascending: false })
-          .range(range.from, range.to);
+  const [dataResult, countResult] = await Promise.all([
+    applyFilters(supabase.from("analytics_contest_participants_v3").select(columns))
+      .order("created_at", { ascending: false, nullsFirst: false })
+      .order("uuid", { ascending: false })
+      .range(range.from, range.to),
+    applyFilters(supabase.from("analytics_contest_participants_v3").select("*", { count: "exact", head: true })),
+  ]);
 
-        countQuery = baseQuery(
-          supabase.from("analytics_contest_participants_v3").select("*", { count: "exact", head: true }),
-        )
-          .is("vote_amount", criteria.vote_amount)
-          .is("comment_id", null);
-      } else {
-        dataQuery = baseQuery(
-          supabase
-            .from("analytics_contest_participants_v3")
-            .select("network_name, contest_address, proposal_id, created_at, vote_amount"),
-        )
-          .not("vote_amount", "is", null)
-          .order("created_at", { ascending: false })
-          .range(range.from, range.to);
+  if (dataResult.error) throw dataResult.error;
+  if (countResult.error) throw countResult.error;
 
-        countQuery = baseQuery(
-          supabase.from("analytics_contest_participants_v3").select("*", { count: "exact", head: true }),
-        ).not("vote_amount", "is", null);
-      }
-
-      const [dataResult, countResult] = await Promise.all([dataQuery, countQuery]);
-
-      return { dataResult, countResult };
-    };
-
-    // first attempt with eq
-    let { dataResult, countResult } = await executeQuery(false);
-
-    // if no results, it could be that address is lowercase, try with ilike
-    if (dataResult.data?.length === 0) {
-      ({ dataResult, countResult } = await executeQuery(true));
-    }
-
-    if (dataResult.error) throw dataResult.error;
-    if (countResult.error) throw countResult.error;
-
-    const data = dataResult.data || [];
-    const count = countResult.count ?? 0;
-
-    return { data, count };
-  } catch (error) {
-    throw error;
-  }
+  return { data: dataResult.data ?? [], count: countResult.count ?? 0 };
 }
 
 async function getContestDetailsByAddresses(contests: { address: string; network_name: string }[]) {

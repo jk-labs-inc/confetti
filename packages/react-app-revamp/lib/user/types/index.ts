@@ -8,6 +8,7 @@ export interface Submission {
   created_at: number;
   network_name: string;
   proposal_id: string;
+  proposal_name: string | null;
   vote_amount?: number;
 }
 

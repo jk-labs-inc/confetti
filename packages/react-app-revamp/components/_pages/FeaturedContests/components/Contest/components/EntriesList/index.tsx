@@ -30,11 +30,9 @@ const EntriesList: FC<EntriesListProps> = ({
 }) => {
   const isEnded = cardState === "ended" || cardState === "canceled";
   const showLoadAll = totalEntries > COLLAPSED_ENTRIES_COUNT;
-  const needsExplicitHeight = isLoading || isExpanded || entries.length === 0;
-  const spacing = needsExplicitHeight ? "h-[112px]" : showLoadAll ? "" : "mb-6";
 
   return (
-    <div className={`flex flex-col gap-2 ${spacing}`}>
+    <div className="flex flex-col gap-2 h-[112px]">
       {isLoading ? (
         <>
           <EntryRowSkeleton />

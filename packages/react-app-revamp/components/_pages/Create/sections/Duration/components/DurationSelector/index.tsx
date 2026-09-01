@@ -41,7 +41,7 @@ const CreateContestTimingDuration = () => {
           <Dropdown
             options={durationOptions}
             menuButtonWidth="w-fit min-w-[160px]"
-            menuItemsWidth="w-max"
+            menuItemsWidth="w-(--button-width)"
             menuButtonTextColor="text-neutral-9"
             onChange={handleDurationChange}
             defaultValue={durationLabel}
