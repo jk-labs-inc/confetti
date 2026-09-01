@@ -9,7 +9,6 @@ import { motion } from "motion/react";
 import Skeleton from "react-loading-skeleton";
 import { useMediaQuery } from "react-responsive";
 import { useShallow } from "zustand/shallow";
-import useVotingInputDisplay from "./hooks/useVotingInputDisplay";
 
 interface VoteAmountInputProps {
   maxBalance: string;
@@ -17,10 +16,17 @@ interface VoteAmountInputProps {
   costToVote: string;
   inputRef: RefObject<HTMLInputElement>;
   isConnected: boolean;
+  displayValue: string;
+  displaySymbol: string;
+  isDisplayLoading: boolean;
+  onDisplayChange: (value: string) => void;
+  onDisplayMax: () => void;
   isBelowMinimum?: boolean;
   pushToFirstAmount?: string | null;
   style?: VotingWidgetStyle;
   autoFocus?: boolean;
+  isReadOnly?: boolean;
+  showPresets?: boolean;
   onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 }
 
@@ -42,19 +48,20 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
   symbol,
   costToVote,
   isConnected,
+  displayValue,
+  displaySymbol,
+  isDisplayLoading,
+  onDisplayChange,
+  onDisplayMax,
   isBelowMinimum = false,
   pushToFirstAmount,
   style = VotingWidgetStyle.classic,
   autoFocus = false,
+  isReadOnly = false,
+  showPresets = true,
   inputRef,
   onKeyDown,
 }) => {
-  const { displayValue, displaySymbol, isLoading, handleDisplayChange, handleDisplayMax, setIsFocused } =
-    useVotingInputDisplay({
-      nativeCurrencySymbol: symbol,
-      maxBalance,
-      isConnected,
-    });
   const { displayValue: pricePerVoteDisplay, displaySymbol: pricePerVoteSymbol } = useDisplayPrice(
     costToVote,
     symbol,
@@ -75,7 +82,7 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
 
   const handlePreset = (percent: number) => {
     if (percent === 100) {
-      handleDisplayMax();
+      onDisplayMax();
     } else {
       setSliderValue(percent, maxBalance, isConnected);
     }
@@ -114,14 +121,16 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
   const hasInput = displayValue.length > 0;
   const votesText = formatVoteCount(hasInput ? totalVotes : 1);
 
-  const showPercentPresets = hasBalance && isConnected;
+  const showPercentPresets = showPresets && hasBalance && isConnected;
   const showPushToFirst = Boolean(pushToFirstAmount);
 
   return (
     <div className="flex flex-col gap-2">
       <div
         className={`flex w-full items-center px-6 py-2 text-[16px] ${styleConfig.background} font-bold ${textColor} border ${borderColor} rounded-[40px] transition-colors duration-300 cursor-text`}
-        onClick={() => inputRef.current?.focus()}
+        onClick={() => {
+          if (!isReadOnly) inputRef.current?.focus();
+        }}
       >
         <div className="relative flex min-w-0 flex-1 items-baseline overflow-hidden">
           <span
@@ -131,7 +140,7 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
           >
             {mirrorText}
           </span>
-          {isLoading ? (
+          {isDisplayLoading ? (
             <Skeleton width={120} height={40} baseColor="#706f78" highlightColor="#FFE25B" borderRadius={8} />
           ) : (
             <>
@@ -146,12 +155,11 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
               <input
                 ref={inputRef}
                 type="text"
-                inputMode="decimal"
+                inputMode={isReadOnly ? "none" : "decimal"}
+                readOnly={isReadOnly}
                 autoFocus={autoFocus}
                 value={displayValue}
-                onChange={e => handleDisplayChange(e.target.value)}
-                onFocus={() => setIsFocused(true)}
-                onBlur={() => setIsFocused(false)}
+                onChange={e => onDisplayChange(e.target.value)}
                 placeholder={placeholder}
                 onKeyDown={onKeyDown}
                 className={`bg-transparent text-right outline-none ${styleConfig.placeholderColor} min-w-0 transition-[font-size] duration-150`}

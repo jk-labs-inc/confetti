@@ -15,7 +15,7 @@ import {
   useTransitionStyles,
   type Placement,
 } from "@floating-ui/react";
-import { useId, useRef } from "react";
+import { useEffect, useId, useRef } from "react";
 import { useActiveTooltipStore } from "./store";
 
 export type TooltipSurface = "default" | "dark" | "panel";
@@ -50,6 +50,8 @@ export function useTooltip({
   const openActive = useActiveTooltipStore(state => state.open);
   const closeActive = useActiveTooltipStore(state => state.close);
   const open = controlledOpen ?? isActive;
+
+  useEffect(() => () => closeActive(id), [id, closeActive]);
 
   const setOpen = (next: boolean) => {
     onOpenChange?.(next);

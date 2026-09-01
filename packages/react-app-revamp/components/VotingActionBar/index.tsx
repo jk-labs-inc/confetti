@@ -2,12 +2,20 @@
 import AddFunds from "@components/AddFunds";
 import { useFitTextToBox } from "@components/EntryCarousel/useFitTextToBox";
 import Drawer from "@components/UI/Drawer";
+import NumericKeypad from "@components/UI/NumericKeypad";
+import { useRunAfterOverlayDismissed } from "@components/UI/TransactionOverlay/useRunAfterOverlayDismissed";
+import FocusModeEntryPreview from "@components/VotingActionBar/components/FocusModeEntryPreview";
+import FocusModeScrim from "@components/VotingActionBar/components/FocusModeScrim";
 import PushToFirstStat from "@components/VotingActionBar/components/PushToFirstStat";
 import WinUpToStat from "@components/VotingActionBar/components/WinUpToStat";
 import WouldWinNowStat from "@components/VotingActionBar/components/WouldWinNowStat";
 import { UPVOTE_GRADIENT } from "@components/VotingActionBar/constants";
 import FitTextGroup from "@components/VotingActionBar/FitTextGroup";
+import { useVotingFocusModeStore } from "@components/VotingActionBar/store";
+import { EntryPreviewHeaderProps } from "@components/Voting/components/EntryPreviewHeader";
+import VotePercentRow from "@components/Voting/components/VotePercentRow";
 import useVotingInputDisplay from "@components/Voting/components/VoteAmountInput/hooks/useVotingInputDisplay";
+import useKeypadInput from "@components/Voting/hooks/useKeypadInput";
 import { useVoteExecution } from "@components/Voting/hooks/useVoteExecution";
 import { useVotingStore } from "@components/Voting/store";
 import { useModal } from "@getpara/react-sdk-lite";
@@ -26,11 +34,19 @@ import { useProposalStore } from "@hooks/useProposal/store";
 import { useVoteBalance } from "@hooks/useVoteBalance";
 import { useVoteProjections } from "@hooks/useVoteProjections";
 import { useWallet } from "@hooks/useWallet";
-import { useRef, useState } from "react";
+import { AnimatePresence, motion } from "motion/react";
+import { FC, useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 import { useShallow } from "zustand/shallow";
 
-const VotingActionBar = () => {
+interface VotingActionBarProps {
+  entryPreview?: EntryPreviewHeaderProps;
+  isVotingClosed?: boolean;
+  onClose?: () => void;
+  onVoteSuccess?: (result: { proposalId: string; amountOfVotes: number }) => void;
+}
+
+const VotingActionBar: FC<VotingActionBarProps> = ({ entryPreview, isVotingClosed, onClose, onVoteSuccess }) => {
   const slot = useMobileNavSlot();
   const contestConfig = useContestConfigStore(useShallow(state => state.contestConfig));
   const { charge, votesClose } = useContestStore(
@@ -41,9 +57,26 @@ const VotingActionBar = () => {
   const pickedProposal = useCastVotesStore(useShallow(state => state.pickedProposal));
   const { isConnected } = useWallet();
   const { openModal } = useModal();
-  const { inputValue, setInputValue } = useVotingStore(
-    useShallow(state => ({ inputValue: state.inputValue, setInputValue: state.setInputValue })),
+  const { inputValue, setInputValue, resetVotingInput } = useVotingStore(
+    useShallow(state => ({
+      inputValue: state.inputValue,
+      setInputValue: state.setInputValue,
+      resetVotingInput: state.reset,
+    })),
   );
+  const { isFocusMode, setIsFocusMode } = useVotingFocusModeStore(
+    useShallow(state => ({ isFocusMode: state.isFocusMode, setIsFocusMode: state.setIsFocusMode })),
+  );
+  const runAfterOverlayDismissed = useRunAfterOverlayDismissed();
+  const isFlowMode = Boolean(onClose);
+
+  useEffect(() => {
+    if (!isFlowMode) return;
+    resetVotingInput();
+    setIsFocusMode(true);
+  }, [isFlowMode, resetVotingInput, setIsFocusMode]);
+
+  useEffect(() => () => setIsFocusMode(false), [setIsFocusMode]);
 
   const { castVotes, isLoading: isCastLoading } = useCastVotes({ charge, votesClose });
   const { currentPriceNative } = usePriceCurveData();
@@ -68,11 +101,12 @@ const VotingActionBar = () => {
   });
   const maxBalance = balance?.formatted || "0";
 
-  const { displayValue, displaySymbol, handleDisplayChange, setIsFocused } = useVotingInputDisplay({
+  const { displayValue, displaySymbol, handleDisplayChange } = useVotingInputDisplay({
     nativeCurrencySymbol: contestConfig.chainNativeCurrencySymbol,
     maxBalance,
     isConnected,
   });
+  const { handleKey } = useKeypadInput({ displayValue, onDisplayChange: handleDisplayChange });
 
   const hasPrice = parseFloat(effectiveCost) > 0;
   const isGhost = !displayValue && hasPrice;
@@ -90,7 +124,6 @@ const VotingActionBar = () => {
   const dotCount = (valueString.match(/\./g) || []).length;
   const charCount = valueString.length - dotCount * 0.5;
 
-  const inputRef = useRef<HTMLInputElement>(null);
   const { ref: inputFitRef, fontSize: inputFontSize } = useFitTextToBox<HTMLSpanElement>(valueString, 8, 20);
 
   const projections = useVoteProjections({
@@ -108,12 +141,16 @@ const VotingActionBar = () => {
   const onVote = async (amountOfVotes: number) => {
     try {
       await castVotes(amountOfVotes);
-    } catch {}
+      if (pickedProposal) onVoteSuccess?.({ proposalId: pickedProposal, amountOfVotes });
+    } catch {
+    } finally {
+      if (onClose) runAfterOverlayDismissed(onClose);
+    }
   };
 
   const { handleVote } = useVoteExecution({
     costToVote: effectiveCost,
-    isVotingClosed: contestStatus === ContestStatus.VotingClosed,
+    isVotingClosed: isVotingClosed ?? contestStatus === ContestStatus.VotingClosed,
     onVote,
   });
 
@@ -123,9 +160,9 @@ const VotingActionBar = () => {
     !pickedProposal || isBalanceLoading || isPriceLoading || isCastLoading || isZeroValue || isBelowMinimum;
 
   const handleClick = async () => {
-    inputRef.current?.blur();
     if (isConnected && insufficientBalance) {
       if (await openAddFunds()) return;
+      setIsFocusMode(false);
       setShowAddFunds(true);
       return;
     }
@@ -134,7 +171,13 @@ const VotingActionBar = () => {
       return;
     }
     if (!pickedProposal) return;
+    setIsFocusMode(false);
     handleVote();
+  };
+
+  const handleAddFundsClose = () => {
+    setShowAddFunds(false);
+    setIsFocusMode(true);
   };
 
   const votesText = formatVoteCount(isGhost ? 1 : totalVotes);
@@ -149,6 +192,16 @@ const VotingActionBar = () => {
 
   return ReactDOM.createPortal(
     <>
+      <FocusModeScrim
+        isVisible={isFocusMode}
+        onDismiss={() => {
+          setIsFocusMode(false);
+          onClose?.();
+        }}
+      />
+
+      {isFocusMode && <FocusModeEntryPreview entryPreview={entryPreview} />}
+
       <div
         className="mx-3 mb-2 rounded-[16px]"
         style={{
@@ -156,11 +209,15 @@ const VotingActionBar = () => {
           boxShadow: "0 0 0 1px rgba(255,255,255,0.16), 0 0 10px -6px rgba(255,255,255,0.14)",
         }}
       >
-        <div className="flex items-center gap-1.5 rounded-[14.5px] bg-neutral-2 px-3 py-2.5">
+        <div
+          className="flex cursor-pointer items-center gap-1.5 rounded-[14.5px] bg-neutral-2 px-3 py-2.5"
+          onClick={() => setIsFocusMode(true)}
+        >
           {/* amount input + votes it buys */}
           <div
-            className="relative flex h-12 w-[88px] shrink-0 cursor-text flex-col items-center justify-center rounded-[24px] border border-neutral-9 px-2"
-            onClick={() => inputRef.current?.focus({ preventScroll: true })}
+            className={`relative flex h-12 w-[88px] shrink-0 flex-col items-center justify-center rounded-[24px] border px-2 transition-colors duration-200 ${
+              isFocusMode ? "border-secondary-11" : "border-neutral-9"
+            }`}
           >
             <span
               ref={inputFitRef}
@@ -179,22 +236,23 @@ const VotingActionBar = () => {
                 </span>
               )}
               <input
-                ref={inputRef}
                 type="text"
-                inputMode="decimal"
+                inputMode="none"
+                readOnly
+                tabIndex={-1}
                 value={displayValue}
-                onChange={e => handleDisplayChange(e.target.value)}
-                onFocus={() => {
-                  setIsFocused(true);
-
-                  window.scrollTo({ top: document.documentElement.scrollHeight, behavior: "smooth" });
-                }}
-                onBlur={() => setIsFocused(false)}
                 placeholder={placeholder}
                 aria-label="amount to spend"
-                className="min-w-0 bg-transparent text-right font-bold text-neutral-11 placeholder-neutral-9 outline-none"
+                className="pointer-events-none min-w-0 bg-transparent text-right font-bold text-neutral-11 placeholder-neutral-9 outline-none"
                 style={{ fontSize: `${inputFontSize}px`, width: `${charCount || 1}ch`, maxWidth: "56px" }}
               />
+              {isFocusMode && (
+                <span
+                  aria-hidden="true"
+                  className="w-[1.5px] shrink-0 animate-caret-blink rounded-full bg-neutral-11"
+                  style={{ height: Math.round(inputFontSize * 0.85) }}
+                />
+              )}
               {displaySymbol !== "$" && (
                 <span className="shrink-0 text-[11px] font-bold uppercase text-neutral-9">{displaySymbol}</span>
               )}
@@ -221,10 +279,10 @@ const VotingActionBar = () => {
           </FitTextGroup>
 
           <button
-            onClick={handleClick}
-            // Keep the input focused through the tap so the keyboard doesn't
-            // collapse and shift the bar mid-press.
-            onPointerDown={e => e.preventDefault()}
+            onClick={e => {
+              e.stopPropagation();
+              handleClick();
+            }}
             disabled={isConnected && insufficientBalance ? false : voteDisabled}
             aria-label="back entry"
             className="flex h-10 shrink-0 items-center justify-center whitespace-nowrap rounded-full px-3 text-[14px] font-bold text-true-black transition-opacity disabled:opacity-50"
@@ -235,16 +293,33 @@ const VotingActionBar = () => {
         </div>
       </div>
 
+      <AnimatePresence>
+        {isFocusMode && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.25, ease: "easeOut" }}
+            className="overflow-hidden"
+          >
+            <div className="flex flex-col gap-4 px-3 pb-[calc(8px+env(safe-area-inset-bottom))] pt-2">
+              <VotePercentRow maxBalance={maxBalance} isConnected={isConnected} />
+              <NumericKeypad onKey={handleKey} />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <Drawer
         isOpen={showAddFunds}
-        onClose={() => setShowAddFunds(false)}
+        onClose={handleAddFundsClose}
         className="bg-true-black m-auto h-auto w-full md:max-w-[550px]"
       >
         <div className="p-6">
           <AddFunds
             chain={contestConfig.chainName}
             asset={contestConfig.chainNativeCurrencySymbol ?? ""}
-            onGoBack={() => setShowAddFunds(false)}
+            onGoBack={handleAddFundsClose}
           />
         </div>
       </Drawer>
