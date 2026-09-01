@@ -278,18 +278,20 @@ const VotingActionBar: FC<VotingActionBarProps> = ({ entryPreview, isVotingClose
             </div>
           </FitTextGroup>
 
-          <button
-            onClick={e => {
-              e.stopPropagation();
-              handleClick();
-            }}
-            disabled={isConnected && insufficientBalance ? false : voteDisabled}
-            aria-label="back entry"
-            className="flex h-10 shrink-0 items-center justify-center whitespace-nowrap rounded-full px-3 text-[14px] font-bold text-true-black transition-opacity disabled:opacity-50"
-            style={{ backgroundImage: UPVOTE_GRADIENT }}
-          >
-            back entry
-          </button>
+          {!isFocusMode && (
+            <button
+              onClick={e => {
+                e.stopPropagation();
+                handleClick();
+              }}
+              disabled={isConnected && insufficientBalance ? false : voteDisabled}
+              aria-label="back entry"
+              className="flex h-10 shrink-0 items-center justify-center whitespace-nowrap rounded-full px-3 text-[14px] font-bold text-true-black transition-opacity disabled:opacity-50"
+              style={{ backgroundImage: UPVOTE_GRADIENT }}
+            >
+              back entry
+            </button>
+          )}
         </div>
       </div>
 
@@ -305,6 +307,15 @@ const VotingActionBar: FC<VotingActionBarProps> = ({ entryPreview, isVotingClose
             <div className="flex flex-col gap-4 px-3 pb-[calc(8px+env(safe-area-inset-bottom))] pt-2">
               <VotePercentRow maxBalance={maxBalance} isConnected={isConnected} />
               <NumericKeypad onKey={handleKey} />
+              <button
+                onClick={handleClick}
+                disabled={isConnected && insufficientBalance ? false : voteDisabled}
+                aria-label="back entry"
+                className="flex h-12 w-full items-center justify-center rounded-[40px] text-[18px] font-bold text-true-black transition-opacity disabled:opacity-50"
+                style={{ backgroundImage: UPVOTE_GRADIENT }}
+              >
+                back entry
+              </button>
             </div>
           </motion.div>
         )}
