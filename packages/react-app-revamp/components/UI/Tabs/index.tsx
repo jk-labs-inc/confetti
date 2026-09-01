@@ -6,10 +6,11 @@ interface TabsProps {
   activeTab: string;
   onChange?: (tab: string) => void;
   optionalInfo?: Record<string, number>;
+  indicators?: Record<string, ReactNode>;
   rightContent?: ReactNode;
 }
 
-const Tabs: FC<TabsProps> = ({ tabs, activeTab, onChange, optionalInfo, rightContent }) => {
+const Tabs: FC<TabsProps> = ({ tabs, activeTab, onChange, optionalInfo, indicators, rightContent }) => {
   const [currentTab, setCurrentTab] = useState<string>(activeTab);
   const tabRefs = useRef<(HTMLDivElement | null)[]>([]);
   const indicatorX = useMotionValue(0);
@@ -96,6 +97,7 @@ const Tabs: FC<TabsProps> = ({ tabs, activeTab, onChange, optionalInfo, rightCon
                 </motion.span>
               )}
             </motion.span>
+            {indicators?.[tab] && <span className="absolute -top-1 -right-3">{indicators[tab]}</span>}
           </motion.div>
         ))}
         {rightContent && <div className="ml-auto flex items-center gap-3">{rightContent}</div>}

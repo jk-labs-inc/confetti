@@ -1,5 +1,6 @@
 import Tabs from "@components/UI/Tabs";
 import { FC, ReactNode, useEffect } from "react";
+import RewardsTabIndicator from "./components/RewardsTabIndicator";
 
 export enum Tab {
   Contest = "Contest",
@@ -28,7 +29,15 @@ const ContestTabs: FC<ContestTabsProps> = ({ tab, excludeTabs = [], onChange, ri
     onChange?.(selectedTab as Tab);
   };
 
-  return <Tabs tabs={tabs} activeTab={tab} onChange={handleChange} rightContent={rightContent} />;
+  return (
+    <Tabs
+      tabs={tabs}
+      activeTab={tab}
+      onChange={handleChange}
+      rightContent={rightContent}
+      indicators={{ [Tab.Rewards]: <RewardsTabIndicator /> }}
+    />
+  );
 };
 
 export default ContestTabs;

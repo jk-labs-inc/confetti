@@ -5,6 +5,7 @@ import { extractPathSegments } from "@helpers/extractPath";
 import { transform } from "@helpers/transform";
 import { useError } from "@hooks/useError";
 import { useWallet } from "@hooks/useWallet";
+import { useQueryClient } from "@tanstack/react-query";
 import { switchChain, waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { updateRewardAnalytics } from "lib/analytics/rewards";
 import { usePathname } from "next/navigation";
@@ -33,6 +34,7 @@ export const useClaimRewards = ({
   const asPath = usePathname();
   const { chainName, address: contestAddress } = extractPathSegments(asPath ?? "");
   const { handleError } = useError();
+  const queryClient = useQueryClient();
   const [loadingStates, setLoadingStates] = useState<ClaimState>({});
   const [successStates, setSuccessStates] = useState<ClaimState>({});
 
@@ -82,6 +84,9 @@ export const useClaimRewards = ({
       toastSuccess({
         message: "Rewards claimed successfully!",
       });
+
+      queryClient.invalidateQueries({ queryKey: ["claimableRewards", contractRewardsModuleAddress] });
+      queryClient.invalidateQueries({ queryKey: ["claimedRewards", contractRewardsModuleAddress] });
 
       try {
         await updateRewardAnalytics({
