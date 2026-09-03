@@ -7,6 +7,7 @@ import { TransactionOverlayFlow, TransactionOverlayPhase } from "@components/UI/
 import { useVotingStore } from "@components/Voting/store";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
+import { useContestStore } from "@hooks/useContest/store";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import useCreatorSplitEnabled from "@hooks/useCreatorSplitEnabled";
 import useNativeRates from "@hooks/useCurrency/useNativeRates";
@@ -49,6 +50,7 @@ interface UseCastVotesProps {
 export function useCastVotes({ charge, votesClose, inlineOverlay }: UseCastVotesProps) {
   const queryClient = useQueryClient();
   const { contestConfig } = useContestConfigStore(useShallow(state => state));
+  const contestName = useContestStore(state => state.contestName);
   const { data: rewards } = useRewardsModule();
   const { updateProposal } = useProposal();
   const { listProposalsData } = useProposalStore(state => state);
@@ -152,12 +154,13 @@ export function useCastVotes({ charge, votesClose, inlineOverlay }: UseCastVotes
       });
       txOverlay.setPhase(TransactionOverlayPhase.INDEXING);
 
+      const pickedProposalName = resolveEntryTitle(listProposalsData.find(proposal => proposal.id === pickedProposal));
       const analyticsParams: CombinedAnalyticsParams = {
         contestAddress: contestConfig.address,
         userAddress,
         chainName: contestConfig.chainName,
         pickedProposal,
-        pickedProposalName: resolveEntryTitle(listProposalsData.find(proposal => proposal.id === pickedProposal)),
+        pickedProposalName,
         amountOfVotes,
         costToVote: estimatedCost,
         charge,
@@ -222,7 +225,12 @@ export function useCastVotes({ charge, votesClose, inlineOverlay }: UseCastVotes
       };
 
       if (overlayPlacement && txOverlay.isShowing(TransactionOverlayFlow.VOTE)) {
-        txOverlay.success(successMeta);
+        txOverlay.success(successMeta, {
+          entryTitle: pickedProposalName,
+          contestName,
+          contestAddress: contestConfig.address,
+          chainName: contestConfig.chainName.toLowerCase(),
+        });
       } else {
         toastSuccess({
           message: "your votes have been deployed successfully",

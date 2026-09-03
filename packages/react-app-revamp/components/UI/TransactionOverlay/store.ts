@@ -5,6 +5,7 @@ import {
   TransactionOverlayPlacement,
   TransactionOverlayStep,
   TransactionOverlaySuccessMeta,
+  TransactionOverlayVoteShare,
 } from "./types";
 
 export interface TransactionOverlayState {
@@ -15,6 +16,7 @@ export interface TransactionOverlayState {
   errorMessage: string;
   steps: TransactionOverlayStep[];
   successMeta: TransactionOverlaySuccessMeta | null;
+  voteShare: TransactionOverlayVoteShare | null;
 }
 
 export const useTransactionOverlayStore = create<TransactionOverlayState>(() => ({
@@ -25,6 +27,7 @@ export const useTransactionOverlayStore = create<TransactionOverlayState>(() => 
   errorMessage: "",
   steps: [],
   successMeta: null,
+  voteShare: null,
 }));
 
 type TransactionOverlayUpdate =
@@ -40,6 +43,11 @@ const setIfOpen = (update: TransactionOverlayUpdate) => {
 export const isInlineOverlayShowing = (state: TransactionOverlayState): boolean =>
   state.isOpen && state.placement === TransactionOverlayPlacement.INLINE;
 
+export const isInlineOverlayInFlow = (state: TransactionOverlayState): boolean =>
+  isInlineOverlayShowing(state) &&
+  state.flow === TransactionOverlayFlow.VOTE &&
+  state.phase === TransactionOverlayPhase.SUCCESS;
+
 export const txOverlay = {
   isShowing: (flow: TransactionOverlayFlow) => {
     const state = useTransactionOverlayStore.getState();
@@ -54,6 +62,7 @@ export const txOverlay = {
       phase: TransactionOverlayPhase.SIGNING,
       errorMessage: "",
       successMeta: null,
+      voteShare: null,
       steps: (options?.steps ?? []).map((label, index) => ({
         label,
         status: index === 0 ? "active" : "pending",
@@ -74,8 +83,8 @@ export const txOverlay = {
     }));
   },
 
-  success: (meta?: TransactionOverlaySuccessMeta) => {
-    setIfOpen({ phase: TransactionOverlayPhase.SUCCESS, successMeta: meta ?? null });
+  success: (meta?: TransactionOverlaySuccessMeta, voteShare?: TransactionOverlayVoteShare) => {
+    setIfOpen({ phase: TransactionOverlayPhase.SUCCESS, successMeta: meta ?? null, voteShare: voteShare ?? null });
   },
 
   fail: (message: string) => {

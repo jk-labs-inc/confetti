@@ -9,7 +9,10 @@ export const PARTICLE_SVGS = [
 
 export const SUCCESS_DISMISS_MS = 2400;
 
+export const SUCCESS_MASCOT_IMAGE = "/landing/bubbles-money.png";
+
 export const VOTE_FLOW_TRACKING_ID = "votes_are_deploying_toast";
+export const VOTE_SHARE_TRACKING_ID = "vote_share_on_x";
 
 // Deterministic PRNG (same shape as VoteFeedback/particles.ts) so particle
 // layouts are stable across renders without threading state around.
