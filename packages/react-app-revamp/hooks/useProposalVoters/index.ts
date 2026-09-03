@@ -1,4 +1,6 @@
 import useContestConfigStore from "@hooks/useContestConfig/store";
+import { useWallet } from "@hooks/useWallet";
+import { isSameAddress } from "@helpers/isSameAddress";
 import { compareVersions } from "compare-versions";
 import { useMemo } from "react";
 import { useShallow } from "zustand/shallow";
@@ -7,6 +9,13 @@ import { useProposalVoterAddresses } from "./hooks/useProposalVoterAddresses";
 import { useProposalVoterVotes } from "./hooks/useProposalVoterVotes";
 
 export { VOTES_PER_PAGE };
+
+const pinAddressFirst = (addresses: string[], pinnedAddress: string | undefined) => {
+  const pinnedIndex = addresses.findIndex(address => isSameAddress(address, pinnedAddress));
+  if (pinnedIndex <= 0) return addresses;
+
+  return [addresses[pinnedIndex], ...addresses.slice(0, pinnedIndex), ...addresses.slice(pinnedIndex + 1)];
+};
 
 export const useProposalVoters = (
   contractAddress: string,
@@ -20,6 +29,7 @@ export const useProposalVoters = (
       version: state.contestConfig.version,
     })),
   );
+  const { userAddress } = useWallet();
 
   const hasDownvotes = version ? compareVersions(version, "5.1") < 0 : false;
 
@@ -30,12 +40,14 @@ export const useProposalVoters = (
     abi,
   });
 
+  const orderedAddresses = useMemo(() => pinAddressFirst(addresses, userAddress), [addresses, userAddress]);
+
   const { voters, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading: isLoadingVotes } = useProposalVoterVotes({
     contractAddress,
     proposalId,
     chainId,
     abi,
-    addresses,
+    addresses: orderedAddresses,
     pageSize,
     hasDownvotes,
   });
