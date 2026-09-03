@@ -1,3 +1,4 @@
+import NumericKeypad from "@components/UI/NumericKeypad";
 import { useModal } from "@getpara/react-sdk-lite";
 import { useCastVotesStore } from "@hooks/useCastVotes/store";
 import useContestConfigStore from "@hooks/useContestConfig/store";
@@ -10,9 +11,12 @@ import { useShallow } from "zustand/shallow";
 import VotingWidgetRewardsProjection from "./components/RewardsProjection";
 import VotingWidgetSignup from "./components/Signup";
 import VoteAmountInput from "./components/VoteAmountInput";
+import useVotingInputDisplay from "./components/VoteAmountInput/hooks/useVotingInputDisplay";
 import VoteButton from "./components/VoteButton";
 import VoteInfoBlocks from "./components/VoteInfoBlocks";
+import VotePercentRow from "./components/VotePercentRow";
 import { useEffectiveCostToVote } from "./hooks/useEffectiveCostToVote";
+import useKeypadInput from "./hooks/useKeypadInput";
 import { useVoteExecution } from "./hooks/useVoteExecution";
 import { useVotingStore } from "./store";
 import { AddFundsEntryReason } from "./types";
@@ -67,6 +71,19 @@ const VotingWidget: FC<VotingWidgetProps> = ({
     isVotingClosed,
     onVote,
   });
+  const maxBalance = balance?.formatted || "0";
+  const {
+    displayValue,
+    displaySymbol,
+    isLoading: isDisplayLoading,
+    handleDisplayChange,
+    handleDisplayMax,
+  } = useVotingInputDisplay({
+    nativeCurrencySymbol: contestConfig.chainNativeCurrencySymbol,
+    maxBalance,
+    isConnected,
+  });
+  const { handleKey } = useKeypadInput({ displayValue, onDisplayChange: handleDisplayChange });
   const pickedProposal = useCastVotesStore(useShallow(state => state.pickedProposal));
   const projections = useVoteProjections({
     proposalId: pickedProposal,
@@ -117,30 +134,43 @@ const VotingWidget: FC<VotingWidgetProps> = ({
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-2">
         <VoteAmountInput
-            maxBalance={balance?.formatted || "0"}
-            symbol={contestConfig.chainNativeCurrencySymbol}
-            costToVote={effectiveCostToVote}
-            isConnected={isConnected}
-            isBelowMinimum={isBelowMinimum}
-            pushToFirstAmount={projections.pushToFirstFillAmount}
-            style={style}
-            autoFocus={!isMobile}
-            inputRef={inputRef as RefObject<HTMLInputElement>}
-            onKeyDown={handleKeyDownInputWithVote}
-          />
-          <VoteInfoBlocks
-            type="my-votes"
-            balance={isBalanceError ? "Error loading balance" : balance?.formatted || "0"}
-            symbol={contestConfig.chainNativeCurrencySymbol}
-            insufficientBalance={insufficientBalance}
-            isConnected={isConnected}
-            onAddFunds={() => onAddFunds?.(AddFundsEntryReason.Manual)}
-          />
+          maxBalance={maxBalance}
+          symbol={contestConfig.chainNativeCurrencySymbol}
+          costToVote={effectiveCostToVote}
+          isConnected={isConnected}
+          displayValue={displayValue}
+          displaySymbol={displaySymbol}
+          isDisplayLoading={isDisplayLoading}
+          onDisplayChange={handleDisplayChange}
+          onDisplayMax={handleDisplayMax}
+          isBelowMinimum={isBelowMinimum}
+          pushToFirstAmount={projections.pushToFirstFillAmount}
+          style={style}
+          autoFocus={!isMobile}
+          isReadOnly={isMobile}
+          showPresets={!isMobile}
+          inputRef={inputRef as RefObject<HTMLInputElement>}
+          onKeyDown={handleKeyDownInputWithVote}
+        />
+        <VoteInfoBlocks
+          type="my-votes"
+          balance={isBalanceError ? "Error loading balance" : balance?.formatted || "0"}
+          symbol={contestConfig.chainNativeCurrencySymbol}
+          insufficientBalance={insufficientBalance}
+          isConnected={isConnected}
+          onAddFunds={() => onAddFunds?.(AddFundsEntryReason.Manual)}
+        />
       </div>
 
       <div className="flex flex-col gap-4">
         <VotingWidgetRewardsProjection projections={projections} />
         <VotingWidgetSignup />
+        {isMobile && (
+          <div className="flex flex-col gap-4">
+            <VotePercentRow maxBalance={maxBalance} isConnected={isConnected} />
+            <NumericKeypad onKey={handleKey} />
+          </div>
+        )}
         <VoteButton
           isDisabled={voteDisabled}
           isInvalidBalance={insufficientBalance && isConnected}

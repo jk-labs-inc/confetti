@@ -1,6 +1,7 @@
 import { IconMagnifyingGlassSolid } from "@components/UI/Icons";
 import CustomLink from "@components/UI/Link";
 import { MobileProfileDrawer } from "@components/UI/MobileWalletPortal";
+import { useVotingFocusModeStore } from "@components/VotingActionBar/store";
 import { FOOTER_LINKS } from "@config/links";
 import {
   ROUTE_CREATE_CONTEST,
@@ -25,10 +26,12 @@ import {
 } from "@heroicons/react/24/solid";
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
+import { MOBILE_NAV_SLOT_ID } from "@hooks/useMobileNavSlot";
 import { useWallet } from "@hooks/useWallet";
 
 const LandingHeaderMobileFooter = () => {
   const { isConnected, userAddress } = useWallet();
+  const isVotingFocusMode = useVotingFocusModeStore(state => state.isFocusMode);
   const { logoutAsync } = useLogout();
   const pathname = usePathname();
   const [isInPwaMode, setIsInPwaMode] = useState(false);
@@ -65,11 +68,19 @@ const LandingHeaderMobileFooter = () => {
   return (
     <footer className="bg-true-black">
       <div
-        className={`fixed bottom-0 left-0 right-0 flex flex-col border-t-2 border-neutral-2 bg-true-black z-50 ${
-          isClient && isInPwaMode ? "pb-8" : "pb-2"
-        }`}
+        className={`fixed bottom-0 left-0 right-0 flex flex-col border-t-2 z-50 ${
+          isVotingFocusMode ? "rounded-t-[16px] border-transparent bg-neutral-1" : "border-neutral-2 bg-true-black"
+        } ${isClient && isInPwaMode ? "pb-8" : "pb-2"}`}
       >
-        <div className="text-neutral-10 border-b text-[14px] border-neutral-2 py-2 overflow-hidden relative">
+        <div id={MOBILE_NAV_SLOT_ID} />
+
+        <div
+          className={`text-neutral-10 border-b text-[14px] overflow-hidden relative transition-all duration-200 ${
+            isVotingFocusMode
+              ? "pointer-events-none max-h-0 border-transparent py-0 opacity-0"
+              : "max-h-14 border-neutral-2 py-2"
+          }`}
+        >
           <div className="flex items-center w-full overflow-x-auto no-scrollbar px-4 pb-1">
             <div className="flex gap-4 items-center min-w-max">
               {filteredLinks.map((link, key) => (
@@ -88,7 +99,11 @@ const LandingHeaderMobileFooter = () => {
           </div>
           <div className="absolute right-0 top-0 bottom-0 w-12 bg-linear-to-l from-true-black to-transparent pointer-events-none"></div>
         </div>
-        <div className="flex flex-row items-center justify-between pt-2 px-8">
+        <div
+          className={`flex flex-row items-center justify-between overflow-hidden px-8 transition-all duration-200 ${
+            isVotingFocusMode ? "pointer-events-none max-h-0 pt-0 opacity-0" : "max-h-20 pt-2"
+          }`}
+        >
           <CustomLink href={ROUTE_LANDING} className={`flex flex-col ${isActive(ROUTE_LANDING)}`}>
             {pathname === ROUTE_LANDING ? <HomeIconSolid width={24} /> : <HomeIcon width={24} />}
             <p className="text-[12px]">home</p>

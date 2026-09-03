@@ -1,8 +1,10 @@
 import { EntryPreviewHeaderProps } from "@components/Voting/components/EntryPreviewHeader";
 import VoteFlow from "@components/Voting/VoteFlow";
-import VoteFlowShell from "@components/Voting/VoteFlow/components/Shell";
+import VoteFlowShell, { useVoteFlowPresentation } from "@components/Voting/VoteFlow/components/Shell";
+import VotingActionBar from "@components/VotingActionBar";
 import { useCastVotesStore } from "@hooks/useCastVotes/store";
 import useCharge from "@hooks/useCharge";
+import { useContestStore } from "@hooks/useContest/store";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import { ContestEntryVotes } from "@hooks/useContestEntriesVotes";
 import { useProposalStore } from "@hooks/useProposal/store";
@@ -35,7 +37,16 @@ const VoteOnEntryContent: FC<VoteOnEntryContentProps> = ({
 }) => {
   const { contestConfig } = useContestConfigStore(useShallow(state => state));
   const setPickedProposal = useCastVotesStore(state => state.setPickedProposal);
-  const setInitialMappedProposalIds = useProposalStore(state => state.setInitialMappedProposalIds);
+  const { setInitialMappedProposalIds, setSubmissionsCount } = useProposalStore(
+    useShallow(state => ({
+      setInitialMappedProposalIds: state.setInitialMappedProposalIds,
+      setSubmissionsCount: state.setSubmissionsCount,
+    })),
+  );
+  const { setCharge, setVotesClose } = useContestStore(
+    useShallow(state => ({ setCharge: state.setCharge, setVotesClose: state.setVotesClose })),
+  );
+  const { usesDrawer } = useVoteFlowPresentation();
   const { charge, isLoading: isChargeLoading } = useCharge({
     address: contestConfig.address,
     abi: contestConfig.abi,
@@ -53,7 +64,32 @@ const VoteOnEntryContent: FC<VoteOnEntryContentProps> = ({
     setInitialMappedProposalIds(entryVotes.map(({ id, votes }) => ({ id, votes: votes ?? 0 })));
   }, [entryVotes, setInitialMappedProposalIds]);
 
+  useEffect(() => {
+    if (charge) setCharge(charge);
+  }, [charge, setCharge]);
+
+  useEffect(() => {
+    setVotesClose(votesClose);
+  }, [votesClose, setVotesClose]);
+
+  useEffect(() => {
+    setSubmissionsCount(submissionsCount);
+  }, [submissionsCount, setSubmissionsCount]);
+
   const isVotingClosed = new Date() >= votesClose;
+
+  if (usesDrawer) {
+    if (!isOpen || isCanceled) return null;
+
+    return (
+      <VotingActionBar
+        entryPreview={entryPreview}
+        isVotingClosed={isVotingClosed}
+        onClose={onClose}
+        onVoteSuccess={onVoteSuccess}
+      />
+    );
+  }
 
   if (isChargeLoading) {
     return (
