@@ -11,12 +11,7 @@ const PushToFirstStat: FC<PushToFirstStatProps> = ({ remainingToFirst, onFill })
   const { formatted } = useNativeDisplayPrice(remainingToFirst, { ceilingPrecision: true });
 
   return (
-    <button
-      onClick={onFill}
-      // Keep the input focused through the tap so the keyboard doesn't collapse.
-      onPointerDown={e => e.preventDefault()}
-      className="flex min-w-0 flex-1 flex-col items-center leading-tight"
-    >
+    <button onClick={onFill} className="flex min-w-0 flex-1 flex-col items-center leading-tight">
       <span className="whitespace-nowrap text-[11px] text-neutral-9">
         push to 1<sup>st</sup>
       </span>

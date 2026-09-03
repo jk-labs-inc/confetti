@@ -1,5 +1,6 @@
 import { motion } from "motion/react";
 import { FC } from "react";
+import { SUCCESS_MASCOT_IMAGE } from "../../constants";
 import { getSuccessCopy } from "../../copy";
 import { TransactionOverlayFlow, TransactionOverlayPlacement, TransactionOverlaySuccessMeta } from "../../types";
 import SuccessBurst from "../SuccessBurst";
@@ -26,7 +27,7 @@ const SuccessView: FC<SuccessViewProps> = ({ flow, meta, placement }) => {
         transition={{ type: "spring", stiffness: 260, damping: 18 }}
       >
         <motion.img
-          src="/landing/bubbles-money.png"
+          src={SUCCESS_MASCOT_IMAGE}
           width={compact ? 160 : 200}
           alt=""
           draggable={false}

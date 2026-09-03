@@ -3,6 +3,7 @@ import BurgerMenu from "@components/UI/BurgerMenu";
 import { IconMagnifyingGlassSolid } from "@components/UI/Icons";
 import CustomLink from "@components/UI/Link";
 import { MobileProfileDrawer } from "@components/UI/MobileWalletPortal";
+import { useVotingFocusModeStore } from "@components/VotingActionBar/store";
 import { FOOTER_LINKS } from "@config/links";
 import {
   ROUTE_CREATE_CONTEST,
@@ -25,6 +26,7 @@ import {
   TrophyIcon as TrophyIconSolid,
   UserCircleIcon as UserCircleIconSolid,
 } from "@heroicons/react/24/solid";
+import { MOBILE_NAV_SLOT_ID } from "@hooks/useMobileNavSlot";
 import { usePathname } from "next/navigation";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
@@ -38,6 +40,7 @@ interface MainHeaderMobileLayoutProps {
 
 const MainHeaderMobileLayout: FC<MainHeaderMobileLayoutProps> = ({ isConnected, address, openConnectModal }) => {
   const pathname = usePathname();
+  const isVotingFocusMode = useVotingFocusModeStore(state => state.isFocusMode);
   const [isClient, setIsClient] = useState(false);
   const [isInPwaMode, setIsInPwaMode] = useState(false);
   const [showWalletPortal, setShowWalletPortal] = useState(false);
@@ -95,14 +98,20 @@ const MainHeaderMobileLayout: FC<MainHeaderMobileLayoutProps> = ({ isConnected, 
         </div>
       )}
 
-      <nav className="fixed bottom-0 left-0 right-0 z-50 flex flex-col bg-true-black">
+      <nav
+        className={`fixed bottom-0 left-0 right-0 z-50 flex flex-col ${
+          isVotingFocusMode ? "rounded-t-[16px] bg-neutral-1" : "bg-true-black"
+        }`}
+      >
         {/* Portal target for create flow buttons */}
-        <div id="mobile-create-nav-slot" />
+        <div id={MOBILE_NAV_SLOT_ID} />
 
         <div
-          className={`flex flex-row items-center justify-between border-t-2 border-neutral-2 py-3 ${
-            isClient && isInPwaMode ? "pb-8" : "pb-2"
-          } px-8`}
+          className={`flex flex-row items-center justify-between overflow-hidden border-t-2 px-8 transition-all duration-200 ${
+            isVotingFocusMode
+              ? "pointer-events-none max-h-0 border-transparent py-0 opacity-0"
+              : `max-h-28 border-neutral-2 py-3 ${isClient && isInPwaMode ? "pb-8" : "pb-2"}`
+          }`}
         >
           <CustomLink href={ROUTE_LANDING} className={`flex flex-col ${isActive(ROUTE_LANDING)}`}>
             {pathname === ROUTE_LANDING ? <HomeIconSolid width={24} /> : <HomeIcon width={24} />}

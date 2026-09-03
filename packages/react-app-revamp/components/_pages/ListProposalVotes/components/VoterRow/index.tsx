@@ -6,18 +6,21 @@ interface VoteRowProps {
   votesPerAddress: Record<string, number>;
   address: string;
   addressesLength: number;
+  isCurrentUser: boolean;
   className?: string;
 }
 
-const VoterRow: FC<VoteRowProps> = ({ votesPerAddress, address, addressesLength, className }) => {
+const VoterRow: FC<VoteRowProps> = ({ votesPerAddress, address, addressesLength, isCurrentUser, className }) => {
+  const textClassName = `${isCurrentUser ? "text-secondary-11" : "text-neutral-11"} ${className ?? ""}`;
+
   return (
     <div
       className={`flex justify-between items-center font-bold pb-1 ${
         addressesLength > 1 ? "border-b border-primary-3" : ""
       }`}
     >
-      <UserProfileDisplay ethereumAddress={address} shortenOnFallback={true} textColor={className} size="extraSmall" showBy={false} />
-      <AnimatedVoteCount votes={votesPerAddress[address]} className={className}>
+      <UserProfileDisplay ethereumAddress={address} shortenOnFallback={true} textColor={textClassName} size="extraSmall" showBy={false} />
+      <AnimatedVoteCount votes={votesPerAddress[address]} className={textClassName}>
         {formatNumberWithCommas(votesPerAddress[address])} {votesPerAddress[address] === 1 ? "vote" : "votes"}
       </AnimatedVoteCount>
     </div>

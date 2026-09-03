@@ -61,7 +61,7 @@ const VotingSidebarVoters: FC<VotingSidebarVotersProps> = ({ proposalId, image, 
             <ListProposalVotes
               proposalId={proposalId}
               votedAddresses={addresses}
-              className="text-neutral-11 text-[12px]"
+              className="text-[12px]"
             />
           </div>
           {!isVotingOpen && (

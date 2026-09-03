@@ -10,7 +10,7 @@ import { TransactionOverlayFlow, TransactionOverlayPlacement } from "./types";
 import { useOverlayLifecycle } from "./useOverlayLifecycle";
 
 const TransactionOverlay = () => {
-  const { isOpen, placement, flow, phase, errorMessage, steps, successMeta } = useTransactionOverlayStore(
+  const { isOpen, placement, flow, phase, errorMessage, steps, successMeta, voteShare } = useTransactionOverlayStore(
     useShallow(state => state),
   );
   const isVisible = isOpen && placement === TransactionOverlayPlacement.FULLSCREEN;
@@ -26,7 +26,7 @@ const TransactionOverlay = () => {
     };
   }, [isVisible]);
 
-  useOverlayLifecycle(isVisible, phase);
+  useOverlayLifecycle({ isVisible, phase, flow });
 
   return (
     <AnimatePresence>
@@ -48,8 +48,9 @@ const TransactionOverlay = () => {
             errorMessage={errorMessage}
             steps={steps}
             successMeta={successMeta}
+            voteShare={voteShare}
             placement={TransactionOverlayPlacement.FULLSCREEN}
-            contentClassName="px-10 pb-[env(safe-area-inset-bottom)] pt-[env(safe-area-inset-top)]"
+            contentClassName="px-6 pb-[env(safe-area-inset-bottom)] pt-[env(safe-area-inset-top)]"
           />
         </motion.div>
       )}

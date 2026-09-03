@@ -81,4 +81,16 @@ export const getPendingPhaseCopy = (
   return { title, sub: typeof sub === "string" ? sub : sub[placement] };
 };
 
+export const VOTE_SHARE_COPY = {
+  heading: "votes added!",
+  hook: "now. want to win?",
+  lead: "get others to vote so that...",
+  reasons: [
+    { emoji: "🏅", text: "you're more likely to win." },
+    { emoji: "💸", text: "you can win more in rewards." },
+  ],
+  closer: "the more people vote, the more you can earn.",
+  cta: "share on X",
+};
+
 export const getSuccessCopy = (flow: TransactionOverlayFlow): string => SUCCESS_COPY[flow];

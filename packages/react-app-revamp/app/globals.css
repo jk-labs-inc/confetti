@@ -160,6 +160,7 @@
   --animate-flicker-infinite: flicker 1s linear infinite;
   --animate-reveal: reveal 1s ease-in-out;
   --animate-flicker-number: flicker-number 0.5s infinite;
+  --animate-caret-blink: caret-blink 1.06s linear infinite;
 
   /* Scale */
   --scale-120: 1.1;
@@ -246,6 +247,17 @@
   --spacing-1ex: 1ex;
 
   /* Keyframe Definitions */
+  @keyframes caret-blink {
+    0%,
+    49.9% {
+      opacity: 1;
+    }
+    50%,
+    100% {
+      opacity: 0;
+    }
+  }
+
   @keyframes card-rotation {
     from {
       transform: rotateY(360deg);
