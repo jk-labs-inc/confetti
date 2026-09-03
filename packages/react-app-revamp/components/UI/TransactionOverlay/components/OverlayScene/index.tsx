@@ -5,11 +5,13 @@ import {
   TransactionOverlayPlacement,
   TransactionOverlayStep,
   TransactionOverlaySuccessMeta,
+  TransactionOverlayVoteShare,
 } from "../../types";
 import AmbientParticles from "../AmbientParticles";
 import ErrorView from "../ErrorView";
 import PendingView from "../PendingView";
 import SuccessView from "../SuccessView";
+import VoteShareView from "../VoteShareView";
 
 interface OverlaySceneProps {
   flow: TransactionOverlayFlow;
@@ -17,6 +19,7 @@ interface OverlaySceneProps {
   errorMessage: string;
   steps: TransactionOverlayStep[];
   successMeta: TransactionOverlaySuccessMeta | null;
+  voteShare: TransactionOverlayVoteShare | null;
   placement: TransactionOverlayPlacement;
   contentClassName?: string;
 }
@@ -27,6 +30,7 @@ const OverlayScene: FC<OverlaySceneProps> = ({
   errorMessage,
   steps,
   successMeta,
+  voteShare,
   placement,
   contentClassName = "",
 }) => (
@@ -39,6 +43,8 @@ const OverlayScene: FC<OverlaySceneProps> = ({
     <div className={`relative flex flex-1 flex-col items-center justify-center ${contentClassName}`}>
       {phase === TransactionOverlayPhase.ERROR ? (
         <ErrorView errorMessage={errorMessage} />
+      ) : phase === TransactionOverlayPhase.SUCCESS && flow === TransactionOverlayFlow.VOTE ? (
+        <VoteShareView meta={successMeta} share={voteShare} placement={placement} />
       ) : phase === TransactionOverlayPhase.SUCCESS ? (
         <SuccessView flow={flow} meta={successMeta} placement={placement} />
       ) : (

@@ -32,3 +32,10 @@ export interface TransactionOverlayStep {
 }
 
 export type TransactionOverlaySuccessMeta = Pick<SuccessToastConfig, "id" | "dataAttributes">;
+
+export interface TransactionOverlayVoteShare {
+  entryTitle?: string;
+  contestName?: string;
+  contestAddress?: string;
+  chainName?: string;
+}

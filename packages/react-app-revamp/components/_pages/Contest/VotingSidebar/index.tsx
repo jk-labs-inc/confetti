@@ -1,5 +1,6 @@
 import AddFunds from "@components/AddFunds";
 import InlineTransactionOverlay from "@components/UI/TransactionOverlay/Inline";
+import { isInlineOverlayInFlow, useTransactionOverlayStore } from "@components/UI/TransactionOverlay/store";
 import { useRunAfterOverlayDismissed } from "@components/UI/TransactionOverlay/useRunAfterOverlayDismissed";
 import VotingWidget, { VotingWidgetStyle } from "@components/Voting";
 import EntryPreviewHeader from "@components/Voting/components/EntryPreviewHeader";
@@ -52,6 +53,7 @@ const VotingSidebar: FC = () => {
   });
 
   const runAfterOverlayDismissed = useRunAfterOverlayDismissed();
+  const hidesVotingArea = useTransactionOverlayStore(isInlineOverlayInFlow);
 
   const onVote = async (amount: number) => {
     try {
@@ -90,11 +92,11 @@ const VotingSidebar: FC = () => {
         <div
           className={`relative px-6 py-4 rounded-4xl flex flex-col gap-4 ${screen === VoteFlowScreen.AddFunds ? "bg-primary-13" : "bg-gradient-voting-area-purple"}`}
         >
-          {screen === VoteFlowScreen.Vote && (
+          {screen === VoteFlowScreen.Vote && !hidesVotingArea && (
             <EntryPreviewHeader image={image} title={title} contestName={contestName} />
           )}
 
-          {screen === VoteFlowScreen.AddFunds ? (
+          {hidesVotingArea ? null : screen === VoteFlowScreen.AddFunds ? (
             <div className="animate-appear">
               <AddFunds
                 chain={contestConfig.chainName}
@@ -130,7 +132,7 @@ const VotingSidebar: FC = () => {
             />
           )}
 
-          <InlineTransactionOverlay className="rounded-4xl" />
+          <InlineTransactionOverlay className="rounded-4xl" inFlowClassName="-mx-6 -my-4" />
         </div>
       )}
 

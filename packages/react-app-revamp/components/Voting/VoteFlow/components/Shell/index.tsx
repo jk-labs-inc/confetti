@@ -1,6 +1,7 @@
 import DialogModalV4 from "@components/UI/DialogModalV4";
 import Drawer from "@components/UI/Drawer";
 import InlineTransactionOverlay from "@components/UI/TransactionOverlay/Inline";
+import { isInlineOverlayInFlow, useTransactionOverlayStore } from "@components/UI/TransactionOverlay/store";
 import { MOBILE_MAX_WIDTH_PX } from "@helpers/isMobileViewport";
 import { FC, ReactNode } from "react";
 import { useMediaQuery } from "react-responsive";
@@ -33,6 +34,7 @@ const VoteFlowShell: FC<VoteFlowShellProps> = ({
   children,
 }) => {
   const { isMobile, usesDrawer } = useVoteFlowPresentation(presentation);
+  const hidesContent = useTransactionOverlayStore(isInlineOverlayInFlow);
 
   if (usesDrawer) {
     return (
@@ -58,8 +60,8 @@ const VoteFlowShell: FC<VoteFlowShellProps> = ({
           className="hidden md:block absolute top-6 right-6 cursor-pointer"
           onClick={onClose}
         />
-        {children}
-        <InlineTransactionOverlay />
+        {!hidesContent && children}
+        <InlineTransactionOverlay inFlowClassName="-mx-6 -my-6 md:-mx-10 md:-my-10 md:px-4 md:py-2" />
       </div>
     </DialogModalV4>
   );
