@@ -8,6 +8,8 @@ import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import VoterRow from "./components/VoterRow";
 import MotionSpinner from "@components/UI/MotionSpinner";
 import useScrollFade from "@hooks/useScrollFade";
+import { useWallet } from "@hooks/useWallet";
+import { isSameAddress } from "@helpers/isSameAddress";
 
 interface ListProposalVotesProps {
   proposalId: string;
@@ -31,6 +33,7 @@ const LoadingSkeleton: FC<{ count: number }> = ({ count }) => (
 
 export const ListProposalVotes: FC<ListProposalVotesProps> = ({ proposalId, votedAddresses, className }) => {
   const asPath = usePathname();
+  const { userAddress } = useWallet();
   const { chainName, address } = extractPathSegments(asPath ?? "");
   const chainId = chains.filter(
     (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName,
@@ -88,6 +91,7 @@ export const ListProposalVotes: FC<ListProposalVotesProps> = ({ proposalId, vote
                       votesPerAddress={accumulatedVotesData}
                       address={address}
                       addressesLength={addresses.length}
+                      isCurrentUser={isSameAddress(address, userAddress)}
                       className={className}
                     />
                   ))}
