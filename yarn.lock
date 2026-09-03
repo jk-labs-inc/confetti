@@ -11786,10 +11786,10 @@ own-keys@^1.0.1:
     object-keys "^1.1.1"
     safe-push-apply "^1.0.0"
 
-ox@0.14.30:
-  version "0.14.30"
-  resolved "https://registry.yarnpkg.com/ox/-/ox-0.14.30.tgz#aee7e72c8f179d8666a7f14e1ae7e28a0fcbea98"
-  integrity sha512-LI11uu+8iiM1B3CLckgd++YF1a0A2k5wDoM9ZeQMiL21BOzQs6L//BLS6hb1HSEKCyycdDIQLsVQx9MjpcC0hA==
+ox@0.14.34:
+  version "0.14.34"
+  resolved "https://registry.yarnpkg.com/ox/-/ox-0.14.34.tgz#6eebf1d19771bedfdac477f5e325349f945eb399"
+  integrity sha512-12seOIk7dv8eAoGQhcWaeKZxNz304IVcDvb9U5Y7JZAEVe21Nm1YMxLjhWah+su5BD4Omx4Zz0z5x3ij9M4GYQ==
   dependencies:
     "@adraffy/ens-normalize" "^1.11.0"
     "@noble/ciphers" "^1.3.0"
@@ -11800,10 +11800,10 @@ ox@0.14.30:
     abitype "^1.2.3"
     eventemitter3 "5.0.1"
 
-ox@0.14.34:
-  version "0.14.34"
-  resolved "https://registry.yarnpkg.com/ox/-/ox-0.14.34.tgz#6eebf1d19771bedfdac477f5e325349f945eb399"
-  integrity sha512-12seOIk7dv8eAoGQhcWaeKZxNz304IVcDvb9U5Y7JZAEVe21Nm1YMxLjhWah+su5BD4Omx4Zz0z5x3ij9M4GYQ==
+ox@0.14.44:
+  version "0.14.44"
+  resolved "https://registry.yarnpkg.com/ox/-/ox-0.14.44.tgz#58cda086c7e2d4c3ba39f08a33778c47de5e2dee"
+  integrity sha512-O54qXXHEk4ySamMSyBpI0AeBegS5frxU6+LA6Jb9Sf6kMOxcTNaxYmwZfpOu22DIQsdKfgQxHq8EsAGaoBQScA==
   dependencies:
     "@adraffy/ens-normalize" "^1.11.0"
     "@noble/ciphers" "^1.3.0"
@@ -14175,10 +14175,10 @@ victory-vendor@^36.6.8:
     d3-time "^3.0.0"
     d3-timer "^3.0.1"
 
-viem@2.55.4:
-  version "2.55.4"
-  resolved "https://registry.yarnpkg.com/viem/-/viem-2.55.4.tgz#a3f83c9e075d30d73fb2ac9cecc0b72a71e108fc"
-  integrity sha512-iSVcFADHPS0GRcY+YMGubuOH0QXcLN87HVlPNaFLPzJv6OzNOql2cim+QxtTe/QxXUqbXLnzTmpFms4PLGyJ6A==
+viem@2.56.3:
+  version "2.56.3"
+  resolved "https://registry.yarnpkg.com/viem/-/viem-2.56.3.tgz#d76da19f71a9e70863c1288b2836903bc43b3425"
+  integrity sha512-vUObq3GO7D3lz9gPNEE/xd5jIUnMbeVDWewh252o54pDEDlW4pDe6FEd/qTGL5RyK52cGHMM7kQ3wjxhilEvkQ==
   dependencies:
     "@noble/curves" "1.9.1"
     "@noble/hashes" "1.8.0"
@@ -14186,7 +14186,7 @@ viem@2.55.4:
     "@scure/bip39" "1.6.0"
     abitype "1.2.3"
     isows "1.0.7"
-    ox "0.14.30"
+    ox "0.14.44"
     ws "8.21.0"
 
 viem@>=2.37.9, viem@^2.23.15, viem@^2.27.2:
