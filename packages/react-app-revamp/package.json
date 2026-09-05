@@ -22,7 +22,7 @@
     "@getpara/react-sdk-lite": "3.18.0",
     "@headlessui/react": "2.2.10",
     "@heroicons/react": "2.2.0",
-    "@lifi/widget": "4.5.0",
+    "@lifi/widget": "4.6.0",
     "@lifi/widget-provider-ethereum": "4.1.4",
     "@mysten/dapp-kit": "0.20.0",
     "@next/third-parties": "15.5.25",
