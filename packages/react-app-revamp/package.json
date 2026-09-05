@@ -86,7 +86,7 @@
     "react-aria": "3.51.0",
     "react-device-detect": "2.2.3",
     "react-dom": "19.2.8",
-    "react-error-boundary": "6.1.4",
+    "react-error-boundary": "6.1.5",
     "react-headless-pagination": "1.1.6",
     "react-html-props": "2.1.1",
     "react-infinite-scroll-hook": "6.0.1",
