@@ -3341,17 +3341,17 @@
   resolved "https://registry.yarnpkg.com/@img/sharp-win32-x64/-/sharp-win32-x64-0.35.4.tgz#0b67bd0b1f01123a982afcc6ba0dc00b877b8a0a"
   integrity sha512-XtmnYhBcrORsJ4XJngyzr/EWP0hRZLAZRFaApdKuviyqF78+ylxh2y06ZmtULAMOnObJ3ucpN0AcwSWnMowTRg==
 
-"@internationalized/date@^3.12.3":
-  version "3.12.3"
-  resolved "https://registry.yarnpkg.com/@internationalized/date/-/date-3.12.3.tgz#e11d14dbf12bf45057dd5996bac77f7c2f89ff9c"
-  integrity sha512-fuLX+3ZKLsxI73y8b01EG/WjHb6gE6weCqlfawPO27kBWGMh9G1yH6Csv1uU7/cac9H2GHmOMt6CjmuQ1aia4Q==
+"@internationalized/date@^3.12.4":
+  version "3.12.4"
+  resolved "https://registry.yarnpkg.com/@internationalized/date/-/date-3.12.4.tgz#a391e01d54ca80b3cb4c3d5040d46a0b26c3f20f"
+  integrity sha512-M1dEn4c1U1HsSlaVR8upZtSqvXrTkHDfv18H01uCSJyjVLDxnBR38v/fMxecmlwXKR4i9HeZcmgQAPE6A+aGJQ==
   dependencies:
     "@swc/helpers" "^0.5.0"
 
-"@internationalized/number@^3.6.7":
-  version "3.6.7"
-  resolved "https://registry.yarnpkg.com/@internationalized/number/-/number-3.6.7.tgz#5a0a8fa413b5f8679a59dcf37e2a74dc508b8371"
-  integrity sha512-3ji1fcrT+FPAK86UqEhB/psHixYo6niWPJtt7+qRaYFynt/BaJG8GhAPimtWUpEiVSTq8ZM8L5psMxGquiB/Vg==
+"@internationalized/number@^3.6.8":
+  version "3.6.8"
+  resolved "https://registry.yarnpkg.com/@internationalized/number/-/number-3.6.8.tgz#aaa3e16fb9d64a8d7f130ccf848c626914dfdf9e"
+  integrity sha512-8UmMFia46DUt+k97zKd9fKWXcWHR+k8ae3eYzILETuT2KbIvLyOfac7zesw+sJdRAAZ7Q9pM1Mk22aXp2LD0Ig==
   dependencies:
     "@swc/helpers" "^0.5.0"
 
@@ -12478,19 +12478,19 @@ randombytes@^2.1.0:
   dependencies:
     safe-buffer "^5.1.0"
 
-react-aria@3.51.0:
-  version "3.51.0"
-  resolved "https://registry.yarnpkg.com/react-aria/-/react-aria-3.51.0.tgz#b8129df769eda51a0f92d256fddcc105badf6ed7"
-  integrity sha512-AyWLw0XR38cFPwBu/ErgGaVrc5dupLEKmRlMXTGvFKOtbaGRQ2+yQJkjVhpdHhoRhU4+G+tJDFeHDTS8tK3bfQ==
+react-aria@3.52.1:
+  version "3.52.1"
+  resolved "https://registry.yarnpkg.com/react-aria/-/react-aria-3.52.1.tgz#2dfc540b1f97c56c7ba5c47a7ff56ba5646ef589"
+  integrity sha512-fdZZruC9/x/joCg0mhKGs5aHpwrXLCSZ4GOJmhhYyiE0ffyEsk9MLFt9LCOCF9tn8ErTD+UDQP4oDUSlZkmpCg==
   dependencies:
-    "@internationalized/date" "^3.12.3"
-    "@internationalized/number" "^3.6.7"
+    "@internationalized/date" "^3.12.4"
+    "@internationalized/number" "^3.6.8"
     "@internationalized/string" "^3.2.10"
     "@react-types/shared" "^3.36.1"
     "@swc/helpers" "^0.5.0"
     aria-hidden "^1.2.3"
     clsx "^2.0.0"
-    react-stately "3.49.0"
+    react-stately "3.50.0"
     use-sync-external-store "^1.6.0"
 
 react-device-detect@2.2.3:
@@ -12622,13 +12622,13 @@ react-smooth@^4.0.4:
     prop-types "^15.8.1"
     react-transition-group "^4.4.5"
 
-react-stately@3.49.0:
-  version "3.49.0"
-  resolved "https://registry.yarnpkg.com/react-stately/-/react-stately-3.49.0.tgz#bc7fda7d0245e2a1239a8f0451950b27639d0e17"
-  integrity sha512-13iNq2KzBrRAzxRc+n53hgROfIistiYY/sPtIhCw1qUB7/kmo+X1xEU2uiS5zcCIrc55AUPwoHqOIIpKWSwB9A==
+react-stately@3.50.0:
+  version "3.50.0"
+  resolved "https://registry.yarnpkg.com/react-stately/-/react-stately-3.50.0.tgz#e94058a2ada3f1d5e2f0591818d18df26129af67"
+  integrity sha512-TnckvpDQGU0672wEaLZqdzvhuSeXWjgW6vijMWxiKOxc8CosQUfPGISdcZyfHqjX3XMjEtRxj4w9HumvX4h4mw==
   dependencies:
-    "@internationalized/date" "^3.12.3"
-    "@internationalized/number" "^3.6.7"
+    "@internationalized/date" "^3.12.4"
+    "@internationalized/number" "^3.6.8"
     "@internationalized/string" "^3.2.10"
     "@react-types/shared" "^3.36.1"
     "@swc/helpers" "^0.5.0"
