@@ -196,6 +196,20 @@ contract ContestTest is Test {
         vm.stopPrank();
     }
 
+    function testVoteOnNonExistentProposal() public {
+        vm.startPrank(TEST_ADDRESS_1);
+
+        vm.warp(1681660001);
+        uint256 proposalId = 1;
+
+        vm.deal(address(TEST_ADDRESS_1), 10 * payPerVoteExpCurveContest.currentPricePerVote());
+        uint256 voteValue = 10 * payPerVoteExpCurveContest.currentPricePerVote();
+        vm.expectRevert(abi.encodeWithSelector(Governor.ProposalDoesNotExist.selector));
+        payPerVoteExpCurveContest.castVote{value: voteValue}(proposalId, 10 ether);
+
+        vm.stopPrank();
+    }
+
     function testVoteExpCurve1() public {
         vm.warp(1681665000);
         assertEq(payPerVoteExpCurveContest.currentPricePerVote(), 312000000000000); // 49.8% of way through
