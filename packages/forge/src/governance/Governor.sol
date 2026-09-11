@@ -82,7 +82,7 @@ abstract contract Governor is GovernorSorting, GovernorAnalytics {
     address public constant JK_LABS_ADDRESS = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738; // Our hot wallet that we collect revenue to.
     uint256 public constant PRICE_CURVE_UPDATE_INTERVAL = 60; // How often the price curve updates if applicable.
     uint256 public constant COST_ROUNDING_VALUE = 1e12; // Used for rounding costs, means cost to propose or vote can't be less than 1e18/this.
-    string private constant VERSION = "6.21"; // Private as to not clutter the ABI.
+    string private constant VERSION = "6.22"; // Private as to not clutter the ABI.
 
     string public name; // The title of the contest
     string public prompt;
@@ -126,6 +126,7 @@ abstract contract Governor is GovernorSorting, GovernorAnalytics {
 
     error CannotVoteOnDeletedProposal();
     error NeedAtLeastOneVoteToVote();
+    error ProposalDoesNotExist();
     error CannotVoteLessThanOneVoteInPayPerVote();
 
     error OnlyCreatorOrEntrantCanDelete();
@@ -480,6 +481,7 @@ abstract contract Governor is GovernorSorting, GovernorAnalytics {
     function _castVote(uint256 proposalId, address account, uint256 numVotes) internal returns (uint256) {
         if (state() != ContestState.Active) revert ContestMustBeActiveToVote();
         if (numVotes == 0) revert NeedAtLeastOneVoteToVote();
+        if (!proposals[proposalId].exists) revert ProposalDoesNotExist();
 
         _countVote(proposalId, account, numVotes);
 
