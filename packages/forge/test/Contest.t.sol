@@ -205,13 +205,10 @@ contract ContestTest is Test {
         vm.deal(address(TEST_ADDRESS_1), 10 * payPerVoteExpCurveContest.currentPricePerVote());
         uint256 voteValue = 10 * payPerVoteExpCurveContest.currentPricePerVote();
         vm.expectRevert(abi.encodeWithSelector(Governor.ProposalDoesNotExist.selector));
-        payPerVoteExpCurveContest.castVote{value: voteValue}(
-            proposalId, 10 ether
-        );
+        payPerVoteExpCurveContest.castVote{value: voteValue}(proposalId, 10 ether);
 
         vm.stopPrank();
     }
-
 
     function testVoteExpCurve1() public {
         vm.warp(1681665000);
