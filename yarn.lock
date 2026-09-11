@@ -11040,10 +11040,10 @@ levn@^0.4.1:
     prelude-ls "^1.2.1"
     type-check "~0.4.0"
 
-libphonenumber-js@1.13.12:
-  version "1.13.12"
-  resolved "https://registry.yarnpkg.com/libphonenumber-js/-/libphonenumber-js-1.13.12.tgz#ba5371e954cb07c0498de97afa312d25e93e2241"
-  integrity sha512-uLVeV1c9OTk6qkdqnj+mpMD+ZdnZ0szVyWu58HwMmpwkHA1gCEkyjd3veZQXDnuw9KEwSRjcc9B1pS9XKIN1fA==
+libphonenumber-js@1.13.13:
+  version "1.13.13"
+  resolved "https://registry.yarnpkg.com/libphonenumber-js/-/libphonenumber-js-1.13.13.tgz#4a7907ff18d4687dd32c7f6f976db7478ac7a898"
+  integrity sha512-hV6SmWnyQ8U1QXhhqbqYBHIStNnscG7A5XbGodgdHhf/8N5PwhYpJA5U/yHDjYwPYTd8uNGXqq416XctuvK2PA==
 
 libphonenumber-js@^1.10.31:
   version "1.13.11"
