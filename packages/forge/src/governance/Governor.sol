@@ -436,7 +436,7 @@ abstract contract Governor is GovernorSorting, GovernorAnalytics {
             }
         }
 
-        emit ProposalsDeleted(proposalIds);
+        emit ProposalsDeleted(proposalIdsToDelete);
     }
 
     /**
