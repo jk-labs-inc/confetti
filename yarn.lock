@@ -2953,32 +2953,32 @@
   resolved "https://registry.yarnpkg.com/@floating-ui/utils/-/utils-0.2.12.tgz#afefe785949f16ac4cdd1e695935a321572dd56a"
   integrity sha512-HpCo8tmWzLVad5s2d19EhAz5zqrrQ6s69qd6moPMQvkOuSwDT1YgRfWSVuc4ennqrgv3OHppiOGMQ7oC13yIww==
 
-"@fun-xyz/fiat-contract@0.11.0":
-  version "0.11.0"
-  resolved "https://registry.yarnpkg.com/@fun-xyz/fiat-contract/-/fiat-contract-0.11.0.tgz#7205786637cbbc1dcda2e4e68e317339d3b55141"
-  integrity sha512-EUsDL1oK7NhHly+RnjU4MFnmIIpj9aAdYRFUN+XfXOQIlH4WUu2270xhxOt6PXJq6ylDswlInR1aSbmpWxPnqQ==
+"@fun-xyz/fiat-contract@0.11.4":
+  version "0.11.4"
+  resolved "https://registry.yarnpkg.com/@fun-xyz/fiat-contract/-/fiat-contract-0.11.4.tgz#3e6c4c3791fcbd85958abca5b51e0ed5bb4a24b4"
+  integrity sha512-bsaKPT5jGh0B8NjRaIjet6swWFrMnpOP1mGmQJPP5sLvmyxEjjtqGQXYp8v1XAoJq8W0cpJFwepAwgdE3F6AgA==
 
-"@funkit/api-base@8.2.0":
-  version "8.2.0"
-  resolved "https://registry.yarnpkg.com/@funkit/api-base/-/api-base-8.2.0.tgz#61fd1c39a6ce80390540c687c11bccf51facc267"
-  integrity sha512-7uqznEXaRhFFiLFVKqHyUBCEsv05bPYxILwvkNLIl62hPfLyiEBbn3avWeLli7cwWS+Zveo2GUmbt8UEM/Nmjw==
+"@funkit/api-base@8.3.0":
+  version "8.3.0"
+  resolved "https://registry.yarnpkg.com/@funkit/api-base/-/api-base-8.3.0.tgz#8fe753a7f66c99abd33498154aa5c1363b940e68"
+  integrity sha512-2VUJ7zvcPE0t1606vCleNd3TtHkpdc50lc4UtrlPV27NEpsOBsEEBl5MPbJQggoM4uj+XejkaR75HYhcTUw0lQ==
   dependencies:
     "@funkit/utils" "4.0.3"
     "@lifeomic/attempt" "^3.1.0"
 
-"@funkit/chains@2.3.0":
-  version "2.3.0"
-  resolved "https://registry.yarnpkg.com/@funkit/chains/-/chains-2.3.0.tgz#e9ce9f9869ce9ca7b8b97e5b0e4fb5ccafede0ff"
-  integrity sha512-hX5wpTPiN/5+tN8rIhkUKVaQjAYLDUVeIE1aXqd52bLXwE8YM+l8UTpoXcnxr7Y4tgkxV0pUJC6YY2n1M4vlMA==
+"@funkit/chains@2.4.0":
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/@funkit/chains/-/chains-2.4.0.tgz#0996a384e5f2a840a74a969069b372c211a0002a"
+  integrity sha512-X3nDeiEAmHJ6JybCh+k88OUUP7xSWu/eE0R8bKDaKVcHET18NyWe1nMeraCVcYX3EbUAdadjUZW6EJ/NP9FQDw==
 
-"@funkit/connect-core@6.1.0":
-  version "6.1.0"
-  resolved "https://registry.yarnpkg.com/@funkit/connect-core/-/connect-core-6.1.0.tgz#30a1fcdbebae10858621cbd5299aa7feeb650d33"
-  integrity sha512-RUS+VtOCiwUgriUCAPylrDqTA9WNTdMstg130UaYaUYFs8iSUI7XxwD308W862intZ5gN85tLlHbwwte5UKzbQ==
+"@funkit/connect-core@7.0.0":
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/@funkit/connect-core/-/connect-core-7.0.0.tgz#692020c988647e9eb221e826cf4000b9b822dc96"
+  integrity sha512-BBHcTgSN3l5VcYgFdYSEIcu2+pKTcYXu5aLRbV3++vbt8s4vnpw14oARFteTHa1cjCM0waVlXHgGS/TfRV09aA==
   dependencies:
-    "@fun-xyz/fiat-contract" "0.11.0"
-    "@funkit/api-base" "8.2.0"
-    "@funkit/chains" "2.3.0"
+    "@fun-xyz/fiat-contract" "0.11.4"
+    "@funkit/api-base" "8.3.0"
+    "@funkit/chains" "2.4.0"
     "@funkit/fun-relay" "3.0.0"
     "@funkit/utils" "4.0.3"
     "@lifeomic/attempt" "3.1.0"
@@ -2986,19 +2986,19 @@
     dnum "2.17.0"
     uuid "^11.1.1"
 
-"@funkit/connect@12.4.0":
-  version "12.4.0"
-  resolved "https://registry.yarnpkg.com/@funkit/connect/-/connect-12.4.0.tgz#bbd9446cf0375d4ba6d1a20ba99bc1a23999f744"
-  integrity sha512-EXK3aslCh+2fJJq6wRj2U/Gzkq2LgX+uyrnxlOiOxkwE0bUd6oPwfeeBsDbLZ/G8aPPwYB9rY5vyFJ7U23sQNg==
+"@funkit/connect@12.5.0":
+  version "12.5.0"
+  resolved "https://registry.yarnpkg.com/@funkit/connect/-/connect-12.5.0.tgz#654a4547244b2397e158dc404c8443dadee9e50e"
+  integrity sha512-pP6/8/gOI/C2wz4iEwDLJqQrczhtYRITm4mmAqL65bC6fD89J9ntGIcdyPVnPR5tsDxMVxyZZ39OXksj8YSAQg==
   dependencies:
     "@aave-dao/aave-address-book" "^4.49.9"
     "@aave/client" "^0.9.3"
     "@bluvo/react" "3.0.0-beta.1"
     "@bluvo/sdk-ts" "3.0.0-beta.1"
     "@datadog/browser-logs" "5.22.0"
-    "@funkit/api-base" "8.2.0"
-    "@funkit/chains" "2.3.0"
-    "@funkit/connect-core" "6.1.0"
+    "@funkit/api-base" "8.3.0"
+    "@funkit/chains" "2.4.0"
+    "@funkit/connect-core" "7.0.0"
     "@funkit/fun-relay" "3.0.0"
     "@funkit/utils" "4.0.3"
     "@number-flow/react" "^0.5.5"
