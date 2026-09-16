@@ -115,13 +115,14 @@ export function useCastVotes({ charge, votesClose, inlineOverlay }: UseCastVotes
 
     if (overlayPlacement) {
       txOverlay.start(TransactionOverlayFlow.VOTE, { placement: overlayPlacement });
-    } else {
-      toastLoading({
+    }
+
+    toastLoading({
         id: VOTE_FLOW_TRACKING_ID,
         message: "votes are deploying...",
         additionalMessageType: LoadingToastMessageType.KEEP_BROWSER_OPEN,
-      });
-    }
+    });
+
     setIsLoading(true);
     setIsSuccess(false);
     setError("");
@@ -231,12 +232,12 @@ export function useCastVotes({ charge, votesClose, inlineOverlay }: UseCastVotes
           contestAddress: contestConfig.address,
           chainName: contestConfig.chainName.toLowerCase(),
         });
-      } else {
-        toastSuccess({
+      }
+
+      toastSuccess({
           message: "your votes have been deployed successfully",
           ...successMeta,
-        });
-      }
+      });
 
       refetchTotalVotesCastOnContest();
       refetchCurrentUserVotesOnProposal();
