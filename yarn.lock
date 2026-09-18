@@ -93,10 +93,10 @@
     "@smithy/types" "^4.17.2"
     tslib "^2.6.2"
 
-"@aws-sdk/client-s3@3.1134.0":
-  version "3.1134.0"
-  resolved "https://registry.yarnpkg.com/@aws-sdk/client-s3/-/client-s3-3.1134.0.tgz#7e4c8de09372ccf4d4595aa20d688454f434b1e1"
-  integrity sha512-dHgbuWMkladVNpR5gEQ7K9ub20w/hcf9IJXtMr+S3/rYpr6Z4gWUEX1seAPj00nAxJqtAaYvX3wdr2BVukZXXQ==
+"@aws-sdk/client-s3@3.1135.0":
+  version "3.1135.0"
+  resolved "https://registry.yarnpkg.com/@aws-sdk/client-s3/-/client-s3-3.1135.0.tgz#a5abaaf94c3d855f0adcff2e6c74d14b833e52c0"
+  integrity sha512-/1CVA0M+TaEOzgM02DUST1NzQTjbY8OumDKPETjzo4owypkZZMxu1ADecFbzeG73hje/XLNAJfGepQ3a40CGnw==
   dependencies:
     "@aws-sdk/checksums" "^3.1001.0"
     "@aws-sdk/core" "^3.978.0"
@@ -258,10 +258,10 @@
     "@smithy/types" "^4.17.2"
     tslib "^2.6.2"
 
-"@aws-sdk/s3-request-presigner@3.1134.0":
-  version "3.1134.0"
-  resolved "https://registry.yarnpkg.com/@aws-sdk/s3-request-presigner/-/s3-request-presigner-3.1134.0.tgz#38307e829958a115efaa07326c659b36aa0f8bdd"
-  integrity sha512-75DC3biOXXmSWqCN2hwJmhMPjDdgc1twjNJEknuWhY9M/E9eFIQufXkwOQx5raNTg6P/FbCgk9tp4y2SZ7vZFA==
+"@aws-sdk/s3-request-presigner@3.1135.0":
+  version "3.1135.0"
+  resolved "https://registry.yarnpkg.com/@aws-sdk/s3-request-presigner/-/s3-request-presigner-3.1135.0.tgz#a15d3959f6d74c1864d1400d1f6976da8d5b0dd0"
+  integrity sha512-e8fkfFrsROsL2xa4X2Elui7SApBSb+vsJ0XlVdifv7MPOuwPzQ0oQsC1/BQxT1/Hx3IuOVdT0EF9dU87aKse8A==
   dependencies:
     "@aws-sdk/core" "^3.978.0"
     "@aws-sdk/signature-v4-multi-region" "^3.996.46"
