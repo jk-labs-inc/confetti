@@ -3045,10 +3045,10 @@
   resolved "https://registry.yarnpkg.com/@funkit/chains/-/chains-2.4.0.tgz#0996a384e5f2a840a74a969069b372c211a0002a"
   integrity sha512-X3nDeiEAmHJ6JybCh+k88OUUP7xSWu/eE0R8bKDaKVcHET18NyWe1nMeraCVcYX3EbUAdadjUZW6EJ/NP9FQDw==
 
-"@funkit/connect-core@8.1.0":
-  version "8.1.0"
-  resolved "https://registry.yarnpkg.com/@funkit/connect-core/-/connect-core-8.1.0.tgz#795a6f5b5c83a6eda07733e6d7ffc525226bbb2a"
-  integrity sha512-jIzqAmGuvFn4rpb3EP12iHPdMsqeykAceqxuz2iciIhugE+xDl2oJ8GAFJiQhcYLsGSiQaI65+bIfMXFwq2ZUw==
+"@funkit/connect-core@8.1.1":
+  version "8.1.1"
+  resolved "https://registry.yarnpkg.com/@funkit/connect-core/-/connect-core-8.1.1.tgz#8be8ddded0c60c296076e114cf90daa7384faf99"
+  integrity sha512-/4W+bGXvrh4z6hgXLc3600OHOZ5Th6nOt/47h6VaoXn915G5MgPcVmzX61qUC38F6tz4jik3+5W4dVQfs5QDbA==
   dependencies:
     "@fun-xyz/fiat-contract" "0.11.4"
     "@funkit/api-base" "8.4.0"
@@ -3060,10 +3060,10 @@
     dnum "2.17.0"
     uuid "^11.1.1"
 
-"@funkit/connect@12.7.0":
-  version "12.7.0"
-  resolved "https://registry.yarnpkg.com/@funkit/connect/-/connect-12.7.0.tgz#0f076899c355c9a5f3659c53a4ebf00fc1c87616"
-  integrity sha512-xG51v/TNuydG9MfJ/qqAfc3I+wM8X40U0hO8c8F47EbhKl8ugQtlFiQ4D53LJSFC4U+PSbtyxzVV1sudy96DAw==
+"@funkit/connect@12.8.0":
+  version "12.8.0"
+  resolved "https://registry.yarnpkg.com/@funkit/connect/-/connect-12.8.0.tgz#8db7e5359ca06cc96b3179cbbb445b1009aa5fa0"
+  integrity sha512-CxQoNEhg0vk0Uj9wiPBXVMcyydMIDmf5Y6lhZboOgG2Das6ALJn6UhaXgpRcmhqspJi5CChIFc3tdVQA8UOQRw==
   dependencies:
     "@aave-dao/aave-address-book" "^4.49.9"
     "@aave/client" "^0.9.3"
@@ -3072,7 +3072,7 @@
     "@datadog/browser-logs" "5.22.0"
     "@funkit/api-base" "8.4.0"
     "@funkit/chains" "2.4.0"
-    "@funkit/connect-core" "8.1.0"
+    "@funkit/connect-core" "8.1.1"
     "@funkit/fun-relay" "3.0.1"
     "@funkit/utils" "5.0.0"
     "@number-flow/react" "^0.5.5"
