@@ -260,7 +260,7 @@ const VotingActionBar: FC<VotingActionBarProps> = ({ entryPreview, isVotingClose
             <span className="whitespace-nowrap text-[11px] leading-tight text-neutral-9">{votesText}</span>
           </div>
 
-          {/* push to 1st / would win now + win up to */}
+          {/* push to 1st / estimated payout + max payout */}
           <FitTextGroup>
             <div className="flex min-w-0 flex-1 items-center justify-center gap-1.5">
               {entryProjection?.kind === "pushToFirst" ? (

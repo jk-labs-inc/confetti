@@ -12,7 +12,7 @@ interface WouldWinNowTooltipProps {
 const WouldWinNowTooltip: FC<WouldWinNowTooltipProps> = ({ isBelowSpend, iconClassName, place }) => {
   return (
     <HoverInfoTooltip
-      ariaLabel="how would win now works"
+      ariaLabel="how estimated payout works"
       buttonClassName="text-neutral-14 hover:text-neutral-11"
       tooltipClassName="max-w-[250px]"
       iconClassName={iconClassName}

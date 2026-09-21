@@ -17,7 +17,7 @@ const WouldWinNowBlock: FC<WouldWinNowBlockProps> = ({ amount, isBelowSpend }) =
     <div className="flex flex-col">
       <div className="flex items-center gap-2">
         <GradientText textSizeClassName="text-[16px]" isFontSabo={false}>
-          would win now
+          estimated payout
         </GradientText>
         <WouldWinNowTooltip isBelowSpend={isBelowSpend} />
       </div>
