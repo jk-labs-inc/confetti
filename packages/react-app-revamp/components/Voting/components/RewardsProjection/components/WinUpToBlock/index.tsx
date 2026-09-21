@@ -17,7 +17,7 @@ const WinUpToBlock: FC<WinUpToBlockProps> = ({ amount, centered }) => {
     <div className={centered ? "mx-auto flex flex-col items-center" : "ml-auto flex flex-col items-end"}>
       <div className="flex items-center gap-2">
         <GradientText textSizeClassName="text-[16px]" isFontSabo={false}>
-          win up to
+          max payout
         </GradientText>
         <VotingWidgetRewardsProjectionTooltip />
       </div>
