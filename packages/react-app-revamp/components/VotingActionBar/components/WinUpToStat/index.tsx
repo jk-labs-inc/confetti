@@ -19,7 +19,7 @@ const WinUpToStat: FC<WinUpToStatProps> = ({ amount }) => {
       className="flex min-w-0 flex-1 flex-col items-center leading-tight"
     >
       <span className="flex items-center gap-0.5 whitespace-nowrap text-[11px] text-neutral-9">
-        win up to
+        max payout
         <InformationCircleIcon aria-hidden="true" className="w-3 h-3" />
       </span>
       <FitText
