@@ -14,7 +14,7 @@
     "@babel/core": "8.0.6",
     "@babel/preset-env": "8.0.6",
     "@clustersxyz/sdk": "1.0.2",
-    "@coinbase/wallet-sdk": "4.3.7",
+    "@coinbase/wallet-sdk": "4.4.0",
     "@floating-ui/react": "0.27.20",
     "@funkit/connect": "12.10.1",
     "@getbrevo/brevo": "6.0.3",
