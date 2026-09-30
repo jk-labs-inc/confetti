@@ -5,12 +5,12 @@ import useContest from "@hooks/useContest";
 import { useContestStore } from "@hooks/useContest/store";
 import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
+import { MOBILE_MAX_WIDTH_PX } from "@helpers/isMobileViewport";
 import { useProposalStore } from "@hooks/useProposal/store";
 import moment from "moment";
 import { useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useShallow } from "zustand/shallow";
-import VotingActionBar from "@components/VotingActionBar";
 import ContestPrompt from "../components/Prompt";
 import ContestStickyCards from "../components/StickyCards";
 import ContestSubmitBar from "./ContestSubmitBar";
@@ -33,7 +33,7 @@ const ContestTab = () => {
   );
   const { isLoading: isContestLoading, isSuccess: isContestSuccess } = useContest();
   const contestState = useContestStateStore(useShallow(state => state.contestState));
-  const isMobile = useMediaQuery({ maxWidth: 768 });
+  const isMobile = useMediaQuery({ maxWidth: MOBILE_MAX_WIDTH_PX });
   const isInPwaMode = window.matchMedia("(display-mode: standalone)").matches;
   const isContestCanceled = contestState === ContestStateEnum.Canceled;
   const { variant } = useContestSubmitButton({
@@ -44,13 +44,11 @@ const ContestTab = () => {
   const [isPriceCurveExpanded, setIsPriceCurveExpanded] = useState(!isContestOver && !isMobile);
 
   const isSubmissionOpen = contestStatus === ContestStatus.SubmissionOpen;
-  const isVotingOpen = contestStatus === ContestStatus.VotingOpen;
   const hasMobileFixedBar =
     isMobile && isSubmissionOpen && (variant.kind === "counter-submit" || variant.kind === "connect");
-  const hasMobileVotingBar = isMobile && isVotingOpen && !isContestCanceled;
 
-  const listBottomPadding = hasMobileFixedBar ? "pb-24" : hasMobileVotingBar ? "pb-12" : "";
-  const listBottomMargin = isInPwaMode && !hasMobileVotingBar ? "mb-12" : "mb-0";
+  const listBottomPadding = hasMobileFixedBar ? "pb-24" : "";
+  const listBottomMargin = isInPwaMode ? "mb-12" : "mb-0";
 
   return (
     <div className="animate-fade-in">
@@ -94,8 +92,6 @@ const ContestTab = () => {
           )}
         </div>
       </div>
-
-      {hasMobileVotingBar && <VotingActionBar />}
 
       <DialogModalSendProposal isOpen={isSubmitProposalModalOpen} setIsOpen={setIsSubmitProposalModalOpen} />
     </div>

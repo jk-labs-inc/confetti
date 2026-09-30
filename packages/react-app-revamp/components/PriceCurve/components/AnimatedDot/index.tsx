@@ -1,18 +1,23 @@
 import { motion } from "motion/react";
-import React from "react";
+import React, { useId } from "react";
 
 interface AnimatedDotProps {
   x: number;
   y: number;
   isHovered: boolean;
+  radius?: number;
 }
 
-const AnimatedDot: React.FC<AnimatedDotProps> = ({ x, y, isHovered }) => {
+const DEFAULT_RADIUS = 8;
+
+const AnimatedDot: React.FC<AnimatedDotProps> = ({ x, y, isHovered, radius = DEFAULT_RADIUS }) => {
+  const gradient = useId();
+
   return (
     <g>
       {/* Define animated gradient */}
       <defs>
-        <radialGradient id={`animated-gradient-${x}-${y}`} cx="50%" cy="50%" r="50%">
+        <radialGradient id={gradient} cx="50%" cy="50%" r="50%">
           <motion.stop
             offset="0%"
             stopColor="#BB65FF"
@@ -62,8 +67,8 @@ const AnimatedDot: React.FC<AnimatedDotProps> = ({ x, y, isHovered }) => {
       <motion.circle
         cx={x}
         cy={y}
-        r={8}
-        fill={`url(#animated-gradient-${x}-${y})`}
+        r={radius}
+        fill={`url(#${gradient})`}
         initial={{
           scale: 1,
         }}

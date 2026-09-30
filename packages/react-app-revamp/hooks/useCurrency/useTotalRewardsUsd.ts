@@ -1,4 +1,5 @@
 import { formatUsd } from "@helpers/formatBalance";
+import { TotalRewardsData } from "lib/rewards/types";
 import { useMemo } from "react";
 import useErc20Rates from "./useErc20Rates";
 import useNativeRates from "./useNativeRates";
@@ -8,6 +9,17 @@ export interface TokenItem {
   symbol: string;
   tokenAddress?: string;
 }
+
+export const toRewardTokenItems = (totalRewards: TotalRewardsData | undefined): TokenItem[] => {
+  const items: TokenItem[] = [];
+  if (totalRewards?.native && totalRewards.native.value > 0n) {
+    items.push({ value: totalRewards.native.formatted, symbol: totalRewards.native.symbol });
+  }
+  Object.entries(totalRewards?.tokens ?? {}).forEach(([address, token]) => {
+    if (token.value > 0n) items.push({ value: token.formatted, symbol: token.symbol, tokenAddress: address });
+  });
+  return items;
+};
 
 /**
  * Combines a single combined USD value across all provided token items.

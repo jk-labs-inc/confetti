@@ -34,16 +34,16 @@ const AddFunds: FC<AddFundsProps> = ({
   );
 
   return (
-    <div id="add_funds_modal" className={`flex flex-col w-full h-full ${className}`}>
+    <div id="add_funds_modal" className={`@container flex flex-col w-full h-full ${className}`}>
       <div className="flex flex-col gap-4 md:gap-6 flex-1 min-h-0">
         <div className="flex items-start md:items-center justify-between w-full">
-          <div className="flex items-center gap-3">
-            <p className="text-[24px] font-bold text-neutral-11">
+          <div className="flex min-w-0 items-center gap-3 @max-[320px]:gap-2">
+            <p className="shrink-0 text-[24px] @max-[320px]:text-[18px] font-bold text-neutral-11">
               add funds <span className="text-[12px]">on </span>
             </p>
-            <div className="flex items-center gap-3">
-              <Image src={chainLogo} alt={chain} width={32} height={32} />
-              <p className="text-[24px] font-normal">{chain}</p>
+            <div className="flex min-w-0 items-center gap-3 @max-[320px]:gap-1.5">
+              <Image src={chainLogo} alt={chain} width={32} height={32} className="shrink-0 @max-[320px]:size-5" />
+              <p className="truncate text-[24px] @max-[320px]:text-[16px] font-normal">{chain}</p>
             </div>
           </div>
         </div>

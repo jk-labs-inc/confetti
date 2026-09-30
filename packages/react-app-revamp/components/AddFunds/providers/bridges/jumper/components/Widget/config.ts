@@ -70,6 +70,9 @@ export const createJumperWidgetConfig = (chainId: number, asset: string, onConne
     },
     ...filters,
     theme: {
+      container: {
+        minWidth: 0,
+      },
       colorSchemes: {
         dark: {
           palette: {

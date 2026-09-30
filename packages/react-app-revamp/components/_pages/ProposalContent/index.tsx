@@ -1,25 +1,31 @@
+import { CARD_IN_VIEW_MARGIN } from "@components/EntryVoters/constants";
 import { toastInfo } from "@components/UI/Toast";
-import { ENTRY_ACCENT_COLOR, withAlpha } from "@helpers/entryColors";
+import { ENTRY_ACCENT_COLOR } from "@helpers/entryColors";
 import { extractPathSegments } from "@helpers/extractPath";
+import { MOBILE_MAX_WIDTH_PX } from "@helpers/isMobileViewport";
 import { Tweet as TweetType } from "@helpers/isContentTweet";
 import { useCastVotesStore } from "@hooks/useCastVotes/store";
+import { useHasVoteRail } from "@hooks/useContestLayoutBand";
 import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import useDeleteProposal from "@hooks/useDeleteProposal";
 import { EntryPreview } from "@hooks/useDeployContest/slices/contestMetadataSlice";
 import useProfileData from "@hooks/useProfileData";
-import { RawMetadataFields } from "@hooks/useProposal/utils";
+import { isWinningEntry, RawMetadataFields } from "@hooks/useProposal/utils";
 import { useWallet } from "@hooks/useWallet";
 import { usePathname } from "next/navigation";
-import { FC, useState } from "react";
+import { useInView } from "motion/react";
+import { FC, useRef, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useShallow } from "zustand/shallow";
 import DrawerVoteForProposal from "../DrawerVoteForProposal";
 import VoteParticleOverlay from "./components/VoteFeedback/VoteParticleOverlay";
+import WinnerCelebration from "./components/WinnerCelebration";
 import ProposalLayoutClassic from "./components/ProposalLayout/Classic";
 import ProposalLayoutGallery from "./components/ProposalLayout/Gallery";
 import ProposalLayoutLeaderboard from "./components/ProposalLayout/Leaderboard";
 import ProposalLayoutTweet from "./components/ProposalLayout/Tweet";
+import { ENTRY_CARD_GROUP_CLASS_NAME } from "./components/ProposalLayout/entryCardFrame";
 
 export interface Proposal {
   id: string;
@@ -58,17 +64,17 @@ const ProposalContent: FC<ProposalContentProps> = ({
     proposal.authorEthereumAddress,
     contestStatus,
   );
-  const isMobile = useMediaQuery({ maxWidth: 768 });
-  const isDesktop = useMediaQuery({ minWidth: 1280 });
+  const isMobile = useMediaQuery({ maxWidth: MOBILE_MAX_WIDTH_PX });
+  const hasVoteRail = useHasVoteRail();
   const asPath = usePathname();
   const { address: contestAddress } = extractPathSegments(asPath ?? "");
   const [isVotingDrawerOpen, setIsVotingDrawerOpen] = useState(false);
   const { contestState } = useContestStateStore(state => state);
   const isContestCanceled = contestState === ContestStateEnum.Canceled;
   const isVotingOpenStatus = contestStatus === ContestStatus.VotingOpen;
-  const isVotingClosedStatus = contestStatus === ContestStatus.VotingClosed;
-  const canSelectForSidebar =
-    !isContestCanceled && (isVotingOpenStatus || (isVotingClosedStatus && proposal.votes > 0));
+  const canSelectForSidebar = !isContestCanceled && isVotingOpenStatus;
+  const isWinner = isWinningEntry(proposal, contestStatus, isContestCanceled);
+  const showWinnerCelebration = isWinner && enabledPreview !== EntryPreview.TITLE;
   const { setPickedProposal, pickedProposal } = useCastVotesStore(
     useShallow(state => ({
       setPickedProposal: state.setPickedProposal,
@@ -76,8 +82,12 @@ const ProposalContent: FC<ProposalContentProps> = ({
     })),
   );
   const isPicked = pickedProposal === proposal.id;
-  const isHighlighted = isPicked && (isDesktop || isVotingDrawerOpen);
-  const highlightColor = isHighlighted ? withAlpha(ENTRY_ACCENT_COLOR, 0.6) : undefined;
+  const isSelectableOnDesktop = hasVoteRail && canSelectForSidebar && !isPicked;
+  const isHighlighted = isPicked && (hasVoteRail || isVotingDrawerOpen);
+  const highlightColor = isHighlighted ? ENTRY_ACCENT_COLOR : undefined;
+  const cardRef = useRef<HTMLDivElement>(null);
+  const isCardInView = useInView(cardRef, { margin: CARD_IN_VIEW_MARGIN });
+  const votersChipEnabled = isCardInView && hasVoteRail;
   const shouldReduceOpacity = isVotingDrawerOpen && !isPicked;
   const {
     profileAvatar,
@@ -128,6 +138,8 @@ const ProposalContent: FC<ProposalContentProps> = ({
     enabledPreview,
     isHighlighted,
     highlightColor,
+    votersChipEnabled,
+    isWinner,
   };
 
   const renderLayout = () => {
@@ -148,7 +160,7 @@ const ProposalContent: FC<ProposalContentProps> = ({
   const handleCardClick = () => {
     if (isContestCanceled) return;
 
-    if (!isDesktop) {
+    if (!hasVoteRail) {
       if (isVotingOpenStatus) handleVotingDrawerOpen();
       return;
     }
@@ -159,12 +171,15 @@ const ProposalContent: FC<ProposalContentProps> = ({
   return (
     <>
       <div
+        ref={cardRef}
         onClick={handleCardClick}
-        className={`relative transition-opacity duration-300 ease-in-out ${
-          isDesktop && canSelectForSidebar ? "xl:cursor-pointer" : ""
+        data-selectable={isSelectableOnDesktop || undefined}
+        className={`${ENTRY_CARD_GROUP_CLASS_NAME} relative transition-opacity duration-300 ease-in-out ${
+          isSelectableOnDesktop ? "lg:cursor-pointer" : ""
         } ${shouldReduceOpacity ? "opacity-30" : "opacity-100"}`}
       >
-        {renderLayout()}
+        {showWinnerCelebration && <WinnerCelebration />}
+        {showWinnerCelebration ? <div className="relative z-[1]">{renderLayout()}</div> : renderLayout()}
         <VoteParticleOverlay votes={proposal.votes} />
       </div>
       <DrawerVoteForProposal isOpen={isVotingDrawerOpen} setIsOpen={handleVotingDrawerClose} />

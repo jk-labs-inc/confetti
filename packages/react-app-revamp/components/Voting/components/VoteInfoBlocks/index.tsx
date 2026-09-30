@@ -13,6 +13,7 @@ const VoteInfoBlocks: FC<VoteInfoBlocksProps> = props => {
           symbol={props.symbol}
           insufficientBalance={props.insufficientBalance}
           onAddFunds={props.onAddFunds}
+          layout={props.layout}
         />
       );
     case "total-votes":

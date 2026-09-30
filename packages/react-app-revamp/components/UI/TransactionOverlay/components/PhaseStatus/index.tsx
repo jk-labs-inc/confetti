@@ -1,16 +1,24 @@
 import { AnimatePresence, motion } from "motion/react";
 import { FC } from "react";
+import { OVERLAY_TYPE_SCALE } from "../../constants";
 import { getPendingPhaseCopy } from "../../copy";
-import { TransactionOverlayFlow, TransactionOverlayPendingPhase, TransactionOverlayPlacement } from "../../types";
+import {
+  TransactionOverlayFlow,
+  TransactionOverlayPendingPhase,
+  TransactionOverlayPlacement,
+  TransactionOverlayTextSize,
+} from "../../types";
 
 interface PhaseStatusProps {
   flow: TransactionOverlayFlow;
   phase: TransactionOverlayPendingPhase;
   placement: TransactionOverlayPlacement;
+  textSize: TransactionOverlayTextSize;
 }
 
-const PhaseStatus: FC<PhaseStatusProps> = ({ flow, phase, placement }) => {
+const PhaseStatus: FC<PhaseStatusProps> = ({ flow, phase, placement, textSize }) => {
   const copy = getPendingPhaseCopy(flow, phase, placement);
+  const typeScale = OVERLAY_TYPE_SCALE[textSize];
 
   return (
     <AnimatePresence mode="wait">
@@ -22,8 +30,8 @@ const PhaseStatus: FC<PhaseStatusProps> = ({ flow, phase, placement }) => {
         transition={{ duration: 0.25, ease: "easeOut" }}
         className="flex flex-col items-center gap-3 text-center"
       >
-        <p className="font-sabo-filled text-[20px] text-neutral-11">{copy.title}</p>
-        <p className="text-[14px] text-neutral-14">{copy.sub}</p>
+        <p className={`font-sabo-filled ${typeScale.title} text-neutral-11`}>{copy.title}</p>
+        <p className={`${typeScale.sub} text-neutral-14`}>{copy.sub}</p>
       </motion.div>
     </AnimatePresence>
   );

@@ -5,6 +5,7 @@ import {
   TransactionOverlayPendingPhase,
   TransactionOverlayPlacement,
   TransactionOverlayStep,
+  TransactionOverlayTextSize,
 } from "../../types";
 import ChompLoader from "../ChompLoader";
 import PhaseProgressBar from "../PhaseProgressBar";
@@ -16,9 +17,10 @@ interface PendingViewProps {
   phase: TransactionOverlayPendingPhase;
   steps: TransactionOverlayStep[];
   placement: TransactionOverlayPlacement;
+  textSize: TransactionOverlayTextSize;
 }
 
-const PendingView: FC<PendingViewProps> = ({ flow, phase, steps, placement }) => {
+const PendingView: FC<PendingViewProps> = ({ flow, phase, steps, placement, textSize }) => {
   const compact = placement === TransactionOverlayPlacement.INLINE;
 
   return (
@@ -36,7 +38,7 @@ const PendingView: FC<PendingViewProps> = ({ flow, phase, steps, placement }) =>
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.12, duration: 0.3, ease: "easeOut" }}
       >
-        <PhaseStatus flow={flow} phase={phase} placement={placement} />
+        <PhaseStatus flow={flow} phase={phase} placement={placement} textSize={textSize} />
         {steps.length > 0 && <StepList steps={steps} />}
       </motion.div>
       <motion.div

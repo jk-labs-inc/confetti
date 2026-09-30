@@ -1,0 +1,3 @@
+export const REFRESH_DEBOUNCE_MS = 600;
+export const REFRESH_JITTER_MS = 400;
+export const RECONCILE_THROTTLE_MS = 10_000;

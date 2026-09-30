@@ -21,6 +21,8 @@ import { useError } from "@hooks/useError";
 import { useFetchUserVotesOnProposal } from "@hooks/useFetchUserVotesOnProposal";
 import useProposal from "@hooks/useProposal";
 import { useProposalStore } from "@hooks/useProposal/store";
+import { invalidateContestLeaderboard } from "@hooks/useContestLeaderboard";
+import { reconcileContestVoteLedger } from "@hooks/useContestVoteLedger";
 import { invalidateProposalVoters } from "@hooks/useProposalVoters/invalidate";
 import useRewardsModule from "@hooks/useRewards";
 import { useTotalRewards } from "@hooks/useTotalRewards";
@@ -250,6 +252,14 @@ export function useCastVotes({ charge, votesClose, inlineOverlay }: UseCastVotes
           proposalId: pickedProposal,
         });
       }
+      invalidateContestLeaderboard(queryClient, {
+        contestAddress: contestConfig.address,
+        chainId: contestConfig.chainId,
+      });
+      void reconcileContestVoteLedger(queryClient, {
+        address: contestConfig.address,
+        chainName: contestConfig.chainName,
+      });
 
       let phoneNumberSubscribed = true;
 

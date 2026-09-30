@@ -2,7 +2,7 @@ import { FC, useCallback, useMemo, useRef, useState } from "react";
 import VoterChip, { voterChipData } from "../components/VoterChip";
 import VoterDrawer from "../components/VoterDrawer";
 import VoterRibbonHeader from "../components/VoterRibbonHeader";
-import { CHIP_GAP, CHIP_W_CSS_MOBILE, LOAD_MORE_THRESHOLD, RIBBON_FADE } from "../constants";
+import { CHIP_GAP, CHIP_W_CSS_MOBILE, RIBBON_FADE } from "../constants";
 import { useScrollEdges } from "../hooks/useScrollEdges";
 import { useVoterRibbon } from "../hooks/useVoterRibbon";
 import { VoterRibbonProps } from "../types";
@@ -13,9 +13,7 @@ const VoterRibbonMobile: FC<VoterRibbonProps> = ({
   formatPrice,
   entryTitlesById,
   isLive,
-  onLoadMore,
-  hasMore,
-  isLoadingMore,
+  showHeader = true,
 }) => {
   const { ordered, newIds, clearNew, activeVoteUuid, setActiveVoteUuid } = useVoterRibbon(votes);
   const chips = useMemo(
@@ -25,7 +23,6 @@ const VoterRibbonMobile: FC<VoterRibbonProps> = ({
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const ticking = useRef(false);
-  const requestedAtLen = useRef(0);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const edges = useScrollEdges(scrollRef);
 
@@ -41,24 +38,14 @@ const VoterRibbonMobile: FC<VoterRibbonProps> = ({
       const idx = Math.max(0, Math.min(ordered.length - 1, Math.round(el.scrollLeft / step)));
       const uuid = ordered[idx]?.uuid;
       if (uuid) setActiveVoteUuid(uuid);
-
-      if (
-        hasMore &&
-        !isLoadingMore &&
-        idx >= ordered.length - 1 - LOAD_MORE_THRESHOLD &&
-        ordered.length !== requestedAtLen.current
-      ) {
-        requestedAtLen.current = ordered.length;
-        onLoadMore?.();
-      }
     });
-  }, [ordered, setActiveVoteUuid, hasMore, isLoadingMore, onLoadMore]);
+  }, [ordered, setActiveVoteUuid]);
 
   const onSelect = useCallback((uuid: string) => setActiveVoteUuid(uuid), [setActiveVoteUuid]);
 
   return (
     <div className="mt-2 flex flex-col">
-      <VoterRibbonHeader isLive={isLive} onViewAll={() => setDrawerOpen(true)} />
+      {showHeader && <VoterRibbonHeader isLive={isLive} onViewAll={() => setDrawerOpen(true)} />}
 
       <div
         ref={scrollRef}
@@ -91,9 +78,6 @@ const VoterRibbonMobile: FC<VoterRibbonProps> = ({
         formatPrice={formatPrice}
         entryTitlesById={entryTitlesById}
         rankById={rankById}
-        onLoadMore={onLoadMore}
-        hasMore={hasMore}
-        isLoadingMore={isLoadingMore}
       />
     </div>
   );

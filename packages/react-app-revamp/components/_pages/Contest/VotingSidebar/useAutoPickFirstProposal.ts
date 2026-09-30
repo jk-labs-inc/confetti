@@ -1,11 +1,11 @@
 import { useCastVotesStore } from "@hooks/useCastVotes/store";
+import { useHasVoteRail } from "@hooks/useContestLayoutBand";
 import { useProposalStore } from "@hooks/useProposal/store";
 import { useEffect } from "react";
-import { useMediaQuery } from "react-responsive";
 import { useShallow } from "zustand/shallow";
 
 export const useAutoPickFirstProposal = () => {
-  const isDesktop = useMediaQuery({ minWidth: 1280 });
+  const hasVoteRail = useHasVoteRail();
   const firstProposalId = useProposalStore(state => state.listProposalsData[0]?.id);
   const { pickedProposal, setPickedProposal } = useCastVotesStore(
     useShallow(state => ({
@@ -15,11 +15,11 @@ export const useAutoPickFirstProposal = () => {
   );
 
   useEffect(() => {
-    if (!isDesktop) return;
+    if (!hasVoteRail) return;
     if (firstProposalId && !pickedProposal) {
       setPickedProposal(firstProposalId);
     }
-  }, [isDesktop, firstProposalId, pickedProposal, setPickedProposal]);
+  }, [hasVoteRail, firstProposalId, pickedProposal, setPickedProposal]);
 
   useEffect(() => {
     return () => {

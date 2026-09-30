@@ -13,18 +13,20 @@ interface AddFundsProvidersProps {
 }
 
 const OnrampDescription = () => (
-  <p className="text-base text-neutral-11">what's your region? this determines the tool to add funds.</p>
+  <p className="text-base @max-[320px]:text-sm text-neutral-11">
+    what's your region? this determines the tool to add funds.
+  </p>
 );
 
 const BridgeDescription = ({ chain }: { chain: string }) => (
-  <p className="text-neutral-11 text-base">fund from another chain into {chain}</p>
+  <p className="text-neutral-11 text-base @max-[320px]:text-sm">fund from another chain into {chain}</p>
 );
 
 const AddFundsProviders: FC<AddFundsProvidersProps> = ({ type, chain, asset, onCloseModal, onBridgeSuccess }) => {
   const providers = useAddFundsProviders({ type, chain, asset, onCloseModal, onBridgeSuccess });
 
   return (
-    <div className="flex flex-col gap-6 w-full">
+    <div className="flex flex-col gap-6 @max-[320px]:gap-4 w-full">
       {type === AddFundsProviderType.ONRAMP ? <OnrampDescription /> : <BridgeDescription chain={chain} />}
       <div className="flex flex-col gap-4">{providers}</div>
     </div>

@@ -17,10 +17,15 @@ const AddFundsJumperWidget: FC<AddFundsJumperWidgetProps> = ({ chainId, asset, o
   const widgetEvents = useWidgetEvents();
   const containerRef = useRef<HTMLDivElement>(null);
   const openModalRef = useRef(openModal);
+  const onBridgeSuccessRef = useRef(onBridgeSuccess);
 
   useEffect(() => {
     openModalRef.current = openModal;
   }, [openModal]);
+
+  useEffect(() => {
+    onBridgeSuccessRef.current = onBridgeSuccess;
+  }, [onBridgeSuccess]);
 
   const widgetConfig = useMemo(
     () => createJumperWidgetConfig(chainId, asset, () => openModalRef.current()),
@@ -29,11 +34,10 @@ const AddFundsJumperWidget: FC<AddFundsJumperWidgetProps> = ({ chainId, asset, o
   const widget = useMemo(() => <LiFiWidget integrator="Confetti" config={widgetConfig} />, [widgetConfig]);
 
   useEffect(() => {
-    if (!onBridgeSuccess) return;
-
     let timeoutId: ReturnType<typeof setTimeout> | undefined;
     const handleRouteCompleted = () => {
-      timeoutId = setTimeout(onBridgeSuccess, BRIDGE_SUCCESS_REDIRECT_DELAY_MS);
+      if (!onBridgeSuccessRef.current) return;
+      timeoutId = setTimeout(() => onBridgeSuccessRef.current?.(), BRIDGE_SUCCESS_REDIRECT_DELAY_MS);
     };
 
     widgetEvents.on(WidgetEvent.RouteExecutionCompleted, handleRouteCompleted);
@@ -42,7 +46,7 @@ const AddFundsJumperWidget: FC<AddFundsJumperWidgetProps> = ({ chainId, asset, o
       widgetEvents.off(WidgetEvent.RouteExecutionCompleted, handleRouteCompleted);
       if (timeoutId) clearTimeout(timeoutId);
     };
-  }, [widgetEvents, onBridgeSuccess]);
+  }, [widgetEvents]);
 
   return (
     <div ref={containerRef} className="relative w-full max-w-full overflow-hidden">

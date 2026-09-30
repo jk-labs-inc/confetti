@@ -1,7 +1,4 @@
-import { parsePrompt } from "@components/_pages/Contest/components/Prompt/utils";
-import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
-import { Interweave } from "interweave";
-import { UrlMatcher } from "interweave-autolink";
+import ContestPromptBody from "@components/_pages/Contest/components/Prompt/components/Body";
 import { FC, useState } from "react";
 import EditContestPrompt from "./components/EditContestPrompt";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
@@ -14,20 +11,7 @@ interface ContestPromptPageV3LayoutProps {
 
 const ContestPromptPageV3Layout: FC<ContestPromptPageV3LayoutProps> = ({ prompt, canEditTitleAndDescription }) => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const { contestState } = useContestStateStore(state => state);
   const { triggerRecalculation } = useDescriptionExpansionStore();
-  const isContestCanceled = contestState === ContestStateEnum.Canceled;
-  const { contestSummary, contestEvaluate, contestContactDetails } = parsePrompt(prompt);
-
-  const renderSection = (content: string, isFirst: boolean) => {
-    if (!content) return null;
-
-    return (
-      <div className={isFirst ? "" : "mt-6"}>
-        <Interweave content={`~ ${content}`} matchers={[new UrlMatcher("url")]} />
-      </div>
-    );
-  };
 
   const handleToggleExpanded = () => {
     setIsExpanded(prev => !prev);
@@ -70,13 +54,7 @@ const ContestPromptPageV3Layout: FC<ContestPromptPageV3LayoutProps> = ({ prompt,
           <div
             className={`rounded-[16px] rounded-tl-none border border-neutral-4 bg-primary-1 px-5 pt-5 pb-5 transition-opacity duration-300 ease-out ${isExpanded ? "opacity-100" : "opacity-0"}`}
           >
-            <div
-              className={`prose prose-invert max-w-none prose-p:text-neutral-11 flex flex-col ${isContestCanceled ? "line-through" : ""}`}
-            >
-              {renderSection(contestSummary, true)}
-              {renderSection(contestEvaluate, false)}
-              {renderSection(contestContactDetails, false)}
-            </div>
+            <ContestPromptBody prompt={prompt} />
           </div>
         </div>
       </div>

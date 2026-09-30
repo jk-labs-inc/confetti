@@ -1,6 +1,7 @@
 import EntryCarousel from "@components/EntryCarousel";
 import EntryList from "@components/EntryCarousel/EntryList";
-import { EntryPreview } from "@hooks/useDeployContest/slices/contestMetadataSlice";
+import EntryVotersSheetProvider from "@components/EntryVoters/Sheet/Provider";
+import { MOBILE_MAX_WIDTH_PX } from "@helpers/isMobileViewport";
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import ProposalContent from "@components/_pages/ProposalContent";
 import { toContentProposal } from "@components/_pages/ProposalContent/toContentProposal";
@@ -9,76 +10,56 @@ import { useContestStore } from "@hooks/useContest/store";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import { useContestStatusStore } from "@hooks/useContestStatus/store";
 import useDeleteProposal from "@hooks/useDeleteProposal";
-import { useMetadataStore } from "@hooks/useMetadataFields/store";
-import useProposal from "@hooks/useProposal";
 import { useProposalStore } from "@hooks/useProposal/store";
 import { useWallet } from "@hooks/useWallet";
+import { useEntriesScrollRoot } from "@layouts/LayoutViewContest/components/ContestEntriesColumn/context";
 import { switchChain } from "@wagmi/core";
 import { LayoutGroup, motion } from "motion/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import useInfiniteScroll from "react-infinite-scroll-hook";
 import { useMediaQuery } from "react-responsive";
 import { useShallow } from "zustand/shallow";
-import { verifyEntryPreviewPrompt } from "../DialogModalSendProposal/utils";
 import ListProposalsContainer from "./container";
 import ListProposalsLoader from "./loader";
 import ListProposalsSkeleton from "./skeleton";
+import { isTweetEntryPreview, useEnabledEntryPreview } from "@hooks/useEnabledEntryPreview";
+import { useLoadMoreProposals } from "./useLoadMoreProposals";
 
 export const ListProposals = () => {
   const {
     chain: { id: userChainId },
   } = useWallet();
   const { contestConfig } = useContestConfigStore(useShallow(state => state));
-  const { fetchProposalsPage } = useProposal();
   const { deleteProposal, isLoading: isDeleteInProcess, isSuccess: isDeleteSuccess } = useDeleteProposal();
-  const {
-    listProposalsIds,
-    isPageProposalsLoading,
-    initialMappedProposalIds,
-    currentPagePaginationProposals,
-    indexPaginationProposals,
-    submissionsCount,
-    totalPagesPaginationProposals,
-    listProposalsData,
-  } = useProposalStore(state => state);
+  const { isPageProposalsLoading, listProposalsData } = useProposalStore(
+    useShallow(state => ({
+      isPageProposalsLoading: state.isPageProposalsLoading,
+      listProposalsData: state.listProposalsData,
+    })),
+  );
   const { contestAuthorEthereumAddress } = useContestStore(state => state);
   const contestStatus = useContestStatusStore(useShallow(state => state.contestStatus));
-  const isMobile = useMediaQuery({ maxWidth: 768 });
+  const isMobile = useMediaQuery({ maxWidth: MOBILE_MAX_WIDTH_PX });
   const [deletingProposalIds, setDeletingProposalIds] = useState<string[]>([]);
   const [selectedProposalIds, setSelectedProposalIds] = useState<string[]>([]);
   const showDeleteButton = selectedProposalIds.length > 0 && !isDeleteInProcess;
   const isUserOnCorrectChain = contestConfig.chainId === userChainId;
-  const { fields: metadataFieldsConfig } = useMetadataStore(state => state);
-  const { enabledPreview } =
-    metadataFieldsConfig.length > 0
-      ? verifyEntryPreviewPrompt(metadataFieldsConfig[0].prompt)
-      : { enabledPreview: null };
-  const isTweetContest = enabledPreview === EntryPreview.TWEET || enabledPreview === EntryPreview.TWEET_AND_TITLE;
+  const enabledPreview = useEnabledEntryPreview();
+  const isTweetContest = isTweetEntryPreview(enabledPreview);
+  const { hasNextPage, loadMore: handleLoadMore } = useLoadMoreProposals();
 
-  const hasNextPage = listProposalsData.length < submissionsCount;
-
-  const handleLoadMore = () => {
-    fetchProposalsPage(
-      {
-        chainId: contestConfig.chainId,
-        address: contestConfig.address as `0x${string}`,
-        abi: contestConfig.abi,
-      },
-      contestConfig.version,
-      currentPagePaginationProposals + 1,
-      indexPaginationProposals[currentPagePaginationProposals + 1],
-      totalPagesPaginationProposals,
-      initialMappedProposalIds,
-    );
-  };
-
-  const [infiniteRef] = useInfiniteScroll({
+  const [infiniteRef, { rootRef }] = useInfiniteScroll({
     loading: isPageProposalsLoading,
     hasNextPage,
     onLoadMore: handleLoadMore,
     rootMargin: "0px 0px 600px 0px",
     disabled: false,
   });
+  const scrollRoot = useEntriesScrollRoot();
+
+  useEffect(() => {
+    rootRef(scrollRoot);
+  }, [rootRef, scrollRoot]);
 
   const onDeleteSelectedProposals = async () => {
     setDeletingProposalIds(selectedProposalIds);
@@ -113,7 +94,7 @@ export const ListProposals = () => {
   }
 
   return (
-    <>
+    <EntryVotersSheetProvider>
       {isMobile ? (
         isTweetContest ? (
           <>
@@ -156,6 +137,7 @@ export const ListProposals = () => {
                 return (
                   <motion.div
                     key={proposal.id}
+                    data-entry-id={proposal.id}
                     layout
                     layoutId={proposal.id}
                     transition={{ duration: 0.4, ease: "easeInOut" }}
@@ -189,7 +171,7 @@ export const ListProposals = () => {
           )}
         </>
       )}
-    </>
+    </EntryVotersSheetProvider>
   );
 };
 

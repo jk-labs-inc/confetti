@@ -99,7 +99,7 @@ const EntryCarousel: FC<EntryCarouselProps> = ({
   const [activeIdx, setActiveIdx] = useState(0);
   const [availableH, setAvailableH] = useState(0);
 
-  const { cards, n, totalVotes, maybeLoadMore } = useEntryFeed({
+  const { cards, n, totalVotes, pendingTargetIndex, maybeLoadMore } = useEntryFeed({
     proposals,
     activeIndex: activeIdx,
     hasNextPage,
@@ -248,6 +248,18 @@ const EntryCarousel: FC<EntryCarouselProps> = ({
     },
     [pos, n, maybeLoadMore, isBounded],
   );
+
+  const jumpTargetRef = useRef<number | null>(null);
+  useEffect(() => {
+    if (pendingTargetIndex === null) {
+      jumpTargetRef.current = null;
+      return;
+    }
+    if (pendingTargetIndex === jumpTargetRef.current || pendingTargetIndex === activeRef.current) return;
+    jumpTargetRef.current = pendingTargetIndex;
+    const current = pos.get();
+    snapTo(current + cardDelta(pendingTargetIndex, current));
+  }, [pendingTargetIndex, snapTo, cardDelta, pos]);
 
   const onPointerDown = (e: ReactPointerEvent<HTMLDivElement>) => {
     if (drag.current.active) return; // one gesture at a time — a second finger must not hijack the frame of reference

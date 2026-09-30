@@ -5,7 +5,9 @@ import { readContract, readContracts } from "@wagmi/core";
 import { formatEther } from "viem";
 import { MappedProposalIds, ProposalCore } from "./store";
 import { ContractConfig } from "@hooks/useContest";
+import { ContestStatus } from "@hooks/useContestStatus/store";
 import { compareVersions } from "compare-versions";
+import { DOWNVOTES_REMOVED_VERSION } from "constants/versions";
 
 export interface RawMetadataFields {
   addressArray: string[];
@@ -30,7 +32,10 @@ export function mapResultToStringArray(result: any): string[] {
 /**
  * Assign ranks to proposals based on votes from the complete proposals list.
  */
-export function rankProposals(proposals: ProposalCore[], allProposalsIdsAndVotes: MappedProposalIds[]): ProposalCore[] {
+export function rankProposals<T extends Pick<ProposalCore, "id" | "netVotes">>(
+  proposals: T[],
+  allProposalsIdsAndVotes: MappedProposalIds[],
+): (T & { rank: number; isTied: boolean })[] {
   const sortedAll = [...allProposalsIdsAndVotes].sort((a, b) => b.votes - a.votes);
 
   const rankMap = new Map<string, number>();
@@ -75,7 +80,7 @@ export function rankProposals(proposals: ProposalCore[], allProposalsIdsAndVotes
 export function transformProposalData(id: any, voteData: any, proposalData: any, version: string) {
   let netVotes: number;
 
-  const hasDownvotes = version ? compareVersions(version, "5.1") < 0 : false;
+  const hasDownvotes = version ? compareVersions(version, DOWNVOTES_REMOVED_VERSION) < 0 : false;
 
   if (hasDownvotes) {
     const voteForBigInt = BigInt(voteData.result[0]);
@@ -118,7 +123,7 @@ export function transformProposalData(id: any, voteData: any, proposalData: any,
  * @param version - Contract version string
  */
 export async function getProposalIdsRaw(contractConfig: ContractConfig, isLegacy: boolean, version?: string) {
-  const hasDownvotes = version ? compareVersions(version, "5.1") < 0 : false;
+  const hasDownvotes = version ? compareVersions(version, DOWNVOTES_REMOVED_VERSION) < 0 : false;
 
   if (isLegacy) {
     return (await readContract(getWagmiConfig(), {
@@ -177,3 +182,9 @@ export async function getProposalIdsRaw(contractConfig: ContractConfig, isLegacy
     return [validData.validProposalIds, validData.correspondingVotes];
   }
 }
+
+export const isWinningEntry = (
+  entry: { rank: number; isTied: boolean },
+  contestStatus: ContestStatus,
+  isCanceled: boolean,
+): boolean => !isCanceled && contestStatus === ContestStatus.VotingClosed && entry.rank === 1 && !entry.isTied;

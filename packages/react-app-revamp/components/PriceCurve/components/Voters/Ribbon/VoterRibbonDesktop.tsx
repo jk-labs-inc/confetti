@@ -2,7 +2,7 @@ import { useVirtualizer } from "@tanstack/react-virtual";
 import { FC, PointerEvent as ReactPointerEvent, useCallback, useEffect, useRef, useState } from "react";
 import VoterChip, { voterChipData } from "../components/VoterChip";
 import VoterRibbonHeader from "../components/VoterRibbonHeader";
-import { CHIP_GAP, DESKTOP_CHIP_W, LOAD_MORE_THRESHOLD, RIBBON_FADE } from "../constants";
+import { CHIP_GAP, DESKTOP_CHIP_W, RIBBON_FADE } from "../constants";
 import { useScrollEdges } from "../hooks/useScrollEdges";
 import { useVoterRibbon } from "../hooks/useVoterRibbon";
 import { VoterRibbonProps } from "../types";
@@ -16,9 +16,8 @@ const VoterRibbonDesktop: FC<VoterRibbonProps> = ({
   formatPrice,
   entryTitlesById,
   isLive,
-  onLoadMore,
-  hasMore,
-  isLoadingMore,
+  showHeader = true,
+  isInteractive = true,
 }) => {
   const { ordered, newIds, clearNew, activeVoteUuid, setActiveVoteUuid } = useVoterRibbon(votes);
 
@@ -89,19 +88,9 @@ const VoterRibbonDesktop: FC<VoterRibbonProps> = ({
 
   const items = virtualizer.getVirtualItems();
 
-  const lastIndex = items.length > 0 ? items[items.length - 1].index : 0;
-  const requestedAtLen = useRef(0);
-  useEffect(() => {
-    if (!hasMore || isLoadingMore) return;
-    if (lastIndex < ordered.length - 1 - LOAD_MORE_THRESHOLD) return;
-    if (ordered.length === requestedAtLen.current) return;
-    requestedAtLen.current = ordered.length;
-    onLoadMore?.();
-  }, [hasMore, isLoadingMore, lastIndex, ordered.length, onLoadMore]);
-
   return (
-    <div className="mt-2 flex flex-col">
-      <VoterRibbonHeader isLive={isLive} />
+    <div className={`flex flex-col ${showHeader ? "mt-2" : "-mt-0.5"}`}>
+      {showHeader && <VoterRibbonHeader isLive={isLive} />}
 
       <div
         ref={scrollRef}
@@ -110,7 +99,7 @@ const VoterRibbonDesktop: FC<VoterRibbonProps> = ({
         onPointerUp={endDrag}
         onPointerLeave={() => {
           endDrag();
-          revertMarker();
+          if (isInteractive) revertMarker();
         }}
         className="no-scrollbar overflow-x-auto overflow-y-hidden pb-1 pt-0.5"
         style={{
@@ -137,7 +126,8 @@ const VoterRibbonDesktop: FC<VoterRibbonProps> = ({
                 <VoterChip
                   {...voterChipData(vote, rankById, entryTitlesById, formatPrice)}
                   width="100%"
-                  isActive={vote.uuid === activeVoteUuid}
+                  isActive={isInteractive && vote.uuid === activeVoteUuid}
+                  isInteractive={isInteractive}
                   isNew={newIds.has(vote.uuid)}
                   onHover={onHover}
                   onSelect={onSelect}
