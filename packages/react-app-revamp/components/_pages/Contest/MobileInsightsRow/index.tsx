@@ -1,7 +1,7 @@
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import { FC } from "react";
 import { useMobileLeaderboard } from "../MobileLeaderboard/context";
-import InsightsChip from "./components/InsightsChip";
+import InsightsLink from "./components/InsightsLink";
 import TopVoterSlot from "./components/TopVoterSlot";
 
 interface MobileInsightsRowProps {
@@ -17,9 +17,9 @@ const MobileInsightsRow: FC<MobileInsightsRowProps> = ({ onOpen }) => {
       type="button"
       onClick={onOpen}
       aria-label="open insights: leaderboard, price curve and activity"
-      className="flex h-9 w-full items-center overflow-hidden rounded-full border border-neutral-4 bg-neutral-2 text-left"
+      className="flex h-9 w-full items-center gap-3 overflow-hidden text-left"
     >
-      <span className="shrink-0 pl-3.5 pr-2.5 text-[11px] font-bold normal-case text-neutral-9">top voters</span>
+      <span className="shrink-0 text-[11px] font-bold normal-case text-neutral-9">top voters</span>
       <span className="flex h-full min-w-0 flex-1 flex-wrap content-start items-center justify-evenly gap-x-3.5 overflow-hidden">
         {topRows.length > 0 ? (
           topRows.map(row => <TopVoterSlot key={row.address} row={row} formatPrice={formatPrice} />)
@@ -33,7 +33,7 @@ const MobileInsightsRow: FC<MobileInsightsRowProps> = ({ onOpen }) => {
           </span>
         )}
       </span>
-      <InsightsChip />
+      <InsightsLink />
     </button>
   );
 };

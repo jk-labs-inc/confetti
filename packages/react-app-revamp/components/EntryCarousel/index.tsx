@@ -13,6 +13,7 @@ import {
   DEPTH_PX,
   DRAG_THRESHOLD,
   DRAG_THRESHOLD_TOUCH,
+  ENTRY_CAROUSEL_FOOTER_ID,
   FILL_BOTTOM_GAP_PX,
   FLICK_MIN_TRAVEL,
   FLICK_MIN_VELOCITY,
@@ -211,9 +212,11 @@ const EntryCarousel: FC<EntryCarouselProps> = ({
     if (!wrap) return;
     const measure = () => {
       const slot = document.getElementById(MOBILE_NAV_SLOT_ID);
+      const footer = document.getElementById(ENTRY_CAROUSEL_FOOTER_ID);
       const floor = slot ? slot.getBoundingClientRect().top : window.innerHeight;
-      const top = wrap.getBoundingClientRect().top;
-      setAvailableH(Math.max(0, floor - top - FILL_BOTTOM_GAP_PX));
+      const wrapRect = wrap.getBoundingClientRect();
+      const footerH = footer ? footer.getBoundingClientRect().bottom - wrapRect.bottom : 0;
+      setAvailableH(Math.max(0, floor - wrapRect.top - footerH - FILL_BOTTOM_GAP_PX));
     };
     measure();
     const ro = new ResizeObserver(measure);

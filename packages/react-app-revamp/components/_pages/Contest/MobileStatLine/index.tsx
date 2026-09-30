@@ -1,3 +1,4 @@
+import { ChevronRightIcon } from "@heroicons/react/24/outline";
 import { useContestPoolDisplay } from "@hooks/useContestPoolDisplay";
 import { FC } from "react";
 import PoolStat from "./components/PoolStat";
@@ -14,7 +15,11 @@ const MobileStatLine: FC<MobileStatLineProps> = ({ onOpenPriceSheet }) => {
   const showPool = pool.hasRewards || pool.isLoading;
 
   return (
-    <div className="flex h-5 min-w-0 items-center gap-2 whitespace-nowrap text-[13px] normal-case text-neutral-9">
+    <button
+      type="button"
+      onClick={onOpenPriceSheet}
+      className="flex h-9 w-full min-w-0 items-center gap-2 whitespace-nowrap rounded-full border border-neutral-4 bg-neutral-2 pl-3.5 pr-2.5 text-left text-[13px] normal-case text-neutral-9"
+    >
       {showPool ? (
         <>
           <PoolStat pool={pool} />
@@ -22,8 +27,9 @@ const MobileStatLine: FC<MobileStatLineProps> = ({ onOpenPriceSheet }) => {
         </>
       ) : null}
       <TimeLeftStat />
-      <PriceStat onClick={onOpenPriceSheet} />
-    </div>
+      <PriceStat />
+      <ChevronRightIcon className="ml-auto h-3.5 w-3.5 shrink-0 text-neutral-11" strokeWidth={2.5} aria-hidden />
+    </button>
   );
 };
 

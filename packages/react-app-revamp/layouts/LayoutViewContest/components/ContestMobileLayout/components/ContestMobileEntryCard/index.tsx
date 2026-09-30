@@ -1,11 +1,16 @@
 import ListProposals from "@components/_pages/ListProposals";
+import { ENTRY_CAROUSEL_FOOTER_ID } from "@components/EntryCarousel/constants";
 import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import { useIsStandalonePwa } from "@hooks/useIsStandalonePwa";
-import { FC } from "react";
+import { FC, ReactNode } from "react";
 import { useEntriesReady } from "../../../../hooks/useEntriesReady";
 
-const ContestMobileEntryCard: FC = () => {
+interface ContestMobileEntryCardProps {
+  footer?: ReactNode;
+}
+
+const ContestMobileEntryCard: FC<ContestMobileEntryCardProps> = ({ footer }) => {
   const isVotingOpen = useContestStatusStore(state => state.contestStatus) === ContestStatus.VotingOpen;
   const isCanceled = useContestStateStore(state => state.contestState) === ContestStateEnum.Canceled;
   const isStandalonePwa = useIsStandalonePwa();
@@ -18,6 +23,11 @@ const ContestMobileEntryCard: FC = () => {
       {isReady && (
         <div className="animate-fade-in">
           <ListProposals />
+          {footer ? (
+            <div id={ENTRY_CAROUSEL_FOOTER_ID} className="mt-3">
+              {footer}
+            </div>
+          ) : null}
         </div>
       )}
     </div>
