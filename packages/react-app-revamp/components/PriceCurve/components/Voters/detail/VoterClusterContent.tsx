@@ -10,9 +10,6 @@ interface VoterClusterContentProps {
   formatPrice: (nativePrice: number) => string;
   entryTitlesById: Map<string, string>;
   rankById: Map<string, number>;
-  onLoadMore?: () => void;
-  hasMore?: boolean;
-  isLoadingMore?: boolean;
 }
 
 interface VoterGroupData {
@@ -22,15 +19,7 @@ interface VoterGroupData {
   totalSpent: number;
 }
 
-const VoterClusterContent: FC<VoterClusterContentProps> = ({
-  cluster,
-  formatPrice,
-  entryTitlesById,
-  rankById,
-  onLoadMore,
-  hasMore,
-  isLoadingMore,
-}) => {
+const VoterClusterContent: FC<VoterClusterContentProps> = ({ cluster, formatPrice, entryTitlesById, rankById }) => {
   const groups = useMemo<VoterGroupData[]>(() => {
     const byAddress = new Map<string, VoterGroupData>();
     for (const vote of cluster.voters) {
@@ -69,7 +58,10 @@ const VoterClusterContent: FC<VoterClusterContentProps> = ({
         <span className="text-neutral-11/55 font-normal whitespace-nowrap">{headerTime}</span>
       </div>
 
-      <div className="no-scrollbar flex flex-col gap-3 overflow-y-auto overscroll-contain" style={{ maxHeight: "60vh" }}>
+      <div
+        className="no-scrollbar flex flex-col gap-3 overflow-y-auto overscroll-contain"
+        style={{ maxHeight: "60vh" }}
+      >
         {groups.map(group =>
           group.casts.length === 1 ? (
             <VoterRow
@@ -93,17 +85,6 @@ const VoterClusterContent: FC<VoterClusterContentProps> = ({
           ),
         )}
       </div>
-
-      {hasMore && (
-        <button
-          type="button"
-          onClick={onLoadMore}
-          disabled={isLoadingMore}
-          className="mt-1 self-center rounded-full bg-neutral-4 px-3 py-1 text-[12px] font-semibold text-neutral-9 disabled:opacity-60"
-        >
-          {isLoadingMore ? "loading…" : "load more"}
-        </button>
-      )}
     </div>
   );
 };

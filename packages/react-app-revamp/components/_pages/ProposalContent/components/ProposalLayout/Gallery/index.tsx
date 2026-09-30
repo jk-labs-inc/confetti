@@ -1,3 +1,4 @@
+import EntryVotersChip from "@components/EntryVoters/Chip";
 import { Proposal } from "@components/_pages/ProposalContent";
 import VoteCountPulse from "@components/_pages/ProposalContent/components/VoteFeedback";
 import { CheckIcon, TrashIcon } from "@heroicons/react/24/outline";
@@ -8,6 +9,8 @@ import { FC, useEffect, useState } from "react";
 import ProposalContentVotePrimary from "../../Buttons/Vote/Primary";
 import ImageWithFallback from "../../ImageWithFallback";
 import ProposalLayoutGalleryRankOrPlaceholder from "./components/RankOrPlaceholder";
+import { useGalleryTileShape } from "./ImageShape/useGalleryTileShape";
+import { ENTRY_CARD_FRAME_CLASS_NAME, entryCardFrameStyle } from "../entryCardFrame";
 
 const galleryOverlayTextStyle: React.CSSProperties = {
   color: "#E5E5E5",
@@ -28,8 +31,8 @@ interface ProposalLayoutGalleryProps {
   allowDelete: boolean;
   selectedProposalIds: string[];
   enabledPreview: EntryPreview | null;
-  isHighlighted: boolean;
   highlightColor?: string;
+  votersChipEnabled: boolean;
   handleVotingDrawerOpen?: () => void;
   toggleProposalSelection?: (proposalId: string) => void;
 }
@@ -40,13 +43,14 @@ const ProposalLayoutGallery: FC<ProposalLayoutGalleryProps> = ({
   allowDelete,
   selectedProposalIds,
   enabledPreview,
-  isHighlighted,
   highlightColor,
+  votersChipEnabled,
   handleVotingDrawerOpen,
   toggleProposalSelection,
 }) => {
   const [imgUrl, setImgUrl] = useState<string>("");
   const [imgTitle, setImgTitle] = useState<string>("");
+  const { onImageLoad, cropHeightRatio } = useGalleryTileShape();
   const isVotingNotOpenYet = contestStatus !== ContestStatus.VotingOpen && contestStatus !== ContestStatus.VotingClosed;
 
   const updateImgUrl = () => {
@@ -83,15 +87,18 @@ const ProposalLayoutGallery: FC<ProposalLayoutGalleryProps> = ({
 
   return (
     <div
-      className={`flex flex-col gap-2 p-2 bg-true-black rounded-2xl shadow-entry-card w-full max-h-[70vh] border-2 transition duration-150 ease-out active:scale-[0.98] ${
-        isHighlighted ? "" : "border-transparent"
-      }`}
-      style={highlightColor ? { borderColor: highlightColor } : undefined}
+      className={`flex flex-col gap-2 p-1.5 wide:p-2 w-full max-h-[70vh] ${ENTRY_CARD_FRAME_CLASS_NAME}`}
+      style={entryCardFrameStyle(highlightColor)}
     >
-      <div className="rounded-2xl overflow-hidden relative">
-        <ImageWithFallback fullSrc={imgUrl} alt="entry image" />
+      <div className="rounded-[12px] wide:rounded-2xl overflow-hidden relative">
+        <ImageWithFallback
+          fullSrc={imgUrl}
+          alt="entry image"
+          cropHeightRatio={cropHeightRatio}
+          onLoad={onImageLoad}
+        />
 
-        <div className="xl:hidden absolute top-1 left-2 right-2 flex items-center justify-between">
+        <div className="lg:hidden absolute top-1 left-2 right-2 flex items-center justify-between">
           <div>{proposal.rank ? <ProposalLayoutGalleryRankOrPlaceholder rank={proposal.rank} /> : null}</div>
           <div
             className="flex flex-col items-end gap-0.5"
@@ -108,17 +115,21 @@ const ProposalLayoutGallery: FC<ProposalLayoutGalleryProps> = ({
         </div>
 
         {proposal.rank ? (
-          <div className="hidden xl:block absolute top-1 left-2">
-            <ProposalLayoutGalleryRankOrPlaceholder rank={proposal.rank} />
+          <div className="hidden lg:block absolute top-1 left-1.5 wide:left-2">
+            <ProposalLayoutGalleryRankOrPlaceholder rank={proposal.rank} size="responsive" />
           </div>
         ) : null}
+
+        <div className="hidden lg:block absolute top-1.5 right-1.5 wide:top-2 wide:right-2 z-10">
+          <EntryVotersChip proposalId={proposal.id} enabled={votersChipEnabled} />
+        </div>
 
         {imgTitle ||
         ((contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed) &&
           proposal.votes > 0) ||
         allowDelete ? (
           <div
-            className="hidden xl:block absolute bottom-0 left-0 right-0 pt-12 pb-2 px-2 pointer-events-none"
+            className="hidden lg:block absolute bottom-0 left-0 right-0 pt-10 pb-1.5 px-2 wide:pt-12 wide:pb-2 pointer-events-none"
             style={{
               background:
                 "linear-gradient(0deg, rgba(0, 0, 0, 0.60) 0%, rgba(0, 0, 0, 0.40) 49.99%, rgba(0, 0, 0, 0.00) 100%)",
@@ -147,7 +158,7 @@ const ProposalLayoutGallery: FC<ProposalLayoutGalleryProps> = ({
               {imgTitle ? (
                 <p
                   className={`${
-                    isVotingNotOpenYet ? "text-[24px]" : "text-[16px]"
+                    isVotingNotOpenYet ? "text-[24px]" : "text-[14px] wide:text-[16px]"
                   } font-bold text-center leading-normal`}
                   style={galleryOverlayTextStyle}
                 >
@@ -157,7 +168,7 @@ const ProposalLayoutGallery: FC<ProposalLayoutGalleryProps> = ({
               {(contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed) &&
               proposal.votes > 0 ? (
                 <p
-                  className="text-[24px] font-bold text-center leading-normal whitespace-nowrap"
+                  className="text-[20px] wide:text-[24px] font-bold text-center leading-normal whitespace-nowrap"
                   style={galleryOverlayTextStyle}
                 >
                   <VoteCountPulse votes={proposal.votes}>{formatNumberWithCommas(proposal.votes)}</VoteCountPulse> votes
@@ -168,7 +179,7 @@ const ProposalLayoutGallery: FC<ProposalLayoutGalleryProps> = ({
         ) : null}
 
         {allowDelete ? (
-          <div className="xl:hidden absolute bottom-1 left-2" onClick={e => e.stopPropagation()}>
+          <div className="lg:hidden absolute bottom-1 left-2" onClick={e => e.stopPropagation()}>
             <div className="bg-true-black/75 w-8 h-6 rounded-full flex items-center justify-center">
               <button className="relative w-4 h-4 cursor-pointer" onClick={onDeleteClick}>
                 <CheckIcon
@@ -188,7 +199,7 @@ const ProposalLayoutGallery: FC<ProposalLayoutGalleryProps> = ({
         ) : null}
 
         {contestStatus === ContestStatus.VotingOpen ? (
-          <div className="xl:hidden absolute bottom-1 left-1/2 transform -translate-x-1/2">
+          <div className="lg:hidden absolute bottom-1 left-1/2 transform -translate-x-1/2">
             <ProposalContentVotePrimary proposal={proposal} handleVotingModalOpen={onVotingDrawerOpen} size="large" />
           </div>
         ) : null}

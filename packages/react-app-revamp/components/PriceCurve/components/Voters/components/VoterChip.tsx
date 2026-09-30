@@ -3,6 +3,7 @@ import CustomLink from "@components/UI/Link";
 import { ROUTE_VIEW_USER } from "@config/routes";
 import { ENTRY_ACCENT_COLOR, withAlpha } from "@helpers/entryColors";
 import { formatNumber } from "@helpers/formatNumber";
+import { formatTimeAgo } from "@helpers/dates";
 import useNow from "@hooks/useNow";
 import useProfileData from "@hooks/useProfileData";
 import { CSSProperties, FC, KeyboardEvent as ReactKeyboardEvent, memo, useEffect, useRef, useState } from "react";
@@ -40,23 +41,17 @@ export function voterChipData(
 interface VoterChipProps extends VoterChipData {
   width: string;
   isActive: boolean;
+  isInteractive?: boolean;
   isNew?: boolean;
+  hidePrice?: boolean;
   onSelect?: (uuid: string) => void;
   onHover?: (uuid: string) => void;
   onSeen?: (uuid: string) => void;
 }
 
-const timeAgo = (sec: number, nowMs: number): string => {
-  const d = Math.max(0, Math.floor(nowMs / 1000) - sec);
-  if (d < 60) return "just now";
-  if (d < 3600) return `${Math.floor(d / 60)}m ago`;
-  if (d < 86400) return `${Math.floor(d / 3600)}h ago`;
-  return `${Math.floor(d / 86400)}d ago`;
-};
-
 const TimeAgo: FC<{ createdAt: number }> = ({ createdAt }) => {
   const now = useNow();
-  return <div className="whitespace-nowrap text-[10.5px] text-neutral-9">{timeAgo(createdAt, now)}</div>;
+  return <div className="whitespace-nowrap text-[10.5px] text-neutral-9">{formatTimeAgo(createdAt, now)}</div>;
 };
 
 const compactVotes = (n: number): string =>
@@ -74,7 +69,9 @@ const VoterChip: FC<VoterChipProps> = ({
   entryTitle,
   width,
   isActive,
+  isInteractive = true,
   isNew,
+  hidePrice = false,
   onSelect,
   onHover,
   onSeen,
@@ -106,15 +103,15 @@ const VoterChip: FC<VoterChipProps> = ({
 
   return (
     <div
-      role="button"
-      tabIndex={0}
-      onClick={() => onSelect?.(uuid)}
-      onKeyDown={handleKeyDown}
-      onMouseEnter={() => onHover?.(uuid)}
+      role={isInteractive ? "button" : undefined}
+      tabIndex={isInteractive ? 0 : undefined}
+      onClick={isInteractive ? () => onSelect?.(uuid) : undefined}
+      onKeyDown={isInteractive ? handleKeyDown : undefined}
+      onMouseEnter={isInteractive ? () => onHover?.(uuid) : undefined}
       aria-label={`${profileName} bought ${formatNumber(voteAmount)} ${
         voteAmount === 1 ? "vote" : "votes"
-      } for ${entryTitle ?? "an entry"}, ${priceText}`}
-      className={`box-border flex shrink-0 cursor-pointer flex-col gap-[9px] overflow-hidden rounded-[15px] border bg-neutral-2 p-[11px] text-left transition-[border-color,box-shadow,transform] duration-150 ${
+      } for ${entryTitle ?? "an entry"}${hidePrice ? "" : `, ${priceText}`}`}
+      className={`box-border flex shrink-0 ${isInteractive ? "cursor-pointer" : ""} flex-col gap-[9px] overflow-hidden rounded-[15px] border bg-neutral-2 p-[11px] text-left transition-[border-color,box-shadow,transform] duration-150 ${
         isActive ? "-translate-y-0.5" : "border-neutral-4"
       } ${entering ? "voter-chip-enter" : ""}`}
       style={style}
@@ -139,22 +136,22 @@ const VoterChip: FC<VoterChipProps> = ({
           +{compactVotes(voteAmount)}{" "}
           <span className="text-[11px] font-semibold text-neutral-9">{voteAmount === 1 ? "vote" : "votes"}</span>
         </span>
-        <span
-          ref={priceRef}
-          className="min-w-0 flex-1 truncate text-right font-semibold text-neutral-9"
-          style={{ fontSize: priceFontSize }}
-        >
-          {priceText}
-        </span>
+        {!hidePrice && (
+          <span
+            ref={priceRef}
+            className="min-w-0 flex-1 truncate text-right font-semibold text-neutral-9"
+            style={{ fontSize: priceFontSize }}
+          >
+            {priceText}
+          </span>
+        )}
       </div>
 
       <div className="flex min-w-0 items-center gap-1.5">
         <span className="flex-none text-[10.5px] text-neutral-9">for</span>
         <EntryRankMedal rank={rank} />
         {entryTitle ? (
-          <span className="min-w-0 flex-1 truncate text-[11.5px] font-semibold text-neutral-11">
-            {entryTitle}
-          </span>
+          <span className="min-w-0 flex-1 truncate text-[11.5px] font-semibold text-neutral-11">{entryTitle}</span>
         ) : (
           <span className="min-w-0 flex-1 truncate text-[11.5px] font-semibold text-neutral-9">an entry</span>
         )}

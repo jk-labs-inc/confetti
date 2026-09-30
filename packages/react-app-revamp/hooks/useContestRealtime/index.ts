@@ -6,14 +6,11 @@ import { subscribe } from "lib/realtime";
 import { useEffect, useRef, useState } from "react";
 import { invalidateAllProposalVoters, invalidateProposalVoters } from "@hooks/useProposalVoters/invalidate";
 import { useShallow } from "zustand/react/shallow";
+import { RECONCILE_THROTTLE_MS, REFRESH_DEBOUNCE_MS, REFRESH_JITTER_MS } from "./constants";
 import { makeParticipantsHandler } from "./handlers";
 import { reconcileProposalVotes, refreshProposalVotes } from "./refreshProposalVotes";
 
 const REWARD_QUERY_KEYS = [["totalRewards"], ["totalRewardsForRank"]];
-const REFRESH_DEBOUNCE_MS = 600;
-const REFRESH_JITTER_MS = 400;
-// Reconcile the whole visible list at most once per window (reconnect + refocus can otherwise race).
-const RECONCILE_THROTTLE_MS = 10_000;
 
 // Mounted once from useLayoutViewContest. Subscribes the open contest to live participant activity
 // and, on a vote, re-reads the entry's on-chain tally, re-ranks the list, and refreshes rewards.

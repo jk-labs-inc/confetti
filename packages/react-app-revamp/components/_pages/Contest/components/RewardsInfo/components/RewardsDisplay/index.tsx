@@ -1,13 +1,17 @@
 import { formatBalance } from "@helpers/formatBalance";
 import { useCurrencyStore } from "@hooks/useCurrency/store";
-import useTotalRewardsUsd, { TokenItem } from "@hooks/useCurrency/useTotalRewardsUsd";
+import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
+import useTotalRewardsUsd, { toRewardTokenItems } from "@hooks/useCurrency/useTotalRewardsUsd";
 import { useTotalRewards } from "@hooks/useTotalRewards";
 import { ModuleType, RewardsModuleInfo } from "lib/rewards/types";
 import { AnimatePresence, motion } from "motion/react";
 import { FC, useEffect, useMemo, useState } from "react";
 import { Abi } from "viem";
 
+export type RewardsInfoVariant = "stat" | "headline";
+
 interface RewardsDisplayProps {
+  variant?: RewardsInfoVariant;
   rewards: RewardsModuleInfo;
   rewardsModuleAddress: `0x${string}`;
   rewardsAbi: Abi;
@@ -17,7 +21,21 @@ interface RewardsDisplayProps {
   isRewardsModuleError: boolean;
 }
 
+const VARIANT_CLASS_NAMES: Record<RewardsInfoVariant, { emoji: string; amount: string; label: string }> = {
+  stat: {
+    emoji: "text-[24px]",
+    amount: "text-neutral-11 text-[16px] md:text-[24px] font-bold md:font-normal",
+    label: "text-[16px] text-neutral-11",
+  },
+  headline: {
+    emoji: "text-[22px] wide:text-[24px]",
+    amount: "text-neutral-11 text-[22px] wide:text-[24px] font-bold",
+    label: "text-[15px] wide:text-[16px] text-neutral-11",
+  },
+};
+
 const RewardsDisplay: FC<RewardsDisplayProps> = ({
+  variant = "stat",
   rewards,
   rewardsModuleAddress,
   rewardsAbi,
@@ -27,6 +45,8 @@ const RewardsDisplay: FC<RewardsDisplayProps> = ({
   isRewardsModuleError,
 }) => {
   const displayCurrency = useCurrencyStore(state => state.displayCurrency);
+  const isVotingClosed = useContestStatusStore(state => state.contestStatus) === ContestStatus.VotingClosed;
+  const classNames = VARIANT_CLASS_NAMES[variant];
 
   const {
     data: totalRewards,
@@ -40,30 +60,7 @@ const RewardsDisplay: FC<RewardsDisplayProps> = ({
 
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  const tokenItems: TokenItem[] = useMemo(() => {
-    const items: TokenItem[] = [];
-
-    if (totalRewards?.native && totalRewards.native.value > 0n) {
-      items.push({
-        value: totalRewards.native.formatted,
-        symbol: totalRewards.native.symbol,
-      });
-    }
-
-    if (totalRewards?.tokens) {
-      Object.entries(totalRewards.tokens).forEach(([address, tokenData]) => {
-        if (tokenData.value > 0n) {
-          items.push({
-            value: tokenData.formatted,
-            symbol: tokenData.symbol,
-            tokenAddress: address,
-          });
-        }
-      });
-    }
-
-    return items;
-  }, [totalRewards]);
+  const tokenItems = useMemo(() => toRewardTokenItems(totalRewards), [totalRewards]);
 
   const totalUsd = useTotalRewardsUsd(tokenItems, chainName);
   const hasRewards = tokenItems.length > 0;
@@ -87,14 +84,14 @@ const RewardsDisplay: FC<RewardsDisplayProps> = ({
 
   return (
     <div className="flex items-baseline gap-1">
-      <span className="text-[24px]">💰</span>
+      <span className={classNames.emoji}>💰</span>
       {displayCurrency === "usd" && totalUsd !== null ? (
-        <p className="text-neutral-11 text-[16px] md:text-[24px] font-bold md:font-normal">${totalUsd}</p>
+        <p className={classNames.amount}>${totalUsd}</p>
       ) : currentReward ? (
         <AnimatePresence mode="wait">
           <motion.p
             key={`reward-${currentIndex}`}
-            className="text-neutral-11 text-[16px] md:text-[24px] font-bold md:font-normal"
+            className={classNames.amount}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
@@ -102,12 +99,13 @@ const RewardsDisplay: FC<RewardsDisplayProps> = ({
             style={{ willChange: "transform, opacity" }}
           >
             {formatBalance(currentReward.value)}{" "}
-            <span className="text-[16px] uppercase">${currentReward.symbol}</span>
+            <span className={`${classNames.label} uppercase`}>${currentReward.symbol}</span>
           </motion.p>
         </AnimatePresence>
       ) : null}
-      <p className="text-[16px] text-neutral-11">
-        to <b>{rewards?.moduleType === ModuleType.VOTER_REWARDS ? "voters" : "entrants"}</b>
+      <p className={classNames.label}>
+        {isVotingClosed ? "paid to" : "to"}{" "}
+        <b>{rewards?.moduleType === ModuleType.VOTER_REWARDS ? "voters" : "entrants"}</b>
       </p>
     </div>
   );

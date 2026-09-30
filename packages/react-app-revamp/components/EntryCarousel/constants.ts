@@ -11,6 +11,7 @@ export const BOUNDED_END_SHIFT = 1; // at an end of the 2-entry track, pull the 
 
 export const FILL_BOTTOM_GAP_PX = 16; // breathing room kept below a carousel that grows to fill the viewport
 export const MAX_FILL_ASPECT = 1.8; // cap on how tall cards grow when filling the void (height / width)
+export const ENTRY_CAROUSEL_FOOTER_ID = "entry-carousel-footer";
 
 export const MAX_ROTATE_DEG = 30; // neighbors tilt up to 30 to face the center (gentler curve)
 export const PERSPECTIVE_PX = 1400; // shared 3D perspective depth (higher = flatter / less dramatic)

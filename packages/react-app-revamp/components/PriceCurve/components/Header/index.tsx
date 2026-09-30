@@ -4,28 +4,40 @@ import { motion } from "motion/react";
 import { FC } from "react";
 import { HEADER_HEIGHT } from "../../constants";
 import InfoButton from "../InfoButton";
+import { HEADER_TONE_CLASS_NAMES, PriceCurveHeaderTone } from "./constants";
 
 interface PriceCurveHeaderProps {
   headerPrice: string;
   intervalText: string;
   isExpanded?: boolean;
   onToggleExpand?: () => void;
+  tone?: PriceCurveHeaderTone;
 }
 
-const PriceCurveHeader: FC<PriceCurveHeaderProps> = ({ headerPrice, intervalText, isExpanded, onToggleExpand }) => {
+const PriceCurveHeader: FC<PriceCurveHeaderProps> = ({
+  headerPrice,
+  intervalText,
+  isExpanded,
+  onToggleExpand,
+  tone = "muted",
+}) => {
   const hasToggle = typeof onToggleExpand === "function";
+  const classNames = HEADER_TONE_CLASS_NAMES[tone];
 
   return (
     <div style={{ minHeight: HEADER_HEIGHT }}>
       <div className="flex justify-between items-start gap-2">
         <div className="flex flex-col">
           <div className="flex items-center gap-1.5">
-            <span className="text-[16px] text-neutral-9 tracking-wide">
-              <CompactAmount value={headerPrice} /> per vote
+            <span className={classNames.priceLine}>
+              <span className={classNames.amount}>
+                <CompactAmount value={headerPrice} />
+              </span>{" "}
+              per vote
             </span>
             <InfoButton />
           </div>
-          <span className="text-[12px] text-neutral-9 mt-0.5">{intervalText}</span>
+          <span className={classNames.interval}>{intervalText}</span>
         </div>
         {hasToggle && (
           <button

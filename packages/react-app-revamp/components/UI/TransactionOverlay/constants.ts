@@ -1,3 +1,27 @@
+import { TransactionOverlayTextSize } from "./types";
+
+interface OverlayTypeScale {
+  title: string;
+  sub: string;
+  shareHeading: string;
+  shareBody: string;
+}
+
+export const OVERLAY_TYPE_SCALE: Record<TransactionOverlayTextSize, OverlayTypeScale> = {
+  [TransactionOverlayTextSize.REGULAR]: {
+    title: "text-[20px]",
+    sub: "text-[14px]",
+    shareHeading: "text-[24px]",
+    shareBody: "text-[16px]",
+  },
+  [TransactionOverlayTextSize.SMALL]: {
+    title: "text-[16px]",
+    sub: "text-[13px]",
+    shareHeading: "text-[20px]",
+    shareBody: "text-[14px]",
+  },
+};
+
 // Brand confetti shards from /public/particles, shared with VoteFeedback and PriceCurve.
 export const PARTICLE_SVGS = [
   "/particles/confetti-pink.svg",

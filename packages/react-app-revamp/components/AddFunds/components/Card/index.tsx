@@ -57,14 +57,14 @@ const AddFundsCard: FC<AddFundsCardProps> = ({
 
     if (onClick) {
       return (
-        <ChevronRightIcon className="w-6 h-6 text-neutral-9 transition-colors duration-300 ease-in-out group-hover:text-neutral-11" />
+        <ChevronRightIcon className="w-6 h-6 @max-[320px]:size-5 shrink-0 text-neutral-9 transition-colors duration-300 ease-in-out group-hover:text-neutral-11" />
       );
     }
 
     return isExpanded ? (
-      <ChevronUpIcon className="w-6 h-6 text-neutral-9 transition-colors duration-300 ease-in-out" />
+      <ChevronUpIcon className="w-6 h-6 @max-[320px]:size-5 shrink-0 text-neutral-9 transition-colors duration-300 ease-in-out" />
     ) : (
-      <ChevronDownIcon className="w-6 h-6 text-neutral-9 transition-colors duration-300 ease-in-out group-hover:text-neutral-11" />
+      <ChevronDownIcon className="w-6 h-6 @max-[320px]:size-5 shrink-0 text-neutral-9 transition-colors duration-300 ease-in-out group-hover:text-neutral-11" />
     );
   };
 
@@ -77,27 +77,31 @@ const AddFundsCard: FC<AddFundsCardProps> = ({
       <button
         onClick={handleClick}
         disabled={disabled}
-        className={`group flex w-full p-4 ${isExpanded ? "rounded-t-2xl" : "rounded-2xl"} border border-transparent ${
+        className={`group flex w-full p-4 @max-[320px]:p-3 ${isExpanded ? "rounded-t-2xl" : "rounded-2xl"} border border-transparent ${
           !isExpanded && !disabled ? "hover:border-neutral-9" : ""
         } transition-colors duration-300 ease-in-out ${disabled ? "cursor-not-allowed" : "cursor-pointer"} ${
           !isExpanded || !children ? "shadow-entry-card" : ""
         }`}
       >
-        <div className="flex gap-4 items-center w-full">
+        <div className="flex gap-4 @max-[320px]:gap-3 items-center w-full">
           <img
             src={logo}
             alt={name}
-            className={`w-10 h-10 p-0.5 ${disabled ? "opacity-50" : ""}`}
+            className={`w-10 h-10 @max-[320px]:size-8 shrink-0 p-0.5 ${disabled ? "opacity-50" : ""}`}
             style={logoBorderColor ? { borderRadius: "50%", border: `2px solid ${logoBorderColor}` } : undefined}
           />
-          <div className="flex flex-col items-start">
-            <p className={`font-bold text-2xl ${disabled ? "text-neutral-9" : "text-neutral-11"}`}>{name}</p>
+          <div className="flex min-w-0 flex-col items-start text-left">
+            <p
+              className={`font-bold text-2xl @max-[320px]:text-base ${disabled ? "text-neutral-9" : "text-neutral-11"}`}
+            >
+              {name}
+            </p>
             {disabled && disabledMessage ? (
               <div className="py-1 px-2 bg-neutral-3 rounded-lg inline-block">
-                <p className="text-negative-11 font-bold text-[12px]">{disabledMessage}</p>
+                <p className="text-negative-11 font-bold text-[12px] @max-[320px]:text-[11px]">{disabledMessage}</p>
               </div>
             ) : description ? (
-              <p className="text-neutral-9 font-bold normal-case text-base">{description}</p>
+              <p className="text-neutral-9 font-bold normal-case text-base @max-[320px]:text-xs">{description}</p>
             ) : null}
           </div>
           <div className="ml-auto">{renderIcon()}</div>

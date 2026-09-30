@@ -6,15 +6,20 @@ import { useShallow } from "zustand/shallow";
 import OverlayScene from "../components/OverlayScene";
 import { VOTE_FLOW_TRACKING_ID } from "../constants";
 import { isInlineOverlayInFlow, isInlineOverlayShowing, txOverlay, useTransactionOverlayStore } from "../store";
-import { TransactionOverlayFlow, TransactionOverlayPlacement } from "../types";
+import { TransactionOverlayFlow, TransactionOverlayPlacement, TransactionOverlayTextSize } from "../types";
 import { useOverlayLifecycle } from "../useOverlayLifecycle";
 
 interface InlineTransactionOverlayProps {
   className?: string;
   inFlowClassName?: string;
+  textSize?: TransactionOverlayTextSize;
 }
 
-const InlineTransactionOverlay: FC<InlineTransactionOverlayProps> = ({ className = "", inFlowClassName = "" }) => {
+const InlineTransactionOverlay: FC<InlineTransactionOverlayProps> = ({
+  className = "",
+  inFlowClassName = "",
+  textSize = TransactionOverlayTextSize.REGULAR,
+}) => {
   const { isOpen, placement, flow, phase, errorMessage, steps, successMeta, voteShare } = useTransactionOverlayStore(
     useShallow(state => state),
   );
@@ -89,6 +94,7 @@ const InlineTransactionOverlay: FC<InlineTransactionOverlayProps> = ({ className
         successMeta={successMeta}
         voteShare={voteShare}
         placement={TransactionOverlayPlacement.INLINE}
+        textSize={textSize}
         contentClassName="px-6 py-8"
       />
     </motion.div>

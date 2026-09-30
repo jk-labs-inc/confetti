@@ -1,14 +1,16 @@
 import { useFitTextToBox } from "@components/EntryCarousel/useFitTextToBox";
 import { VotingWidgetStyle } from "@components/Voting";
+import { VotingWidgetLayout } from "@components/Voting/types";
 import { useVotingStore } from "@components/Voting/store";
 import { formatVoteCount } from "@helpers/formatNumber";
+import { MOBILE_MAX_WIDTH_PX } from "@helpers/isMobileViewport";
 import useDisplayPrice from "@hooks/useCurrency/useDisplayPrice";
 import { useVotesFromInput } from "@hooks/useVotesFromInput";
 import { FC, RefObject } from "react";
-import { motion } from "motion/react";
 import Skeleton from "react-loading-skeleton";
 import { useMediaQuery } from "react-responsive";
 import { useShallow } from "zustand/shallow";
+import PresetChips from "./components/PresetChips";
 
 interface VoteAmountInputProps {
   maxBalance: string;
@@ -24,6 +26,7 @@ interface VoteAmountInputProps {
   isBelowMinimum?: boolean;
   pushToFirstAmount?: string | null;
   style?: VotingWidgetStyle;
+  layout?: VotingWidgetLayout;
   autoFocus?: boolean;
   isReadOnly?: boolean;
   showPresets?: boolean;
@@ -31,17 +34,34 @@ interface VoteAmountInputProps {
 }
 
 const STYLE_CONFIG = {
-  colored: {
-    background: "bg-[#40096A]",
-    borderColor: "border-[#84679B]",
-    placeholderColor: "placeholder-neutral-9",
+  muted: {
+    background: "bg-neutral-2",
+    borderColor: "border-neutral-5",
+    placeholderColor: "placeholder-primary-3",
+    chipBorderColor: "border-neutral-17",
   },
   classic: {
     background: "bg-transparent",
     borderColor: "border-secondary-11",
     placeholderColor: "placeholder-neutral-9/50",
+    chipBorderColor: "border-[#84679B]",
   },
 } as const;
+
+const INPUT_MIN_FONT_PX = 12;
+const MOBILE_INPUT_MAX_FONT_PX = 24;
+const INPUT_MAX_FONT_PX: Record<VotingWidgetLayout, number> = {
+  [VotingWidgetLayout.regular]: 40,
+  [VotingWidgetLayout.compact]: 32,
+};
+const PILL_PADDING_CLASS_NAME: Record<VotingWidgetLayout, string> = {
+  [VotingWidgetLayout.regular]: "px-6",
+  [VotingWidgetLayout.compact]: "px-4",
+};
+const VOTES_TEXT_SIZE_CLASS_NAME: Record<VotingWidgetLayout, string> = {
+  [VotingWidgetLayout.regular]: "text-[16px]",
+  [VotingWidgetLayout.compact]: "text-[13px]",
+};
 
 const VoteAmountInput: FC<VoteAmountInputProps> = ({
   maxBalance,
@@ -56,6 +76,7 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
   isBelowMinimum = false,
   pushToFirstAmount,
   style = VotingWidgetStyle.classic,
+  layout = VotingWidgetLayout.regular,
   autoFocus = false,
   isReadOnly = false,
   showPresets = true,
@@ -101,13 +122,13 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
   const dotCount = (valueString.match(/\./g) || []).length;
   const charCount = valueString.length - dotCount * 0.5;
 
-  const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
+  const isMobile = useMediaQuery({ maxWidth: MOBILE_MAX_WIDTH_PX });
 
   const mirrorText = displaySymbol === "$" ? `$${valueString}` : `${valueString} ${displaySymbol}`;
   const { ref: inputFitRef, fontSize: inputFontSize } = useFitTextToBox<HTMLSpanElement>(
     mirrorText,
-    12,
-    isMobile ? 24 : 40,
+    INPUT_MIN_FONT_PX,
+    isMobile ? MOBILE_INPUT_MAX_FONT_PX : INPUT_MAX_FONT_PX[layout],
   );
 
   const hasBalance = parseFloat(maxBalance) > 0;
@@ -123,11 +144,23 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
 
   const showPercentPresets = showPresets && hasBalance && isConnected;
   const showPushToFirst = Boolean(pushToFirstAmount);
+  const hasChips = showPushToFirst || showPercentPresets;
+  const isCompact = layout === VotingWidgetLayout.compact;
+  const presetChips = (
+    <PresetChips
+      layout={layout}
+      chipBorderColor={styleConfig.chipBorderColor}
+      showPushToFirst={showPushToFirst}
+      showPercentPresets={showPercentPresets}
+      onPushToFirst={handlePushToFirst}
+      onPreset={handlePreset}
+    />
+  );
 
   return (
     <div className="flex flex-col gap-2">
       <div
-        className={`flex w-full items-center px-6 py-2 text-[16px] ${styleConfig.background} font-bold ${textColor} border ${borderColor} rounded-[40px] transition-colors duration-300 cursor-text`}
+        className={`flex w-full items-center gap-3 ${PILL_PADDING_CLASS_NAME[layout]} py-2 text-[16px] ${styleConfig.background} font-bold ${textColor} border ${borderColor} rounded-[40px] transition-colors duration-300 cursor-text`}
         onClick={() => {
           if (!isReadOnly) inputRef.current?.focus();
         }}
@@ -173,51 +206,15 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
         </div>
 
         <div className="flex flex-col items-end gap-3 ml-auto shrink-0">
-          {(showPushToFirst || showPercentPresets) && (
-            <div className="flex items-center gap-1">
-              {showPushToFirst && (
-                <motion.button
-                  onClick={e => {
-                    e.stopPropagation();
-                    handlePushToFirst();
-                  }}
-                  className="w-auto h-4 px-2 rounded-[40px] border border-[#84679B] text-positive-11 font-bold flex items-center justify-center hover:bg-positive-11/10 transition-colors duration-150"
-                  style={{ willChange: "transform" }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <span className="text-[12px] whitespace-nowrap">push to 1st</span>
-                </motion.button>
-              )}
-              {showPercentPresets &&
-                [25, 50, 75, 100].map(percent => {
-                  const isMax = percent === 100;
-                  return (
-                    <motion.button
-                      key={percent}
-                      onClick={e => {
-                        e.stopPropagation();
-                        handlePreset(percent);
-                      }}
-                      className={`w-8 h-4 px-2 rounded-[40px] border border-[#84679B] font-bold flex items-center justify-center hover:bg-positive-11/10 transition-colors duration-150 ${isMax ? "text-positive-11" : "text-neutral-9"}`}
-                      style={{ willChange: "transform" }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      {isMax ? (
-                        <span className="text-[12px]">max</span>
-                      ) : (
-                        <>
-                          <span className="text-[12px]">{percent}</span>
-                          <span className="text-[10px]">%</span>
-                        </>
-                      )}
-                    </motion.button>
-                  );
-                })}
-            </div>
-          )}
-          <span className={`text-[16px] text-neutral-9 font-bold ${hasInput ? "" : "invisible"}`}>{votesText}</span>
+          {hasChips && !isCompact && presetChips}
+          <span
+            className={`${VOTES_TEXT_SIZE_CLASS_NAME[layout]} text-neutral-9 font-bold ${hasInput ? "" : "invisible"}`}
+          >
+            {votesText}
+          </span>
         </div>
       </div>
+      {hasChips && isCompact && presetChips}
       {isBelowMinimum && (
         <p className="text-[14px] font-bold text-negative-11 px-6">
           must be at least {formattedPricePerVote} to buy a vote

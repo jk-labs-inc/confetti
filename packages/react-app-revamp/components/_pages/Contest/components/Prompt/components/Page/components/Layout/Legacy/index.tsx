@@ -1,22 +1,11 @@
-import { Interweave, Node } from "interweave";
+import { legacyPromptTransform } from "@components/_pages/Contest/components/Prompt/utils/legacyPromptTransform";
+import { Interweave } from "interweave";
 import { UrlMatcher } from "interweave-autolink";
-import { FC, ReactNode } from "react";
+import { FC } from "react";
 
 interface ContestPromptPageLegacyLayoutProps {
   prompt: string;
 }
-
-const transform = (node: HTMLElement, children: Node[]): ReactNode => {
-  const element = node.tagName.toLowerCase();
-
-  if (element === "p") {
-    return <p className="text-[16px]">{children}</p>;
-  } else if (element === "ul") {
-    return <ul className="list-disc list-inside list-explainer">{children}</ul>;
-  } else if (element === "li") {
-    return <li className="flex items-center">{children}</li>;
-  }
-};
 
 const ContestPromptPageLegacyLayout: FC<ContestPromptPageLegacyLayoutProps> = ({ prompt }) => {
   return (
@@ -27,7 +16,7 @@ const ContestPromptPageLegacyLayout: FC<ContestPromptPageLegacyLayoutProps> = ({
       <div className="pl-5">
         <div className="border-l border-true-white">
           <div className="prose prose-invert pl-5 overflow-hidden">
-            <Interweave content={prompt} matchers={[new UrlMatcher("url")]} transform={transform} />
+            <Interweave content={prompt} matchers={[new UrlMatcher("url")]} transform={legacyPromptTransform} />
           </div>
         </div>
       </div>

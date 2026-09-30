@@ -4,6 +4,11 @@ export enum VoteFlowScreen {
   Confirm = "confirm",
 }
 
+export enum VotingWidgetLayout {
+  regular = "regular",
+  compact = "compact",
+}
+
 export enum AddFundsEntryReason {
   Shortfall = "shortfall",
   Manual = "manual",

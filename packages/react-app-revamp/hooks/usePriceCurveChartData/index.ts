@@ -3,7 +3,6 @@ import { PricePoint } from "lib/priceCurve/types";
 import { ChartDataPoint } from "@components/PriceCurve/types";
 
 export interface PriceCurveChartData {
-  chartData: ChartDataPoint[];
   currentPrice: number;
   currentIndex: number;
 }
@@ -23,11 +22,6 @@ const usePriceCurveChartData = ({ pricePoints }: UsePriceCurveChartDataParams): 
     return () => clearInterval(interval);
   }, []);
 
-  const chartData = useMemo<ChartDataPoint[]>(() => {
-    if (!pricePoints || pricePoints.length === 0) return [];
-    return convertToChartData(pricePoints);
-  }, [pricePoints]);
-
   const { currentPrice, currentIndex } = useMemo(() => {
     if (!pricePoints || pricePoints.length === 0) {
       return { currentPrice: 0, currentIndex: -1 };
@@ -36,7 +30,7 @@ const usePriceCurveChartData = ({ pricePoints }: UsePriceCurveChartDataParams): 
     return { currentPrice: getCurrentPriceValue(pricePoints, index), currentIndex: index };
   }, [pricePoints, currentTime]);
 
-  return { chartData, currentPrice, currentIndex };
+  return { currentPrice, currentIndex };
 };
 
 const findCurrentPriceIndex = (pricePoints: PricePoint[], currentTime: Date): number => {
@@ -60,7 +54,7 @@ const findCurrentPriceIndex = (pricePoints: PricePoint[], currentTime: Date): nu
   return activeIndex;
 };
 
-const convertToChartData = (pricePoints: PricePoint[]): ChartDataPoint[] => {
+export const convertToChartData = (pricePoints: PricePoint[]): ChartDataPoint[] => {
   return pricePoints.map((point, index) => ({
     id: `Point ${index + 1}`,
     date: point.date,

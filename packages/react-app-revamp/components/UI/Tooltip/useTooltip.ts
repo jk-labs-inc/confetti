@@ -18,18 +18,21 @@ import {
 import { useEffect, useId, useRef } from "react";
 import { useActiveTooltipStore } from "./store";
 
-export type TooltipSurface = "default" | "dark" | "panel";
+export type TooltipSurface = "default" | "dark" | "panel" | "voters";
 
 interface UseTooltipOptions {
   interactive?: boolean;
   placement?: Placement;
   offsetPx?: number;
+  alignmentOffsetPx?: number;
+  arrowPadding?: number;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
   openDelay?: number;
   closeDelay?: number;
   requireIntent?: boolean;
   enableClick?: boolean;
+  enableHover?: boolean;
   strategy?: "fixed" | "absolute";
 }
 
@@ -37,12 +40,15 @@ export function useTooltip({
   interactive = false,
   placement = "top",
   offsetPx = 8,
+  alignmentOffsetPx = 0,
+  arrowPadding = 0,
   open: controlledOpen,
   onOpenChange,
   openDelay = 200,
   closeDelay,
   requireIntent = false,
   enableClick = false,
+  enableHover = true,
   strategy = "fixed",
 }: UseTooltipOptions = {}) {
   const id = useId();
@@ -77,14 +83,15 @@ export function useTooltip({
     strategy,
     whileElementsMounted: autoUpdate,
     middleware: [
-      offset(offsetPx),
+      offset({ mainAxis: offsetPx, alignmentAxis: alignmentOffsetPx }),
       flip({ fallbackAxisSideDirection: "start" }),
       shift({ padding: 8 }),
-      arrow({ element: arrowRef }),
+      arrow({ element: arrowRef, padding: arrowPadding }),
     ],
   });
 
   const hover = useHover(context, {
+    enabled: enableHover,
     move: false,
     mouseOnly: enableClick,
     delay: { open: openDelay, close: closeDelay ?? (interactive ? 0 : 150) },

@@ -11,6 +11,11 @@ export enum TransactionOverlayPlacement {
   INLINE = "inline",
 }
 
+export enum TransactionOverlayTextSize {
+  REGULAR = "regular",
+  SMALL = "small",
+}
+
 export enum TransactionOverlayPhase {
   SIGNING = "signing",
   MINING = "mining",

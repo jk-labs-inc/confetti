@@ -14,6 +14,7 @@
   --breakpoint-lx: 1150px;
   --breakpoint-xl: 1280px;
   --breakpoint-2xl: 1350px;
+  --breakpoint-wide: 1440px;
   --breakpoint-3xl: 1500px;
   --breakpoint-4xl: 1660px;
 
@@ -438,16 +439,6 @@ li {
   transform: translateX(-45%);
 }
 
-.standalone-pwa {
-  display: none;
-}
-
-@media all and (display-mode: standalone) {
-  .standalone-pwa {
-    display: flex;
-  }
-}
-
 .button-delete-state {
   opacity: 0.5 !important;
   pointer-events: none !important;
@@ -660,6 +651,7 @@ li {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    min-height: 100svh;
     caret-color: #bb65ff !important;
   }
 
@@ -817,6 +809,32 @@ li {
 
 .voter-chip-enter {
   animation: voterChipIn 360ms ease-out both;
+}
+
+@keyframes winnerConfettiFall {
+  0% {
+    top: -6%;
+    opacity: 0;
+    transform: translateX(0) rotate(0deg);
+  }
+  10% {
+    opacity: 1;
+  }
+  50% {
+    transform: translateX(var(--sway)) rotate(calc(var(--spin) / 2));
+  }
+  88% {
+    opacity: 1;
+  }
+  100% {
+    top: 104%;
+    opacity: 0;
+    transform: translateX(0) rotate(var(--spin));
+  }
+}
+
+.winner-confetti-drift {
+  animation: winnerConfettiFall var(--duration) linear var(--delay) infinite;
 }
 
 @keyframes ellipsis {

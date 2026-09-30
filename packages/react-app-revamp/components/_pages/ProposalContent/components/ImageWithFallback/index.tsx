@@ -2,14 +2,18 @@
 
 import { ENTRY_IMAGE_PRESET } from "lib/image/cloudflare";
 import { useCloudflareFluidImage } from "lib/image/useCloudflareImage";
-import React, { useState } from "react";
+import React, { SyntheticEvent, useState } from "react";
+
+const CROP_FOCUS_POSITION = "50% 30%";
 
 interface ImageWithFallbackProps {
   fullSrc: string;
   alt: string;
+  cropHeightRatio?: number;
+  onLoad?: (event: SyntheticEvent<HTMLImageElement>) => void;
 }
 
-const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({ fullSrc, alt }) => {
+const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({ fullSrc, alt, cropHeightRatio, onLoad }) => {
   const hasValidSrc = fullSrc && fullSrc.trim() !== "";
 
   // High-quality, resized, responsive variants of the entry image. Non-transformable
@@ -29,20 +33,29 @@ const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({ fullSrc, alt }) =
     return null;
   }
 
+  const isCropped = cropHeightRatio !== undefined;
+
   return (
-    <div className="relative rounded-[16px] w-full h-full">
+    <div
+      className="relative rounded-[12px] wide:rounded-2xl w-full h-full"
+      style={isCropped ? { aspectRatio: 1 / cropHeightRatio } : undefined}
+    >
       <img
         src={failed ? fullSrc : src}
         srcSet={failed ? undefined : srcSet}
         sizes={sizes}
         onError={handleError}
+        onLoad={onLoad}
         alt={alt}
         loading="lazy"
         decoding="async"
-        className="rounded-[16px] w-full h-full min-h-52 object-contain"
+        className={`rounded-[12px] wide:rounded-2xl w-full h-full min-h-52 ${
+          isCropped ? "absolute inset-0 object-cover" : "object-contain"
+        }`}
+        style={isCropped ? { objectPosition: CROP_FOCUS_POSITION } : undefined}
       />
       <div
-        className="xl:hidden absolute inset-x-0 top-0 h-20 rounded-t-[16px]"
+        className="lg:hidden absolute inset-x-0 top-0 h-20 rounded-t-[12px]"
         style={{
           background: "linear-gradient(180deg, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.70) 50%, rgba(0, 0, 0, 0) 100%)",
         }}

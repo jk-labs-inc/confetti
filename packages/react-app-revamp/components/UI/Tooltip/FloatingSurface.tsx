@@ -6,12 +6,14 @@ const SURFACE: Record<TooltipSurface, string> = {
   default: "p-2 bg-neutral-9 text-true-black rounded-lg",
   dark: "p-2 bg-neutral-4 text-white rounded-lg",
   panel: "p-3 bg-primary-1 text-neutral-11 rounded-[16px] border border-neutral-4",
+  voters: "p-0 bg-neutral-1 text-neutral-11 rounded-[20px] border border-neutral-5",
 };
 
 const ARROW: Record<TooltipSurface, { fill: string; stroke?: string }> = {
   default: { fill: "#9d9d9d" },
   dark: { fill: "#28282c" },
   panel: { fill: "#1a1a1a", stroke: "#28282c" },
+  voters: { fill: "#151515", stroke: "#2e2e32" },
 };
 
 interface FloatingSurfaceProps {

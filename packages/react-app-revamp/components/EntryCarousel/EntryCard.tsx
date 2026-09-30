@@ -1,9 +1,15 @@
+import EntryVotersChip from "@components/EntryVoters/Chip";
+import MobileVoterCountLine from "@components/_pages/Contest/MobileVoterCountLine";
 import { Proposal } from "@components/_pages/ProposalContent";
 import ProposalLayoutGalleryRankOrPlaceholder from "@components/_pages/ProposalContent/components/ProposalLayout/Gallery/components/RankOrPlaceholder";
 import { Tweet } from "@components/_pages/ProposalContent/components/ProposalLayout/Tweet/components/CustomTweet";
 import VoteCountPulse from "@components/_pages/ProposalContent/components/VoteFeedback";
+import WinnerBadge from "@components/_pages/ProposalContent/components/WinnerCelebration/WinnerBadge";
+import WinnerConfetti from "@components/_pages/ProposalContent/components/WinnerCelebration/WinnerConfetti";
 import { ENTRY_ACCENT_COLOR, withAlpha } from "@helpers/entryColors";
 import { formatNumberWithCommas } from "@helpers/formatNumber";
+import { isWinningEntry } from "@hooks/useProposal/utils";
+import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
 import { ContestStatus } from "@hooks/useContestStatus/store";
 import { EntryPreview } from "@hooks/useDeployContest/slices/contestMetadataSlice";
 import { CSSProperties, FC, ReactNode, useMemo } from "react";
@@ -13,6 +19,7 @@ import ShadowCrossfade from "./ShadowCrossfade";
 import { useFitTextToBox } from "./useFitTextToBox";
 
 const FOIL_PX = 1.5;
+const WINNER_FOIL_BG = "var(--background-image-gradient-gold)";
 
 const GRAIN_URL = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`;
 
@@ -93,6 +100,8 @@ const EntryCard: FC<EntryCardProps> = ({
   const showVotes =
     (contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed) && proposal.votes > 0;
   const isTitleOnly = entry.kind === "title";
+  const isCanceled = useContestStateStore(state => state.contestState) === ContestStateEnum.Canceled;
+  const isWinner = isWinningEntry(proposal, contestStatus, isCanceled);
 
   const titleText = isTitleOnly ? entry.title || "untitled entry" : "";
   const titleMaxFont = Math.round(Math.max(20, Math.min(32, 32 - (titleText.trim().length - 12) * 0.8)));
@@ -106,7 +115,7 @@ const EntryCard: FC<EntryCardProps> = ({
 
   const votePercentage = totalVotes > 0 ? Math.round((proposal.votes / totalVotes) * 100) : 0;
   const isFeed = variant === "feed";
-  const foilBg = active || elevated ? ENTRY_ACCENT_COLOR : "transparent";
+  const foilBg = isWinner ? WINNER_FOIL_BG : active || elevated ? ENTRY_ACCENT_COLOR : "transparent";
   const pctSize = compact ? "text-[16px]" : "text-[24px]";
   const pctLabelSize = compact ? "text-[8px]" : "text-[9px]";
   const voteCountSize = compact ? "text-[16px]" : "text-[22px]";
@@ -118,6 +127,7 @@ const EntryCard: FC<EntryCardProps> = ({
   const restingShadow = "0 0 0 1px rgba(255,255,255,0.22), 0 0 22px -2px rgba(255,255,255,0.26)";
 
   const innerBg = isTitleOnly ? "linear-gradient(180deg, #1a1a1a 0%, #0c0c0c 54%, #050505 100%)" : "#000";
+  const showVotersLine = elevated || (isFeed && active);
 
   if (isFeed) {
     const showHeader = !!proposal.rank || !!entry.title || showVotes;
@@ -131,9 +141,13 @@ const EntryCard: FC<EntryCardProps> = ({
           {showHeader ? (
             <div className="flex w-full items-center pl-2">
               {proposal.rank ? <ProposalLayoutGalleryRankOrPlaceholder rank={proposal.rank} /> : null}
-              <div className="ml-auto flex flex-col items-end gap-1">
-                {entry.title ? <p className="text-[12px] font-bold text-neutral-11">{entry.title}</p> : null}
-                {showVotes ? <p className="text-[12px] text-neutral-11">{votesNumber} votes</p> : null}
+              <div className="ml-auto flex items-center gap-2">
+                {active ? <EntryVotersChip proposalId={proposal.id} enabled reserveSpace /> : null}
+                <div className="flex flex-col items-end gap-1">
+                  {entry.title ? <p className="text-[12px] font-bold text-neutral-11">{entry.title}</p> : null}
+                  {showVotes ? <p className="text-[12px] text-neutral-11">{votesNumber} votes</p> : null}
+                  {showVotersLine ? <MobileVoterCountLine proposalId={proposal.id} /> : null}
+                </div>
               </div>
             </div>
           ) : null}
@@ -183,7 +197,8 @@ const EntryCard: FC<EntryCardProps> = ({
               </p>
             </div>
             {showVotes ? (
-              <div className={`flex justify-center ${compact ? "pb-4" : "pb-5"}`}>
+              <div className={`flex flex-col items-center gap-1 ${compact ? "pb-4" : "pb-5"}`}>
+                {isWinner ? <WinnerBadge variant="inline" /> : null}
                 <div className="inline-flex items-center gap-2">
                   <span className={`${voteCountSize} font-bold leading-none tabular-nums text-neutral-11`}>
                     {votesNumber}
@@ -194,6 +209,7 @@ const EntryCard: FC<EntryCardProps> = ({
                     votes
                   </span>
                 </div>
+                {showVotersLine ? <MobileVoterCountLine proposalId={proposal.id} /> : null}
               </div>
             ) : null}
           </div>
@@ -210,7 +226,13 @@ const EntryCard: FC<EntryCardProps> = ({
           </div>
         ) : null}
 
-        {isTitleOnly && showVotes && totalVotes > 0 ? (
+        {elevated ? (
+          <div className="absolute right-2 top-2 z-20">
+            <EntryVotersChip proposalId={proposal.id} enabled />
+          </div>
+        ) : null}
+
+        {isTitleOnly && showVotes && totalVotes > 0 && !elevated ? (
           <div
             className={`pointer-events-none absolute z-10 flex flex-col items-end leading-none ${
               compact ? "right-2 top-2" : "right-3 top-3"
@@ -228,6 +250,7 @@ const EntryCard: FC<EntryCardProps> = ({
             className="pointer-events-none absolute inset-x-0 bottom-0 z-10 flex flex-col items-center gap-1.5 px-3 pb-4 pt-12"
             style={{ background: overlayGradient }}
           >
+            {isWinner ? <WinnerBadge variant="inline" /> : null}
             {entry.title ? (
               <p className="text-center text-[16px] font-bold leading-normal" style={overlayTextStyle}>
                 {entry.title}
@@ -249,9 +272,13 @@ const EntryCard: FC<EntryCardProps> = ({
                 </span>
               </div>
             ) : null}
+            {showVotersLine ? (
+              <MobileVoterCountLine proposalId={proposal.id} className="[text-shadow:1px_1px_0_#000]" />
+            ) : null}
           </div>
         ) : null}
       </div>
+      {isWinner && elevated ? <WinnerConfetti /> : null}
     </div>
   );
 };

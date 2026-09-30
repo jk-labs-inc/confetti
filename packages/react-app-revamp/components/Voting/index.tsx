@@ -1,5 +1,6 @@
 import NumericKeypad from "@components/UI/NumericKeypad";
 import { useModal } from "@getpara/react-sdk-lite";
+import { MOBILE_MAX_WIDTH_PX } from "@helpers/isMobileViewport";
 import { useCastVotesStore } from "@hooks/useCastVotes/store";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import { useVoteBalance } from "@hooks/useVoteBalance";
@@ -19,11 +20,11 @@ import { useEffectiveCostToVote } from "./hooks/useEffectiveCostToVote";
 import useKeypadInput from "./hooks/useKeypadInput";
 import { useVoteExecution } from "./hooks/useVoteExecution";
 import { useVotingStore } from "./store";
-import { AddFundsEntryReason } from "./types";
+import { AddFundsEntryReason, VotingWidgetLayout } from "./types";
 
 export enum VotingWidgetStyle {
   classic = "classic",
-  colored = "colored",
+  muted = "muted",
 }
 
 interface VotingWidgetProps {
@@ -33,10 +34,15 @@ interface VotingWidgetProps {
   isContestCanceled: boolean;
   submissionsCount: number;
   style?: VotingWidgetStyle;
+  layout?: VotingWidgetLayout;
   onVote?: (amountOfVotes: number) => void;
   onAddFunds?: (reason: AddFundsEntryReason) => void;
   onConnectRequest?: () => void;
+  pinVoteButton?: boolean;
 }
+
+const PINNED_VOTE_BUTTON_CLASS_NAME = "sticky bottom-0 z-10 -mx-3 -mb-3 px-3 pb-3 pt-6 -mt-6 rounded-b-2xl";
+const PINNED_VOTE_BUTTON_BACKDROP = "linear-gradient(to bottom, rgba(20, 20, 20, 0) 0%, #141414 40%)";
 
 const VotingWidget: FC<VotingWidgetProps> = ({
   costToVote,
@@ -45,11 +51,13 @@ const VotingWidget: FC<VotingWidgetProps> = ({
   isContestCanceled,
   submissionsCount,
   style = VotingWidgetStyle.classic,
+  layout = VotingWidgetLayout.regular,
   onVote,
   onAddFunds,
   onConnectRequest,
+  pinVoteButton = false,
 }) => {
-  const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
+  const isMobile = useMediaQuery({ maxWidth: MOBILE_MAX_WIDTH_PX });
   const { isConnected } = useWallet();
   const { openModal } = useModal();
   const contestConfig = useContestConfigStore(useShallow(state => state.contestConfig));
@@ -146,6 +154,7 @@ const VotingWidget: FC<VotingWidgetProps> = ({
           isBelowMinimum={isBelowMinimum}
           pushToFirstAmount={projections.pushToFirstFillAmount}
           style={style}
+          layout={layout}
           autoFocus={!isMobile}
           isReadOnly={isMobile}
           showPresets={!isMobile}
@@ -159,11 +168,12 @@ const VotingWidget: FC<VotingWidgetProps> = ({
           insufficientBalance={insufficientBalance}
           isConnected={isConnected}
           onAddFunds={() => onAddFunds?.(AddFundsEntryReason.Manual)}
+          layout={layout}
         />
       </div>
 
       <div className="flex flex-col gap-4">
-        <VotingWidgetRewardsProjection projections={projections} />
+        <VotingWidgetRewardsProjection projections={projections} layout={layout} />
         <VotingWidgetSignup />
         {isMobile && (
           <div className="flex flex-col gap-4">
@@ -171,12 +181,17 @@ const VotingWidget: FC<VotingWidgetProps> = ({
             <NumericKeypad onKey={handleKey} />
           </div>
         )}
-        <VoteButton
-          isDisabled={voteDisabled}
-          isInvalidBalance={insufficientBalance && isConnected}
-          isConnected={isConnected}
-          onClick={handlePrimaryAction}
-        />
+        <div
+          className={pinVoteButton ? PINNED_VOTE_BUTTON_CLASS_NAME : ""}
+          style={pinVoteButton ? { background: PINNED_VOTE_BUTTON_BACKDROP } : undefined}
+        >
+          <VoteButton
+            isDisabled={voteDisabled}
+            isInvalidBalance={insufficientBalance && isConnected}
+            isConnected={isConnected}
+            onClick={handlePrimaryAction}
+          />
+        </div>
       </div>
     </div>
   );

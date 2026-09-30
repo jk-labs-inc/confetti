@@ -17,6 +17,7 @@ interface UseEntryFeedResult {
   cards: Proposal[];
   n: number;
   totalVotes: number;
+  pendingTargetIndex: number | null;
   maybeLoadMore: (index: number) => void;
 }
 
@@ -47,6 +48,7 @@ export function useEntryFeed({
   );
 
   const setPickedProposal = useCastVotesStore(state => state.setPickedProposal);
+  const pickedProposal = useCastVotesStore(state => state.pickedProposal);
 
   const lastTargetRef = useRef<string | null>(null);
 
@@ -58,6 +60,12 @@ export function useEntryFeed({
       setPickedProposal(centeredId);
     }
   }, [activeIndex, cards, n, setPickedProposal]);
+
+  const pendingTargetIndex = useMemo(() => {
+    if (!pickedProposal || lastTargetRef.current === null || pickedProposal === lastTargetRef.current) return null;
+    const index = cards.findIndex(card => card.id === pickedProposal);
+    return index >= 0 ? index : null;
+  }, [pickedProposal, cards]);
 
   const requestedAtLen = useRef(0);
   const maybeLoadMore = useCallback(
@@ -72,5 +80,5 @@ export function useEntryFeed({
     [n, hasNextPage, isLoadingMore, onLoadMore],
   );
 
-  return { cards, n, totalVotes, maybeLoadMore };
+  return { cards, n, totalVotes, pendingTargetIndex, maybeLoadMore };
 }

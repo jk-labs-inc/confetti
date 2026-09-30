@@ -1,8 +1,13 @@
-import { FC, useCallback, useEffect } from "react";
+import { CSSProperties, FC, useCallback, useEffect } from "react";
 import { Drawer as VaulDrawer } from "vaul";
 
 const VAUL_EXIT_ANIMATION_MS = 500;
 const BODY_LOCK_CLEANUP_DELAY_MS = VAUL_EXIT_ANIMATION_MS + 200;
+const DEFAULT_CONTENT_MAX_HEIGHT = "calc(100dvh - 48px)";
+const HANDLE_CLASS_NAME: Record<DrawerHandleSize, string> = {
+  default: "mx-auto! w-12! h-1.5! shrink-0! rounded-full! bg-neutral-9! my-4!",
+  compact: "mx-auto! w-9! h-1! shrink-0! rounded-full! bg-primary-3! my-2.5!",
+};
 
 // vaul/radix own these body locks while a drawer is open, but can leak them on
 // close (mobile-only freeze); once no drawer is open, none of them may remain.
@@ -29,12 +34,19 @@ export const scheduleBodyLockCleanup = () => {
   setTimeout(clearLeftoverBodyLock, BODY_LOCK_CLEANUP_DELAY_MS);
 };
 
+export type DrawerHandleSize = "default" | "compact";
+
 interface DrawerProps {
   isOpen: boolean;
   children: React.ReactNode;
   isHandleHidden?: boolean;
   className?: string;
   onClose?: () => void;
+  snapPoints?: (number | string)[];
+  activeSnapPoint?: number | string | null;
+  setActiveSnapPoint?: (snapPoint: number | string | null) => void;
+  contentStyle?: CSSProperties;
+  handleSize?: DrawerHandleSize;
 }
 
 const shouldPreventDismiss = (e: React.SyntheticEvent | Event | { detail?: { originalEvent?: Event } }) => {
@@ -46,7 +58,18 @@ const shouldPreventDismiss = (e: React.SyntheticEvent | Event | { detail?: { ori
   return !!el.closest?.("cpsl-auth-modal") || !!el.closest?.(".Toastify") || !!el.closest?.("body > [data-rk]");
 };
 
-const Drawer: FC<DrawerProps> = ({ isOpen, children, className, onClose, isHandleHidden = false }) => {
+const Drawer: FC<DrawerProps> = ({
+  isOpen,
+  children,
+  className,
+  onClose,
+  isHandleHidden = false,
+  snapPoints,
+  activeSnapPoint,
+  setActiveSnapPoint,
+  contentStyle,
+  handleSize = "default",
+}) => {
   const handleOpenChange = (open: boolean) => {
     if (!open && onClose) {
       onClose();
@@ -72,20 +95,25 @@ const Drawer: FC<DrawerProps> = ({ isOpen, children, className, onClose, isHandl
   }, []);
 
   return (
-    <VaulDrawer.Root open={isOpen} onOpenChange={handleOpenChange} repositionInputs={false} handleOnly>
+    <VaulDrawer.Root
+      open={isOpen}
+      onOpenChange={handleOpenChange}
+      repositionInputs={false}
+      handleOnly
+      snapPoints={snapPoints}
+      activeSnapPoint={activeSnapPoint}
+      setActiveSnapPoint={setActiveSnapPoint}
+    >
       <VaulDrawer.Portal>
         <VaulDrawer.Overlay className="fixed inset-0 bg-neutral-8/40 z-40" />
         <VaulDrawer.Content
           className={`z-50 rounded-t-[40px] border-t border-l border-r border-neutral-17 flex flex-col fixed bottom-0 left-0 right-0 outline-none ${className}`}
           onPointerDownOutside={handleInteractOutside}
           onInteractOutside={handleInteractOutside}
-          style={{ maxHeight: "calc(100dvh - 48px)" }}
+          style={{ maxHeight: DEFAULT_CONTENT_MAX_HEIGHT, ...contentStyle }}
         >
           <VaulDrawer.Title className="sr-only">Drawer</VaulDrawer.Title>
-          <VaulDrawer.Handle
-            hidden={isHandleHidden}
-            className="mx-auto! w-12! h-1.5! shrink-0! rounded-full! bg-neutral-9! my-4!"
-          />
+          <VaulDrawer.Handle hidden={isHandleHidden} className={HANDLE_CLASS_NAME[handleSize]} />
           <div className="flex-1 overflow-y-auto overflow-x-hidden overscroll-contain">{children}</div>
         </VaulDrawer.Content>
       </VaulDrawer.Portal>
