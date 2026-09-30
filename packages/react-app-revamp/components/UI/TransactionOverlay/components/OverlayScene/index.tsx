@@ -5,6 +5,7 @@ import {
   TransactionOverlayPlacement,
   TransactionOverlayStep,
   TransactionOverlaySuccessMeta,
+  TransactionOverlayTextSize,
   TransactionOverlayVoteShare,
 } from "../../types";
 import AmbientParticles from "../AmbientParticles";
@@ -21,6 +22,7 @@ interface OverlaySceneProps {
   successMeta: TransactionOverlaySuccessMeta | null;
   voteShare: TransactionOverlayVoteShare | null;
   placement: TransactionOverlayPlacement;
+  textSize?: TransactionOverlayTextSize;
   contentClassName?: string;
 }
 
@@ -32,6 +34,7 @@ const OverlayScene: FC<OverlaySceneProps> = ({
   successMeta,
   voteShare,
   placement,
+  textSize = TransactionOverlayTextSize.REGULAR,
   contentClassName = "",
 }) => (
   <>
@@ -42,13 +45,13 @@ const OverlayScene: FC<OverlaySceneProps> = ({
     {phase !== TransactionOverlayPhase.ERROR && <AmbientParticles />}
     <div className={`relative flex flex-1 flex-col items-center justify-center ${contentClassName}`}>
       {phase === TransactionOverlayPhase.ERROR ? (
-        <ErrorView errorMessage={errorMessage} />
+        <ErrorView errorMessage={errorMessage} textSize={textSize} />
       ) : phase === TransactionOverlayPhase.SUCCESS && flow === TransactionOverlayFlow.VOTE ? (
-        <VoteShareView meta={successMeta} share={voteShare} placement={placement} />
+        <VoteShareView meta={successMeta} share={voteShare} placement={placement} textSize={textSize} />
       ) : phase === TransactionOverlayPhase.SUCCESS ? (
         <SuccessView flow={flow} meta={successMeta} placement={placement} />
       ) : (
-        <PendingView flow={flow} phase={phase} steps={steps} placement={placement} />
+        <PendingView flow={flow} phase={phase} steps={steps} placement={placement} textSize={textSize} />
       )}
     </div>
   </>

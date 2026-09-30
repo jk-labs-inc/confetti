@@ -1,3 +1,4 @@
+import { MOBILE_MAX_WIDTH_PX } from "@helpers/isMobileViewport";
 import { FC } from "react";
 import { useMediaQuery } from "react-responsive";
 import DesktopHeader from "./components/DesktopHeader";
@@ -12,10 +13,12 @@ interface ContestHeaderProps {
   canEditTitle: boolean;
   contestAuthorEthereumAddress: string;
   contestVersion: string;
+  isWideLayout: boolean;
+  showDescriptionToggle: boolean;
 }
 
 const ContestHeader: FC<ContestHeaderProps> = props => {
-  const isMobile = useMediaQuery({ maxWidth: 768 });
+  const isMobile = useMediaQuery({ maxWidth: MOBILE_MAX_WIDTH_PX });
 
   if (isMobile) {
     return (
@@ -26,6 +29,8 @@ const ContestHeader: FC<ContestHeaderProps> = props => {
         canEditTitle={props.canEditTitle}
         contestAuthorEthereumAddress={props.contestAuthorEthereumAddress}
         contestVersion={props.contestVersion}
+        contestPrompt={props.contestPrompt}
+        showDescriptionToggle={props.showDescriptionToggle}
       />
     );
   }

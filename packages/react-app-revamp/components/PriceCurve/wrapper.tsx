@@ -1,19 +1,13 @@
-import useContestConfigStore from "@hooks/useContestConfig/store";
-import { useCurrencyStore } from "@hooks/useCurrency/store";
-import { convertToDisplayPrice, DisplayPriceOptions } from "@hooks/useCurrency/useDisplayPrice";
-import useNativeRates from "@hooks/useCurrency/useNativeRates";
-import useCurrentPricePercentageIncrease from "@hooks/useCurrentPricePercentageIncrease";
-import useContestEntryTitles from "@hooks/useContestEntryTitles";
-import useContestVoteMarkers from "@hooks/useContestVoteMarkers";
-import { useProposalStore } from "@hooks/useProposal/store";
+import { useNativePriceFormatter } from "@hooks/useNativePriceFormatter";
+import { useNextPriceUpdate } from "@hooks/useNextPriceUpdate";
+import { usePriceUpdateWarning } from "@hooks/useNextPriceUpdate/usePriceUpdateWarning";
 import usePriceCurveData from "@hooks/usePriceCurveData";
-import { useCountdownTimer } from "@hooks/useTimer";
+import { useResolvedVoteEvents } from "@hooks/useResolvedVoteEvents";
 import { useParentSize } from "@visx/responsive";
-import { useEffect, useMemo } from "react";
-import { useShallow } from "zustand/shallow";
+import { PriceCurveHeaderTone } from "./components/Header/constants";
 import { HEADER_HEIGHT } from "./constants";
 import PriceCurve from "./index";
-import usePriceCurveChartStore from "./store";
+import { ChartPadding } from "./types";
 
 const DEFAULT_CHART_HEIGHT = 300;
 
@@ -24,6 +18,9 @@ interface PriceCurveWrapperProps {
   showAxisLabels?: boolean;
   isExpanded?: boolean;
   onToggleExpand?: () => void;
+  showVoterRibbon?: boolean;
+  headerTone?: PriceCurveHeaderTone;
+  chartPadding?: ChartPadding;
 }
 
 const PriceCurveWrapper = ({
@@ -33,111 +30,20 @@ const PriceCurveWrapper = ({
   showAxisLabels = false,
   isExpanded,
   onToggleExpand,
+  showVoterRibbon = true,
+  headerTone,
+  chartPadding,
 }: PriceCurveWrapperProps) => {
   const { parentRef, width } = useParentSize({ debounceTime: 150 });
-  const contestConfig = useContestConfigStore(useShallow(state => state.contestConfig));
-  const displayCurrency = useCurrencyStore(state => state.displayCurrency);
-  const { data: nativeRates } = useNativeRates();
-
-  const {
-    chartData,
-    currentPrice,
-    currentIndex,
-    startPrice,
-    priceCurveType,
-    priceCurveUpdateInterval,
-    startTimeMs,
-    endTimeMs,
-    totalVotingMinutes,
-    isLoading,
-    isError,
-  } = usePriceCurveData();
-
-  const { voteEvents, fetchNextPage, hasNextPage, isFetchingNextPage } = useContestVoteMarkers({
-    contestAddress: contestConfig.address,
-    chainName: contestConfig.chainName,
-    enabled: !!contestConfig.address,
-  });
-
-  const rankById = useProposalStore(
-    useShallow(state => {
-      const map = new Map<string, number>();
-      for (const proposal of state.listProposalsData) map.set(proposal.id, proposal.rank);
-      return map;
-    }),
-  );
-
-  const storedTitlesById = useMemo(() => {
-    const map = new Map<string, string>();
-    for (const event of voteEvents) {
-      if (event.proposalName) map.set(event.proposalId, event.proposalName);
-    }
-    return map;
-  }, [voteEvents]);
-
-  const unresolvedProposalIds = useMemo(
-    () => voteEvents.filter(event => !storedTitlesById.has(event.proposalId)).map(event => event.proposalId),
-    [voteEvents, storedTitlesById],
-  );
-  const { titlesById: fetchedTitlesById, resolvedIds } = useContestEntryTitles({
-    contestConfig,
-    proposalIds: unresolvedProposalIds,
-    enabled: !!contestConfig.address && unresolvedProposalIds.length > 0,
-  });
-
-  const entryTitlesById = useMemo(() => {
-    if (storedTitlesById.size === 0) return fetchedTitlesById;
-    const merged = new Map(fetchedTitlesById);
-    for (const [id, title] of storedTitlesById) merged.set(id, title);
-    return merged;
-  }, [fetchedTitlesById, storedTitlesById]);
-
-  const resolvedVoteEvents = useMemo(
-    () => voteEvents.filter(event => storedTitlesById.has(event.proposalId) || resolvedIds.has(event.proposalId)),
-    [voteEvents, storedTitlesById, resolvedIds],
-  );
-
-  const endTime = useMemo(() => new Date(endTimeMs), [endTimeMs]);
-  const votingTimeLeft = useCountdownTimer(endTime);
-
-  const { currentPricePercentageData } = useCurrentPricePercentageIncrease({
-    address: contestConfig.address,
-    abi: contestConfig.abi,
-    chainId: contestConfig.chainId,
-    costToVote: BigInt(startPrice),
-    totalVotingMinutes,
-    priceCurveType,
-    votingTimeLeft,
-  });
-
-  const secondsUntilNextUpdate = priceCurveUpdateInterval > 0 ? votingTimeLeft % priceCurveUpdateInterval : 0;
-
-  const now = Date.now();
-  const contestPhase: "before" | "during" | "after" =
-    now < startTimeMs ? "before" : votingTimeLeft > 0 ? "during" : "after";
+  const { chartData, currentPrice, currentIndex, priceCurveType, priceCurveUpdateInterval, isLoading, isError } =
+    usePriceCurveData();
+  const { voteEvents, rankById, entryTitlesById } = useResolvedVoteEvents();
+  const nextPriceUpdate = useNextPriceUpdate();
+  usePriceUpdateWarning(nextPriceUpdate, showPriceWarning);
+  const formatPrice = useNativePriceFormatter();
 
   const endPrice = chartData.length > 0 ? chartData[chartData.length - 1].pv : 0;
   const startPriceValue = chartData.length > 0 ? chartData[0].pv : 0;
-
-  const formatPrice = (nativePrice: number, options?: DisplayPriceOptions): string => {
-    const { displayValue, displaySymbol } = convertToDisplayPrice(
-      nativePrice.toString(),
-      contestConfig.chainNativeCurrencySymbol,
-      displayCurrency,
-      nativeRates ?? {},
-      {},
-      undefined,
-      options,
-    );
-    return displaySymbol === "$" ? `$${displayValue}` : `${displayValue} ${displaySymbol}`;
-  };
-
-  const setShowPriceUpdateWarning = usePriceCurveChartStore(useShallow(state => state.setShowPriceUpdateWarning));
-
-  useEffect(() => {
-    const shouldWarn = showPriceWarning && secondsUntilNextUpdate < 10 && votingTimeLeft > 60;
-    setShowPriceUpdateWarning(shouldWarn);
-  }, [showPriceWarning, secondsUntilNextUpdate, votingTimeLeft, setShowPriceUpdateWarning]);
 
   if (isLoading) {
     const skeletonHeight = isExpanded === false ? HEADER_HEIGHT : height;
@@ -164,12 +70,12 @@ const PriceCurveWrapper = ({
         height={height}
         formatPrice={formatPrice}
         formatHeaderPrice={nativePrice => formatPrice(nativePrice, { ceilingPrecision: true })}
-        percentageIncrease={currentPricePercentageData?.percentageIncrease ?? null}
-        isBelowThreshold={currentPricePercentageData?.isBelowThreshold ?? true}
-        secondsUntilNextUpdate={secondsUntilNextUpdate}
-        votingTimeLeft={votingTimeLeft}
+        percentageIncrease={nextPriceUpdate.percentage?.percentageIncrease ?? null}
+        isBelowThreshold={nextPriceUpdate.percentage?.isBelowThreshold ?? true}
+        secondsUntilNextUpdate={nextPriceUpdate.secondsUntilNextUpdate}
+        votingTimeLeft={nextPriceUpdate.votingTimeLeft}
         showPriceWarning={showPriceWarning}
-        contestPhase={contestPhase}
+        contestPhase={nextPriceUpdate.phase}
         startPriceValue={startPriceValue}
         endPriceValue={endPrice}
         updateIntervalSeconds={priceCurveUpdateInterval}
@@ -178,12 +84,12 @@ const PriceCurveWrapper = ({
         showAxisLabels={showAxisLabels}
         isExpanded={isExpanded}
         onToggleExpand={onToggleExpand}
-        voteEvents={resolvedVoteEvents}
+        showVoterRibbon={showVoterRibbon}
+        headerTone={headerTone}
+        chartPadding={chartPadding}
+        voteEvents={voteEvents}
         entryTitlesById={entryTitlesById}
         rankById={rankById}
-        onLoadMoreVotes={fetchNextPage}
-        hasMoreVotes={hasNextPage}
-        isLoadingMoreVotes={isFetchingNextPage}
       />
     </div>
   );

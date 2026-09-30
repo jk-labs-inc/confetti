@@ -1,14 +1,14 @@
 import AddFunds from "@components/AddFunds";
 import InlineTransactionOverlay from "@components/UI/TransactionOverlay/Inline";
+import { TransactionOverlayTextSize } from "@components/UI/TransactionOverlay/types";
 import { isInlineOverlayInFlow, useTransactionOverlayStore } from "@components/UI/TransactionOverlay/store";
 import { useRunAfterOverlayDismissed } from "@components/UI/TransactionOverlay/useRunAfterOverlayDismissed";
 import VotingWidget, { VotingWidgetStyle } from "@components/Voting";
 import EntryPreviewHeader from "@components/Voting/components/EntryPreviewHeader";
 import { usePickedEntryPreview } from "@components/Voting/hooks/usePickedEntryPreview";
-import { VoteFlowScreen } from "@components/Voting/types";
+import { VoteFlowScreen, VotingWidgetLayout } from "@components/Voting/types";
 import ConfirmVote from "@components/Voting/VoteFlow/components/ConfirmVote";
 import { useVoteFlowController } from "@components/Voting/VoteFlow/hooks/useVoteFlowController";
-import VotingSidebarVoters from "./components/Voters";
 import useCastVotes from "@hooks/useCastVotes";
 import { useCastVotesStore } from "@hooks/useCastVotes/store";
 import { useContestStore } from "@hooks/useContest/store";
@@ -21,7 +21,16 @@ import { FC, useEffect } from "react";
 import { useShallow } from "zustand/shallow";
 import { useAutoPickFirstProposal } from "./useAutoPickFirstProposal";
 
-const VotingSidebar: FC = () => {
+const VOTE_CONTAINER_SURFACE = {
+  background: "radial-gradient(120% 55% at 50% 0%, rgba(187, 101, 255, 0.09) 0%, rgba(187, 101, 255, 0) 70%), #141414",
+  boxShadow: "inset 0 1px 0 rgba(255, 255, 255, 0.08)",
+};
+
+interface VotingSidebarProps {
+  layout?: VotingWidgetLayout;
+}
+
+const VotingSidebar: FC<VotingSidebarProps> = ({ layout = VotingWidgetLayout.regular }) => {
   useAutoPickFirstProposal();
   const { contestConfig } = useContestConfigStore(useShallow(state => state));
   const { charge: contestCharge, votingClose } = useContestStore(
@@ -37,7 +46,6 @@ const VotingSidebar: FC = () => {
   const contestState = useContestStateStore(useShallow(state => state.contestState));
   const isContestCanceled = contestState === ContestStateEnum.Canceled;
   const isVotingOpen = contestStatus === ContestStatus.VotingOpen;
-  const isVotingClosed = contestStatus === ContestStatus.VotingClosed;
   const pickedProposal = useCastVotesStore(state => state.pickedProposal);
   const { castVotes, isLoading } = useCastVotes({
     charge: contestCharge,
@@ -84,67 +92,68 @@ const VotingSidebar: FC = () => {
     goToVote();
   }, [pickedProposal, goToVote]);
 
-  if (isContestCanceled || (!isVotingOpen && !isVotingClosed) || !pickedProposal) return null;
+  if (isContestCanceled || !isVotingOpen || !pickedProposal) return null;
 
   return (
-    <div className="bg-primary-1 rounded-4xl p-4 flex flex-col gap-4">
-      {isVotingOpen && (
-        <div
-          className={`relative px-6 py-4 rounded-4xl flex flex-col gap-4 ${screen === VoteFlowScreen.AddFunds ? "bg-primary-13" : "bg-gradient-voting-area-purple"}`}
-        >
-          {screen === VoteFlowScreen.Vote && !hidesVotingArea && (
-            <EntryPreviewHeader image={image} title={title} contestName={contestName} />
-          )}
+    <div
+      className="border border-white/14 p-2 rounded-3xl wide:rounded-[28px] flex flex-col"
+      style={VOTE_CONTAINER_SURFACE}
+    >
+      <div
+        className={`relative px-3 py-3 rounded-2xl flex flex-col gap-4 ${screen === VoteFlowScreen.AddFunds ? "bg-primary-13" : ""}`}
+      >
+        {screen === VoteFlowScreen.Vote && !hidesVotingArea && (
+          <EntryPreviewHeader image={image} title={title} contestName={contestName} />
+        )}
 
-          {hidesVotingArea ? null : screen === VoteFlowScreen.AddFunds ? (
-            <div className="animate-appear">
-              <AddFunds
-                chain={contestConfig.chainName}
-                asset={contestConfig.chainNativeCurrencySymbol ?? ""}
-                onGoBack={goToVote}
-                onBridgeSuccess={handleBridgeSuccess}
-              />
-            </div>
-          ) : screen === VoteFlowScreen.Confirm ? (
-            <div className="animate-appear">
-              <ConfirmVote
-                entryPreview={entryPreview}
-                chainNativeCurrencySymbol={contestConfig.chainNativeCurrencySymbol ?? ""}
-                costToVote={effectiveCostToVote}
-                isVotingClosed={false}
-                isVoteLoading={isLoading}
-                onConfirm={confirmVote}
-                onGoBack={goToVote}
-              />
-            </div>
-          ) : (
-            <VotingWidget
-              key={pickedProposal}
-              costToVote={currentPricePerVote}
-              style={VotingWidgetStyle.colored}
-              isLoading={isCurrentPricePerVoteLoading || isLoading}
-              isVotingClosed={false}
-              isContestCanceled={isContestCanceled}
-              onVote={onVote}
-              onAddFunds={goToAddFunds}
-              onConnectRequest={requestConnectAndVote}
-              submissionsCount={submissionsCount}
+        {hidesVotingArea ? null : screen === VoteFlowScreen.AddFunds ? (
+          <div className="animate-appear">
+            <AddFunds
+              chain={contestConfig.chainName}
+              asset={contestConfig.chainNativeCurrencySymbol ?? ""}
+              onGoBack={goToVote}
+              onBridgeSuccess={handleBridgeSuccess}
             />
-          )}
+          </div>
+        ) : screen === VoteFlowScreen.Confirm ? (
+          <div className="animate-appear">
+            <ConfirmVote
+              entryPreview={entryPreview}
+              chainNativeCurrencySymbol={contestConfig.chainNativeCurrencySymbol ?? ""}
+              costToVote={effectiveCostToVote}
+              isVotingClosed={false}
+              isVoteLoading={isLoading}
+              onConfirm={confirmVote}
+              onGoBack={goToVote}
+            />
+          </div>
+        ) : (
+          <VotingWidget
+            key={pickedProposal}
+            costToVote={currentPricePerVote}
+            style={VotingWidgetStyle.muted}
+            layout={layout}
+            isLoading={isCurrentPricePerVoteLoading || isLoading}
+            isVotingClosed={false}
+            isContestCanceled={isContestCanceled}
+            onVote={onVote}
+            onAddFunds={goToAddFunds}
+            onConnectRequest={requestConnectAndVote}
+            submissionsCount={submissionsCount}
+            pinVoteButton
+          />
+        )}
 
-          <InlineTransactionOverlay className="rounded-4xl" inFlowClassName="-mx-6 -my-4" />
-        </div>
-      )}
-
-      {screen === VoteFlowScreen.Vote && (
-        <VotingSidebarVoters
-          key={pickedProposal}
-          proposalId={pickedProposal}
-          image={image}
-          title={title}
-          contestName={contestName}
+        <InlineTransactionOverlay
+          className="rounded-2xl"
+          inFlowClassName="-mx-3 -my-3"
+          textSize={
+            layout === VotingWidgetLayout.compact
+              ? TransactionOverlayTextSize.SMALL
+              : TransactionOverlayTextSize.REGULAR
+          }
         />
-      )}
+      </div>
     </div>
   );
 };

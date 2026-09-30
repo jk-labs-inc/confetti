@@ -1,10 +1,11 @@
 import { PriceCurveType } from "@hooks/useDeployContest/types";
-import { ContestVoteEvent } from "@hooks/useContestVoteMarkers";
+import { ContestVoteEvent } from "@hooks/useContestVoteLedger";
 import AnimatedDot from "./components/AnimatedDot";
 import AxisLabels from "./components/AxisLabels";
 import ConfettiParticles from "./components/ConfettiParticles";
 import GridLines from "./components/GridLines";
 import PriceCurveHeader from "./components/Header";
+import { PriceCurveHeaderTone } from "./components/Header/constants";
 import HoverOverlay from "./components/HoverOverlay";
 import CurveMarker from "./components/Voters/components/CurveMarker";
 import VoterRibbon from "./components/Voters/Ribbon";
@@ -22,7 +23,7 @@ import {
 } from "./constants";
 import { useChartInteraction } from "./hooks/useChartInteraction";
 import { useChartScales } from "./hooks/useChartScales";
-import { ChartDataPoint } from "./types";
+import { ChartDataPoint, ChartPadding } from "./types";
 import { curveMonotoneX } from "@visx/curve";
 import { Group } from "@visx/group";
 import { LinePath } from "@visx/shape";
@@ -53,9 +54,9 @@ interface PriceCurveProps {
   voteEvents?: ContestVoteEvent[];
   entryTitlesById?: Map<string, string>;
   rankById?: Map<string, number>;
-  onLoadMoreVotes?: () => void;
-  hasMoreVotes?: boolean;
-  isLoadingMoreVotes?: boolean;
+  showVoterRibbon?: boolean;
+  headerTone?: PriceCurveHeaderTone;
+  chartPadding?: ChartPadding;
 }
 
 const EMPTY_ENTRY_TITLES: Map<string, string> = new Map();
@@ -84,14 +85,14 @@ const PriceCurve: FC<PriceCurveProps> = ({
   voteEvents = [],
   entryTitlesById = EMPTY_ENTRY_TITLES,
   rankById = EMPTY_RANKS,
-  onLoadMoreVotes,
-  hasMoreVotes,
-  isLoadingMoreVotes,
+  showVoterRibbon = true,
+  headerTone,
+  chartPadding,
 }) => {
   const svgRef = useRef<SVGSVGElement>(null);
 
   const pad = noPadding ? NO_PADDING : CARD_PADDING;
-  const chartPad = showAxisLabels ? CHART_PADDING_WITH_LABELS : CHART_PADDING;
+  const chartPad = chartPadding ?? (showAxisLabels ? CHART_PADDING_WITH_LABELS : CHART_PADDING);
   const svgWidth = width - pad.left - pad.right;
   const svgHeight = height - pad.top - HEADER_HEIGHT - pad.bottom;
   const chartWidth = svgWidth - chartPad.left - chartPad.right;
@@ -145,6 +146,7 @@ const PriceCurve: FC<PriceCurveProps> = ({
         intervalText={intervalText}
         isExpanded={isExpanded}
         onToggleExpand={onToggleExpand}
+        tone={headerTone}
       />
 
       {collapsed ? null : (
@@ -172,9 +174,6 @@ const PriceCurve: FC<PriceCurveProps> = ({
                 hoveredDotY={yScale(hoveredPoint.pv)}
                 chartWidth={chartWidth}
                 chartHeight={chartHeight}
-                chartPadTop={chartPad.top}
-                chartPadRight={chartPad.right}
-                svgHeight={svgHeight}
                 formatPrice={formatPrice}
               />
             )}
@@ -213,16 +212,13 @@ const PriceCurve: FC<PriceCurveProps> = ({
         </svg>
       )}
 
-      {!collapsed && showVoters && (
+      {!collapsed && showVoters && showVoterRibbon && (
         <VoterRibbon
           votes={positionedVotes}
           rankById={rankById}
           formatPrice={formatPrice}
           entryTitlesById={entryTitlesById}
           isLive={isDuring}
-          onLoadMore={onLoadMoreVotes}
-          hasMore={hasMoreVotes}
-          isLoadingMore={isLoadingMoreVotes}
         />
       )}
     </div>

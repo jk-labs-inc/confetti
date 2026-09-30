@@ -6,6 +6,7 @@ import useContestConfigStore from "@hooks/useContestConfig/store";
 import { useContestRealtime } from "@hooks/useContestRealtime";
 import { useContestStatusStore } from "@hooks/useContestStatus/store";
 import { useContestStatusTimer } from "@hooks/useContestStatusTimer";
+import { useLedgerChainSync, useLedgerRealtime } from "@hooks/useContestVoteLedger";
 import useRewardsModule from "@hooks/useRewards";
 import { useEffect } from "react";
 import { useConnectionEffect } from "wagmi";
@@ -45,6 +46,8 @@ export const useLayoutViewContest = () => {
   });
 
   const { isConnected: isRealtimeConnected } = useContestRealtime();
+  useLedgerRealtime();
+  useLedgerChainSync();
 
   // OFAC address check
   useConnectionEffect({

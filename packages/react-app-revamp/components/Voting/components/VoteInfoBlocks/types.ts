@@ -1,3 +1,5 @@
+import { VotingWidgetLayout } from "@components/Voting/types";
+
 export type VoteInfoBlockType = "my-votes" | "total-votes";
 
 interface BaseVoteInfoBlocksProps {
@@ -11,6 +13,7 @@ export interface MyVotesProps extends BaseVoteInfoBlocksProps {
   insufficientBalance: boolean;
   isConnected: boolean;
   onAddFunds?: () => void;
+  layout?: VotingWidgetLayout;
 }
 
 export interface TotalVotesProps extends BaseVoteInfoBlocksProps {

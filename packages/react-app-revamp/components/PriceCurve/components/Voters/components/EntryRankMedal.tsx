@@ -1,7 +1,7 @@
 import RankBadge from "@components/UI/RankBadge";
 import { FC } from "react";
 
-const MEDAL_IMAGES: Record<number, string> = {
+export const MEDAL_IMAGES: Record<number, string> = {
   1: "/contest/gold-medal.png",
   2: "/contest/silver-medal.png",
   3: "/contest/bronze-medal.png",

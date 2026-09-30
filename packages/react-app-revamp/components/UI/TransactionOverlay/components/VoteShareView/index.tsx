@@ -2,8 +2,14 @@ import GradientText from "@components/UI/GradientText";
 import { generateTwitterShareUrlForVotedEntry } from "@helpers/share";
 import { motion } from "motion/react";
 import { FC } from "react";
+import { OVERLAY_TYPE_SCALE } from "../../constants";
 import { VOTE_SHARE_COPY } from "../../copy";
-import { TransactionOverlayPlacement, TransactionOverlaySuccessMeta, TransactionOverlayVoteShare } from "../../types";
+import {
+  TransactionOverlayPlacement,
+  TransactionOverlaySuccessMeta,
+  TransactionOverlayTextSize,
+  TransactionOverlayVoteShare,
+} from "../../types";
 import OverlayCloseButton from "../OverlayCloseButton";
 import ShareOnXButton from "../ShareOnXButton";
 import SuccessBurst from "../SuccessBurst";
@@ -15,10 +21,12 @@ interface VoteShareViewProps {
   meta: TransactionOverlaySuccessMeta | null;
   share: TransactionOverlayVoteShare | null;
   placement: TransactionOverlayPlacement;
+  textSize: TransactionOverlayTextSize;
 }
 
-const VoteShareView: FC<VoteShareViewProps> = ({ meta, share, placement }) => {
+const VoteShareView: FC<VoteShareViewProps> = ({ meta, share, placement, textSize }) => {
   const isFullscreen = placement === TransactionOverlayPlacement.FULLSCREEN;
+  const typeScale = OVERLAY_TYPE_SCALE[textSize];
 
   const content = (
     <div
@@ -27,13 +35,13 @@ const VoteShareView: FC<VoteShareViewProps> = ({ meta, share, placement }) => {
       {...meta?.dataAttributes}
     >
       <motion.div
-        className="flex flex-col gap-4 text-[16px] text-neutral-11"
+        className={`flex flex-col gap-4 ${typeScale.shareBody} text-neutral-11`}
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.15, duration: 0.3, ease: "easeOut" }}
       >
         <div className="mb-3">
-          <GradientText isFontSabo={false} textSizeClassName="text-[24px] font-bold">
+          <GradientText isFontSabo={false} textSizeClassName={`${typeScale.shareHeading} font-bold`}>
             {VOTE_SHARE_COPY.heading}
           </GradientText>
         </div>

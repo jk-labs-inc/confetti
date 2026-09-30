@@ -4,6 +4,13 @@ export interface ChartDataPoint {
   pv: number;
 }
 
+export interface ChartPadding {
+  top: number;
+  right: number;
+  bottom: number;
+  left: number;
+}
+
 export interface PriceCurveChartProps {
   data: ChartDataPoint[];
   currentPrice: number;

@@ -1,4 +1,4 @@
-import { ContestVoteEvent } from "@hooks/useContestVoteMarkers";
+import { ContestVoteEvent } from "@hooks/useContestVoteLedger";
 import { clamp } from "lodash";
 import { ChartDataPoint } from "../../types";
 import { PositionedVote } from "./types";

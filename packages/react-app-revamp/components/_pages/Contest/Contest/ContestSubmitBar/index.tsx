@@ -1,4 +1,5 @@
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
+import { MOBILE_MAX_WIDTH_PX } from "@helpers/isMobileViewport";
 import { useContestStore } from "@hooks/useContest/store";
 import { useMobileNavSlot } from "@hooks/useMobileNavSlot";
 import { useProposalStore } from "@hooks/useProposal/store";
@@ -12,7 +13,7 @@ interface ContestSubmitBarProps {
 }
 
 const ContestSubmitBar = ({ variant }: ContestSubmitBarProps) => {
-  const isMobile = useMediaQuery({ maxWidth: 768 });
+  const isMobile = useMediaQuery({ maxWidth: MOBILE_MAX_WIDTH_PX });
   const submissionsCount = useProposalStore(useShallow(state => state.submissionsCount));
   const contestMaxProposalCount = useContestStore(useShallow(state => state.contestMaxProposalCount));
   const showsMobileBar = isMobile && (variant.kind === "counter-submit" || variant.kind === "connect");

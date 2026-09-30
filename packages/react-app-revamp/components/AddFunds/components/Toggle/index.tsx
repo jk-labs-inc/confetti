@@ -59,7 +59,7 @@ const AddFundsToggle: FC<AddFundsToggleProps> = ({ value, onChange }) => {
 
   return (
     <div
-      className="relative flex w-[304px] h-8 items-center rounded-full bg-transparent border border-primary-3 p-1"
+      className="relative flex w-full max-w-[304px] h-8 items-center rounded-full bg-transparent border border-primary-3 p-1"
       role="tablist"
     >
       <motion.div
@@ -79,7 +79,7 @@ const AddFundsToggle: FC<AddFundsToggleProps> = ({ value, onChange }) => {
           }}
           onClick={() => handleClick(index)}
           onKeyDown={e => handleKeyDown(e, index)}
-          className={`relative z-10 h-6 flex-1 text-base font-semibold rounded-full transition-colors duration-200 focus:outline-none cursor-pointer flex items-center justify-center gap-1.5 ${
+          className={`relative z-10 h-6 flex-1 text-base @max-[320px]:text-sm font-semibold rounded-full transition-colors duration-200 focus:outline-none cursor-pointer flex items-center justify-center gap-1.5 ${
             selectedIndex === index ? "text-true-black" : "text-neutral-14"
           }`}
           role="tab"

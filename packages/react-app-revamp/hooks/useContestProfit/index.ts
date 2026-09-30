@@ -7,6 +7,7 @@ import { useWallet } from "@hooks/useWallet";
 import { RewardModuleInfo } from "lib/rewards/types";
 import { useMemo, useCallback } from "react";
 import { useShallow } from "zustand/shallow";
+import { calculateProfitPercentage } from "@helpers/percentages";
 import { ContestProfitData } from "./types";
 
 interface UseContestProfitParams {
@@ -22,13 +23,6 @@ const EMPTY_PROFIT_DATA: ContestProfitData = {
   isLoading: false,
   isError: false,
   refetch: () => {},
-};
-
-const calculateProfitPercentage = (rewards: bigint, spent: bigint): number => {
-  if (spent === 0n) return 0;
-
-  const profitBps = ((rewards - spent) * 10000n) / spent;
-  return Number(profitBps) / 100;
 };
 
 const useContestProfit = ({ contestAddress, chainId, rewards }: UseContestProfitParams): ContestProfitData => {

@@ -9,9 +9,6 @@ interface HoverOverlayProps {
   hoveredDotY: number;
   chartWidth: number;
   chartHeight: number;
-  chartPadTop: number;
-  chartPadRight: number;
-  svgHeight: number;
   formatPrice: (nativePrice: number) => string;
 }
 
@@ -21,9 +18,6 @@ const HoverOverlay: FC<HoverOverlayProps> = ({
   hoveredDotY,
   chartWidth,
   chartHeight,
-  chartPadTop,
-  chartPadRight,
-  svgHeight,
   formatPrice,
 }) => {
   const dateLabel = moment(hoveredPoint.date).format("MMM D, h:mmA");
@@ -34,22 +28,7 @@ const HoverOverlay: FC<HoverOverlayProps> = ({
 
   return (
     <>
-      <rect
-        x={hoveredDotX}
-        y={-chartPadTop}
-        width={chartWidth + chartPadRight - hoveredDotX}
-        height={svgHeight}
-        fill="rgba(0,0,0,0.7)"
-      />
-
-      <line
-        x1={hoveredDotX}
-        x2={hoveredDotX}
-        y1={0}
-        y2={chartHeight}
-        stroke="rgba(255,255,255,0.25)"
-        strokeWidth={1}
-      />
+      <line x1={hoveredDotX} x2={hoveredDotX} y1={0} y2={chartHeight} stroke="rgba(255,255,255,0.25)" strokeWidth={1} />
 
       <text
         x={dateLabelX}
@@ -76,14 +55,7 @@ const HoverOverlay: FC<HoverOverlayProps> = ({
       >
         {formatPrice(hoveredPoint.pv)}
       </text>
-      <text
-        x={hoveredDotX + 14}
-        y={hoveredDotY + 10}
-        textAnchor="start"
-        fill="#58F4FF"
-        fontSize={12}
-        fontWeight={700}
-      >
+      <text x={hoveredDotX + 14} y={hoveredDotY + 10} textAnchor="start" fill="#58F4FF" fontSize={12} fontWeight={700}>
         per vote
       </text>
     </>

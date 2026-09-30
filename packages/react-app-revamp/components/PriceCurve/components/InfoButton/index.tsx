@@ -1,9 +1,17 @@
 import HoverInfoTooltip from "@components/UI/HoverInfoTooltip";
+import { FC } from "react";
 
-const InfoButton = () => {
+interface InfoButtonProps {
+  buttonClassName?: string;
+  iconClassName?: string;
+}
+
+const InfoButton: FC<InfoButtonProps> = ({ buttonClassName, iconClassName }) => {
   return (
     <HoverInfoTooltip
       ariaLabel="how the price curve works"
+      buttonClassName={buttonClassName}
+      iconClassName={iconClassName}
       contentClassName="text-[12px] text-true-black leading-tight flex flex-col gap-2 normal-case"
       tooltipClassName="w-[200px]! md:w-[254px]! rounded-lg! normal-case"
       tooltipStyle={{ padding: 8 }}

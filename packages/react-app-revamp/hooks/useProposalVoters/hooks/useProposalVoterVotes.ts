@@ -9,6 +9,7 @@ interface VoterWithVotes {
   address: string;
   votes: bigint | [bigint, bigint];
   formattedVotes: number;
+  isRead: boolean;
 }
 
 interface UseProposalVoterVotesProps {
@@ -52,12 +53,14 @@ export const useProposalVoterVotes = ({
 
       return addressesPage.map((address, index) => {
         const voteData = results[index]?.result as bigint | [bigint, bigint] | undefined;
+        const isRead = results[index]?.status === "success";
 
         if (!voteData) {
           return {
             address,
             votes: hasDownvotes ? [BigInt(0), BigInt(0)] : BigInt(0),
             formattedVotes: 0,
+            isRead,
           };
         }
 
@@ -68,6 +71,7 @@ export const useProposalVoterVotes = ({
           address,
           votes: voteData,
           formattedVotes: Number(formatEther(netVotes)),
+          isRead,
         };
       });
     },

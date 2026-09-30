@@ -5,14 +5,15 @@ import useRewardsModule from "@hooks/useRewards";
 import { usePathname } from "next/navigation";
 import { FC } from "react";
 import { Abi } from "viem";
-import RewardsDisplay from "./components/RewardsDisplay";
+import RewardsDisplay, { RewardsInfoVariant } from "./components/RewardsDisplay";
 import RewardsLoader from "./components/RewardsLoader";
 
 interface ContestRewardsInfoProps {
   version: string;
+  variant?: RewardsInfoVariant;
 }
 
-const ContestRewardsInfo: FC<ContestRewardsInfoProps> = ({ version }) => {
+const ContestRewardsInfo: FC<ContestRewardsInfoProps> = ({ version, variant = "stat" }) => {
   const pathname = usePathname();
   const { chainName } = extractPathSegments(pathname);
   const chainId = chains.filter(
@@ -38,6 +39,7 @@ const ContestRewardsInfo: FC<ContestRewardsInfoProps> = ({ version }) => {
 
   return (
     <RewardsDisplay
+      variant={variant}
       rewardsModuleAddress={rewards.contractAddress as `0x${string}`}
       rewardsAbi={rewards.abi as Abi}
       chainId={chainId}

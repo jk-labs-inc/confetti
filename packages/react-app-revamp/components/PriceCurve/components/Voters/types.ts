@@ -1,4 +1,4 @@
-import { ContestVoteEvent } from "@hooks/useContestVoteMarkers";
+import { ContestVoteEvent } from "@hooks/useContestVoteLedger";
 
 export interface PositionedVote extends ContestVoteEvent {
   x: number;
@@ -16,7 +16,6 @@ export interface VoterRibbonProps {
   formatPrice: (nativePrice: number) => string;
   entryTitlesById: Map<string, string>;
   isLive: boolean;
-  onLoadMore?: () => void;
-  hasMore?: boolean;
-  isLoadingMore?: boolean;
+  showHeader?: boolean;
+  isInteractive?: boolean;
 }

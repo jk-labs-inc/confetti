@@ -8,6 +8,8 @@ import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/s
 import { FOOTER_LINKS } from "@config/links";
 import { FC, useMemo } from "react";
 import { useShallow } from "zustand/shallow";
+import { useDescriptionDisclosure } from "../../hooks/useDescriptionDisclosure";
+import MobileContestTitle from "./components/MobileContestTitle";
 
 const BURGER_MENU_LINKS = ["Github", "Linktree", "Docs", "Report a bug", "Terms", "Privacy Policy", "Media Kit", "FAQ"];
 
@@ -18,6 +20,8 @@ interface MobileHeaderProps {
   canEditTitle: boolean;
   contestAuthorEthereumAddress: string;
   contestVersion: string;
+  contestPrompt: string;
+  showDescriptionToggle: boolean;
 }
 
 const MobileHeader: FC<MobileHeaderProps> = ({
@@ -25,11 +29,16 @@ const MobileHeader: FC<MobileHeaderProps> = ({
   contestAddress,
   chainName,
   contestAuthorEthereumAddress,
+  contestPrompt,
+  showDescriptionToggle,
 }) => {
   const { contestState } = useContestStateStore(state => state);
-  const { votesOpen, votesClose } = useContestStore(useShallow(state => ({ votesOpen: state.votesOpen, votesClose: state.votesClose })));
+  const { votesOpen, votesClose } = useContestStore(
+    useShallow(state => ({ votesOpen: state.votesOpen, votesClose: state.votesClose })),
+  );
   const isContestCanceled = contestState === ContestStateEnum.Canceled;
   const filteredLinks = useMemo(() => FOOTER_LINKS.filter(link => BURGER_MENU_LINKS.includes(link.label)), []);
+  const description = useDescriptionDisclosure(showDescriptionToggle, contestPrompt);
 
   return (
     <div className="animate-fade-in sticky top-0 z-20 -mx-6 bg-true-black px-6 pt-3 pb-3">
@@ -81,13 +90,22 @@ const MobileHeader: FC<MobileHeaderProps> = ({
               </BurgerMenu>
             </div>
           </div>
-          <p
-            className={`text-neutral-11 font-sabo-filled ${contestName.length > 25 ? "text-[18px]" : "text-[20px]"} ${isContestCanceled ? "line-through" : ""}`}
-          >
-            {contestName}
-          </p>
+          {description.toggle ? (
+            <MobileContestTitle
+              contestName={contestName}
+              isCanceled={isContestCanceled}
+              trailing={description.toggle}
+            />
+          ) : (
+            <p
+              className={`text-neutral-11 font-sabo-filled ${contestName.length > 25 ? "text-[18px]" : "text-[20px]"} ${isContestCanceled ? "line-through" : ""}`}
+            >
+              {contestName}
+            </p>
+          )}
         </div>
       </div>
+      {description.panel}
     </div>
   );
 };
