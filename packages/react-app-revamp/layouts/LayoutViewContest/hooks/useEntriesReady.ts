@@ -1,4 +1,5 @@
 import { useContestStore } from "@hooks/useContest/store";
+import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import { useProposalStore } from "@hooks/useProposal/store";
 import { useShallow } from "zustand/shallow";
 
@@ -14,4 +15,13 @@ export const useEntriesReady = (): boolean => {
   );
 
   return !isContestLoading && !isListProposalsLoading && isContestSuccess && isListProposalsSuccess;
+};
+
+export const useHasNoEntries = (): boolean => {
+  const isReady = useEntriesReady();
+  const submissionsCount = useProposalStore(state => state.submissionsCount);
+  const contestStatus = useContestStatusStore(state => state.contestStatus);
+  const isVotingPhase = contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed;
+
+  return isReady && isVotingPhase && submissionsCount === 0;
 };

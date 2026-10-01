@@ -19,7 +19,7 @@ export type {
   LeaderboardRow,
   UseContestLeaderboardParams,
 } from "./types";
-export { formatMainEntryLine, rankRowsByMultiple } from "./rows";
+export { rankRowsByMultiple } from "./rows";
 export { useSyncVerifyAddresses } from "./useVerifiedVoterStats";
 export { invalidateContestLeaderboard } from "./verifiedStats";
 

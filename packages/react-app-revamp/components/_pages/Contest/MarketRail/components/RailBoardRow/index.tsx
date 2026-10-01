@@ -5,21 +5,19 @@ import { LeaderboardRow } from "@hooks/useContestLeaderboard";
 import { NativePriceFormatter } from "@hooks/useNativePriceFormatter";
 import useProfileData from "@hooks/useProfileData";
 import { FC } from "react";
-import MainEntryLine from "../../../FullBoard/components/MainEntryLine";
 import VoterName from "../../../FullBoard/components/VoterName";
 import { ME_HIGHLIGHT_CLASS_NAME } from "../../../FullBoard/constants";
-import { RAIL_AVATAR_PX, RAIL_CHIP_PX, RAIL_ENTRY_MEDAL_PX, RAIL_MEDAL_CELL_PX } from "../../constants";
+import { RAIL_AVATAR_PX, RAIL_CHIP_PX, RAIL_MEDAL_CELL_PX } from "../../constants";
 
 interface RailBoardRowProps {
   row: LeaderboardRow;
-  entryTitle?: string;
   formatPrice: NativePriceFormatter;
 }
 
 const DEFAULT_FRAME_CLASS_NAME = "border-b border-neutral-4 last:border-b-0 px-0.5";
 const VIEWER_FRAME_CLASS_NAME = `rounded-xl px-2 not-first:mt-1.5 not-last:mb-1.5 ${ME_HIGHLIGHT_CLASS_NAME}`;
 
-const RailBoardRow: FC<RailBoardRowProps> = ({ row, entryTitle, formatPrice }) => {
+const RailBoardRow: FC<RailBoardRowProps> = ({ row, formatPrice }) => {
   const { profileName, profileAvatar } = useProfileData(row.address, true);
 
   return (
@@ -47,12 +45,6 @@ const RailBoardRow: FC<RailBoardRowProps> = ({ row, entryTitle, formatPrice }) =
           profileName={profileName}
           meClassName="text-[12px] font-bold"
           linkClassName="w-fit max-w-full text-[12px] font-bold"
-        />
-        <MainEntryLine
-          mainEntry={row.mainEntry}
-          entryTitle={entryTitle}
-          medalPx={RAIL_ENTRY_MEDAL_PX}
-          className="min-w-0 text-[10px]"
         />
       </div>
       <div className="flex flex-col items-end gap-1">

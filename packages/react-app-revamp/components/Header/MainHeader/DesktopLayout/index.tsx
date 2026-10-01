@@ -3,11 +3,20 @@ import CurrencyToggle from "@components/Header/CurrencyToggle";
 import PlayCreateToggle from "@components/Header/PlayCreateToggle";
 import CustomLink from "@components/UI/Link";
 import Logo from "@components/UI/Logo";
+import { CONTEST_ULTRAWIDE_WIDTH_CLASS_NAME } from "@hooks/useContestLayoutBand";
 import { FC } from "react";
 
-const MainHeaderDesktopLayout: FC = () => {
+interface MainHeaderDesktopLayoutProps {
+  isContestPage: boolean;
+}
+
+const MainHeaderDesktopLayout: FC<MainHeaderDesktopLayoutProps> = ({ isContestPage }) => {
   return (
-    <header className="grid grid-cols-[1fr_auto_1fr] items-center px-12 mt-8 xl:px-0 xl:w-[calc(100%-2rem)] xl:max-w-[1272px] wide:max-w-[1352px] xl:mx-auto">
+    <header
+      className={`grid grid-cols-[1fr_auto_1fr] items-center px-12 mt-8 xl:px-0 xl:w-[calc(100%-2rem)] xl:max-w-[1272px] wide:max-w-[1352px] xl:mx-auto ${
+        isContestPage ? CONTEST_ULTRAWIDE_WIDTH_CLASS_NAME : ""
+      }`}
+    >
       <CustomLink href="/">
         <Logo />
       </CustomLink>

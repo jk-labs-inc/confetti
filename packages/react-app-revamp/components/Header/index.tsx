@@ -15,7 +15,7 @@ const Header: React.FC = () => {
     return <CreateFlowHeader />;
   }
 
-  return <MainHeader showProfile />;
+  return <MainHeader showProfile isContestPage={!!pathname?.startsWith("/contest/")} />;
 };
 
 export default Header;

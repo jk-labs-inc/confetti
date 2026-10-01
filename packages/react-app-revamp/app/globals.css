@@ -837,6 +837,49 @@ li {
   animation: winnerConfettiFall var(--duration) linear var(--delay) infinite;
 }
 
+@keyframes emptyStageConfettiLand {
+  0% {
+    opacity: 0;
+    transform: translate(var(--from-x), var(--from-y)) rotate(calc(var(--spin) - 540deg));
+  }
+  15% {
+    opacity: 1;
+  }
+  55% {
+    transform: translate(calc(var(--from-x) * -0.4), calc(var(--from-y) * 0.35)) rotate(calc(var(--spin) - 180deg));
+  }
+  100% {
+    opacity: 1;
+    transform: translate(0, 0) rotate(var(--spin));
+  }
+}
+
+.empty-stage-confetti {
+  animation: emptyStageConfettiLand var(--duration) cubic-bezier(0.3, 0.5, 0.4, 1) var(--delay) both;
+}
+
+@keyframes emptyStageSway {
+  0%,
+  100% {
+    transform: rotate(-2deg);
+  }
+  50% {
+    transform: rotate(2deg);
+  }
+}
+
+.empty-stage-sway {
+  transform-origin: 50% 100%;
+  animation: emptyStageSway 3.6s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .empty-stage-confetti,
+  .empty-stage-sway {
+    animation: none;
+  }
+}
+
 @keyframes ellipsis {
   to {
     width: 40px;

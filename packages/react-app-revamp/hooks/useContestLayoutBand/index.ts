@@ -11,6 +11,7 @@ export enum ContestLayoutBand {
 export const CONTEST_VOTE_RAIL_MIN_WIDTH_PX = 1024;
 export const CONTEST_TERMINAL_MIN_WIDTH_PX = 1280;
 export const CONTEST_WIDE_MIN_WIDTH_PX = 1440;
+export const CONTEST_ULTRAWIDE_WIDTH_CLASS_NAME = "4xl:w-[calc(100%-12rem)] 4xl:max-w-[1760px]";
 
 export const useHasVoteRail = (): boolean => useMediaQuery({ minWidth: CONTEST_VOTE_RAIL_MIN_WIDTH_PX });
 

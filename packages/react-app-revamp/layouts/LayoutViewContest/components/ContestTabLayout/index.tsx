@@ -1,5 +1,7 @@
 import { ContestLayoutBand, useContestLayoutBand } from "@hooks/useContestLayoutBand";
 import { FC } from "react";
+import { useHasNoEntries } from "../../hooks/useEntriesReady";
+import ContestEntriesColumn from "../ContestEntriesColumn";
 import ContestMobileLayout from "../ContestMobileLayout";
 import ContestTabletLayout from "../ContestTabletLayout";
 import ContestTerminalLayout from "../ContestTerminalLayout";
@@ -11,6 +13,15 @@ interface ContestTabLayoutProps {
 
 const ContestTabLayout: FC<ContestTabLayoutProps> = ({ showVoteRail }) => {
   const band = useContestLayoutBand();
+  const hasNoEntries = useHasNoEntries();
+
+  if (hasNoEntries) {
+    return (
+      <div className="mt-3">
+        <ContestEntriesColumn scrollMode="page" />
+      </div>
+    );
+  }
 
   switch (band) {
     case ContestLayoutBand.Mobile:
