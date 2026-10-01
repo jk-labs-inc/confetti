@@ -1,6 +1,7 @@
 import { chains, ChainWithIcon } from "@config/wagmi/chains";
 import { useAccount, useLogout, useWallet as useParaWallet } from "@getpara/react-sdk-lite";
 import { useMemo } from "react";
+import { getAddress, isAddress } from "viem";
 import { Connector, useChainId, useSwitchChain } from "wagmi";
 
 interface WalletHookReturn {
@@ -39,11 +40,13 @@ export function useWallet(): WalletHookReturn {
   // Resolve user address based on connection type
   const userAddress = useMemo(() => {
     // External wallet address comes from wagmi connection
-    if (connectionType === "external" && external?.evm?.address) {
-      return external.evm.address;
-    }
     // Embedded wallet address comes from Para wallet
-    return paraWallet?.address as `0x${string}` | undefined;
+    const rawAddress =
+      connectionType === "external" && external?.evm?.address
+        ? external.evm.address
+        : (paraWallet?.address as `0x${string}` | undefined);
+
+    return rawAddress && isAddress(rawAddress, { strict: false }) ? getAddress(rawAddress) : rawAddress;
   }, [connectionType, external?.evm?.address, paraWallet?.address]);
 
   // wagmi connection with an expired Para session reports
