@@ -4,7 +4,13 @@ import { LeaderboardRow } from "@hooks/useContestLeaderboard";
 import { NativePriceFormatter } from "@hooks/useNativePriceFormatter";
 import useProfileData from "@hooks/useProfileData";
 import { FC } from "react";
-import { BOARD_AVATAR_PX, BOARD_ROW_GRID_CLASS_NAME, ME_HIGHLIGHT_CLASS_NAME, UNRANKED_LABEL } from "../../constants";
+import {
+  BOARD_AVATAR_PX,
+  BOARD_ROW_GRID_CLASS_NAME,
+  ME_HIGHLIGHT_CLASS_NAME,
+  ME_STICKY_CLASS_NAME,
+  UNRANKED_LABEL,
+} from "../../constants";
 import VoterName from "../VoterName";
 
 interface BoardRowProps {
@@ -14,7 +20,9 @@ interface BoardRowProps {
 
 const BoardRow: FC<BoardRowProps> = ({ row, formatPrice }) => {
   const { profileName, profileAvatar } = useProfileData(row.address, true);
-  const frameClassName = row.isViewer ? `rounded-xl ${ME_HIGHLIGHT_CLASS_NAME}` : "border-b border-neutral-4";
+  const frameClassName = row.isViewer
+    ? `rounded-xl ${ME_HIGHLIGHT_CLASS_NAME} ${ME_STICKY_CLASS_NAME}`
+    : "border-b border-neutral-4";
 
   return (
     <div className={`${BOARD_ROW_GRID_CLASS_NAME} ${frameClassName} px-2 py-[9px]`}>

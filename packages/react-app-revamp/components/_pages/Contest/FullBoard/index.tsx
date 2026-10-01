@@ -9,7 +9,7 @@ import Fold from "./components/Fold";
 import Podium from "./components/Podium";
 import BoardRow from "./components/Row";
 import BoardSortControl from "./components/SortControl";
-import { BOARD_SKELETON_ROWS, BoardSort } from "./constants";
+import { BOARD_LIST_MAX_HEIGHT_PX, BOARD_LIST_SCROLL_CLASS_NAME, BOARD_SKELETON_ROWS, BoardSort } from "./constants";
 import { useBoardView } from "./useBoardView";
 
 const FullBoard: FC = () => {
@@ -23,7 +23,7 @@ const FullBoard: FC = () => {
   useSyncVerifyAddresses(view.visibleRows, setVerifyAddresses);
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex min-h-0 flex-col gap-4">
       <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
         <BoardCaption
           poolLabel={isEarningsAvailable ? formatPrice(totals.poolNative) : null}
@@ -38,7 +38,7 @@ const FullBoard: FC = () => {
       ) : (
         <>
           <Podium rows={view.podiumRows} formatPrice={formatPrice} />
-          <div className="flex flex-col">
+          <div className={BOARD_LIST_SCROLL_CLASS_NAME} style={{ maxHeight: BOARD_LIST_MAX_HEIGHT_PX }}>
             {view.listRows.map(row => (
               <BoardRow key={row.address} row={row} formatPrice={formatPrice} />
             ))}
