@@ -3684,10 +3684,10 @@
     "@lifi/sdk" "^4.8.0"
     zustand "^5.0.15"
 
-"@lifi/widget@4.7.0":
-  version "4.7.0"
-  resolved "https://registry.yarnpkg.com/@lifi/widget/-/widget-4.7.0.tgz#e17d632345e829ec6d34fd3c21718c26bf21c08c"
-  integrity sha512-PXrxguP+Z7nPUsYV6F53JV6oTXaqv+uTzmWfr3z9bw2PNzippMx5+YyWVVf7OO2abKHDXDM2wSOaNofaVQyUjQ==
+"@lifi/widget@4.7.1":
+  version "4.7.1"
+  resolved "https://registry.yarnpkg.com/@lifi/widget/-/widget-4.7.1.tgz#70bfac07027b8e4eb2bb53800ae0f85011a5e2ef"
+  integrity sha512-0iWAsv2OVjlC4xvxTx1/flkHQU9dj/fLI7gxcIW7QBC1UVvV3qKHPaXHaTzU3JEI7mnwTtE6TIXnvMU6Cq7v3Q==
   dependencies:
     "@emotion/react" "^11.14.0"
     "@emotion/styled" "^11.14.1"
