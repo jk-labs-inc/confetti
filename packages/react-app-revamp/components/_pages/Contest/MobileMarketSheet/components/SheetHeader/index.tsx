@@ -4,8 +4,8 @@ import { FC } from "react";
 import { MarketSheetSegment } from "../../constants";
 
 const SEGMENT_OPTIONS: SegmentedControlOption<MarketSheetSegment>[] = [
-  { value: MarketSheetSegment.Leaderboard, label: "leaderboard" },
   { value: MarketSheetSegment.Price, label: "price curve" },
+  { value: MarketSheetSegment.Leaderboard, label: "leaderboard" },
   { value: MarketSheetSegment.Activity, label: "activity" },
 ];
 const SEGMENT_OPTIONS_WITHOUT_LEADERBOARD = SEGMENT_OPTIONS.filter(

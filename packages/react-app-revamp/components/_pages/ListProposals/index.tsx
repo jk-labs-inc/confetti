@@ -13,6 +13,7 @@ import useDeleteProposal from "@hooks/useDeleteProposal";
 import { useProposalStore } from "@hooks/useProposal/store";
 import { useWallet } from "@hooks/useWallet";
 import { useEntriesScrollRoot } from "@layouts/LayoutViewContest/components/ContestEntriesColumn/context";
+import { useHasNoEntries } from "@layouts/LayoutViewContest/hooks/useEntriesReady";
 import { switchChain } from "@wagmi/core";
 import { LayoutGroup, motion } from "motion/react";
 import { useEffect, useState } from "react";
@@ -20,9 +21,11 @@ import useInfiniteScroll from "react-infinite-scroll-hook";
 import { useMediaQuery } from "react-responsive";
 import { useShallow } from "zustand/shallow";
 import ListProposalsContainer from "./container";
+import EmptyEntries from "./EmptyEntries";
 import ListProposalsLoader from "./loader";
 import ListProposalsSkeleton from "./skeleton";
 import { isTweetEntryPreview, useEnabledEntryPreview } from "@hooks/useEnabledEntryPreview";
+import { REORDER_TRANSITION, useEntryEntrance } from "./useEntryEntrance";
 import { useLoadMoreProposals } from "./useLoadMoreProposals";
 
 export const ListProposals = () => {
@@ -47,6 +50,8 @@ export const ListProposals = () => {
   const enabledPreview = useEnabledEntryPreview();
   const isTweetContest = isTweetEntryPreview(enabledPreview);
   const { hasNextPage, loadMore: handleLoadMore } = useLoadMoreProposals();
+  const hasNoEntries = useHasNoEntries();
+  const { entranceFor, isReorderAnimated } = useEntryEntrance(listProposalsData);
 
   const [infiniteRef, { rootRef }] = useInfiniteScroll({
     loading: isPageProposalsLoading,
@@ -93,6 +98,10 @@ export const ListProposals = () => {
     return <ListProposalsLoader ref={infiniteRef} />;
   }
 
+  if (hasNoEntries) {
+    return <EmptyEntries />;
+  }
+
   return (
     <EntryVotersSheetProvider>
       {isMobile ? (
@@ -127,8 +136,8 @@ export const ListProposals = () => {
                   return (
                     <motion.div
                       key={`deleting-${proposal.id}`}
-                      layout
-                      transition={{ duration: 0.4, ease: "easeInOut" }}
+                      layout={isReorderAnimated}
+                      transition={REORDER_TRANSITION}
                     >
                       <ListProposalsSkeleton enabledPreview={enabledPreview} highlightColor="#FF78A9" count={1} />
                     </motion.div>
@@ -138,9 +147,9 @@ export const ListProposals = () => {
                   <motion.div
                     key={proposal.id}
                     data-entry-id={proposal.id}
-                    layout
-                    layoutId={proposal.id}
-                    transition={{ duration: 0.4, ease: "easeInOut" }}
+                    layout={isReorderAnimated}
+                    layoutId={isReorderAnimated ? proposal.id : undefined}
+                    {...entranceFor(proposal.id)}
                   >
                     <ProposalContent
                       proposal={toContentProposal(proposal)}

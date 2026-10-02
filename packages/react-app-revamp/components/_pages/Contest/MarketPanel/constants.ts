@@ -9,7 +9,6 @@ export const STRIP_AVATAR_PX = 30;
 export const STRIP_CHIP_PX = 16;
 export const STRIP_MEDAL_GEOMETRY = getMedalAvatarGeometry(STRIP_AVATAR_PX);
 export const STRIP_MEDAL_ROW_HEIGHT_PX = STRIP_MEDAL_GEOMETRY.medalHeightPx + getChipOverhangPx(STRIP_CHIP_PX);
-export const STRIP_ENTRY_MEDAL_PX = 12;
 export const EMPTY_GHOST_SLOT_COUNT = 5;
 
 export enum MarketPanelTab {

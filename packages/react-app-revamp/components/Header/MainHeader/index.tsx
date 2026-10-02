@@ -7,9 +7,10 @@ import MainHeaderMobileLayout from "./MobileLayout";
 
 interface MainHeaderProps {
   showProfile?: boolean;
+  isContestPage?: boolean;
 }
 
-const MainHeader: FC<MainHeaderProps> = ({ showProfile }) => {
+const MainHeader: FC<MainHeaderProps> = ({ showProfile, isContestPage = false }) => {
   const { isConnected, userAddress } = useWallet();
   const { openModal } = useModal();
 
@@ -23,7 +24,7 @@ const MainHeader: FC<MainHeaderProps> = ({ showProfile }) => {
         />
       </MediaQuery>
       <MediaQuery minWidth={1025}>
-        <MainHeaderDesktopLayout />
+        <MainHeaderDesktopLayout isContestPage={isContestPage} />
       </MediaQuery>
     </div>
   );

@@ -29,8 +29,6 @@ interface MergeVerifiedRowsParams extends BuildLeaderboardRowsParams {
 }
 
 const NO_PNL_SORT_VALUE = Number.NEGATIVE_INFINITY;
-const UNTITLED_MAIN_ENTRY = "an entry";
-const NO_MAIN_ENTRY = "no entry yet";
 
 const pnlSortValue = (row: Pick<LeaderboardRow, "pnl">): number => row.pnl?.percentage ?? NO_PNL_SORT_VALUE;
 
@@ -182,6 +180,3 @@ export const sortAndRankRows = (rows: RankableRow[]): LeaderboardRow[] =>
 
 export const rankRowsByMultiple = (rows: LeaderboardRow[]): LeaderboardRow[] =>
   [...rows].sort(compareByMultiple).map((row, index) => ({ ...row, rank: index + 1 }));
-
-export const formatMainEntryLine = (mainEntry: LeaderboardMainEntry | null, entryTitle: string | undefined): string =>
-  mainEntry ? (entryTitle ?? UNTITLED_MAIN_ENTRY) : NO_MAIN_ENTRY;
