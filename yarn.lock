@@ -3146,14 +3146,47 @@
     uuid "^11.1.1"
     xstate "^5.24.0"
 
-"@getpara/evm-wallet-connectors@3.20.0":
-  version "3.20.0"
-  resolved "https://registry.yarnpkg.com/@getpara/evm-wallet-connectors/-/evm-wallet-connectors-3.20.0.tgz#b0e9771a503e790b0750c1366db3ba498ccb161c"
-  integrity sha512-7+Q+oIc13aoEYE8q5accr9yyUkZtNJfgGr46XXLwXHN2zKAxh7sraDPwYJOZEChtuuVuKYslOEpsaKa5o0WKfQ==
+"@getpara/core-sdk@3.21.0":
+  version "3.21.0"
+  resolved "https://registry.yarnpkg.com/@getpara/core-sdk/-/core-sdk-3.21.0.tgz#b7b411488b1b57807284836d51b81a8e5c23c056"
+  integrity sha512-RZH6gSwEa/olCnys+zUiQLAXkpBY75htS92yUN/xOHWZde8vekKY7TJyafo4KI6LNleeeJWhRvyPVWHhjFkmwg==
+  dependencies:
+    "@celo/utils" "^8.0.2"
+    "@getpara/shared" "^1.34.0"
+    "@getpara/user-management-client" "3.21.0"
+    "@noble/curves" "^1.9.7"
+    "@noble/hashes" "^1.5.0"
+    "@opentelemetry/api" "^1.9.1"
+    "@opentelemetry/context-zone" "^2.9.0"
+    "@opentelemetry/core" "^2.9.0"
+    "@opentelemetry/exporter-trace-otlp-http" "^0.220.0"
+    "@opentelemetry/instrumentation" "^0.220.0"
+    "@opentelemetry/instrumentation-fetch" "^0.220.0"
+    "@opentelemetry/instrumentation-xml-http-request" "^0.220.0"
+    "@opentelemetry/otlp-transformer" "^0.220.0"
+    "@opentelemetry/resources" "^2.9.0"
+    "@opentelemetry/sdk-trace-base" "^2.9.0"
+    "@opentelemetry/semantic-conventions" "^1.40.0"
+    "@scure/base" "^1.2.6"
+    "@types/node-forge" "^1.3.11"
+    axios "^1.8.4"
+    buffer "6.0.3"
+    libphonenumber-js "^1.11.7"
+    node-forge "^1.4.0"
+    uuid "^11.1.1"
+    xstate "^5.24.0"
+
+"@getpara/evm-wallet-connectors@3.21.0":
+  version "3.21.0"
+  resolved "https://registry.yarnpkg.com/@getpara/evm-wallet-connectors/-/evm-wallet-connectors-3.21.0.tgz#6a090a575ca2b6f9fc95772fafab38c8f39c162b"
+  integrity sha512-vB7/P1aVhJSGTpfhpVXYpEb3XLmvQZKETuz51yhlbgvDaTkLEkeeHIWTwObx0gEV7LE+rBJwrXgNTp+OhDlegA==
   dependencies:
     "@coinbase/wallet-sdk" "4.3.0"
-    "@getpara/wagmi-v2-connector" "3.20.0"
-    "@getpara/web-sdk" "3.20.0"
+    "@getpara/react-common" "3.21.0"
+    "@getpara/wagmi-v2-connector" "3.21.0"
+    "@getpara/web-sdk" "3.21.0"
+    "@safe-global/safe-apps-provider" "0.18.6"
+    "@safe-global/safe-apps-sdk" "9.1.0"
     "@walletconnect/ethereum-provider" "2.23.0"
     zustand "^4.5.2"
     zustand-sync-tabs "^0.2.2"
@@ -3164,6 +3197,14 @@
   integrity sha512-agq44sTOopIhZ9PTA0yNpuAAxmeWLXgHXwy7uZA8FRFW7ZNR5apYR7WAyyParU3Fcu1q8KLF40pXssA1ebrm5Q==
   dependencies:
     "@getpara/web-sdk" "3.20.0"
+
+"@getpara/react-common@3.21.0":
+  version "3.21.0"
+  resolved "https://registry.yarnpkg.com/@getpara/react-common/-/react-common-3.21.0.tgz#d1974cdc4fca95e0ea9d1a9748d0cd9e092680dc"
+  integrity sha512-Uv3QYsFNyYG/bQiLLQpNZrq1/LVfpb3//oGYkjbyIZhMMRnv/3aFNOmreDSVfH3qP3HSmnRUCRxSgafzGZ3nQw==
+  dependencies:
+    "@getpara/user-management-client" "3.21.0"
+    "@getpara/web-sdk" "3.21.0"
 
 "@getpara/react-component-library@3.20.0":
   version "3.20.0"
@@ -3239,6 +3280,13 @@
   dependencies:
     zod "^3.22.4"
 
+"@getpara/shared@^1.34.0":
+  version "1.34.0"
+  resolved "https://registry.yarnpkg.com/@getpara/shared/-/shared-1.34.0.tgz#6dcb4794be30f4a00cfc12906e10c1bc9f05eca2"
+  integrity sha512-SQqVlUE5rnPaKkcLWwr+VAFtVBgKFnJN/MLBO8aEbWFCWk4pwgAXsaXs6HVoPkXsKAviJ3w1Q/EHfQq5hdaRWQ==
+  dependencies:
+    zod "^3.22.4"
+
 "@getpara/user-management-client@3.20.0":
   version "3.20.0"
   resolved "https://registry.yarnpkg.com/@getpara/user-management-client/-/user-management-client-3.20.0.tgz#e0f5cb76195fbe4669bedc23577aa2ff0652eb43"
@@ -3250,20 +3298,32 @@
     axios-retry "^4.5.0"
     libphonenumber-js "^1.11.7"
 
-"@getpara/viem-v2-integration@3.20.0":
-  version "3.20.0"
-  resolved "https://registry.yarnpkg.com/@getpara/viem-v2-integration/-/viem-v2-integration-3.20.0.tgz#99b04ed2b1fd6558c0bd87e49df7218b7e65ae71"
-  integrity sha512-AVG6VQFUGCN/YdqwQsMdZVam+subodPfcrLXiDBQ79Rb/nGIKYLrkvTwB7JMCmX9aWwOab2G81ZTTxqAj2FP9w==
+"@getpara/user-management-client@3.21.0":
+  version "3.21.0"
+  resolved "https://registry.yarnpkg.com/@getpara/user-management-client/-/user-management-client-3.21.0.tgz#b751062107e9ce4db51239beb3bdf7d5e74c76f8"
+  integrity sha512-OpFEfR9hFPdCGq/NoD+KUjlwXUzitA5efJ9EONkjXoevCuCflOU85OwnOKlCE+IxWQAYh8JBLlVI/OOzGbecng==
   dependencies:
-    "@getpara/core-sdk" "3.20.0"
+    "@getpara/shared" "^1.34.0"
+    "@opentelemetry/api" "^1.9.1"
+    axios "^1.8.4"
+    axios-retry "^4.5.0"
+    libphonenumber-js "^1.11.7"
 
-"@getpara/wagmi-v2-connector@3.20.0":
-  version "3.20.0"
-  resolved "https://registry.yarnpkg.com/@getpara/wagmi-v2-connector/-/wagmi-v2-connector-3.20.0.tgz#27351a8a50e470a1fc854dbb674fe987ede5d9a9"
-  integrity sha512-cqhsBJJ+o1rxokGMP3oUJR2giBegbCwIc+2dD779ltvfvPcNviFSpLhjoUsxCAQ79Hot5OLbjibiwHZdM9hTFg==
+"@getpara/viem-v2-integration@3.21.0":
+  version "3.21.0"
+  resolved "https://registry.yarnpkg.com/@getpara/viem-v2-integration/-/viem-v2-integration-3.21.0.tgz#d05644d0bd93e36ab9dc299ac11b5f8c364430a6"
+  integrity sha512-s8VNDL7824eHE6A7V54xrvT9DBSYw8zvpEX3gbqV4Mi6//63/JPripErRUDGTf8G7olCPVJFK4Ne6H2jEHFLhg==
   dependencies:
-    "@getpara/viem-v2-integration" "3.20.0"
-    "@getpara/web-sdk" "3.20.0"
+    "@getpara/core-sdk" "3.21.0"
+
+"@getpara/wagmi-v2-connector@3.21.0":
+  version "3.21.0"
+  resolved "https://registry.yarnpkg.com/@getpara/wagmi-v2-connector/-/wagmi-v2-connector-3.21.0.tgz#915d32dd144cfbacf6c8fb90abca35053bd756e9"
+  integrity sha512-L2gcR3LcMYtGy9ni+WwIcY8LLOS6uPyF879jVcJUaxniNwJ4XWsmWm/icMQmoxFhmlwdEyMp2Ad/YoI1B0hxeA==
+  dependencies:
+    "@getpara/viem-v2-integration" "3.21.0"
+    "@getpara/web-sdk" "3.21.0"
+    eventemitter3 "^5.0.1"
 
 "@getpara/web-sdk@3.20.0":
   version "3.20.0"
@@ -3274,6 +3334,21 @@
     "@getpara/user-management-client" "3.20.0"
     "@opentelemetry/api" "^1.9.1"
     base64url "^3.0.1"
+    buffer "6.0.3"
+    cbor-web "^9.0.2"
+    node-forge "^1.4.0"
+    ua-parser-js "^2.0.2"
+    uuid "^11.1.1"
+
+"@getpara/web-sdk@3.21.0":
+  version "3.21.0"
+  resolved "https://registry.yarnpkg.com/@getpara/web-sdk/-/web-sdk-3.21.0.tgz#bb81ef58f232531369d1ebdf8269c264390c5cb7"
+  integrity sha512-Z7L6wO4nu8PKshIr6e0rsuci1apATafTpW6aFcC68VOYcDbCiNRPhp6iQRySROYTA3bYjvHNaLviG+BUKnzNog==
+  dependencies:
+    "@getpara/core-sdk" "3.21.0"
+    "@getpara/user-management-client" "3.21.0"
+    "@opentelemetry/api" "^1.9.1"
+    "@scure/base" "^1.2.6"
     buffer "6.0.3"
     cbor-web "^9.0.2"
     node-forge "^1.4.0"
@@ -4073,7 +4148,7 @@
   dependencies:
     "@noble/hashes" "1.8.0"
 
-"@noble/curves@1.9.7", "@noble/curves@^1.4.2", "@noble/curves@^1.6.0", "@noble/curves@^1.8.0", "@noble/curves@~1.9.0":
+"@noble/curves@1.9.7", "@noble/curves@^1.4.2", "@noble/curves@^1.6.0", "@noble/curves@^1.8.0", "@noble/curves@^1.9.7", "@noble/curves@~1.9.0":
   version "1.9.7"
   resolved "https://registry.yarnpkg.com/@noble/curves/-/curves-1.9.7.tgz#79d04b4758a43e4bca2cbdc62e7771352fa6b951"
   integrity sha512-gbKGcRUYIjA3/zCCNaWDciTMFI0dCkvou3TL8Zmy5Nc7sJ47a0jtOeZoTaMxkuqRo9cRhjOdZJXegxYE5FN/xw==
@@ -5399,6 +5474,27 @@
   resolved "https://registry.yarnpkg.com/@rushstack/eslint-patch/-/eslint-patch-1.16.1.tgz#4f97581e114fc79f246cee3723a5c4edd3b62415"
   integrity sha512-TvZbIpeKqGQQ7X0zSCvPH9riMSFQFSggnfBjFZ1mEoILW+UuXCKwOoPcgjMwiUtRqFZ8jWhPJc4um14vC6I4ag==
 
+"@safe-global/safe-apps-provider@0.18.6":
+  version "0.18.6"
+  resolved "https://registry.yarnpkg.com/@safe-global/safe-apps-provider/-/safe-apps-provider-0.18.6.tgz#b5756176549e35350b7e090824b71507a0d1f749"
+  integrity sha512-4LhMmjPWlIO8TTDC2AwLk44XKXaK6hfBTWyljDm0HQ6TWlOEijVWNrt2s3OCVMSxlXAcEzYfqyu1daHZooTC2Q==
+  dependencies:
+    "@safe-global/safe-apps-sdk" "^9.1.0"
+    events "^3.3.0"
+
+"@safe-global/safe-apps-sdk@9.1.0", "@safe-global/safe-apps-sdk@^9.1.0":
+  version "9.1.0"
+  resolved "https://registry.yarnpkg.com/@safe-global/safe-apps-sdk/-/safe-apps-sdk-9.1.0.tgz#0e65913e0f202e529ed3c846e0f5a98c2d35aa98"
+  integrity sha512-N5p/ulfnnA2Pi2M3YeWjULeWbjo7ei22JwU/IXnhoHzKq3pYCN6ynL9mJBOlvDVv892EgLPCWCOwQk/uBT2v0Q==
+  dependencies:
+    "@safe-global/safe-gateway-typescript-sdk" "^3.5.3"
+    viem "^2.1.1"
+
+"@safe-global/safe-gateway-typescript-sdk@^3.5.3":
+  version "3.23.1"
+  resolved "https://registry.yarnpkg.com/@safe-global/safe-gateway-typescript-sdk/-/safe-gateway-typescript-sdk-3.23.1.tgz#1e86d471bcd2adb0f777246ccbea6fa39618e02c"
+  integrity sha512-6ORQfwtEJYpalCeVO21L4XXGSdbEMfyp2hEv6cP82afKXSwvse6d3sdelgaPWUxHIsFRkWvHDdzh8IyyKHZKxw==
+
 "@scure/base@1.2.6", "@scure/base@^1.2.6", "@scure/base@~1.2.5":
   version "1.2.6"
   resolved "https://registry.yarnpkg.com/@scure/base/-/base-1.2.6.tgz#ca917184b8231394dd8847509c67a0be522e59f6"
@@ -6537,6 +6633,13 @@
   integrity sha512-zmPitbQ8+6zNutpwgcQuLcsEpn/Cj54Kbn7L5pX0Os5kdWplB7xPgEh/g+SWOB/qmows2gpuCaPyduq8ZZRnxA==
   dependencies:
     minimatch "*"
+
+"@types/node-forge@^1.3.11":
+  version "1.3.14"
+  resolved "https://registry.yarnpkg.com/@types/node-forge/-/node-forge-1.3.14.tgz#006c2616ccd65550560c2757d8472eb6d3ecea0b"
+  integrity sha512-mhVF2BnD4BO+jtOp7z1CdzaK4mbuK0LLQYAvdOLqHTavxFNq4zA1EmYkpnFjP8HOUzedfQkRnp0E2ulSAYSzAw==
+  dependencies:
+    "@types/node" "*"
 
 "@types/node@*":
   version "25.5.0"
@@ -14538,6 +14641,20 @@ viem@>=2.52.0, viem@^2:
     abitype "1.2.3"
     isows "1.0.7"
     ox "0.14.34"
+    ws "8.21.0"
+
+viem@^2.1.1:
+  version "2.57.2"
+  resolved "https://registry.yarnpkg.com/viem/-/viem-2.57.2.tgz#15afad8116ad3ccaf904297b63444e2f4773460b"
+  integrity sha512-ZbPvu+5fvRsbFh+OymDz0GyEySsSco8GWrEAiHM4ckhEY1vJTPy0tcLVkn0cs70dPiUOjLxkQBnfVyt9YkJ7cA==
+  dependencies:
+    "@noble/curves" "1.9.1"
+    "@noble/hashes" "1.8.0"
+    "@scure/bip32" "1.7.0"
+    "@scure/bip39" "1.6.0"
+    abitype "1.2.3"
+    isows "1.0.7"
+    ox "0.14.45"
     ws "8.21.0"
 
 viem@^2.56.8:
