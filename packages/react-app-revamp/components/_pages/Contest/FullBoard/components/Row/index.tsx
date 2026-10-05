@@ -8,21 +8,21 @@ import {
   BOARD_AVATAR_PX,
   BOARD_ROW_GRID_CLASS_NAME,
   ME_HIGHLIGHT_CLASS_NAME,
-  ROW_MEDAL_PX,
+  ME_STICKY_CLASS_NAME,
   UNRANKED_LABEL,
 } from "../../constants";
-import MainEntryLine from "../MainEntryLine";
 import VoterName from "../VoterName";
 
 interface BoardRowProps {
   row: LeaderboardRow;
-  entryTitle?: string;
   formatPrice: NativePriceFormatter;
 }
 
-const BoardRow: FC<BoardRowProps> = ({ row, entryTitle, formatPrice }) => {
+const BoardRow: FC<BoardRowProps> = ({ row, formatPrice }) => {
   const { profileName, profileAvatar } = useProfileData(row.address, true);
-  const frameClassName = row.isViewer ? `rounded-xl ${ME_HIGHLIGHT_CLASS_NAME}` : "border-b border-neutral-4";
+  const frameClassName = row.isViewer
+    ? `rounded-xl ${ME_HIGHLIGHT_CLASS_NAME} ${ME_STICKY_CLASS_NAME}`
+    : "border-b border-neutral-4";
 
   return (
     <div className={`${BOARD_ROW_GRID_CLASS_NAME} ${frameClassName} px-2 py-[9px]`}>
@@ -36,12 +36,6 @@ const BoardRow: FC<BoardRowProps> = ({ row, entryTitle, formatPrice }) => {
           profileName={profileName}
           meClassName="text-[13px] font-bold"
           linkClassName="text-[13px] font-semibold"
-        />
-        <MainEntryLine
-          mainEntry={row.mainEntry}
-          entryTitle={entryTitle}
-          medalPx={ROW_MEDAL_PX}
-          className="text-[11px]"
         />
       </div>
       <span className="text-right text-[16px] font-black tabular-nums text-neutral-11">

@@ -1,5 +1,5 @@
 import { Avatar } from "@components/UI/Avatar";
-import { formatMainEntryLine, LeaderboardRow as LeaderboardRowData } from "@hooks/useContestLeaderboard";
+import { LeaderboardRow as LeaderboardRowData } from "@hooks/useContestLeaderboard";
 import { NativePriceFormatter } from "@hooks/useNativePriceFormatter";
 import useProfileData from "@hooks/useProfileData";
 import { FC } from "react";
@@ -11,11 +11,10 @@ import RankCell from "./RankCell";
 
 interface LeaderboardRowProps {
   row: LeaderboardRowData;
-  entryTitle?: string;
   formatPrice: NativePriceFormatter;
 }
 
-const LeaderboardRow: FC<LeaderboardRowProps> = ({ row, entryTitle, formatPrice }) => {
+const LeaderboardRow: FC<LeaderboardRowProps> = ({ row, formatPrice }) => {
   const { profileName, profileAvatar } = useProfileData(row.address, true);
   const frameClassName = row.isViewer ? `rounded-xl ${ME_HIGHLIGHT_CLASS_NAME}` : "border-b border-neutral-4";
 
@@ -30,9 +29,6 @@ const LeaderboardRow: FC<LeaderboardRowProps> = ({ row, entryTitle, formatPrice 
           meClassName="text-[11.5px] wide:text-[12px] font-bold"
           linkClassName="text-[11.5px] wide:text-[12px] font-bold"
         />
-        <p className="truncate text-[9.5px] wide:text-[10px] normal-case text-neutral-9">
-          {formatMainEntryLine(row.mainEntry, entryTitle)}
-        </p>
       </div>
       <EarningCell
         earningNative={row.earningNative}

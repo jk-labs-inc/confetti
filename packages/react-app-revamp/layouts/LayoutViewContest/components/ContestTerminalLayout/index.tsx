@@ -10,8 +10,9 @@ interface ContestTerminalLayoutProps {
   showVoteRail: boolean;
 }
 
-const THREE_COLUMN_GRID = "grid-cols-[minmax(0,9fr)_minmax(0,22fr)_minmax(0,9fr)]";
-const TWO_COLUMN_GRID = "grid-cols-[minmax(0,9fr)_minmax(0,31fr)]";
+const THREE_COLUMN_GRID =
+  "grid-cols-[minmax(0,9fr)_minmax(0,22fr)_minmax(0,9fr)] 4xl:grid-cols-[296px_minmax(0,1fr)_296px]";
+const TWO_COLUMN_GRID = "grid-cols-[minmax(0,9fr)_minmax(0,31fr)] 4xl:grid-cols-[296px_minmax(0,1fr)]";
 
 const ContestTerminalLayout: FC<ContestTerminalLayoutProps> = ({ showVoteRail }) => (
   <div
@@ -20,9 +21,8 @@ const ContestTerminalLayout: FC<ContestTerminalLayoutProps> = ({ showVoteRail })
     }`}
   >
     <MarketRail />
-    <div className="flex min-h-0 min-w-0 flex-col gap-2 wide:gap-2.5">
-      <ActivityTicker />
-      <ContestEntriesColumn scrollMode="viewport" />
+    <div className="flex min-h-0 min-w-0 flex-col">
+      <ContestEntriesColumn scrollMode="viewport" header={<ActivityTicker />} />
     </div>
     {showVoteRail && (
       <aside className={`min-h-0 ${VOTE_RAIL_SCROLL_CLASS_NAME}`}>

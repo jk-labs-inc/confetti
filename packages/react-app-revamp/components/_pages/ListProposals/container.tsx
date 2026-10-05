@@ -7,8 +7,9 @@ import {
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import { MOBILE_MAX_WIDTH_PX } from "@helpers/isMobileViewport";
 import { EntryPreview } from "@hooks/useDeployContest/slices/contestMetadataSlice";
-import React, { ReactNode, useMemo } from "react";
+import React, { ReactNode } from "react";
 import { useMediaQuery } from "react-responsive";
+import MasonryContainer from "./MasonryContainer";
 
 interface ListProposalsContainerProps {
   enabledPreview: EntryPreview | null;
@@ -51,26 +52,6 @@ const TitleContainer = ({ children }: { children: ReactNode }) => {
   );
 };
 
-const MasonryContainer = ({ children, columnCount }: { children: ReactNode; columnCount: number }) => {
-  const columns = useMemo(() => {
-    const cols: ReactNode[][] = Array.from({ length: columnCount }, () => []);
-    React.Children.forEach(children, (child, index) => {
-      cols[index % columnCount].push(child);
-    });
-    return cols;
-  }, [children, columnCount]);
-
-  return (
-    <div className="flex gap-3 wide:gap-3.5">
-      {columns.map((col, colIndex) => (
-        <div key={colIndex} className="flex-1 flex flex-col gap-3 wide:gap-3.5">
-          {col}
-        </div>
-      ))}
-    </div>
-  );
-};
-
 const ListProposalsContainer = ({ enabledPreview, children }: ListProposalsContainerProps) => {
   const isMobile = useMediaQuery({ maxWidth: MOBILE_MAX_WIDTH_PX });
 
@@ -82,13 +63,13 @@ const ListProposalsContainer = ({ enabledPreview, children }: ListProposalsConta
     case EntryPreview.IMAGE_AND_TITLE:
       return (
         <GalleryImageShapeProvider>
-          <MasonryContainer children={children} columnCount={isMobile ? 1 : 2} />
+          <MasonryContainer children={children} isSingleColumn={isMobile} />
         </GalleryImageShapeProvider>
       );
 
     case EntryPreview.TWEET:
     case EntryPreview.TWEET_AND_TITLE:
-      return <MasonryContainer children={children} columnCount={isMobile ? 1 : 2} />;
+      return <MasonryContainer children={children} isSingleColumn={isMobile} />;
 
     default:
       return <TitleContainer children={children} />;

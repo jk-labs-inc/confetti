@@ -1,6 +1,5 @@
 import { useContestStatusStore } from "@hooks/useContestStatus/store";
 import { useContestLeaderboard, useSyncVerifyAddresses } from "@hooks/useContestLeaderboard";
-import { useLeaderboardEntryTitles } from "@hooks/useLeaderboardEntryTitles";
 import { useNativePriceFormatter } from "@hooks/useNativePriceFormatter";
 import { FC, useMemo, useState } from "react";
 import LeaderboardSkeleton from "../../../MarketRail/components/LeaderboardList/LeaderboardSkeleton";
@@ -36,8 +35,6 @@ const PodiumStrip: FC = () => {
   const podiumRows = useMemo(() => boardRows.slice(0, count), [boardRows, count]);
   useSyncVerifyAddresses(podiumRows, setVerifyAddresses);
 
-  const entryTitleOf = useLeaderboardEntryTitles(podiumRows, pinnedViewerRow);
-
   if (isLoading && rows.length === 0) return <LeaderboardSkeleton count={STRIP_SKELETON_ROWS} />;
   if (boardRows.length === 0)
     return (
@@ -52,21 +49,10 @@ const PodiumStrip: FC = () => {
   return (
     <div ref={ref} className="flex items-stretch" style={{ gap: STRIP_GAP_PX }}>
       {podiumRows.map(row => (
-        <PodiumCard
-          key={row.address}
-          row={row}
-          entryTitle={entryTitleOf(row)}
-          formatPrice={formatPrice}
-        />
+        <PodiumCard key={row.address} row={row} formatPrice={formatPrice} />
       ))}
       {pinnedViewerRow && <div className="shrink-0 self-stretch bg-neutral-4" style={{ width: DIVIDER_WIDTH_PX }} />}
-      {pinnedViewerRow ? (
-        <PodiumCard
-          row={pinnedViewerRow}
-          entryTitle={entryTitleOf(pinnedViewerRow)}
-          formatPrice={formatPrice}
-        />
-      ) : null}
+      {pinnedViewerRow ? <PodiumCard row={pinnedViewerRow} formatPrice={formatPrice} /> : null}
     </div>
   );
 };

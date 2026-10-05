@@ -7,6 +7,7 @@ import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/s
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import { MOBILE_MAX_WIDTH_PX } from "@helpers/isMobileViewport";
 import { useProposalStore } from "@hooks/useProposal/store";
+import { useHasNoEntries } from "@layouts/LayoutViewContest/hooks/useEntriesReady";
 import moment from "moment";
 import { useState } from "react";
 import { useMediaQuery } from "react-responsive";
@@ -33,6 +34,7 @@ const ContestTab = () => {
   );
   const { isLoading: isContestLoading, isSuccess: isContestSuccess } = useContest();
   const contestState = useContestStateStore(useShallow(state => state.contestState));
+  const hasNoEntries = useHasNoEntries();
   const isMobile = useMediaQuery({ maxWidth: MOBILE_MAX_WIDTH_PX });
   const isInPwaMode = window.matchMedia("(display-mode: standalone)").matches;
   const isContestCanceled = contestState === ContestStateEnum.Canceled;
@@ -69,17 +71,21 @@ const ContestTab = () => {
       </div>
 
       <div className="mt-4 md:mt-6 border-t border-neutral-4" />
-      <div className="mt-3 md:mt-4">
-        <PriceCurveWrapper
-          height={250}
-          showPriceWarning
-          noPadding
-          showAxisLabels
-          isExpanded={isPriceCurveExpanded}
-          onToggleExpand={() => setIsPriceCurveExpanded(prev => !prev)}
-        />
-      </div>
-      <div className="mt-4 hidden md:block border-t border-neutral-4" />
+      {!hasNoEntries && (
+        <>
+          <div className="mt-3 md:mt-4">
+            <PriceCurveWrapper
+              height={250}
+              showPriceWarning
+              noPadding
+              showAxisLabels
+              isExpanded={isPriceCurveExpanded}
+              onToggleExpand={() => setIsPriceCurveExpanded(prev => !prev)}
+            />
+          </div>
+          <div className="mt-4 hidden md:block border-t border-neutral-4" />
+        </>
+      )}
 
       {isMobile && <ContestStickyCards />}
 

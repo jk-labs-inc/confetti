@@ -5,7 +5,11 @@ import ContestShareButton from "@components/_pages/Contest/components/ContestSha
 import ContestTabs, { Tab } from "@components/_pages/Contest/components/Tabs";
 import { populateBugReportLink } from "@helpers/githubIssue";
 import { useContestStore } from "@hooks/useContest/store";
-import { ContestLayoutBand, useContestLayoutBand } from "@hooks/useContestLayoutBand";
+import {
+  CONTEST_ULTRAWIDE_WIDTH_CLASS_NAME,
+  ContestLayoutBand,
+  useContestLayoutBand,
+} from "@hooks/useContestLayoutBand";
 import useContestEntryType from "@hooks/useContestEntryType";
 import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
@@ -20,10 +24,10 @@ import ContestTabsContent from "./components/ContestTabsContent";
 import LayoutViewContestError from "./components/Error";
 import ReadOnlyBanner from "./components/ReadOnlyBanner";
 import { getContestImageUrl } from "./helpers/getContestImageUrl";
+import { useHasNoEntries } from "./hooks/useEntriesReady";
 import { useLayoutViewContest } from "./hooks/useLayoutViewContest";
 
-const BAND_ROOT_CLASS_NAME =
-  "flex flex-col grow min-h-0 mx-auto w-full px-6 pt-6 md:px-8 md:pt-8 lg:pt-10 lg:px-0 lg:w-[calc(100%-2rem)] lg:max-w-[1272px] wide:max-w-[1352px]";
+const BAND_ROOT_CLASS_NAME = `flex flex-col grow min-h-0 mx-auto w-full px-6 pt-6 md:px-8 md:pt-8 lg:pt-10 lg:px-0 lg:w-[calc(100%-2rem)] lg:max-w-[1272px] wide:max-w-[1352px] ${CONTEST_ULTRAWIDE_WIDTH_CLASS_NAME}`;
 const LEGACY_ROOT_CLASS_NAME =
   "flex flex-col w-full px-6 pt-6 md:px-12 md:pt-8 lg:pt-10 md:pb-20 lg:w-[760px] lg:px-0 mx-auto";
 
@@ -68,8 +72,9 @@ const LayoutViewContest = () => {
   const showMarketRail = !isCanceled && (isVotingOpen || (isVotingClosed && contestHasVotes));
 
   const isTerminal = useContestLayoutBand() === ContestLayoutBand.Terminal;
+  const hasNoEntries = useHasNoEntries();
   const { ref: rootRef, height: boundHeight } = useViewportBoundHeight(
-    showMarketRail && tab === Tab.Contest && isTerminal,
+    showMarketRail && !hasNoEntries && tab === Tab.Contest && isTerminal,
   );
 
   const excludeTabs = useMemo(() => {

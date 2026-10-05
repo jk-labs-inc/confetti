@@ -1,5 +1,4 @@
 import { useContestLeaderboard, useSyncVerifyAddresses } from "@hooks/useContestLeaderboard";
-import { useLeaderboardEntryTitles } from "@hooks/useLeaderboardEntryTitles";
 import { useNativePriceFormatter } from "@hooks/useNativePriceFormatter";
 import { FC, useMemo, useState } from "react";
 import FullBoardModal from "../../../FullBoard/components/Modal";
@@ -18,8 +17,6 @@ const RailLeaderboard: FC = () => {
   useSyncVerifyAddresses(railRows, setVerifyAddresses);
   const pinnedViewerRow = viewerRow && !railRows.some(row => row.isViewer) ? viewerRow : null;
 
-  const entryTitleOf = useLeaderboardEntryTitles(railRows, pinnedViewerRow);
-
   return (
     <>
       <div className="shrink-0 border-t border-neutral-4" />
@@ -29,7 +26,6 @@ const RailLeaderboard: FC = () => {
       <LeaderboardList
         rows={railRows}
         pinnedViewerRow={pinnedViewerRow}
-        entryTitleOf={entryTitleOf}
         formatPrice={formatPrice}
         isLoading={isLoading}
       />

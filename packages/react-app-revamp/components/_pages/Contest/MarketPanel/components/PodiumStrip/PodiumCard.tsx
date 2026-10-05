@@ -5,26 +5,18 @@ import { LeaderboardRow } from "@hooks/useContestLeaderboard";
 import { NativePriceFormatter } from "@hooks/useNativePriceFormatter";
 import useProfileData from "@hooks/useProfileData";
 import { FC } from "react";
-import MainEntryLine from "../../../FullBoard/components/MainEntryLine";
 import VoterName from "../../../FullBoard/components/VoterName";
 import { ME_HIGHLIGHT_CLASS_NAME } from "../../../FullBoard/constants";
-import {
-  PODIUM_CARD_MIN_WIDTH_PX,
-  STRIP_AVATAR_PX,
-  STRIP_CHIP_PX,
-  STRIP_ENTRY_MEDAL_PX,
-  STRIP_MEDAL_ROW_HEIGHT_PX,
-} from "../../constants";
+import { PODIUM_CARD_MIN_WIDTH_PX, STRIP_AVATAR_PX, STRIP_CHIP_PX, STRIP_MEDAL_ROW_HEIGHT_PX } from "../../constants";
 
 interface PodiumCardProps {
   row: LeaderboardRow;
-  entryTitle?: string;
   formatPrice: NativePriceFormatter;
 }
 
 const DEFAULT_FRAME_CLASS_NAME = "border border-neutral-4 bg-neutral-2";
 
-const PodiumCard: FC<PodiumCardProps> = ({ row, entryTitle, formatPrice }) => {
+const PodiumCard: FC<PodiumCardProps> = ({ row, formatPrice }) => {
   const { profileName, profileAvatar } = useProfileData(row.address, true);
   const rank = row.isOnBoard ? row.rank : undefined;
 
@@ -58,14 +50,6 @@ const PodiumCard: FC<PodiumCardProps> = ({ row, entryTitle, formatPrice }) => {
         <span className="text-[17px] font-black tabular-nums text-neutral-11">{formatPrice(row.earningNative)}</span>
         {row.pnl && <PnlPill percentage={row.pnl.percentage} />}
       </div>
-      {row.mainEntry && (
-        <MainEntryLine
-          mainEntry={row.mainEntry}
-          entryTitle={entryTitle}
-          medalPx={STRIP_ENTRY_MEDAL_PX}
-          className="min-w-0 text-[10px]"
-        />
-      )}
     </div>
   );
 };
