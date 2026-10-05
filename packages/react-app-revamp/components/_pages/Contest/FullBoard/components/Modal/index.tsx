@@ -9,7 +9,7 @@ interface FullBoardModalProps {
 
 const FullBoardModal: FC<FullBoardModalProps> = ({ isOpen, onClose }) => (
   <DialogModalV4 isOpen={isOpen} onClose={() => onClose()} lgWidth="lg:max-w-[760px]">
-    <div className="no-scrollbar flex max-h-[calc(100dvh-4rem)] flex-col gap-4 overflow-y-auto p-4 text-left lg:p-0 lg:pb-6">
+    <div className="no-scrollbar flex max-h-[calc(100dvh-4rem)] flex-col gap-4 overflow-y-auto p-4 text-left lg:max-h-[calc(100dvh-7rem)] lg:p-0 lg:pb-6">
       <div className="flex items-center gap-3">
         <h2 className="font-sabo-filled text-[28px] leading-none normal-case text-neutral-11">leaderboard</h2>
         <button

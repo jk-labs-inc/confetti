@@ -9,7 +9,6 @@ export const RAIL_MAX_ROWS = 5;
 export const LEADERBOARD_SKELETON_ROWS = 3;
 export const RAIL_AVATAR_PX = 24;
 export const RAIL_CHIP_PX = 13;
-export const RAIL_ENTRY_MEDAL_PX = 11;
 export const RAIL_MEDAL_GEOMETRY = getMedalAvatarGeometry(RAIL_AVATAR_PX);
 export const RAIL_MEDAL_CELL_PX = RAIL_MEDAL_GEOMETRY.medalWidthPx;
 export const RAIL_GHOST_RANKS = [1, 2, 3];

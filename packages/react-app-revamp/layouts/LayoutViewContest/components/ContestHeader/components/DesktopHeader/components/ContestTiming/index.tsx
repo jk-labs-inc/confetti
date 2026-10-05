@@ -73,7 +73,9 @@ const ContestTiming: FC<ContestTimingProps> = ({ variant = "stat" }) => {
 
     if (now.isSameOrAfter(voteStart) && now.isBefore(end)) {
       const allSegments = getCountdownSegments(votingTimeLeft, isMobile && !isHeadline);
-      const segments = isHeadline ? allSegments.slice(0, HEADLINE_SEGMENT_COUNT) : allSegments;
+      const segments = isHeadline
+        ? allSegments.slice(0, HEADLINE_SEGMENT_COUNT).filter(segment => segment.value > 0)
+        : allSegments;
       const content = segments.map((seg, i) => (
         <span key={i}>
           <span className={classNames.segmentValue}>{seg.value}</span>{" "}
