@@ -3035,10 +3035,10 @@
   resolved "https://registry.yarnpkg.com/@fun-xyz/fiat-contract/-/fiat-contract-0.31.0.tgz#4815d0dde129372e8903cc38431ee8a9ced93cb1"
   integrity sha512-1imGqPyHO6E8vXB/oRoU5ZYeGrkAu7B8lZdtKqhO7/BJXzyUPH49NTXKdeqlibzmDVqo7Q4+wsqUjH8H84FpPQ==
 
-"@funkit/api-base@9.0.0":
-  version "9.0.0"
-  resolved "https://registry.yarnpkg.com/@funkit/api-base/-/api-base-9.0.0.tgz#5c185d1e27936c3bb17d99edd31611f57450a56d"
-  integrity sha512-R1Nktp5tNeSpO4kLHDpgGR7kLSDQ0ngPUhKL2R65PmTKtnySetqZDd6JKhPba8ojjZR/YGT02qOgnwtYBMMXqw==
+"@funkit/api-base@9.0.1":
+  version "9.0.1"
+  resolved "https://registry.yarnpkg.com/@funkit/api-base/-/api-base-9.0.1.tgz#1ac2f88a50da5f8cc50948769b32c228bbeaccc4"
+  integrity sha512-Ub6wwNjSv5NSnr6imFL312sCIFscptF9UQ+s8gy4qAnGLcOZB4lctQpiT+5jEt2R8bkXSZ7tVhcjul918Jek6Q==
   dependencies:
     "@funkit/utils" "5.0.2"
     "@lifeomic/attempt" "^3.1.0"
@@ -3048,13 +3048,13 @@
   resolved "https://registry.yarnpkg.com/@funkit/chains/-/chains-2.5.0.tgz#27e4a68f58614d09c752adf6b954364fac813e93"
   integrity sha512-yPd7ee/e+qQH9lAT2ZqcHwEOzoVLJbDPqeFCczashMbf7mWByffus7/bhLj2XpLeYHzRqzBxZD+qFBoGAzjgcA==
 
-"@funkit/connect-core@9.1.0":
-  version "9.1.0"
-  resolved "https://registry.yarnpkg.com/@funkit/connect-core/-/connect-core-9.1.0.tgz#b175d517745176120b537f3c8282e9b2f455454d"
-  integrity sha512-KX2O35dMJhfLE8Adv7tR3/AlhqvhIXxwHkbgXnzbW05deY72EmWREBUexFFdYdD/qRbLxDhCNU6CyIXSFdNwkg==
+"@funkit/connect-core@9.2.0":
+  version "9.2.0"
+  resolved "https://registry.yarnpkg.com/@funkit/connect-core/-/connect-core-9.2.0.tgz#ef3f1024d84aab160a569963d54485e8dde0d3ac"
+  integrity sha512-ru8kc7xe+Aszi4tj1AEaQUoVAn3cmXegLc2ZsWLqiZ2423FaBkrFl7BM5xUey1Y4RxFWhBtrdjkAIFg2kbg95A==
   dependencies:
     "@fun-xyz/fiat-contract" "0.31.0"
-    "@funkit/api-base" "9.0.0"
+    "@funkit/api-base" "9.0.1"
     "@funkit/chains" "2.5.0"
     "@funkit/fun-relay" "3.1.3"
     "@funkit/utils" "5.0.2"
@@ -3063,19 +3063,19 @@
     dnum "2.17.0"
     uuid "^11.1.1"
 
-"@funkit/connect@12.15.1":
-  version "12.15.1"
-  resolved "https://registry.yarnpkg.com/@funkit/connect/-/connect-12.15.1.tgz#393cf599ce926972d74f9ed662f95e9919215410"
-  integrity sha512-8/b89pHy39ROk38GxK+InatMzqnEG1UGd93PmWTo/5nG7h4klAcTtTAKm2TrDtDWDzMkVOYnYfgdExQvfzuSfA==
+"@funkit/connect@12.15.2":
+  version "12.15.2"
+  resolved "https://registry.yarnpkg.com/@funkit/connect/-/connect-12.15.2.tgz#c01a47192849649069b899d03869e7bda0643b79"
+  integrity sha512-9KL2YN7kzvo3tuBG6JBt4nsOtqcq0hPtlpFw7UmnhHEuSdktaC5KyWVZHvRNYvokedyfvrtGcEUPkPu94nj7Yg==
   dependencies:
     "@aave-dao/aave-address-book" "^4.49.9"
     "@aave/client" "^0.9.3"
     "@bluvo/react" "3.0.0-beta.1"
     "@bluvo/sdk-ts" "3.0.0-beta.1"
     "@datadog/browser-logs" "5.22.0"
-    "@funkit/api-base" "9.0.0"
+    "@funkit/api-base" "9.0.1"
     "@funkit/chains" "2.5.0"
-    "@funkit/connect-core" "9.1.0"
+    "@funkit/connect-core" "9.2.0"
     "@funkit/fun-relay" "3.1.3"
     "@funkit/utils" "5.0.2"
     "@number-flow/react" "^0.5.5"
