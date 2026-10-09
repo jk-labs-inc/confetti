@@ -23,7 +23,7 @@
     "@headlessui/react": "2.2.10",
     "@heroicons/react": "2.2.0",
     "@lifi/widget": "4.9.0",
-    "@lifi/widget-provider-ethereum": "4.1.6",
+    "@lifi/widget-provider-ethereum": "4.1.7",
     "@mysten/dapp-kit": "0.20.0",
     "@next/third-parties": "15.5.27",
     "@solana/wallet-adapter-react": "0.15.40",
