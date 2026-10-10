@@ -3150,15 +3150,45 @@
     uuid "^11.1.1"
     xstate "^5.24.0"
 
-"@getpara/evm-wallet-connectors@3.21.0":
-  version "3.21.0"
-  resolved "https://registry.yarnpkg.com/@getpara/evm-wallet-connectors/-/evm-wallet-connectors-3.21.0.tgz#6a090a575ca2b6f9fc95772fafab38c8f39c162b"
-  integrity sha512-vB7/P1aVhJSGTpfhpVXYpEb3XLmvQZKETuz51yhlbgvDaTkLEkeeHIWTwObx0gEV7LE+rBJwrXgNTp+OhDlegA==
+"@getpara/core-sdk@3.22.0":
+  version "3.22.0"
+  resolved "https://registry.yarnpkg.com/@getpara/core-sdk/-/core-sdk-3.22.0.tgz#b747d77e8381342bc389597c0b0b4c19765309d5"
+  integrity sha512-KX54oe7TK6qyWR923vInDY5F04HyzQwlq//9BMkkQC4ja6Mf1uDiVPVJ5g4wddaBAA0XkvkBTdvdKIphKyBoFQ==
+  dependencies:
+    "@celo/utils" "^8.0.2"
+    "@getpara/shared" "^1.35.0"
+    "@getpara/user-management-client" "3.22.0"
+    "@noble/curves" "^1.9.7"
+    "@noble/hashes" "^1.5.0"
+    "@opentelemetry/api" "^1.9.1"
+    "@opentelemetry/context-zone" "^2.9.0"
+    "@opentelemetry/core" "^2.9.0"
+    "@opentelemetry/exporter-trace-otlp-http" "^0.220.0"
+    "@opentelemetry/instrumentation" "^0.220.0"
+    "@opentelemetry/instrumentation-fetch" "^0.220.0"
+    "@opentelemetry/instrumentation-xml-http-request" "^0.220.0"
+    "@opentelemetry/otlp-transformer" "^0.220.0"
+    "@opentelemetry/resources" "^2.9.0"
+    "@opentelemetry/sdk-trace-base" "^2.9.0"
+    "@opentelemetry/semantic-conventions" "^1.40.0"
+    "@scure/base" "^1.2.6"
+    "@types/node-forge" "^1.3.11"
+    axios "^1.8.4"
+    buffer "6.0.3"
+    libphonenumber-js "^1.11.7"
+    node-forge "^1.4.0"
+    uuid "^11.1.1"
+    xstate "^5.24.0"
+
+"@getpara/evm-wallet-connectors@3.22.0":
+  version "3.22.0"
+  resolved "https://registry.yarnpkg.com/@getpara/evm-wallet-connectors/-/evm-wallet-connectors-3.22.0.tgz#5a331331bdca57da4581f6b00f3cda5a1171f8ea"
+  integrity sha512-JzdnBNZ9XT9/mmzrmxaKvy4jAlx4gun7/QE6AKGzhL2n8qOaWhHBlHPMzepE+oGb+cFZ2SuG4P4XkPTXB8xfLQ==
   dependencies:
     "@coinbase/wallet-sdk" "4.3.0"
-    "@getpara/react-common" "3.21.0"
-    "@getpara/wagmi-v2-connector" "3.21.0"
-    "@getpara/web-sdk" "3.21.0"
+    "@getpara/react-common" "3.22.0"
+    "@getpara/wagmi-v2-connector" "3.22.0"
+    "@getpara/web-sdk" "3.22.0"
     "@safe-global/safe-apps-provider" "0.18.6"
     "@safe-global/safe-apps-sdk" "9.1.0"
     "@walletconnect/ethereum-provider" "2.23.0"
@@ -3172,6 +3202,14 @@
   dependencies:
     "@getpara/user-management-client" "3.21.0"
     "@getpara/web-sdk" "3.21.0"
+
+"@getpara/react-common@3.22.0":
+  version "3.22.0"
+  resolved "https://registry.yarnpkg.com/@getpara/react-common/-/react-common-3.22.0.tgz#2268293dbbf98961ece19a526bafc6f49b51b542"
+  integrity sha512-ocsg9ULuAOv/LuFnGTC73i9Ja7arcwurCulXPv7V8DqJzaQJGICIZkG72zlv/hUj9juv5C9sb4VEhdCHnPD4tg==
+  dependencies:
+    "@getpara/user-management-client" "3.22.0"
+    "@getpara/web-sdk" "3.22.0"
 
 "@getpara/react-component-library@3.21.0":
   version "3.21.0"
@@ -3250,6 +3288,13 @@
   dependencies:
     zod "^3.22.4"
 
+"@getpara/shared@^1.35.0":
+  version "1.36.0"
+  resolved "https://registry.yarnpkg.com/@getpara/shared/-/shared-1.36.0.tgz#b3229a39a46e22f79e5beb6748e3345f76ea4c4b"
+  integrity sha512-RDX4SfrlpsfLvGUXHsNqNWRES85IWb3JmJLra5lMbkkzAKLKrTmszdVXLwWviqOBFCKf3rh6qO8INZHTkmMayg==
+  dependencies:
+    zod "^3.22.4"
+
 "@getpara/user-management-client@3.21.0":
   version "3.21.0"
   resolved "https://registry.yarnpkg.com/@getpara/user-management-client/-/user-management-client-3.21.0.tgz#b751062107e9ce4db51239beb3bdf7d5e74c76f8"
@@ -3261,20 +3306,31 @@
     axios-retry "^4.5.0"
     libphonenumber-js "^1.11.7"
 
-"@getpara/viem-v2-integration@3.21.0":
-  version "3.21.0"
-  resolved "https://registry.yarnpkg.com/@getpara/viem-v2-integration/-/viem-v2-integration-3.21.0.tgz#d05644d0bd93e36ab9dc299ac11b5f8c364430a6"
-  integrity sha512-s8VNDL7824eHE6A7V54xrvT9DBSYw8zvpEX3gbqV4Mi6//63/JPripErRUDGTf8G7olCPVJFK4Ne6H2jEHFLhg==
+"@getpara/user-management-client@3.22.0":
+  version "3.22.0"
+  resolved "https://registry.yarnpkg.com/@getpara/user-management-client/-/user-management-client-3.22.0.tgz#f171513ca89ef3b40caf199045d397f26976c0e7"
+  integrity sha512-+ayUXmm7sy18+2k+hQUNXWhNN6dbRLSb82GIVu7AeJiqW7beBowFQmUrpiBySklL0vd1W8O6AhJo/3xDbrS0lQ==
   dependencies:
-    "@getpara/core-sdk" "3.21.0"
+    "@getpara/shared" "^1.35.0"
+    "@opentelemetry/api" "^1.9.1"
+    axios "^1.8.4"
+    axios-retry "^4.5.0"
+    libphonenumber-js "^1.11.7"
 
-"@getpara/wagmi-v2-connector@3.21.0":
-  version "3.21.0"
-  resolved "https://registry.yarnpkg.com/@getpara/wagmi-v2-connector/-/wagmi-v2-connector-3.21.0.tgz#915d32dd144cfbacf6c8fb90abca35053bd756e9"
-  integrity sha512-L2gcR3LcMYtGy9ni+WwIcY8LLOS6uPyF879jVcJUaxniNwJ4XWsmWm/icMQmoxFhmlwdEyMp2Ad/YoI1B0hxeA==
+"@getpara/viem-v2-integration@3.22.0":
+  version "3.22.0"
+  resolved "https://registry.yarnpkg.com/@getpara/viem-v2-integration/-/viem-v2-integration-3.22.0.tgz#f20a4f0af440c3ed9d4942d5aced7160d40e60aa"
+  integrity sha512-IoGS/Y4E+YF8EfvdcKi2Ro+U8el6P1tx1J7Ya7gK4U4V/Gp9CRsP0Cv/YpsMQpWcFne2QT5zPFHagmsrCG/Blg==
   dependencies:
-    "@getpara/viem-v2-integration" "3.21.0"
-    "@getpara/web-sdk" "3.21.0"
+    "@getpara/core-sdk" "3.22.0"
+
+"@getpara/wagmi-v2-connector@3.22.0":
+  version "3.22.0"
+  resolved "https://registry.yarnpkg.com/@getpara/wagmi-v2-connector/-/wagmi-v2-connector-3.22.0.tgz#859052f56f86194fdb3dad9e0c9a543d7e422e6d"
+  integrity sha512-fD1eNmXk/X9vHhiTG0f/3x0XkQ75QAFSKTNY/UtRPCQHMyw7SWi37ZNxTUuXp9afbB+55/7qB5mQmzkGrYCxng==
+  dependencies:
+    "@getpara/viem-v2-integration" "3.22.0"
+    "@getpara/web-sdk" "3.22.0"
     eventemitter3 "^5.0.1"
 
 "@getpara/web-sdk@3.21.0":
@@ -3284,6 +3340,21 @@
   dependencies:
     "@getpara/core-sdk" "3.21.0"
     "@getpara/user-management-client" "3.21.0"
+    "@opentelemetry/api" "^1.9.1"
+    "@scure/base" "^1.2.6"
+    buffer "6.0.3"
+    cbor-web "^9.0.2"
+    node-forge "^1.4.0"
+    ua-parser-js "^2.0.2"
+    uuid "^11.1.1"
+
+"@getpara/web-sdk@3.22.0":
+  version "3.22.0"
+  resolved "https://registry.yarnpkg.com/@getpara/web-sdk/-/web-sdk-3.22.0.tgz#0ebc81be0ee3158e76a3a89a61e65dab20da0e22"
+  integrity sha512-0mzZl6XzTAWX8jRjJ6EnGFD5uuQCd+F+C7J2aUq2FMyZ7v8eDI5IcjHmEOpfcSbIIbzvzBbOo8Hz4q5OOAxSUQ==
+  dependencies:
+    "@getpara/core-sdk" "3.22.0"
+    "@getpara/user-management-client" "3.22.0"
     "@opentelemetry/api" "^1.9.1"
     "@scure/base" "^1.2.6"
     buffer "6.0.3"
