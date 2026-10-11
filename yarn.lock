@@ -3727,27 +3727,20 @@
   dependencies:
     "@lifi/types" "^18.13.0"
 
-"@lifi/sdk@^4.11.0":
-  version "4.11.0"
-  resolved "https://registry.yarnpkg.com/@lifi/sdk/-/sdk-4.11.0.tgz#424c56674cc3941e640d23b10e300d7f8377c556"
-  integrity sha512-i+FS2v0LIZmgT3IrEE3nGJO/+Ow5ty/gGkRnURPUvQkoEFzSgVQ0d/XtFnBJJOgmWvaZs9UaoFbRxWdJTwxJdQ==
-  dependencies:
-    "@lifi/types" "^18.13.0"
-
 "@lifi/types@^18.13.0":
   version "18.13.0"
   resolved "https://registry.yarnpkg.com/@lifi/types/-/types-18.13.0.tgz#e8f4ec2e3fd0d4735de0ffae510f546e5a089aef"
   integrity sha512-WHZTVeN6/ijMnducCNcEeW6uirVtNW86CrB6JKZki7hBgI0rg106nSuD+yf1599q4i7igezppS02Z+M6W6BPAA==
 
-"@lifi/wallet-management@4.3.2":
-  version "4.3.2"
-  resolved "https://registry.yarnpkg.com/@lifi/wallet-management/-/wallet-management-4.3.2.tgz#553f8124a6d94936d70812caf66aafeafce6ba78"
-  integrity sha512-kmlu3I5e3XDHdHr2p9UgsqXqky7/Mx+X+tWKAFConGV7gtHZE4xE6bu3F4f1vVAtReSRt/YvJxcd3Bx5T19nJw==
+"@lifi/wallet-management@4.3.3":
+  version "4.3.3"
+  resolved "https://registry.yarnpkg.com/@lifi/wallet-management/-/wallet-management-4.3.3.tgz#6f65bca81bf0b306c417aaabc889a19ac2cc6127"
+  integrity sha512-6sIX0Nt671yxiXnjBO0lMsSqS9lpYCBNhj3C1nfhlD6I2kmYZ5wsq94p04T6vUfDLbbv73/nw4xicDZZIYQJVQ==
   dependencies:
     "@emotion/react" "^11.14.0"
     "@emotion/styled" "^11.14.1"
-    "@lifi/sdk" "^4.11.0"
-    "@lifi/widget-provider" "4.6.0"
+    "@lifi/sdk" "^4.12.0"
+    "@lifi/widget-provider" "4.6.1"
     "@mui/icons-material" "^9.4.0"
     "@mui/material" "^9.4.0"
     "@mui/system" "^9.4.0"
@@ -3766,14 +3759,6 @@
     "@lifi/widget-provider" "4.6.1"
     viem ">=2.52.0"
 
-"@lifi/widget-provider@4.6.0":
-  version "4.6.0"
-  resolved "https://registry.yarnpkg.com/@lifi/widget-provider/-/widget-provider-4.6.0.tgz#6a92b39acad0e74e942dbb4bd6aa12b5b90d6295"
-  integrity sha512-CN7mArzn8ac74djjLMJ1YEOKWAmuAk3Cz8fCkX18XJvX86MvNyp6gN2Dqab5jvVsFfe+02SM4eMeSe1BlSayXw==
-  dependencies:
-    "@lifi/sdk" "^4.11.0"
-    zustand "^5.0.15"
-
 "@lifi/widget-provider@4.6.1":
   version "4.6.1"
   resolved "https://registry.yarnpkg.com/@lifi/widget-provider/-/widget-provider-4.6.1.tgz#dfbb9e08b98e32822842cbce483f8622f7ee5be3"
@@ -3782,16 +3767,16 @@
     "@lifi/sdk" "^4.12.0"
     zustand "^5.0.15"
 
-"@lifi/widget@4.9.0":
-  version "4.9.0"
-  resolved "https://registry.yarnpkg.com/@lifi/widget/-/widget-4.9.0.tgz#a18b7de670ce319ecc041d8aa08648394ede3e27"
-  integrity sha512-c1J2F9fs+F+Uyf5M2o0PjHmIowwgy1Yv2PJYOQrtvhrcX3AbjIWOil4u/WpGXDWN8I2qBirgph5k2eSoogrxtg==
+"@lifi/widget@4.10.1":
+  version "4.10.1"
+  resolved "https://registry.yarnpkg.com/@lifi/widget/-/widget-4.10.1.tgz#b800adeb4bf240451c13fd1db515e444530b9106"
+  integrity sha512-hWnWpGLzURrMLpXlYevgj4VZz9QO56TB3u6JDakP3KPX0PekYHJ7ihLNBYU6ErTCW9PMmZig3PxwVz65l8uLvA==
   dependencies:
     "@emotion/react" "^11.14.0"
     "@emotion/styled" "^11.14.1"
-    "@lifi/sdk" "^4.11.0"
-    "@lifi/wallet-management" "4.3.2"
-    "@lifi/widget-provider" "4.6.0"
+    "@lifi/sdk" "^4.12.0"
+    "@lifi/wallet-management" "4.3.3"
+    "@lifi/widget-provider" "4.6.1"
     "@mui/icons-material" "^9.4.0"
     "@mui/material" "^9.4.0"
     "@mui/system" "^9.4.0"
