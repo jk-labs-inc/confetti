@@ -1,5 +1,6 @@
 import SignInModalTracker from "@components/Analytics/SignInModalTracker";
 import CountryFlagPolyfill from "@components/CountryFlagPolyfill";
+import { isXClaimConfigured } from "@config/xClaim";
 import "@funkit/connect/styles.css";
 import "@getpara/react-sdk-lite/styles.css";
 import LayoutBase from "@layouts/LayoutBase";
@@ -84,6 +85,7 @@ export const viewport: Viewport = {
 };
 
 const DynamicPortal = dynamic(() => import("./portal"), { ssr: !!false });
+const DynamicXClaimRuntime = dynamic(() => import("@components/XClaim/XClaimRuntime"), { ssr: !!false });
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -96,6 +98,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <LayoutBase>{children}</LayoutBase>
             <DynamicPortal />
             <SignInModalTracker />
+            {isXClaimConfigured && <DynamicXClaimRuntime />}
             <GoogleTagManager gtmId="GTM-W2WHJ2QJ" />
           </Providers>
         </div>
