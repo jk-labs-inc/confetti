@@ -1,10 +1,9 @@
-import type { Address } from "viem";
+import type { Address, Hash } from "viem";
 import type {
   CLAIM_STATUSES,
   ELIGIBILITY_REASONS,
   OUTCOME_CODES,
   REJECT_REASONS,
-  WORKER_ERROR_CODES,
   X_CANCELLED_CODES,
   X_CLAIM_CHECKS,
 } from "./constants";
@@ -14,10 +13,7 @@ export type EligibilityReason = (typeof ELIGIBILITY_REASONS)[number];
 export type RejectReason = (typeof REJECT_REASONS)[number];
 export type OutcomeCode = (typeof OUTCOME_CODES)[number];
 export type ClaimStatus = (typeof CLAIM_STATUSES)[number];
-export type WorkerErrorCode = (typeof WORKER_ERROR_CODES)[number];
 export type XCancelledReason = (typeof X_CANCELLED_CODES)[number] | "unrecognized";
-
-export type TxHash = `0x${string}`;
 
 export type XClaimCheckStatus = "passed" | "failed" | "unknown" | "off";
 export type XClaimChecks = Readonly<Record<XClaimCheck, XClaimCheckStatus>>;
@@ -46,7 +42,7 @@ export interface XClaimNonce {
 }
 
 export interface XClaimPayout {
-  txHash: TxHash | null;
+  txHash: Hash | null;
   tokenAmount: string | null;
   usdAmount: string | null;
   currency: string | null;
@@ -97,14 +93,10 @@ export type XClaimWallet =
 
 export type XClaimSignedInWallet = Exclude<XClaimWallet, { kind: "signed_out" }>;
 export type XClaimEmbeddedWallet = Extract<XClaimWallet, { kind: "embedded" }>;
+export type XClaimExternalWallet = Extract<XClaimWallet, { kind: "external" }>;
 
 export type XClaimFailureReason =
-  | "signature_rejected"
-  | "wallet_proof"
-  | "signed_out"
-  | "not_linked"
-  | "temporary"
-  | "misconfigured";
+  "signature_rejected" | "wallet_proof" | "signed_out" | "not_linked" | "temporary" | "misconfigured";
 
 export interface XClaimFailure {
   reason: XClaimFailureReason;
@@ -124,7 +116,7 @@ export type XClaimNoSpotsCause = { kind: "no_spots"; nextReleaseAt: Date | null 
 export type XClaimBoardView =
   | { board: "ClaimStart" }
   | { board: "ClaimConfirmX" }
-  | { board: "ClaimExternalWallet"; activeStep: 1 | 2 }
+  | { board: "ClaimExternalWallet"; activeStep: 1 | 2; wallet: XClaimExternalWallet }
   | { board: "ClaimLinked"; handle: string | null }
   | { board: "Checking"; handle: string | null }
   | { board: "Success"; payout: XClaimPayout; confirming: boolean }
@@ -141,7 +133,6 @@ export interface XClaimSheetCommon {
   wallet: XClaimWallet;
   spots: XClaimSpots | null;
   action: XClaimActionState;
-  fromRedirectOnly: boolean;
 }
 
 export type XClaimSheetView = XClaimSheetCommon & XClaimBoardView;
@@ -149,9 +140,11 @@ export type XClaimSheetView = XClaimSheetCommon & XClaimBoardView;
 export type XClaimOfferAudience = "signed_out" | "signed_in";
 
 export type XClaimOffer =
-  | { status: "off"; reason: "not_configured" | "loading" | "unavailable" | "settled" }
+  | { status: "off"; reason: "not_configured" | "loading" | "unavailable" | "other_chain" | "settled" }
   | { status: "waiting"; audience: XClaimOfferAudience; nextReleaseAt: Date; paused: boolean }
-  | { status: "open"; audience: XClaimOfferAudience; spots: XClaimSpots };
+  | { status: "open"; audience: XClaimOfferAudience; spots: XClaimSpots; linked: boolean };
+
+export type XClaimOpenOffer = Extract<XClaimOffer, { status: "open" }>;
 
 export interface XClaimActions {
   open: () => void;
@@ -177,6 +170,7 @@ export interface XClaimFlowAction extends XClaimActionState {
 
 export interface XClaimInput {
   configured: boolean;
+  contestChain: string | null;
   wallet: XClaimWallet;
   spots: XClaimSpots | null;
   spotsFailed: boolean;

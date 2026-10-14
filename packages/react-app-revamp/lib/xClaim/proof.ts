@@ -6,7 +6,8 @@ import type { XClaimNonce } from "./types";
 
 export type WalletProofHeader = string & { readonly __brand: "WalletProofHeader" };
 
-type WalletProofPayload = { kind: "para"; jwt: string; address: Address } | { kind: "siwe"; message: string; signature: Hex };
+type WalletProofPayload =
+  { kind: "para"; jwt: string; address: Address } | { kind: "siwe"; message: string; signature: Hex };
 
 const jwtPayloadSchema = z.object({ exp: z.number() });
 
@@ -60,7 +61,7 @@ const parseJwtSegment = (segment: string | undefined): unknown => {
   }
 };
 
-export const decodeJwt = (jwt: string) => {
+const decodeJwt = (jwt: string) => {
   const [header, payload] = jwt.split(".");
   return { header: parseJwtSegment(header), payload: parseJwtSegment(payload) };
 };

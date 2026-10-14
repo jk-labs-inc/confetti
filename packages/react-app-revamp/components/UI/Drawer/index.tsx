@@ -1,8 +1,8 @@
 import { CSSProperties, FC, useCallback, useEffect } from "react";
 import { Drawer as VaulDrawer } from "vaul";
 
-const VAUL_EXIT_ANIMATION_MS = 500;
-const BODY_LOCK_CLEANUP_DELAY_MS = VAUL_EXIT_ANIMATION_MS + 200;
+export const DRAWER_EXIT_ANIMATION_MS = 500;
+const BODY_LOCK_CLEANUP_DELAY_MS = DRAWER_EXIT_ANIMATION_MS + 200;
 const DEFAULT_CONTENT_MAX_HEIGHT = "calc(100dvh - 48px)";
 const HANDLE_CLASS_NAME: Record<DrawerHandleSize, string> = {
   default: "mx-auto! w-12! h-1.5! shrink-0! rounded-full! bg-neutral-9! my-4!",

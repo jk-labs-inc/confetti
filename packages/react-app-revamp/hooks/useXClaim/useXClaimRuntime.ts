@@ -4,20 +4,30 @@ import { LANDING_WALLET_WAIT_MS } from "lib/xClaim/constants";
 import { takeFlowStarter } from "lib/xClaim/memory";
 import { parseRedirect } from "lib/xClaim/outcomes";
 import { paraTokenCache } from "lib/xClaim/proof";
+import { openOfferFor } from "lib/xClaim/view";
 import { useEffect, useRef } from "react";
+import { useShallow } from "zustand/shallow";
 import { walletAddressOf } from "./queries";
-import { useXClaimStore, xClaimAction, xClaimMemory, xClaimSheet, xClaimSignIn } from "./store";
+import { publishXClaimOffer, useXClaimStore, xClaimAction, xClaimMemory, xClaimSheet, xClaimSignIn } from "./store";
 
 export const useXClaimRuntime = () => {
   const { isOpen: isParaModalOpen } = useModal();
-  const { offer, sheet } = useXClaim();
+  const claim = useXClaim();
+  const { offer, sheet } = claim;
   const wallet = sheet.view.wallet;
-  const result = useXClaimStore(state => state.result);
-  const signInPending = useXClaimStore(state => state.signIn.pending);
+  const { result, signInPending, memoryAddress } = useXClaimStore(
+    useShallow(state => ({
+      result: state.result,
+      signInPending: state.signIn.pending,
+      memoryAddress: state.memory?.address ?? null,
+    })),
+  );
   const previousAddress = useRef<string | null>(null);
 
   const address = walletAddressOf(wallet);
   const isSignedOut = wallet.kind === "signed_out";
+
+  useEffect(() => publishXClaimOffer(offer), [offer]);
 
   useEffect(() => {
     const landing = parseRedirect(window.location.href);
@@ -52,9 +62,9 @@ export const useXClaimRuntime = () => {
   useEffect(() => {
     if (!signInPending || isSignedOut || isParaModalOpen) return;
     if (offer.status === "off" && offer.reason === "loading") return;
-    xClaimSignIn.consume();
-    if (offer.status === "open" && offer.audience === "signed_in") xClaimSheet.open();
-  }, [signInPending, isSignedOut, isParaModalOpen, offer]);
+    if (wallet.kind === "external" && memoryAddress !== wallet.address) return;
+    xClaimSignIn.consume({ openSheet: openOfferFor(offer, "signed_in") !== null });
+  }, [signInPending, isSignedOut, isParaModalOpen, offer, wallet, memoryAddress]);
 
   useEffect(() => {
     const onPageShow = (event: PageTransitionEvent) => {
@@ -63,4 +73,6 @@ export const useXClaimRuntime = () => {
     window.addEventListener("pageshow", onPageShow);
     return () => window.removeEventListener("pageshow", onPageShow);
   }, []);
+
+  return claim;
 };

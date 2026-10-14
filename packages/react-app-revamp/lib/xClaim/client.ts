@@ -1,6 +1,6 @@
 import { isXClaimConfigured, xClaimWorkerUrl } from "@config/xClaim";
 import { didUserReject } from "utils/error";
-import { type Address, isAddress } from "viem";
+import { type Address, type Hash, isAddress, isHash } from "viem";
 import { z } from "zod";
 import {
   CLAIM_REQUEST_TIMEOUT_MS,
@@ -11,17 +11,9 @@ import {
   WORKER_ERROR_CODES,
   X_AUTHORIZE_HOSTS,
 } from "./constants";
-import { isMemberOf, isRejectReason, isTxHash, parseDate, resultFromCode, toPayout } from "./outcomes";
+import { isMemberOf, isRejectReason, parseDate, resultFromCode, toPayout } from "./outcomes";
 import type { WalletProofHeader } from "./proof";
-import type {
-  ClaimMe,
-  TxHash,
-  XClaimCheckStatus,
-  XClaimFailure,
-  XClaimNonce,
-  XClaimResult,
-  XClaimSpots,
-} from "./types";
+import type { ClaimMe, XClaimCheckStatus, XClaimFailure, XClaimNonce, XClaimResult, XClaimSpots } from "./types";
 
 export class XClaimError extends Error {
   readonly failure: XClaimFailure;
@@ -42,7 +34,7 @@ const isoDate = z.string().transform((value, context) => {
 
 const addressSchema = z.custom<Address>(value => typeof value === "string" && isAddress(value, { strict: false }));
 
-const txHashSchema = z.custom<TxHash>(value => typeof value === "string" && isTxHash(value));
+const txHashSchema = z.custom<Hash>(value => typeof value === "string" && isHash(value));
 
 const errorBodySchema = z.object({ error: z.enum(WORKER_ERROR_CODES) });
 
@@ -207,7 +199,8 @@ const failureFromResponse = (status: number, body: unknown): XClaimFailure => {
   }
 };
 
-const isTimeout = (error: unknown) => error instanceof Error && (error.name === "TimeoutError" || error.name === "AbortError");
+const isTimeout = (error: unknown) =>
+  error instanceof Error && (error.name === "TimeoutError" || error.name === "AbortError");
 
 const readBody = async (response: Response): Promise<unknown> => {
   try {

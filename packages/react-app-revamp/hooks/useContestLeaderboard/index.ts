@@ -134,7 +134,14 @@ export function useContestLeaderboard({
     return ids;
   }, [verified]);
 
-  useVerifyRefresh({ ledger, verifyList, verifiedMainEntryIds, enabled: enabled && earningsReady });
+  useVerifyRefresh({
+    contestAddress: contestConfig.address,
+    chainId: contestConfig.chainId,
+    ledger,
+    verifyList,
+    verifiedMainEntryIds,
+    enabled: enabled && earningsReady,
+  });
 
   return useMemo<ContestLeaderboard>(
     () => ({

@@ -2,8 +2,9 @@ import { isXClaimConfigured } from "@config/xClaim";
 import { useWallet } from "@hooks/useWallet";
 import type { XClaimActions, XClaimInput, XClaimOffer, XClaimSheetView, XClaimWallet } from "lib/xClaim/types";
 import { deriveOffer, deriveView } from "lib/xClaim/view";
+import { useParams } from "next/navigation";
 import { useMemo } from "react";
-import { useShallow } from "zustand/react/shallow";
+import { useShallow } from "zustand/shallow";
 import { useXClaimMe, useXClaimSpots, walletAddressOf } from "./queries";
 import { useXClaimStore } from "./store";
 import { useWalletProof } from "./useWalletProof";
@@ -32,6 +33,8 @@ const toXClaimWallet = ({
 export const useXClaim = (): XClaimHookReturn => {
   const { userAddress, isConnected, walletKind, loginMethod, connector } = useWallet();
   const walletName = connector?.name ?? null;
+  const params = useParams();
+  const contestChain = typeof params?.chain === "string" ? params.chain.toLowerCase() : null;
   const wallet = useMemo(
     () => toXClaimWallet({ userAddress, isConnected, walletKind, loginMethod, walletName }),
     [userAddress, isConnected, walletKind, loginMethod, walletName],
@@ -65,6 +68,7 @@ export const useXClaim = (): XClaimHookReturn => {
   const input = useMemo(
     (): XClaimInput => ({
       configured: isXClaimConfigured,
+      contestChain,
       wallet,
       spots: spotsQuery.data ?? null,
       spotsFailed: spotsQuery.isError,
@@ -77,6 +81,7 @@ export const useXClaim = (): XClaimHookReturn => {
       action,
     }),
     [
+      contestChain,
       wallet,
       spotsQuery.data,
       spotsQuery.isError,

@@ -3,6 +3,7 @@ import { toContentProposal } from "@components/_pages/ProposalContent/toContentP
 import { useCastVotesStore } from "@hooks/useCastVotes/store";
 import { ProposalCore, useProposalStore } from "@hooks/useProposal/store";
 import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useShallow } from "zustand/shallow";
 import { LOAD_MORE_THRESHOLD } from "./constants";
 
 interface UseEntryFeedParams {
@@ -47,8 +48,9 @@ export function useEntryFeed({
     [initialMappedProposalIds],
   );
 
-  const setPickedProposal = useCastVotesStore(state => state.setPickedProposal);
-  const pickedProposal = useCastVotesStore(state => state.pickedProposal);
+  const { setPickedProposal, pickedProposal } = useCastVotesStore(
+    useShallow(state => ({ setPickedProposal: state.setPickedProposal, pickedProposal: state.pickedProposal })),
+  );
 
   const lastTargetRef = useRef<string | null>(null);
 

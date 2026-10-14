@@ -1,4 +1,6 @@
-import { PENDING_POLL_WINDOW_MS, SIGN_IN_ARM_GRACE_MS, SIGN_IN_LOG_LIMIT } from "lib/xClaim/constants";
+import { isXClaimConfigured } from "@config/xClaim";
+import { PENDING_POLL_WINDOW_MS, SIGN_IN_ARM_GRACE_MS } from "lib/xClaim/constants";
+import type { XClaimSignInHandoff } from "lib/xClaim/handoff";
 import { memoryAfterHint, readMemory, writeMemory } from "lib/xClaim/memory";
 import type {
   XClaimActionName,
@@ -7,20 +9,13 @@ import type {
   XClaimFlowAction,
   XClaimFlowResult,
   XClaimMemory,
+  XClaimOffer,
   XClaimResult,
 } from "lib/xClaim/types";
 import { create } from "zustand";
+import { shallow } from "zustand/shallow";
 
-export type ParaAuthEventName = "onLogin" | "onAccountCreation";
-
-export interface SignInLogEntry {
-  event: ParaAuthEventName;
-  at: number;
-  counted: boolean;
-  failed: boolean;
-}
-
-export interface XClaimStoreState {
+interface XClaimStoreState {
   isOpen: boolean;
   result: XClaimFlowResult | null;
   action: XClaimFlowAction;
@@ -28,7 +23,7 @@ export interface XClaimStoreState {
   pollUntil: number | null;
   memory: { address: string; state: XClaimMemory | null } | null;
   signIn: { armed: boolean; modalClosedAt: number | null; pending: boolean };
-  signInLog: SignInLogEntry[];
+  offer: XClaimOffer;
 }
 
 type BusyStage = Exclude<XClaimActionStage, "idle">;
@@ -39,6 +34,8 @@ interface ParaAuthEvent {
 
 const IDLE_ACTION: XClaimFlowAction = { name: null, stage: "idle", error: null };
 
+const IDLE_SIGN_IN: XClaimStoreState["signIn"] = { armed: false, modalClosedAt: null, pending: false };
+
 export const useXClaimStore = create<XClaimStoreState>(() => ({
   isOpen: false,
   result: null,
@@ -46,11 +43,12 @@ export const useXClaimStore = create<XClaimStoreState>(() => ({
   actionRun: 0,
   pollUntil: null,
   memory: null,
-  signIn: { armed: false, modalClosedAt: null, pending: false },
-  signInLog: [],
+  signIn: IDLE_SIGN_IN,
+  offer: { status: "off", reason: isXClaimConfigured ? "loading" : "not_configured" },
 }));
 
-const pollWindowFor = (result: XClaimResult, at: number) => (result.kind === "pending" ? at + PENDING_POLL_WINDOW_MS : null);
+const pollWindowFor = (result: XClaimResult, at: number) =>
+  result.kind === "pending" ? at + PENDING_POLL_WINDOW_MS : null;
 
 const closeFlow = (state: XClaimStoreState) => ({
   isOpen: false,
@@ -109,7 +107,10 @@ export const xClaimAction = {
   },
 
   reject: (name: XClaimActionName, failure: XClaimFailure) =>
-    useXClaimStore.setState(state => ({ action: { name, stage: "idle", error: failure }, actionRun: state.actionRun + 1 })),
+    useXClaimStore.setState(state => ({
+      action: { name, stage: "idle", error: failure },
+      actionRun: state.actionRun + 1,
+    })),
 
   recordResult: (run: number, result: XClaimResult, at: number) => {
     if (!isCurrentRun(run)) return;
@@ -147,16 +148,11 @@ export const xClaimMemory = {
   },
 };
 
-const recordAuthEvent = (event: ParaAuthEventName, payload: ParaAuthEvent) => {
-  const now = Date.now();
-  const { signIn, signInLog } = useXClaimStore.getState();
+const recordAuthEvent = (payload: ParaAuthEvent) => {
+  const { signIn } = useXClaimStore.getState();
   const failed = payload.detail?.error !== undefined;
-  const withinGrace = signIn.modalClosedAt === null || now - signIn.modalClosedAt <= SIGN_IN_ARM_GRACE_MS;
-  const counted = !failed && signIn.armed && withinGrace;
-  useXClaimStore.setState({
-    signIn: counted ? { ...signIn, pending: true } : signIn,
-    signInLog: [{ event, at: now, counted, failed }, ...signInLog].slice(0, SIGN_IN_LOG_LIMIT),
-  });
+  const withinGrace = signIn.modalClosedAt === null || Date.now() - signIn.modalClosedAt <= SIGN_IN_ARM_GRACE_MS;
+  if (!failed && signIn.armed && withinGrace) useXClaimStore.setState({ signIn: { ...signIn, pending: true } });
 };
 
 export const xClaimSignIn = {
@@ -174,10 +170,27 @@ export const xClaimSignIn = {
     }
   },
 
-  consume: () => useXClaimStore.setState({ signIn: { armed: false, modalClosedAt: null, pending: false } }),
+  consume: ({ openSheet }: { openSheet: boolean }) =>
+    useXClaimStore.setState(state => ({ isOpen: state.isOpen || openSheet, signIn: IDLE_SIGN_IN })),
 };
 
 export const xClaimParaCallbacks = {
-  onLogin: (event: ParaAuthEvent) => recordAuthEvent("onLogin", event),
-  onAccountCreation: (event: ParaAuthEvent) => recordAuthEvent("onAccountCreation", event),
+  onLogin: recordAuthEvent,
+  onAccountCreation: recordAuthEvent,
 };
+
+const handoffOf = (state: XClaimStoreState): XClaimSignInHandoff => {
+  if (state.signIn.pending) return "deciding";
+  return state.isOpen ? "sheet_open" : "free";
+};
+
+export const takeOverXClaimSignIn = () =>
+  useXClaimStore.setState(state => ({ ...(state.isOpen ? closeFlow(state) : {}), signIn: IDLE_SIGN_IN }));
+
+export const useXClaimSignInHandoff = () => useXClaimStore(handoffOf);
+
+export const publishXClaimOffer = (offer: XClaimOffer) => {
+  if (!shallow(useXClaimStore.getState().offer, offer)) useXClaimStore.setState({ offer });
+};
+
+export const useXClaimOffer = () => useXClaimStore(state => state.offer);

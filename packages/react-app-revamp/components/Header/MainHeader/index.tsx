@@ -1,4 +1,5 @@
 import { useModal } from "@getpara/react-sdk-lite";
+import { DESKTOP_HEADER_MIN_WIDTH_PX } from "@helpers/isMobileViewport";
 import { MediaQuery } from "@helpers/mediaQuery";
 import { useWallet } from "@hooks/useWallet";
 import { FC } from "react";
@@ -16,14 +17,14 @@ const MainHeader: FC<MainHeaderProps> = ({ showProfile, isContestPage = false })
 
   return (
     <div>
-      <MediaQuery maxWidth={1024}>
+      <MediaQuery maxWidth={DESKTOP_HEADER_MIN_WIDTH_PX - 1}>
         <MainHeaderMobileLayout
           isConnected={isConnected}
           address={userAddress ?? ""}
           openConnectModal={() => openModal()}
         />
       </MediaQuery>
-      <MediaQuery minWidth={1025}>
+      <MediaQuery minWidth={DESKTOP_HEADER_MIN_WIDTH_PX}>
         <MainHeaderDesktopLayout isContestPage={isContestPage} />
       </MediaQuery>
     </div>

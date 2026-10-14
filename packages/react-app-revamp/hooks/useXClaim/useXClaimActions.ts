@@ -53,7 +53,10 @@ export const useXClaimActions = ({
           call: proof =>
             startXLogin({
               proof,
-              returnPath: safeReturnPath({ preferred: returnPath ?? currentPath(), fallback: window.location.pathname }),
+              returnPath: safeReturnPath({
+                preferred: returnPath ?? currentPath(),
+                fallback: window.location.pathname,
+              }),
             }),
           onProven: provenFor(run),
         });

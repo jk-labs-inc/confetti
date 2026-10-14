@@ -21,6 +21,10 @@ export const formatDate = (dateString: string): string => {
   return moment(dateString).format("MMMM D, h:mm a").toLowerCase();
 };
 
+export const formatMonthDay = (date: Date): string => moment(date).format("MMM D").toLowerCase();
+
+export const formatTimeOfDay = (date: Date): string => moment(date).format("h:mm a").toLowerCase();
+
 /**
  * @param date - The date to resolve the abbreviation for; defaults to now
  * @returns The time zone abbreviation

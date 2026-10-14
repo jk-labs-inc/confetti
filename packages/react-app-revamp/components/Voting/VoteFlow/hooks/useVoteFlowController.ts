@@ -7,6 +7,9 @@ import { useAddFunds, DEPOSIT_ARRIVAL_POLL_INTERVAL_MS } from "@hooks/useAddFund
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import { useVoteBalance } from "@hooks/useVoteBalance";
 import { useWallet } from "@hooks/useWallet";
+import { takeOverXClaimSignIn, useXClaimSignInHandoff } from "@hooks/useXClaim/store";
+import { VOTE_WAITS_FOR_CLAIM_MS } from "lib/xClaim/constants";
+import { voteResumeStep } from "lib/xClaim/handoff";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useShallow } from "zustand/shallow";
 
@@ -40,10 +43,12 @@ export const useVoteFlowController = ({
   const [screen, setScreen] = useState(VoteFlowScreen.Vote);
   const [addFundsEntryReason, setAddFundsEntryReason] = useState(AddFundsEntryReason.Shortfall);
   const [isConnectIntentPending, setIsConnectIntentPending] = useState(false);
+  const [claimWait, setClaimWait] = useState<"idle" | "waiting" | "over">("idle");
   const intentFiredRef = useRef(false);
 
   const { isConnected } = useWallet();
   const { isOpen: isParaModalOpen, openModal } = useModal();
+  const claimSignIn = useXClaimSignInHandoff();
   const contestConfig = useContestConfigStore(useShallow(state => state.contestConfig));
   const effectiveCostToVote = useEffectiveCostToVote(costToVote);
 
@@ -94,6 +99,7 @@ export const useVoteFlowController = ({
 
   const requestConnectAndVote = useCallback(() => {
     intentFiredRef.current = false;
+    setClaimWait("idle");
     setIsConnectIntentPending(true);
     openModal();
   }, [openModal]);
@@ -114,11 +120,18 @@ export const useVoteFlowController = ({
     }
     if (isBalanceLoading || balance === undefined) return;
     if (intentFiredRef.current) return;
-    intentFiredRef.current = true;
-    setIsConnectIntentPending(false);
     const typedAmount = parseFloat(useVotingStore.getState().inputValue);
     const isShortfall = insufficientBalance || (!isNaN(typedAmount) && typedAmount > parseFloat(spendableBalance));
-    if (isShortfall) {
+    const step = voteResumeStep({ needsFunds: isShortfall, claim: claimSignIn, isClaimWaitOver: claimWait === "over" });
+    if (step === "wait") {
+      setClaimWait(current => (current === "idle" ? "waiting" : current));
+      return;
+    }
+    intentFiredRef.current = true;
+    setIsConnectIntentPending(false);
+    if (step === "yield_to_claim") return;
+    takeOverXClaimSignIn();
+    if (step === "add_funds") {
       goToAddFunds(AddFundsEntryReason.Shortfall);
     } else {
       confirmVote();
@@ -133,9 +146,17 @@ export const useVoteFlowController = ({
     balance,
     spendableBalance,
     insufficientBalance,
+    claimSignIn,
+    claimWait,
     goToAddFunds,
     confirmVote,
   ]);
+
+  useEffect(() => {
+    if (claimWait !== "waiting") return;
+    const timer = setTimeout(() => setClaimWait("over"), VOTE_WAITS_FOR_CLAIM_MS);
+    return () => clearTimeout(timer);
+  }, [claimWait]);
 
   useEffect(() => {
     if (!isConnectIntentPending || isParaModalOpen || isConnected) return;
@@ -169,6 +190,7 @@ export const useVoteFlowController = ({
     setScreen(VoteFlowScreen.Vote);
     setAddFundsEntryReason(AddFundsEntryReason.Shortfall);
     setIsConnectIntentPending(false);
+    setClaimWait("idle");
     intentFiredRef.current = false;
   }, [isOpen]);
 

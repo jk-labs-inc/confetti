@@ -1,5 +1,5 @@
 import { loadFromLocalStorage, removeFromLocalStorage, saveToLocalStorage } from "@helpers/localStorage";
-import { FLOW_STARTER_KEY, FLOW_STARTER_TTL_MS, MEMORY_KEY_PREFIX } from "./constants";
+import { FLOW_STARTER_KEY, FLOW_STARTER_TTL_MS, MEMORY_KEY_PREFIX, TIP_DISMISSED_KEY } from "./constants";
 import { isSettledResult, resultFromMe } from "./outcomes";
 import type { ClaimMe, XClaimMemory, XClaimResult } from "./types";
 
@@ -77,5 +77,21 @@ export const takeFlowStarter = (now: number): string | null => {
     return address;
   } catch {
     return null;
+  }
+};
+
+export const readTipDismissed = (): boolean => {
+  try {
+    return loadFromLocalStorage<{ dismissed?: unknown }>(TIP_DISMISSED_KEY).dismissed === true;
+  } catch {
+    return false;
+  }
+};
+
+export const rememberTipDismissed = () => {
+  try {
+    saveToLocalStorage(TIP_DISMISSED_KEY, { dismissed: true });
+  } catch {
+    return;
   }
 };

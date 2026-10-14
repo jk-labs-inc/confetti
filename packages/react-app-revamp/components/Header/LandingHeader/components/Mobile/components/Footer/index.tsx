@@ -1,3 +1,5 @@
+import MobileNavAccountTab from "@components/Header/MobileNavAccountTab";
+import MobileNavSlot from "@components/Header/MobileNavSlot";
 import { IconMagnifyingGlassSolid } from "@components/UI/Icons";
 import CustomLink from "@components/UI/Link";
 import { MobileProfileDrawer } from "@components/UI/MobileWalletPortal";
@@ -11,27 +13,21 @@ import {
   ROUTE_VIEW_LIVE_CONTESTS,
 } from "@config/routes";
 import { useLogout, useModal } from "@getpara/react-sdk-lite";
-import {
-  HomeIcon,
-  MagnifyingGlassIcon,
-  PencilSquareIcon,
-  TrophyIcon,
-  UserCircleIcon,
-} from "@heroicons/react/24/outline";
+import { HomeIcon, MagnifyingGlassIcon, PencilSquareIcon, TrophyIcon } from "@heroicons/react/24/outline";
 import {
   HomeIcon as HomeIconSolid,
   PencilSquareIcon as PencilSquareIconSolid,
   TrophyIcon as TrophyIconSolid,
-  UserCircleIcon as UserCircleIconSolid,
 } from "@heroicons/react/24/solid";
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
-import { MOBILE_NAV_SLOT_ID } from "@hooks/useMobileNavSlot";
+import { useXClaimOffer } from "@hooks/useXClaim/store";
 import { useWallet } from "@hooks/useWallet";
 
 const LandingHeaderMobileFooter = () => {
   const { isConnected, userAddress } = useWallet();
   const isVotingFocusMode = useVotingFocusModeStore(state => state.isFocusMode);
+  const claimOffer = useXClaimOffer();
   const { logoutAsync } = useLogout();
   const pathname = usePathname();
   const [isInPwaMode, setIsInPwaMode] = useState(false);
@@ -72,7 +68,7 @@ const LandingHeaderMobileFooter = () => {
           isVotingFocusMode ? "rounded-t-[16px] border-transparent bg-neutral-1" : "border-neutral-2 bg-true-black"
         } ${isClient && isInPwaMode ? "pb-8" : "pb-2"}`}
       >
-        <div id={MOBILE_NAV_SLOT_ID} />
+        <MobileNavSlot claimOffer={claimOffer} />
 
         <div
           className={`text-neutral-10 border-b text-[14px] overflow-hidden relative transition-all duration-200 ${
@@ -138,23 +134,13 @@ const LandingHeaderMobileFooter = () => {
             <p className="text-[12px]">create</p>
           </CustomLink>
 
-          <div className="transition-all duration-500">
-            {isConnected ? (
-              <div className="flex flex-col items-center" onClick={handleWalletClick}>
-                {showWalletPortal ? (
-                  <UserCircleIconSolid width={24} height={24} className="text-neutral-11" />
-                ) : (
-                  <UserCircleIcon width={24} height={24} className="text-neutral-11" />
-                )}
-                <p className="text-[12px]">profile</p>
-              </div>
-            ) : (
-              <div className="flex flex-col items-center" onClick={() => openModal()}>
-                <img width={24} height={24} src="/header/wallet.svg" alt="wallet" />
-                <p className="text-[12px]">wallet</p>
-              </div>
-            )}
-          </div>
+          <MobileNavAccountTab
+            isConnected={isConnected}
+            isProfileOpen={showWalletPortal}
+            onProfileClick={handleWalletClick}
+            onSignInClick={() => openModal()}
+            claimOffer={claimOffer}
+          />
         </div>
       </div>
       {isClient && (
@@ -163,6 +149,7 @@ const LandingHeaderMobileFooter = () => {
           onClose={closeWalletPortal}
           address={userAddress ?? ""}
           onDisconnect={handleDisconnect}
+          claimOffer={claimOffer}
         />
       )}
     </footer>

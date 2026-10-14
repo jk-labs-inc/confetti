@@ -8,12 +8,12 @@ import {
   REJECT_REASONS,
   X_CLAIM_CHECKS,
 } from "./constants";
+import { isHash, type Hash } from "viem";
 import type {
   ClaimMe,
   EligibilityReason,
   OutcomeCode,
   RejectReason,
-  TxHash,
   XClaimCheck,
   XClaimCheckStatus,
   XClaimChecks,
@@ -21,7 +21,6 @@ import type {
   XClaimResult,
 } from "./types";
 
-const TX_HASH_PATTERN = /^0x[0-9a-fA-F]{64}$/;
 const DECIMAL_PATTERN = /^\d+(\.\d+)?$/;
 const LABEL_PATTERN = /^[A-Za-z0-9_-]{1,32}$/;
 const CONTROL_CHARACTERS = /[\u0000-\u001f\u007f]/;
@@ -32,7 +31,7 @@ export const ELIGIBILITY_CHECK: Readonly<Record<EligibilityReason, XClaimCheck>>
   ratio: "ratio",
 };
 
-export const EMPTY_PAYOUT: XClaimPayout = {
+const EMPTY_PAYOUT: XClaimPayout = {
   txHash: null,
   tokenAmount: null,
   usdAmount: null,
@@ -48,11 +47,9 @@ export const isOutcomeCode = (value: string): value is OutcomeCode => isMemberOf
 
 export const isRejectReason = (value: string): value is RejectReason => isMemberOf(REJECT_REASONS, value);
 
-export const isTxHash = (value: string): value is TxHash => TX_HASH_PATTERN.test(value);
-
 export const isDecimalAmount = (value: string) => DECIMAL_PATTERN.test(value);
 
-export const explorerTxUrl = ({ txHash, network }: { txHash: TxHash | null; network: string | null }) =>
+export const explorerTxUrl = ({ txHash, network }: { txHash: Hash | null; network: string | null }) =>
   txHash && network === POLYGON_NETWORK ? `${POLYGON_EXPLORER_TX_URL}${txHash}` : null;
 
 export const toPayout = (fields: Omit<XClaimPayout, "explorerUrl">): XClaimPayout => ({
@@ -110,7 +107,7 @@ const payoutFromParams = (params: URLSearchParams): XClaimPayout => {
   const tx = params.get("tx");
   const amount = params.get("amount");
   return toPayout({
-    txHash: tx && isTxHash(tx) ? tx : null,
+    txHash: tx && isHash(tx) ? tx : null,
     tokenAmount: amount && isDecimalAmount(amount) ? amount : null,
     usdAmount: null,
     currency: readLabel(params, "currency"),
@@ -119,7 +116,6 @@ const payoutFromParams = (params: URLSearchParams): XClaimPayout => {
 };
 
 export interface RedirectLanding {
-  code: string;
   result: XClaimResult;
   cleanUrl: string;
 }
@@ -138,7 +134,7 @@ export const parseRedirect = (href: string): RedirectLanding | null => {
 
   REDIRECT_PARAMS.forEach(name => url.searchParams.delete(name));
   const search = url.searchParams.toString();
-  return { code, result, cleanUrl: `${url.pathname}${search ? `?${search}` : ""}${url.hash}` };
+  return { result, cleanUrl: `${url.pathname}${search ? `?${search}` : ""}${url.hash}` };
 };
 
 const isPayoutResult = (result: XClaimResult | null) => result?.kind === "paid" || result?.kind === "pending";
