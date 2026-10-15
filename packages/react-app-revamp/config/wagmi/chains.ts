@@ -1,7 +1,6 @@
 import { Chain, Transport, fallback, http } from "viem";
 import { cookieStorage, createConfig, createStorage } from "wagmi";
 import { ChainWithIcon } from "./custom-chains/types";
-import { abstract } from "./custom-chains/abstract";
 import { arbitrumOne } from "./custom-chains/arbitrumOne";
 import { avalanche } from "./custom-chains/avalanche";
 import { base } from "./custom-chains/base";
@@ -27,7 +26,6 @@ export const chains: readonly [ChainWithIcon, ...ChainWithIcon[]] = [
   base,
   avalanche,
   world,
-  abstract,
   monad,
   sepolia,
   baseTestnet,
