@@ -2,10 +2,11 @@ import { motion, useScroll, useTransform } from "motion/react";
 import { FC, ReactNode, useRef } from "react";
 
 interface PeekCardProps {
+  isPeek: boolean;
   children: ReactNode;
 }
 
-const PeekCard: FC<PeekCardProps> = ({ children }) => {
+const PeekCard: FC<PeekCardProps> = ({ isPeek, children }) => {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -16,7 +17,7 @@ const PeekCard: FC<PeekCardProps> = ({ children }) => {
   const opacity = useTransform(scrollYProgress, [0.6, 1], [0.4, 1]);
 
   return (
-    <motion.div ref={ref} style={{ opacity }} className="md:opacity-100!">
+    <motion.div ref={ref} style={{ opacity: isPeek ? opacity : 1 }} className="md:opacity-100!">
       {children}
     </motion.div>
   );

@@ -1,5 +1,5 @@
 import { ALCHEMY_PRICES_BASE_URL, CHAIN_TO_ALCHEMY_NETWORK } from "@config/alchemy";
-import { useQuery } from "@tanstack/react-query";
+import { queryOptions, useQuery } from "@tanstack/react-query";
 
 const ALCHEMY_KEY = process.env.NEXT_PUBLIC_ALCHEMY_KEY ?? "";
 
@@ -69,22 +69,24 @@ export const fetchErc20Prices = async (addresses: string[], chain: string): Prom
   return rates;
 };
 
-/**
- * Fetches live USD prices for ERC-20 tokens on a given chain via the
- * Alchemy Prices API.
- */
-const useErc20Rates = (tokenAddresses: string[], chainName: string) => {
+export const erc20RatesQueryOptions = (tokenAddresses: string[], chainName: string) => {
   const sorted = [...tokenAddresses].map(a => a.toLowerCase()).sort();
-  const enabled = sorted.length > 0 && !!CHAIN_TO_ALCHEMY_NETWORK[chainName];
 
-  return useQuery({
+  return queryOptions({
     queryKey: ["erc20-rates-fetch", chainName, sorted.join(",")],
     queryFn: () => fetchErc20Prices(sorted, chainName),
     staleTime: Infinity,
     refetchOnWindowFocus: false,
     retry: 2,
-    enabled,
+    enabled: sorted.length > 0 && !!CHAIN_TO_ALCHEMY_NETWORK[chainName],
   });
 };
+
+/**
+ * Fetches live USD prices for ERC-20 tokens on a given chain via the
+ * Alchemy Prices API.
+ */
+const useErc20Rates = (tokenAddresses: string[], chainName: string) =>
+  useQuery(erc20RatesQueryOptions(tokenAddresses, chainName));
 
 export default useErc20Rates;
