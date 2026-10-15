@@ -1,48 +1,20 @@
 "use client";
 
 import FeaturedContests from "@components/_pages/FeaturedContests";
+import { featuredContestKey, rankFeaturedContests } from "@components/_pages/FeaturedContests/ranking";
 import CustomLink from "@components/UI/Link";
 import { ROUTE_VIEW_LIVE_CONTESTS } from "@config/routes";
 import { isSupabaseConfigured } from "@helpers/database";
+import { useRewardPoolsUsd } from "@hooks/useCurrency/useTotalRewardsUsd";
 import { experimental_streamedQuery as streamedQuery, useQuery } from "@tanstack/react-query";
 import { streamFeaturedContests } from "lib/contests";
 import { CONTESTS_FEATURE_COUNT } from "lib/contests/constants";
 import { fetchTotalRewardsForContests } from "lib/contests/contracts";
-import { ProcessedContest } from "lib/contests/types";
-import moment from "moment";
-import { useCallback, useState } from "react";
+import { useMemo, useState } from "react";
 import LandingPageHowItWorks from "./HowItWorks";
-
-const sortContests = (contests: ProcessedContest[]): ProcessedContest[] => {
-  const now = moment();
-
-  return [...contests].sort((a, b) => {
-    const aEnd = moment(a.end_at);
-    const bEnd = moment(b.end_at);
-    const aVoteStart = moment(a.vote_start_at);
-    const bVoteStart = moment(b.vote_start_at);
-
-    const aIsEnded = aEnd.isSameOrBefore(now);
-    const bIsEnded = bEnd.isSameOrBefore(now);
-
-    if (!aIsEnded && bIsEnded) return -1;
-    if (aIsEnded && !bIsEnded) return 1;
-
-    if (!aIsEnded && !bIsEnded) {
-      const startDiff = aVoteStart.diff(bVoteStart);
-      if (startDiff !== 0) return startDiff;
-      return aEnd.diff(bEnd);
-    }
-
-    const endDiff = bEnd.diff(aEnd);
-    if (endDiff !== 0) return endDiff;
-    return bVoteStart.diff(aVoteStart);
-  });
-};
 
 function useFeaturedContests() {
   const [page] = useState(0);
-  const selectSortedContests = useCallback((data: ProcessedContest[]) => sortContests(data), []);
 
   const {
     data: contestData = [],
@@ -56,23 +28,31 @@ function useFeaturedContests() {
       streamFn: () => streamFeaturedContests(page, CONTESTS_FEATURE_COUNT),
       refetchMode: "reset",
     }),
-    select: selectSortedContests,
     refetchOnWindowFocus: false,
   });
 
   const isStreamingComplete = status === "success" && !isContestDataFetching;
 
-  const { data: rewardsData, isFetching: isRewardsFetching } = useQuery({
+  const { data: rewardsByKey, isFetching: isRewardsFetching } = useQuery({
     queryKey: ["totalRewards", isStreamingComplete ? contestData.length : "pending"],
-    queryFn: () => fetchTotalRewardsForContests(contestData),
+    queryFn: async () => {
+      const rewards = await fetchTotalRewardsForContests(contestData);
+      return Object.fromEntries(contestData.map((contest, index) => [featuredContestKey(contest), rewards[index]]));
+    },
     enabled: isStreamingComplete && contestData.length > 0,
     refetchOnWindowFocus: false,
   });
 
+  const poolUsdByKey = useRewardPoolsUsd(rewardsByKey);
+
+  const contests = useMemo(
+    () => rankFeaturedContests({ contests: contestData, rewardsByKey, poolUsdByKey }),
+    [contestData, rewardsByKey, poolUsdByKey],
+  );
+
   return {
     status,
-    contestData,
-    rewardsData,
+    contests,
     isRewardsFetching,
     isContestDataFetching,
     refetch,
@@ -80,7 +60,7 @@ function useFeaturedContests() {
 }
 
 const LandingPage = () => {
-  const { status, contestData, rewardsData, isRewardsFetching, isContestDataFetching, refetch } = useFeaturedContests();
+  const { status, contests, isRewardsFetching, isContestDataFetching, refetch } = useFeaturedContests();
 
   return (
     <div className="px-4 mt-6 lx:mt-12 pb-12">
@@ -92,8 +72,7 @@ const LandingPage = () => {
           >
             <FeaturedContests
               status={status}
-              contestData={contestData}
-              rewardsData={rewardsData}
+              contests={contests}
               isRewardsFetching={isRewardsFetching}
               isContestDataFetching={isContestDataFetching}
               onRetry={() => refetch()}

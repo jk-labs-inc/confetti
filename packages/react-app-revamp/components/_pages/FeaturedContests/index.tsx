@@ -1,30 +1,28 @@
 import { CONTESTS_FEATURE_COUNT } from "lib/contests/constants";
-import { ContestWithTotalRewards, ProcessedContest } from "lib/contests/types";
 import { FC } from "react";
 import FeaturedContestCard from "./components/Contest";
 import FeaturedContestsEmptyState from "./components/EmptyState";
 import FeaturedContestsErrorState from "./components/ErrorState";
 import PeekCard from "./components/PeekCard";
 import SkeletonCard from "./components/SkeletonCard";
+import { FeaturedContestItem } from "./ranking";
 
 interface FeaturedContestsProps {
   status: "error" | "pending" | "success";
   isContestDataFetching: boolean;
   isRewardsFetching: boolean;
-  contestData?: ProcessedContest[];
-  rewardsData?: ContestWithTotalRewards[];
+  contests: FeaturedContestItem[];
   onRetry: () => void;
 }
 
 const FeaturedContests: FC<FeaturedContestsProps> = ({
   status,
-  contestData,
-  rewardsData,
+  contests,
   isRewardsFetching,
   isContestDataFetching,
   onRetry,
 }) => {
-  const isEmpty = status === "success" && !isContestDataFetching && !contestData?.length;
+  const isEmpty = status === "success" && !isContestDataFetching && !contests.length;
 
   return (
     <div className="flex flex-col gap-4 max-md:px-2">
@@ -35,25 +33,15 @@ const FeaturedContests: FC<FeaturedContestsProps> = ({
         <FeaturedContestsEmptyState />
       ) : (
         <div className="flex flex-col md:grid md:grid-cols-(--grid-featured-contests) gap-6 pb-4">
-          {contestData?.map((contest, index) => {
-            const card = (
-              <FeaturedContestCard
-                contestData={contest}
-                rewardsData={rewardsData?.[index]}
-                isRewardsFetching={isRewardsFetching}
-              />
-            );
-
-            return index === 0 ? (
-              <PeekCard key={`contest-${index}`}>{card}</PeekCard>
-            ) : (
-              <div key={`contest-${index}`}>{card}</div>
-            );
-          })}
+          {contests.map(({ key, contest, rewards }, index) => (
+            <PeekCard key={key} isPeek={index === 0}>
+              <FeaturedContestCard contestData={contest} rewardsData={rewards} isRewardsFetching={isRewardsFetching} />
+            </PeekCard>
+          ))}
 
           {isContestDataFetching &&
             Array.from({
-              length: Math.max(0, CONTESTS_FEATURE_COUNT - (contestData?.length || 0)),
+              length: Math.max(0, CONTESTS_FEATURE_COUNT - contests.length),
             }).map((_, index) => <SkeletonCard key={`skeleton-${index}`} />)}
         </div>
       )}
