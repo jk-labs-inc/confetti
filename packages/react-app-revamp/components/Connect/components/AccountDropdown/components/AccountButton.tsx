@@ -1,4 +1,5 @@
 import { Avatar } from "@components/UI/Avatar";
+import XClaimUnclaimedDot from "@components/XClaim/entry/XClaimUnclaimedDot";
 import { MenuButton } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import { ChainWithIcon } from "@config/wagmi";
@@ -11,9 +12,17 @@ interface AccountButtonProps {
   ensAvatar: string | null | undefined;
   displayName: string;
   currentChain?: ChainWithIcon;
+  hasClaimDot: boolean;
 }
 
-const AccountButton: FC<AccountButtonProps> = ({ address, ensName, ensAvatar, displayName, currentChain }) => {
+const AccountButton: FC<AccountButtonProps> = ({
+  address,
+  ensName,
+  ensAvatar,
+  displayName,
+  currentChain,
+  hasClaimDot,
+}) => {
   return (
     <MenuButton
       className={`w-auto h-8 flex items-center gap-2 bg-secondary-1 p-4 text-base text-neutral-9 font-bold focus:not-data-focus:outline-none data-focus:outline data-focus:outline-white border border-primary-3 rounded-4xl`}
@@ -31,6 +40,7 @@ const AccountButton: FC<AccountButtonProps> = ({ address, ensName, ensAvatar, di
                 className="absolute -bottom-0.5 -right-0.5 rounded-full ring-2 ring-secondary-1"
               />
             )}
+            {hasClaimDot && <XClaimUnclaimedDot className="-top-0.5 -right-0.5 border-secondary-1" />}
           </div>
           {ensName || displayName}
           <ChevronDownIcon

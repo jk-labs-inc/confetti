@@ -19,7 +19,7 @@
   --breakpoint-4xl: 1660px;
 
   --font-sabo-regular: "Twemoji Country Flags", var(--font-family-sabo-regular), sans-serif;
-  --font-sabo-filled: "Twemoji Country Flags", var(--font-family-sabo-filled), sans-serif;
+  --font-sabo-filled: "Twemoji Country Flags", var(--font-family-sabo-dollar), var(--font-family-sabo-filled), sans-serif;
   --font-sans: "Twemoji Country Flags", var(--font-family-lato), sans-serif;
   --font-mono: monospace;
 
@@ -1075,12 +1075,6 @@ li {
   .sidebar-scroll::-webkit-scrollbar-thumb:hover {
     background-color: rgba(187, 101, 255, 0.5);
   }
-}
-
-cpsl-auth-modal {
-  position: relative;
-  z-index: 9999999999;
-  pointer-events: auto;
 }
 
 /* funkit checkout portals mount as direct body children; drawers lock body pointer-events */

@@ -1,11 +1,15 @@
 import { chains, ChainWithIcon } from "@config/wagmi/chains";
-import { useAccount, useLogout, useWallet as useParaWallet } from "@getpara/react-sdk-lite";
+import { type LoginMethod, useAccount, useLogout, useWallet as useParaWallet } from "@getpara/react-sdk-lite";
 import { useMemo } from "react";
 import { getAddress, isAddress } from "viem";
 import { Connector, useChainId, useSwitchChain } from "wagmi";
 
+export type WalletKind = "embedded" | "external";
+
 interface WalletHookReturn {
   userAddress: `0x${string}` | undefined;
+  walletKind: WalletKind | undefined;
+  loginMethod: LoginMethod | undefined;
   isConnected: boolean;
   chain: ChainWithIcon;
   connector: Connector | undefined;
@@ -24,7 +28,7 @@ interface WalletHookReturn {
  */
 export function useWallet(): WalletHookReturn {
   // Para SDK hooks for wallet state
-  const { connectionType, external, isConnected: isAccountConnected } = useAccount();
+  const { connectionType, external, embedded, isConnected: isAccountConnected } = useAccount();
   const { data: paraWallet } = useParaWallet(); // Only available for embedded wallets
   const { logout: paraLogout } = useLogout();
   const switchChain = useSwitchChain();
@@ -38,15 +42,15 @@ export function useWallet(): WalletHookReturn {
   // Create appropriate signer based on wallet connection type
   // Memoized to prevent recreation on every render
   // Resolve user address based on connection type
-  const userAddress = useMemo(() => {
+  const { userAddress, walletKind } = useMemo(() => {
     // External wallet address comes from wagmi connection
     // Embedded wallet address comes from Para wallet
-    const rawAddress =
-      connectionType === "external" && external?.evm?.address
-        ? external.evm.address
-        : (paraWallet?.address as `0x${string}` | undefined);
+    const isExternal = connectionType === "external" && !!external?.evm?.address;
+    const rawAddress = isExternal ? external.evm.address : (paraWallet?.address as `0x${string}` | undefined);
+    const address = rawAddress && isAddress(rawAddress, { strict: false }) ? getAddress(rawAddress) : rawAddress;
+    const kind: WalletKind | undefined = address ? (isExternal ? "external" : "embedded") : undefined;
 
-    return rawAddress && isAddress(rawAddress, { strict: false }) ? getAddress(rawAddress) : rawAddress;
+    return { userAddress: address, walletKind: kind };
   }, [connectionType, external?.evm?.address, paraWallet?.address]);
 
   // wagmi connection with an expired Para session reports
@@ -63,6 +67,8 @@ export function useWallet(): WalletHookReturn {
 
   return {
     userAddress,
+    walletKind,
+    loginMethod: embedded.loginMethod,
     isConnected,
     //TODO: test if we need an undefined here?
     chain: chain as ChainWithIcon,
