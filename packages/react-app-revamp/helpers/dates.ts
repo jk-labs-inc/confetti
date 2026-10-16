@@ -25,6 +25,8 @@ export const formatMonthDay = (date: Date): string => moment(date).format("MMM D
 
 export const formatTimeOfDay = (date: Date): string => moment(date).format("h:mm a").toLowerCase();
 
+export const isToday = (date: Date): boolean => moment(date).isSame(moment(), "day");
+
 /**
  * @param date - The date to resolve the abbreviation for; defaults to now
  * @returns The time zone abbreviation

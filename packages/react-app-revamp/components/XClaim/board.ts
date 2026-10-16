@@ -9,6 +9,7 @@ export interface XClaimBoardEnv {
   board: XClaimBoard;
   layout: XClaimLayout;
   action: XClaimActionState;
+  settling: boolean;
   close: () => void;
 }
 

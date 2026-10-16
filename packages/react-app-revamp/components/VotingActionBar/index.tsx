@@ -18,7 +18,6 @@ import useVotingInputDisplay from "@components/Voting/components/VoteAmountInput
 import useKeypadInput from "@components/Voting/hooks/useKeypadInput";
 import { useVoteExecution } from "@components/Voting/hooks/useVoteExecution";
 import { useVotingStore } from "@components/Voting/store";
-import { useModal } from "@getpara/react-sdk-lite";
 import { formatVoteCount } from "@helpers/formatNumber";
 import { useAddFunds } from "@hooks/useAddFunds";
 import useCastVotes from "@hooks/useCastVotes";
@@ -34,6 +33,7 @@ import { useProposalStore } from "@hooks/useProposal/store";
 import { useVoteBalance } from "@hooks/useVoteBalance";
 import { useVoteProjections } from "@hooks/useVoteProjections";
 import { useWallet } from "@hooks/useWallet";
+import { useClaimFirstSignIn } from "@hooks/useXClaim/useClaimFirstSignIn";
 import { AnimatePresence, motion } from "motion/react";
 import { FC, useEffect, useState } from "react";
 import ReactDOM from "react-dom";
@@ -56,7 +56,7 @@ const VotingActionBar: FC<VotingActionBarProps> = ({ entryPreview, isVotingClose
   const submissionsCount = useProposalStore(useShallow(state => state.submissionsCount));
   const pickedProposal = useCastVotesStore(useShallow(state => state.pickedProposal));
   const { isConnected } = useWallet();
-  const { openModal } = useModal();
+  const signIn = useClaimFirstSignIn(contestConfig.chainName);
   const { inputValue, setInputValue, resetVotingInput } = useVotingStore(
     useShallow(state => ({
       inputValue: state.inputValue,
@@ -167,7 +167,7 @@ const VotingActionBar: FC<VotingActionBarProps> = ({ entryPreview, isVotingClose
       return;
     }
     if (!isConnected) {
-      openModal();
+      signIn();
       return;
     }
     if (!pickedProposal) return;

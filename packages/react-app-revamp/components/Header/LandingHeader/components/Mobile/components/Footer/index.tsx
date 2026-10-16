@@ -12,7 +12,7 @@ import {
   ROUTE_VIEW_CONTESTS,
   ROUTE_VIEW_LIVE_CONTESTS,
 } from "@config/routes";
-import { useLogout, useModal } from "@getpara/react-sdk-lite";
+import { useLogout } from "@getpara/react-sdk-lite";
 import { HomeIcon, MagnifyingGlassIcon, PencilSquareIcon, TrophyIcon } from "@heroicons/react/24/outline";
 import {
   HomeIcon as HomeIconSolid,
@@ -22,6 +22,7 @@ import {
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { useXClaimOffer } from "@hooks/useXClaim/store";
+import { useClaimFirstSignIn } from "@hooks/useXClaim/useClaimFirstSignIn";
 import { useWallet } from "@hooks/useWallet";
 
 const LandingHeaderMobileFooter = () => {
@@ -34,7 +35,7 @@ const LandingHeaderMobileFooter = () => {
   const [isClient, setIsClient] = useState(false);
   const isActive = (route: string) => (pathname === route ? "font-bold" : "");
   const isOneOfActive = (routes: string[]) => (routes.includes(pathname ?? "") ? "font-bold" : "");
-  const { openModal } = useModal();
+  const signIn = useClaimFirstSignIn();
   const allowedLinks = ["Github", "Linktree", "Report a bug", "Terms", "Privacy Policy", "Docs", "Media Kit", "FAQ"];
   const filteredLinks = FOOTER_LINKS.filter(link => allowedLinks.includes(link.label));
   const [showWalletPortal, setShowWalletPortal] = useState(false);
@@ -138,7 +139,7 @@ const LandingHeaderMobileFooter = () => {
             isConnected={isConnected}
             isProfileOpen={showWalletPortal}
             onProfileClick={handleWalletClick}
-            onSignInClick={() => openModal()}
+            onSignInClick={signIn}
             claimOffer={claimOffer}
           />
         </div>

@@ -17,7 +17,7 @@ const XCancelledBoard: FC<XCancelledBoardProps> = ({ reason, spots, onRetry }) =
     width="result"
     titleSize="regular"
     hero={<BoardHero art="shy" size={140} />}
-    title="x wasn't connected"
+    title="twitter wasn't connected"
     body={CANCELLED_BODY[reason]}
     primary={{ kind: "run", id: X_CLAIM_IDS.tryXAgain, label: "try again", onPress: onRetry, withXLogo: true }}
     secondary={{ role: "dismiss", label: "maybe later" }}

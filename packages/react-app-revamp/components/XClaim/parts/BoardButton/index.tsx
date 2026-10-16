@@ -1,6 +1,6 @@
 import XLogoIcon from "@components/UI/Icons/XLogo";
 import { useXClaimBoard, type XClaimButtonSpec } from "@components/XClaim/board";
-import { BUSY_LABEL } from "@components/XClaim/copy";
+import { BUSY_LABEL, SETTLING_LABEL } from "@components/XClaim/copy";
 import Link from "next/link";
 import { FC } from "react";
 
@@ -23,7 +23,7 @@ const TONE_CLASS: Readonly<Record<BoardButtonTone, string>> = {
 const BASE_CLASS = "transition-opacity disabled:cursor-default disabled:opacity-60";
 
 const BoardButton: FC<BoardButtonProps> = ({ spec, tone }) => {
-  const { action, close } = useXClaimBoard();
+  const { action, settling, close } = useXClaimBoard();
   const className = `${BASE_CLASS} ${TONE_CLASS[tone]}`;
 
   if (spec.kind === "link") {
@@ -42,19 +42,19 @@ const BoardButton: FC<BoardButtonProps> = ({ spec, tone }) => {
     );
   }
 
-  const busyStage = action.stage === "idle" ? null : action.stage;
+  const busyLabel = action.stage === "idle" ? (settling ? SETTLING_LABEL : null) : BUSY_LABEL[action.stage];
 
   return (
     <button
       id={spec.id}
       type="button"
-      disabled={busyStage !== null}
-      aria-busy={busyStage !== null}
+      disabled={busyLabel !== null}
+      aria-busy={busyLabel !== null}
       onClick={() => spec.onPress()}
       className={className}
     >
-      {spec.withXLogo && !busyStage && <XLogoIcon size={16} />}
-      {busyStage ? BUSY_LABEL[busyStage] : spec.label}
+      {spec.withXLogo && !busyLabel && <XLogoIcon size={16} />}
+      {busyLabel ?? spec.label}
     </button>
   );
 };

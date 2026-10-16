@@ -2,6 +2,7 @@ import { isXClaimConfigured } from "@config/xClaim";
 import { PENDING_POLL_WINDOW_MS, SIGN_IN_ARM_GRACE_MS } from "lib/xClaim/constants";
 import type { XClaimSignInHandoff } from "lib/xClaim/handoff";
 import { memoryAfterHint, readMemory, writeMemory } from "lib/xClaim/memory";
+import { openOfferFor, paysOnChain } from "lib/xClaim/view";
 import type {
   XClaimActionName,
   XClaimActionStage,
@@ -62,6 +63,13 @@ const isCurrentRun = (run: number) => useXClaimStore.getState().actionRun === ru
 
 export const xClaimSheet = {
   open: () => useXClaimStore.setState({ isOpen: true }),
+
+  pitch: (chain: string | null) => {
+    const offer = openOfferFor(useXClaimStore.getState().offer, "signed_out");
+    if (!offer || !paysOnChain(offer.spots, chain)) return false;
+    useXClaimStore.setState({ isOpen: true });
+    return true;
+  },
 
   close: () => useXClaimStore.setState(closeFlow),
 
@@ -179,15 +187,18 @@ export const xClaimParaCallbacks = {
   onAccountCreation: recordAuthEvent,
 };
 
-const handoffOf = (state: XClaimStoreState): XClaimSignInHandoff => {
-  if (state.signIn.pending) return "deciding";
-  return state.isOpen ? "sheet_open" : "free";
+const handoffOf = (state: XClaimStoreState, chain: string | null): XClaimSignInHandoff => {
+  const { isOpen, result, offer } = state;
+  if (!isOpen) return state.signIn.pending ? "deciding" : "free";
+  if (result !== null) return "sheet_open";
+  if (offer.status === "open") return paysOnChain(offer.spots, chain) ? "sheet_open" : "free";
+  return offer.status === "off" && offer.reason === "loading" ? "deciding" : "free";
 };
 
 export const takeOverXClaimSignIn = () =>
   useXClaimStore.setState(state => ({ ...(state.isOpen ? closeFlow(state) : {}), signIn: IDLE_SIGN_IN }));
 
-export const useXClaimSignInHandoff = () => useXClaimStore(handoffOf);
+export const useXClaimSignInHandoff = (chain: string | null) => useXClaimStore(state => handoffOf(state, chain));
 
 export const publishXClaimOffer = (offer: XClaimOffer) => {
   if (!shallow(useXClaimStore.getState().offer, offer)) useXClaimStore.setState({ offer });

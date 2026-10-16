@@ -1,4 +1,4 @@
-import type { CheckStickerStates, XClaimButtonSpec } from "@components/XClaim/board";
+import type { CheckStickerStates, XClaimButtonSpec, XClaimSecondarySpec } from "@components/XClaim/board";
 import { CLAIM_FINE_PRINT, CLAIM_TITLE } from "@components/XClaim/copy";
 import BoardHero, { type BoardHeroBubble } from "@components/XClaim/parts/BoardHero";
 import BoardLayout from "@components/XClaim/parts/BoardLayout";
@@ -11,11 +11,21 @@ interface ClaimOfferBoardProps {
   bubble: BoardHeroBubble;
   body: string;
   primary: XClaimButtonSpec;
+  secondary?: XClaimSecondarySpec;
   checks: CheckStickerStates;
   spots: XClaimSpots | null;
 }
 
-const ClaimOfferBoard: FC<ClaimOfferBoardProps> = ({ bubble, body, primary, checks, spots }) => (
+const MAYBE_LATER: XClaimSecondarySpec = { role: "dismiss", label: "maybe later" };
+
+const ClaimOfferBoard: FC<ClaimOfferBoardProps> = ({
+  bubble,
+  body,
+  primary,
+  secondary = MAYBE_LATER,
+  checks,
+  spots,
+}) => (
   <BoardLayout
     width="claim"
     titleSize="large"
@@ -23,7 +33,7 @@ const ClaimOfferBoard: FC<ClaimOfferBoardProps> = ({ bubble, body, primary, chec
     title={CLAIM_TITLE}
     body={body}
     primary={primary}
-    secondary={{ role: "dismiss", label: "maybe later" }}
+    secondary={secondary}
     finePrint={CLAIM_FINE_PRINT}
   >
     <CheckStickers states={checks} />

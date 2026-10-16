@@ -47,7 +47,6 @@ export interface XClaimPayout {
   usdAmount: string | null;
   currency: string | null;
   network: string | null;
-  explorerUrl: string | null;
 }
 
 export interface XLink {
@@ -114,12 +113,13 @@ export interface XClaimActionState {
 export type XClaimNoSpotsCause = { kind: "no_spots"; nextReleaseAt: Date | null } | { kind: "paused" };
 
 export type XClaimBoardView =
+  | { board: "ClaimSignedOut" }
   | { board: "ClaimStart" }
   | { board: "ClaimConfirmX" }
   | { board: "ClaimExternalWallet"; activeStep: 1 | 2; wallet: XClaimExternalWallet }
   | { board: "ClaimLinked"; handle: string | null }
   | { board: "Checking"; handle: string | null }
-  | { board: "Success"; payout: XClaimPayout; confirming: boolean }
+  | { board: "Success"; confirming: boolean; onContest: boolean }
   | { board: "NotEligible"; handle: string | null; checks: XClaimChecks; stats: XAccountStats | null }
   | { board: "AlreadyLinked" }
   | { board: "AlreadyClaimed"; handle: string | null; usdAmount: string | null; claimedAt: Date | null }
@@ -133,6 +133,7 @@ export interface XClaimSheetCommon {
   wallet: XClaimWallet;
   spots: XClaimSpots | null;
   action: XClaimActionState;
+  settling: boolean;
 }
 
 export type XClaimSheetView = XClaimSheetCommon & XClaimBoardView;
@@ -146,9 +147,12 @@ export type XClaimOffer =
 
 export type XClaimOpenOffer = Extract<XClaimOffer, { status: "open" }>;
 
+export type XClaimTeaserOffer = Extract<XClaimOffer, { status: "open" | "waiting" }>;
+
 export interface XClaimActions {
   open: () => void;
   close: () => void;
+  signIn: () => void;
   startXClaim: (returnPath?: string) => Promise<void>;
   retryClaim: () => Promise<void>;
   checkStatus: () => Promise<void>;

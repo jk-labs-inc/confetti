@@ -16,7 +16,7 @@ interface ClaimExternalWalletBoardProps {
 
 const STEPS = [
   { step: 1, label: "prove this wallet is yours", tilt: "-rotate-2" },
-  { step: 2, label: "connect x, then bubbles checks it", tilt: "rotate-[1.5deg]" },
+  { step: 2, label: "verify your twitter", tilt: "rotate-[1.5deg]" },
 ] as const;
 
 const ClaimExternalWalletBoard: FC<ClaimExternalWalletBoardProps> = ({ wallet, activeStep, spots, onSign }) => (

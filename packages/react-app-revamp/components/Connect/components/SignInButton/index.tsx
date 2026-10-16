@@ -1,6 +1,6 @@
 import XClaimAmountSticker from "@components/XClaim/entry/XClaimAmountSticker";
 import XClaimSignInHoverCard from "@components/XClaim/entry/XClaimSignInHoverCard";
-import { openOfferFor } from "lib/xClaim/view";
+import { signedOutTeaserFor } from "lib/xClaim/view";
 import type { XClaimOffer } from "lib/xClaim/types";
 import { FC } from "react";
 
@@ -10,7 +10,7 @@ interface SignInButtonProps {
 }
 
 const SignInButton: FC<SignInButtonProps> = ({ claimOffer, onSignIn }) => {
-  const claimOpen = openOfferFor(claimOffer, "signed_out");
+  const teaser = signedOutTeaserFor(claimOffer);
 
   return (
     <div className="group/signin relative">
@@ -21,10 +21,10 @@ const SignInButton: FC<SignInButtonProps> = ({ claimOffer, onSignIn }) => {
       >
         sign in
       </button>
-      {claimOpen && (
+      {teaser && (
         <>
           <XClaimAmountSticker className="absolute -top-3 -right-1.5 px-2 py-0.5 text-[12px] rotate-8" />
-          <XClaimSignInHoverCard spots={claimOpen.spots} />
+          <XClaimSignInHoverCard offer={teaser} />
         </>
       )}
     </div>

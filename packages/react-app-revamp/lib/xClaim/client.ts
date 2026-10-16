@@ -11,7 +11,7 @@ import {
   WORKER_ERROR_CODES,
   X_AUTHORIZE_HOSTS,
 } from "./constants";
-import { isMemberOf, isRejectReason, parseDate, resultFromCode, toPayout } from "./outcomes";
+import { isMemberOf, isRejectReason, parseDate, resultFromCode } from "./outcomes";
 import type { WalletProofHeader } from "./proof";
 import type { ClaimMe, XClaimCheckStatus, XClaimFailure, XClaimNonce, XClaimResult, XClaimSpots } from "./types";
 
@@ -110,13 +110,13 @@ const claimRecordSchema = z
   .transform(claim => ({
     status: claim.status,
     rejectReason: claim.rejectReason !== null && isRejectReason(claim.rejectReason) ? claim.rejectReason : null,
-    payout: toPayout({
+    payout: {
       txHash: claim.txHash,
       tokenAmount: claim.tokenAmount,
       usdAmount: claim.usdAmount,
       currency: claim.currency,
       network: claim.network,
-    }),
+    },
     createdAt: claim.createdAt,
   }));
 
@@ -147,13 +147,13 @@ const claimResultSchema = z
       case "pending":
         return {
           kind: body.outcome,
-          payout: toPayout({
+          payout: {
             txHash: body.txHash,
             tokenAmount: body.tokenAmount,
             usdAmount: body.usdAmount,
             currency: body.currency,
             network: body.network,
-          }),
+          },
         };
       case "rejected":
         if (isRejectReason(body.reason)) return resultFromCode(body.reason, { nextReleaseAt: body.nextReleaseAt });

@@ -1,9 +1,9 @@
-import { useModal } from "@getpara/react-sdk-lite";
 import { DESKTOP_HEADER_MIN_WIDTH_PX } from "@helpers/isMobileViewport";
 import { MediaQuery } from "@helpers/mediaQuery";
 import { usePageActionStore } from "@hooks/useCreateFlowAction/store";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { useWallet } from "@hooks/useWallet";
+import { useClaimFirstSignIn } from "@hooks/useXClaim/useClaimFirstSignIn";
 import { useEffect } from "react";
 import { useShallow } from "zustand/shallow";
 import MainHeaderMobileLayout from "../MainHeader/MobileLayout";
@@ -17,7 +17,7 @@ const CreateFlowHeader = () => {
   const { pageAction, setPageAction } = usePageActionStore(
     useShallow(state => ({ pageAction: state.pageAction, setPageAction: state.setPageAction })),
   );
-  const { openModal } = useModal();
+  const signIn = useClaimFirstSignIn();
 
   useEffect(() => {
     return () => {
@@ -28,11 +28,7 @@ const CreateFlowHeader = () => {
   return (
     <div>
       <MediaQuery maxWidth={DESKTOP_HEADER_MIN_WIDTH_PX - 1}>
-        <MainHeaderMobileLayout
-          isConnected={isConnected}
-          address={userAddress ?? ""}
-          openConnectModal={() => openModal()}
-        />
+        <MainHeaderMobileLayout isConnected={isConnected} address={userAddress ?? ""} openConnectModal={signIn} />
       </MediaQuery>
       <MediaQuery minWidth={DESKTOP_HEADER_MIN_WIDTH_PX}>
         <CreateFlowHeaderDesktopLayout

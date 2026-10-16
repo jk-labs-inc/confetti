@@ -12,7 +12,11 @@ import type {
   XClaimResult,
   XClaimSheetView,
   XClaimSpots,
+  XClaimTeaserOffer,
 } from "./types";
+
+export const paysOnChain = (spots: Pick<XClaimSpots, "network">, chain: string | null) =>
+  !chain || chain.toLowerCase() === spots.network;
 
 const knownHandle = (me: ClaimMe | null) => me?.link?.handle ?? null;
 
@@ -73,11 +77,7 @@ const resultBoard = (result: XClaimResult, input: XClaimInput): XClaimBoardView 
   switch (result.kind) {
     case "paid":
     case "pending":
-      return {
-        board: "Success",
-        payout: { ...result.payout, usdAmount: result.payout.usdAmount ?? input.spots?.usdAmount ?? null },
-        confirming: result.kind === "pending",
-      };
+      return { board: "Success", confirming: result.kind === "pending", onContest: input.contestChain !== null };
     case "payout_failed":
       return { board: "PayoutFailed", handle: knownHandle(input.me), usdAmount: input.spots?.usdAmount ?? null };
     case "not_eligible":
@@ -113,7 +113,8 @@ const offerBoard = (input: XClaimInput): XClaimBoardView => {
     const signed = action.name === "start_x" && (action.stage === "submitting" || action.stage === "redirecting");
     return { board: "ClaimExternalWallet", activeStep: signed ? 2 : 1, wallet };
   }
-  if (wallet.kind === "embedded" && wallet.signedInWithX) return { board: "ClaimConfirmX" };
+  if (wallet.kind === "signed_out") return { board: "ClaimSignedOut" };
+  if (wallet.signedInWithX) return { board: "ClaimConfirmX" };
   return { board: "ClaimStart" };
 };
 
@@ -146,6 +147,7 @@ export const deriveView = (input: XClaimInput): XClaimSheetView => ({
   wallet: input.wallet,
   spots: input.spots,
   action: { stage: input.action.stage, error: input.action.error },
+  settling: input.wallet.kind === "embedded" && input.meLoading,
   ...deriveBoard(input),
 });
 
@@ -153,7 +155,7 @@ export const deriveOffer = (input: XClaimInput): XClaimOffer => {
   const { configured, wallet, spots } = input;
   if (!configured) return { status: "off", reason: "not_configured" };
   if (!spots) return { status: "off", reason: input.spotsFailed ? "unavailable" : "loading" };
-  if (input.contestChain && input.contestChain !== spots.network) return { status: "off", reason: "other_chain" };
+  if (!paysOnChain(spots, input.contestChain)) return { status: "off", reason: "other_chain" };
   if (wallet.kind === "embedded" && input.meLoading) return { status: "off", reason: "loading" };
   if (isSettled(input)) return { status: "off", reason: "settled" };
 
@@ -166,3 +168,8 @@ export const deriveOffer = (input: XClaimInput): XClaimOffer => {
 
 export const openOfferFor = (offer: XClaimOffer, audience: XClaimOfferAudience): XClaimOpenOffer | null =>
   offer.status === "open" && offer.audience === audience ? offer : null;
+
+export const signedOutTeaserFor = (offer: XClaimOffer): XClaimTeaserOffer | null => {
+  if (offer.status === "off" || offer.audience !== "signed_out") return null;
+  return offer.status === "waiting" && offer.paused ? null : offer;
+};

@@ -1,4 +1,6 @@
 export const X_CLAIM_IDS = {
+  createWallet: "x_claim_create_wallet",
+  signInExisting: "x_claim_sign_in_existing",
   connectX: "x_claim_connect_x",
   confirmX: "x_claim_confirm_x",
   signMessage: "x_claim_sign_message",
@@ -9,9 +11,9 @@ export const X_CLAIM_IDS = {
   close: "x_claim_close",
   done: "x_claim_done",
   successFindContest: "x_claim_success_find_contest",
+  successBackToContest: "x_claim_success_back_to_contest",
   alreadyClaimedFindContest: "x_claim_already_claimed_find_contest",
   checkAgain: "x_claim_check_again",
-  viewTx: "x_claim_view_tx",
   addFunds: "x_claim_add_funds",
   alreadyLinkedGotIt: "x_claim_already_linked_got_it",
   noSpotsGotIt: "x_claim_no_spots_got_it",

@@ -50,8 +50,6 @@ export const POLYGON_NETWORK = "polygon";
 
 export const POLYGON_CURRENCY = "POL";
 
-export const POLYGON_EXPLORER_TX_URL = "https://polygonscan.com/tx/";
-
 export const MAX_RETURN_PATH_LENGTH = 512;
 
 export const REQUEST_TIMEOUT_MS = 15_000;
@@ -63,6 +61,8 @@ export const PARA_JWT_TIMEOUT_MS = 15_000;
 export const VOTE_WAITS_FOR_CLAIM_MS = 5_000;
 
 export const SPOTS_STALE_MS = 15_000;
+
+export const SPOTS_RELEASE_REFETCH_DELAY_MS = 5_000;
 
 export const PENDING_POLL_INTERVAL_MS = 5_000;
 

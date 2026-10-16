@@ -2,7 +2,7 @@ import XClaimAmountSticker from "@components/XClaim/entry/XClaimAmountSticker";
 import XClaimUnclaimedDot from "@components/XClaim/entry/XClaimUnclaimedDot";
 import { UserCircleIcon } from "@heroicons/react/24/outline";
 import { UserCircleIcon as UserCircleIconSolid } from "@heroicons/react/24/solid";
-import { openOfferFor } from "lib/xClaim/view";
+import { openOfferFor, signedOutTeaserFor } from "lib/xClaim/view";
 import type { XClaimOffer } from "lib/xClaim/types";
 import { FC } from "react";
 
@@ -38,7 +38,7 @@ const MobileNavAccountTab: FC<MobileNavAccountTabProps> = ({
       <div className="relative flex flex-col items-center" onClick={onSignInClick}>
         <img width={24} height={24} src="/header/wallet.svg" alt="wallet" />
         <p className="text-[12px]">wallet</p>
-        {openOfferFor(claimOffer, "signed_out") && (
+        {signedOutTeaserFor(claimOffer) && (
           <XClaimAmountSticker className="absolute -top-1.5 left-3.5 px-[7px] py-px text-[11px] -rotate-8" />
         )}
       </div>

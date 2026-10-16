@@ -1,4 +1,4 @@
-import { CLAIM_TITLE } from "@components/XClaim/copy";
+import { CLAIM_TITLE, VERIFY_TWITTER_LABEL } from "@components/XClaim/copy";
 import { X_CLAIM_ART } from "@components/XClaim/constants";
 import type { XClaimOpenOffer } from "lib/xClaim/types";
 import { ComponentPropsWithRef, FC } from "react";
@@ -35,7 +35,7 @@ const XClaimClaimRow: FC<XClaimClaimRowProps> = ({ offer, placement, ...buttonPr
       <span className="flex flex-1 flex-col gap-1">
         <span className="font-sabo-filled text-[17px] text-neutral-11">{CLAIM_TITLE}</span>
         <span className="text-[13px] text-neutral-9">
-          {linked ? "one tap to claim" : "connect x"} · {spots.open} of {spots.dailyLimit} spots left today
+          {linked ? "one tap to claim" : VERIFY_TWITTER_LABEL} · {spots.open} of {spots.dailyLimit} spots left today
         </span>
       </span>
       <XClaimAmountSticker className="px-2.5 py-1 text-[13px] -rotate-6" />

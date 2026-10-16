@@ -10,7 +10,7 @@ import PayoutFailedBoard from "@components/XClaim/boards/PayoutFailedBoard";
 import SuccessBoard from "@components/XClaim/boards/SuccessBoard";
 import XCancelledBoard from "@components/XClaim/boards/XCancelledBoard";
 import { X_CLAIM_IDS } from "@components/XClaim/constants";
-import { CLAIM_BUTTON_LABEL, handleText } from "@components/XClaim/copy";
+import { CLAIM_BUTTON_LABEL, CLAIM_PITCH, handleText, VERIFY_TWITTER_LABEL } from "@components/XClaim/copy";
 import { CLAIM_AMOUNT_LABEL } from "lib/xClaim/constants";
 import type { XClaimActions, XClaimSheetView } from "lib/xClaim/types";
 import { FC, ReactElement } from "react";
@@ -26,15 +26,33 @@ const PASSED_CHECKS: CheckStickerStates = { verified: "passed", verifiedFollower
 
 const boardFor = (view: XClaimSheetView, actions: XClaimActions, onAddFunds: () => void): ReactElement => {
   switch (view.board) {
+    case "ClaimSignedOut":
+      return (
+        <ClaimOfferBoard
+          bubble="on_us"
+          body={CLAIM_PITCH}
+          primary={{ kind: "run", id: X_CLAIM_IDS.createWallet, label: "create wallet", onPress: actions.signIn }}
+          secondary={{
+            role: "alternative",
+            kind: "run",
+            id: X_CLAIM_IDS.signInExisting,
+            label: "i already have a wallet",
+            modalLabel: "sign in",
+            onPress: actions.signIn,
+          }}
+          checks={TODO_CHECKS}
+          spots={view.spots}
+        />
+      );
     case "ClaimStart":
       return (
         <ClaimOfferBoard
           bubble="on_us"
-          body={`connect your x. pass three quick checks and the ${CLAIM_AMOUNT_LABEL} pops right into your wallet.`}
+          body={`verify your twitter and we'll give you ${CLAIM_AMOUNT_LABEL} to play with.`}
           primary={{
             kind: "run",
             id: X_CLAIM_IDS.connectX,
-            label: "connect x",
+            label: VERIFY_TWITTER_LABEL,
             onPress: () => actions.startXClaim(),
             withXLogo: true,
           }}
@@ -46,11 +64,11 @@ const boardFor = (view: XClaimSheetView, actions: XClaimActions, onAddFunds: () 
       return (
         <ClaimOfferBoard
           bubble="one_more_tap"
-          body="you signed in with x. confirm it once more so bubbles can run three quick checks."
+          body={`you signed in with twitter. confirm it once more and we'll give you ${CLAIM_AMOUNT_LABEL} to play with.`}
           primary={{
             kind: "run",
             id: X_CLAIM_IDS.confirmX,
-            label: "confirm x account",
+            label: "confirm twitter",
             onPress: () => actions.startXClaim(),
             withXLogo: true,
           }}
@@ -71,7 +89,7 @@ const boardFor = (view: XClaimSheetView, actions: XClaimActions, onAddFunds: () 
       return (
         <ClaimOfferBoard
           bubble="on_us"
-          body={`${handleText(view.handle)} already passed all three checks. one tap and the ${CLAIM_AMOUNT_LABEL} pops right into your wallet.`}
+          body={`${handleText(view.handle)} is already verified. one tap and the ${CLAIM_AMOUNT_LABEL} pops right into your wallet.`}
           primary={{
             kind: "run",
             id: X_CLAIM_IDS.linkedClaim,
@@ -86,7 +104,11 @@ const boardFor = (view: XClaimSheetView, actions: XClaimActions, onAddFunds: () 
       return <CheckingBoard handle={view.handle} />;
     case "Success":
       return (
-        <SuccessBoard payout={view.payout} confirming={view.confirming} onCheckAgain={() => actions.checkStatus()} />
+        <SuccessBoard
+          confirming={view.confirming}
+          onContest={view.onContest}
+          onCheckAgain={() => actions.checkStatus()}
+        />
       );
     case "NotEligible":
       return <NotEligibleBoard handle={view.handle} checks={view.checks} stats={view.stats} onAddFunds={onAddFunds} />;
@@ -111,7 +133,9 @@ const boardFor = (view: XClaimSheetView, actions: XClaimActions, onAddFunds: () 
 };
 
 const XClaimSheetContent: FC<XClaimSheetContentProps> = ({ view, actions, layout, onAddFunds }) => (
-  <XClaimBoardContext.Provider value={{ board: view.board, layout, action: view.action, close: actions.close }}>
+  <XClaimBoardContext.Provider
+    value={{ board: view.board, layout, action: view.action, settling: view.settling, close: actions.close }}
+  >
     {boardFor(view, actions, onAddFunds)}
   </XClaimBoardContext.Provider>
 );

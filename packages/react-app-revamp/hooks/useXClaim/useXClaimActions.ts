@@ -1,3 +1,4 @@
+import { useModal } from "@getpara/react-sdk-lite";
 import { useQueryClient } from "@tanstack/react-query";
 import { fetchClaimMe, startXLogin, submitClaim, toXClaimFailure, XClaimError } from "lib/xClaim/client";
 import { memoryFromMe, memoryFromWorkerResult, rememberFlowStarter } from "lib/xClaim/memory";
@@ -20,6 +21,7 @@ export const useXClaimActions = ({
   runWithProof: RunWithProof;
 }): XClaimActions => {
   const queryClient = useQueryClient();
+  const { openModal } = useModal();
 
   const begin = useCallback(
     (name: XClaimActionName): { signedIn: XClaimSignedInWallet; run: number } | null => {
@@ -111,8 +113,10 @@ export const useXClaimActions = ({
     }
   }, [begin, provenFor, queryClient, runWithProof]);
 
+  const signIn = useCallback(() => openModal(), [openModal]);
+
   return useMemo(
-    () => ({ open: xClaimSheet.open, close: xClaimSheet.close, startXClaim, retryClaim, checkStatus }),
-    [startXClaim, retryClaim, checkStatus],
+    () => ({ open: xClaimSheet.open, close: xClaimSheet.close, signIn, startXClaim, retryClaim, checkStatus }),
+    [signIn, startXClaim, retryClaim, checkStatus],
   );
 };

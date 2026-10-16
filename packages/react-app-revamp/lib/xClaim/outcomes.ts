@@ -2,13 +2,11 @@ import {
   MAX_RETURN_PATH_LENGTH,
   OUTCOME_CODES,
   OUTCOME_PARAM,
-  POLYGON_EXPLORER_TX_URL,
-  POLYGON_NETWORK,
   REDIRECT_PARAMS,
   REJECT_REASONS,
   X_CLAIM_CHECKS,
 } from "./constants";
-import { isHash, type Hash } from "viem";
+import { isHash } from "viem";
 import type {
   ClaimMe,
   EligibilityReason,
@@ -37,7 +35,6 @@ const EMPTY_PAYOUT: XClaimPayout = {
   usdAmount: null,
   currency: null,
   network: null,
-  explorerUrl: null,
 };
 
 export const isMemberOf = <T extends string>(list: readonly T[], value: string): value is T =>
@@ -48,14 +45,6 @@ export const isOutcomeCode = (value: string): value is OutcomeCode => isMemberOf
 export const isRejectReason = (value: string): value is RejectReason => isMemberOf(REJECT_REASONS, value);
 
 export const isDecimalAmount = (value: string) => DECIMAL_PATTERN.test(value);
-
-export const explorerTxUrl = ({ txHash, network }: { txHash: Hash | null; network: string | null }) =>
-  txHash && network === POLYGON_NETWORK ? `${POLYGON_EXPLORER_TX_URL}${txHash}` : null;
-
-export const toPayout = (fields: Omit<XClaimPayout, "explorerUrl">): XClaimPayout => ({
-  ...fields,
-  explorerUrl: explorerTxUrl(fields),
-});
 
 export const parseDate = (value: string | null): Date | null => {
   if (!value) return null;
@@ -106,13 +95,13 @@ const readLabel = (params: URLSearchParams, name: string) => {
 const payoutFromParams = (params: URLSearchParams): XClaimPayout => {
   const tx = params.get("tx");
   const amount = params.get("amount");
-  return toPayout({
+  return {
     txHash: tx && isHash(tx) ? tx : null,
     tokenAmount: amount && isDecimalAmount(amount) ? amount : null,
     usdAmount: null,
     currency: readLabel(params, "currency"),
     network: readLabel(params, "network"),
-  });
+  };
 };
 
 export interface RedirectLanding {

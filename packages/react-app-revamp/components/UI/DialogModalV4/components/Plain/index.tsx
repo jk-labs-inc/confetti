@@ -1,4 +1,5 @@
 import { Transition, TransitionChild } from "@headlessui/react";
+import { isParaModalShown } from "@helpers/paraModal";
 import { FC, MouseEvent, PointerEvent, ReactNode, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { dialogModalV4BackdropClassName, getDialogModalV4PanelClassName, type DialogModalV4Panel } from "../../styles";
@@ -23,7 +24,7 @@ const DialogModalV4Plain: FC<DialogModalV4PlainProps> = ({ isOpen, children, wid
     if (!isOpen) return;
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") onClose();
+      if (event.key === "Escape" && !isParaModalShown()) onClose();
     };
 
     document.addEventListener("keydown", handleKeyDown);

@@ -19,8 +19,8 @@ const NotEligibleBoard: FC<NotEligibleBoardProps> = ({ handle, checks, stats, on
     titleSize="regular"
     hero={<BoardHero art="shy" size={140} />}
     title="not quite yet"
-    body={`${handleText(handle)} needs to pass all three checks. you can still play: add funds with a card in about a minute.`}
-    note="once you pass, come back with the same x account."
+    body={`${handleText(handle)} didn't pass every check yet. you can still play: add funds with a card in about a minute.`}
+    note="once you pass, come back with the same twitter account."
     primary={{ kind: "run", id: X_CLAIM_IDS.addFunds, label: "add funds", onPress: onAddFunds }}
     secondary={{ role: "dismiss", label: "close" }}
   >
