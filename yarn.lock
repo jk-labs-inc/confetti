@@ -6090,12 +6090,12 @@
     "@tanstack/store" "0.11.2"
     use-sync-external-store "^1.6.0"
 
-"@tanstack/react-virtual@3.14.19", "@tanstack/react-virtual@^3.14.17":
-  version "3.14.19"
-  resolved "https://registry.yarnpkg.com/@tanstack/react-virtual/-/react-virtual-3.14.19.tgz#7650f00a1a093071131b6bf35df7f788e3e56ff9"
-  integrity sha512-zmVdJO8DDqHphZ2H6SnTmgpVXcUy5DprB+clZF0ik679/d0MQ1UPEb2jtaX6F5VTAX4o3ozSLQaRCnybS2KYLA==
+"@tanstack/react-virtual@3.14.20":
+  version "3.14.20"
+  resolved "https://registry.yarnpkg.com/@tanstack/react-virtual/-/react-virtual-3.14.20.tgz#76779f8093414b37fae3ae8fd95151f6c3ecfbdb"
+  integrity sha512-9hbhFlc0lznjXmWYDB/KEl7PJxEPz0Qnj2FzJFse98miGvXtx7jzjE5jlasmtczmZ6TxXsyI4v7PuyGQm2q1nQ==
   dependencies:
-    "@tanstack/virtual-core" "3.19.4"
+    "@tanstack/virtual-core" "3.19.5"
 
 "@tanstack/react-virtual@^3.13.9":
   version "3.13.23"
@@ -6103,6 +6103,13 @@
   integrity sha512-XnMRnHQ23piOVj2bzJqHrRrLg4r+F86fuBcwteKfbIjJrtGxb4z7tIvPVAe4B+4UVwo9G4Giuz5fmapcrnZ0OQ==
   dependencies:
     "@tanstack/virtual-core" "3.13.23"
+
+"@tanstack/react-virtual@^3.14.17":
+  version "3.14.19"
+  resolved "https://registry.yarnpkg.com/@tanstack/react-virtual/-/react-virtual-3.14.19.tgz#7650f00a1a093071131b6bf35df7f788e3e56ff9"
+  integrity sha512-zmVdJO8DDqHphZ2H6SnTmgpVXcUy5DprB+clZF0ik679/d0MQ1UPEb2jtaX6F5VTAX4o3ozSLQaRCnybS2KYLA==
+  dependencies:
+    "@tanstack/virtual-core" "3.19.4"
 
 "@tanstack/router-core@1.171.37":
   version "1.171.37"
@@ -6128,6 +6135,11 @@
   version "3.19.4"
   resolved "https://registry.yarnpkg.com/@tanstack/virtual-core/-/virtual-core-3.19.4.tgz#f0661bd299f63f27172a93d579abe44bc0a56812"
   integrity sha512-ygZ3O99Il18dl0gG0q7sH78iSkb96F07G+xK9V83eCgV8NQbcNd7R+cgcJJMFO7llBoebd0A82sCCstQq2Vp6Q==
+
+"@tanstack/virtual-core@3.19.5":
+  version "3.19.5"
+  resolved "https://registry.yarnpkg.com/@tanstack/virtual-core/-/virtual-core-3.19.5.tgz#d4d287d519a4b938aa52106a97e3e10b5d147428"
+  integrity sha512-X/wq6DtSK/XClznMM+I4JE63yyIwmyPk4Ts83bD0VKaIbwHNdRsO5QipCPX+3OovqYyr0puQNpbmp8+SPhspNg==
 
 "@tiptap/core@3.7.2", "@tiptap/core@^3.7.2":
   version "3.7.2"
