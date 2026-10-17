@@ -17,7 +17,7 @@
     "@coinbase/wallet-sdk": "4.4.0",
     "@floating-ui/react": "0.27.20",
     "@funkit/connect": "12.16.0",
-    "@getbrevo/brevo": "6.0.3",
+    "@getbrevo/brevo": "6.2.0",
     "@getpara/evm-wallet-connectors": "3.22.0",
     "@getpara/react-sdk-lite": "3.22.0",
     "@headlessui/react": "2.2.10",
