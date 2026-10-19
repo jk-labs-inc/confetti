@@ -13,6 +13,7 @@ export const X_CLAIM_IDS = {
   successFindContest: "x_claim_success_find_contest",
   successBackToContest: "x_claim_success_back_to_contest",
   alreadyClaimedFindContest: "x_claim_already_claimed_find_contest",
+  alreadyClaimedBackToContest: "x_claim_already_claimed_back_to_contest",
   checkAgain: "x_claim_check_again",
   addFunds: "x_claim_add_funds",
   alreadyLinkedGotIt: "x_claim_already_linked_got_it",

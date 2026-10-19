@@ -115,7 +115,7 @@ const boardFor = (view: XClaimSheetView, actions: XClaimActions, onAddFunds: () 
     case "AlreadyLinked":
       return <AlreadyLinkedBoard onConnectOther={() => actions.startXClaim()} />;
     case "AlreadyClaimed":
-      return <AlreadyClaimedBoard handle={view.handle} claimedAt={view.claimedAt} />;
+      return <AlreadyClaimedBoard handle={view.handle} claimedAt={view.claimedAt} onContest={view.onContest} />;
     case "NoSpots":
       return (
         <NoSpotsBoard

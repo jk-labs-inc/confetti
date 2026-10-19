@@ -122,7 +122,13 @@ export type XClaimBoardView =
   | { board: "Success"; confirming: boolean; onContest: boolean }
   | { board: "NotEligible"; handle: string | null; checks: XClaimChecks; stats: XAccountStats | null }
   | { board: "AlreadyLinked" }
-  | { board: "AlreadyClaimed"; handle: string | null; usdAmount: string | null; claimedAt: Date | null }
+  | {
+      board: "AlreadyClaimed";
+      handle: string | null;
+      usdAmount: string | null;
+      claimedAt: Date | null;
+      onContest: boolean;
+    }
   | { board: "NoSpots"; handle: string | null; cause: XClaimNoSpotsCause; canClaimNow: boolean }
   | { board: "PayoutFailed"; handle: string | null; usdAmount: string | null }
   | { board: "XCancelled"; reason: XCancelledReason };

@@ -48,10 +48,11 @@ const noSpotsBoard = (input: XClaimInput, cause: XClaimNoSpotsCause): XClaimBoar
   canClaimNow: canClaimNow(input),
 });
 
-const claimedBoard = ({ me }: XClaimInput): XClaimBoardView => {
+const claimedBoard = ({ me, contestChain }: XClaimInput): XClaimBoardView => {
   const claim = me?.claim;
   const activeClaim = claim && (claim.status === "paid" || claim.status === "pending") ? claim : null;
-  if (!activeClaim) return { board: "AlreadyClaimed", handle: null, usdAmount: null, claimedAt: null };
+  const onContest = contestChain !== null;
+  if (!activeClaim) return { board: "AlreadyClaimed", handle: null, usdAmount: null, claimedAt: null, onContest };
   const link = me?.link;
   const linkPredatesClaim = !!link && link.linkedAt.getTime() <= activeClaim.createdAt.getTime();
   return {
@@ -59,6 +60,7 @@ const claimedBoard = ({ me }: XClaimInput): XClaimBoardView => {
     handle: linkPredatesClaim ? link.handle : null,
     usdAmount: activeClaim.payout.usdAmount,
     claimedAt: activeClaim.createdAt,
+    onContest,
   };
 };
 
