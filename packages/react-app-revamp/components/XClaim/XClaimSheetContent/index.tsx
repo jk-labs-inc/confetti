@@ -31,12 +31,12 @@ const boardFor = (view: XClaimSheetView, actions: XClaimActions, onAddFunds: () 
         <ClaimOfferBoard
           bubble="on_us"
           body={CLAIM_PITCH}
-          primary={{ kind: "run", id: X_CLAIM_IDS.createWallet, label: "create wallet", onPress: actions.signIn }}
+          primary={{ kind: "run", id: X_CLAIM_IDS.createWallet, label: "create account", onPress: actions.signIn }}
           secondary={{
             role: "alternative",
             kind: "run",
             id: X_CLAIM_IDS.signInExisting,
-            label: "i already have a wallet",
+            label: "i already have an account",
             modalLabel: "sign in",
             onPress: actions.signIn,
           }}

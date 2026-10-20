@@ -12,13 +12,13 @@ import type {
 
 export const CLAIM_PLUS_LABEL = `+${CLAIM_AMOUNT_LABEL}`;
 
-export const CLAIM_TITLE = `claim ${CLAIM_AMOUNT_LABEL} to play`;
+export const CLAIM_TITLE = `claim ${CLAIM_AMOUNT_LABEL}... for free!`;
 
 export const CLAIM_BUTTON_LABEL = `claim ${CLAIM_AMOUNT_LABEL}`;
 
 export const VERIFY_TWITTER_LABEL = "verify twitter";
 
-export const CLAIM_PITCH = `create a wallet, verify your twitter, and we'll give you ${CLAIM_AMOUNT_LABEL} to play with.`;
+export const CLAIM_PITCH = `create an account, verify your twitter, and we'll give you ${CLAIM_AMOUNT_LABEL} to play with.`;
 
 export const CLAIM_FINE_PRINT = "one claim per twitter account and wallet. we only read your public profile.";
 
