@@ -1,4 +1,6 @@
 import CurrencyToggle from "@components/Header/CurrencyToggle";
+import MobileNavAccountTab from "@components/Header/MobileNavAccountTab";
+import MobileNavSlot from "@components/Header/MobileNavSlot";
 import BurgerMenu from "@components/UI/BurgerMenu";
 import { IconMagnifyingGlassSolid } from "@components/UI/Icons";
 import CustomLink from "@components/UI/Link";
@@ -13,20 +15,13 @@ import {
   ROUTE_VIEW_LIVE_CONTESTS,
 } from "@config/routes";
 import { useLogout } from "@getpara/react-sdk-lite";
-import {
-  HomeIcon,
-  MagnifyingGlassIcon,
-  PencilSquareIcon,
-  TrophyIcon,
-  UserCircleIcon,
-} from "@heroicons/react/24/outline";
+import { HomeIcon, MagnifyingGlassIcon, PencilSquareIcon, TrophyIcon } from "@heroicons/react/24/outline";
 import {
   HomeIcon as HomeIconSolid,
   PencilSquareIcon as PencilSquareIconSolid,
   TrophyIcon as TrophyIconSolid,
-  UserCircleIcon as UserCircleIconSolid,
 } from "@heroicons/react/24/solid";
-import { MOBILE_NAV_SLOT_ID } from "@hooks/useMobileNavSlot";
+import { useXClaimOffer } from "@hooks/useXClaim/store";
 import { usePathname } from "next/navigation";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
@@ -41,6 +36,7 @@ interface MainHeaderMobileLayoutProps {
 const MainHeaderMobileLayout: FC<MainHeaderMobileLayoutProps> = ({ isConnected, address, openConnectModal }) => {
   const pathname = usePathname();
   const isVotingFocusMode = useVotingFocusModeStore(state => state.isFocusMode);
+  const claimOffer = useXClaimOffer();
   const [isClient, setIsClient] = useState(false);
   const [isInPwaMode, setIsInPwaMode] = useState(false);
   const [showWalletPortal, setShowWalletPortal] = useState(false);
@@ -103,8 +99,7 @@ const MainHeaderMobileLayout: FC<MainHeaderMobileLayoutProps> = ({ isConnected, 
           isVotingFocusMode ? "rounded-t-[16px] bg-neutral-1" : "bg-true-black"
         }`}
       >
-        {/* Portal target for create flow buttons */}
-        <div id={MOBILE_NAV_SLOT_ID} />
+        <MobileNavSlot claimOffer={claimOffer} />
 
         <div
           className={`flex flex-row items-center justify-between overflow-hidden border-t-2 px-8 transition-all duration-200 ${
@@ -143,23 +138,13 @@ const MainHeaderMobileLayout: FC<MainHeaderMobileLayoutProps> = ({ isConnected, 
             <p className="text-[12px]">create</p>
           </CustomLink>
 
-          <div className="transition-all duration-500">
-            {isConnected ? (
-              <div className="flex flex-col items-center" onClick={handleWalletClick}>
-                {showWalletPortal ? (
-                  <UserCircleIconSolid width={24} height={24} className="text-neutral-11" />
-                ) : (
-                  <UserCircleIcon width={24} height={24} className="text-neutral-11" />
-                )}
-                <p className="text-[12px]">profile</p>
-              </div>
-            ) : (
-              <div className="flex flex-col items-center" onClick={openConnectModal}>
-                <img width={24} height={24} src="/header/wallet.svg" alt="wallet" />
-                <p className="text-[12px]">wallet</p>
-              </div>
-            )}
-          </div>
+          <MobileNavAccountTab
+            isConnected={isConnected}
+            isProfileOpen={showWalletPortal}
+            onProfileClick={handleWalletClick}
+            onSignInClick={openConnectModal}
+            claimOffer={claimOffer}
+          />
         </div>
       </nav>
 
@@ -169,6 +154,7 @@ const MainHeaderMobileLayout: FC<MainHeaderMobileLayoutProps> = ({ isConnected, 
           onClose={closeWalletPortal}
           address={address}
           onDisconnect={handleDisconnect}
+          claimOffer={claimOffer}
         />
       )}
     </>

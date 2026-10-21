@@ -7,9 +7,13 @@ import { FC, useEffect, useState } from "react";
 import { useShallow } from "zustand/shallow";
 
 const VotingWidgetSignup: FC = () => {
-  const setEmailAddress = useVotingStore(useShallow(state => state.setEmailAddress));
-  const setPhoneNumber = useVotingStore(useShallow(state => state.setPhoneNumber));
-  const resetSignupsNonce = useVotingStore(state => state.resetSignupsNonce);
+  const { setEmailAddress, setPhoneNumber, resetSignupsNonce } = useVotingStore(
+    useShallow(state => ({
+      setEmailAddress: state.setEmailAddress,
+      setPhoneNumber: state.setPhoneNumber,
+      resetSignupsNonce: state.resetSignupsNonce,
+    })),
+  );
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumberValue] = useState<PhoneNumberValue>(EMPTY_PHONE_NUMBER);
   const isPhoneNumberInvalid = !isPhoneNumberEmpty(phoneNumber) && !isValidPhoneNumber(phoneNumber);

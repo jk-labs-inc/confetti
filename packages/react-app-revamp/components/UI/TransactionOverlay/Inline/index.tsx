@@ -20,11 +20,21 @@ const InlineTransactionOverlay: FC<InlineTransactionOverlayProps> = ({
   inFlowClassName = "",
   textSize = TransactionOverlayTextSize.REGULAR,
 }) => {
-  const { isOpen, placement, flow, phase, errorMessage, steps, successMeta, voteShare } = useTransactionOverlayStore(
-    useShallow(state => state),
-  );
+  const { isOpen, placement, flow, phase, errorMessage, steps, successMeta, voteShare, isInFlow } =
+    useTransactionOverlayStore(
+      useShallow(state => ({
+        isOpen: state.isOpen,
+        placement: state.placement,
+        flow: state.flow,
+        phase: state.phase,
+        errorMessage: state.errorMessage,
+        steps: state.steps,
+        successMeta: state.successMeta,
+        voteShare: state.voteShare,
+        isInFlow: isInlineOverlayInFlow(state),
+      })),
+    );
   const isVisible = isOpen && placement === TransactionOverlayPlacement.INLINE;
-  const isInFlow = useTransactionOverlayStore(isInlineOverlayInFlow);
   const [isExiting, setIsExiting] = useState(false);
   const wasVisibleRef = useRef(false);
   const coverHeightRef = useRef<number | null>(null);

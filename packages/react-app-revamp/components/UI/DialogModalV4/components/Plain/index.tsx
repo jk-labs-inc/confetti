@@ -1,17 +1,19 @@
 import { Transition, TransitionChild } from "@headlessui/react";
+import { isParaModalShown } from "@helpers/paraModal";
 import { FC, MouseEvent, PointerEvent, ReactNode, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { dialogModalV4BackdropClassName, getDialogModalV4PanelClassName } from "../../styles";
+import { dialogModalV4BackdropClassName, getDialogModalV4PanelClassName, type DialogModalV4Panel } from "../../styles";
 
 interface DialogModalV4PlainProps {
   isOpen: boolean;
   children: ReactNode;
   width: string;
   lgWidth: string;
+  panel: DialogModalV4Panel;
   onClose: () => void;
 }
 
-const DialogModalV4Plain: FC<DialogModalV4PlainProps> = ({ isOpen, children, width, lgWidth, onClose }) => {
+const DialogModalV4Plain: FC<DialogModalV4PlainProps> = ({ isOpen, children, width, lgWidth, panel, onClose }) => {
   const panelRef = useRef<HTMLDivElement>(null);
   const isPointerDownOutside = useRef(false);
   const [isMounted, setIsMounted] = useState(false);
@@ -22,7 +24,7 @@ const DialogModalV4Plain: FC<DialogModalV4PlainProps> = ({ isOpen, children, wid
     if (!isOpen) return;
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") onClose();
+      if (event.key === "Escape" && !isParaModalShown()) onClose();
     };
 
     document.addEventListener("keydown", handleKeyDown);
@@ -62,9 +64,9 @@ const DialogModalV4Plain: FC<DialogModalV4PlainProps> = ({ isOpen, children, wid
             ref={panelRef}
             role="dialog"
             aria-modal="true"
-            className={getDialogModalV4PanelClassName(width, lgWidth)}
+            className={getDialogModalV4PanelClassName(width, lgWidth, panel)}
           >
-            <div className="lg:pb-0 lg:p-6">{children}</div>
+            {panel === "bare" ? children : <div className="lg:pb-0 lg:p-6">{children}</div>}
           </TransitionChild>
         </div>
       </div>

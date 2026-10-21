@@ -16,6 +16,7 @@ import {
   type Placement,
 } from "@floating-ui/react";
 import { useEffect, useId, useRef } from "react";
+import { useShallow } from "zustand/shallow";
 import { useActiveTooltipStore } from "./store";
 
 export type TooltipSurface = "default" | "dark" | "panel" | "voters";
@@ -52,9 +53,9 @@ export function useTooltip({
   strategy = "fixed",
 }: UseTooltipOptions = {}) {
   const id = useId();
-  const isActive = useActiveTooltipStore(state => state.activeId === id);
-  const openActive = useActiveTooltipStore(state => state.open);
-  const closeActive = useActiveTooltipStore(state => state.close);
+  const { isActive, openActive, closeActive } = useActiveTooltipStore(
+    useShallow(state => ({ isActive: state.activeId === id, openActive: state.open, closeActive: state.close })),
+  );
   const open = controlledOpen ?? isActive;
 
   useEffect(() => () => closeActive(id), [id, closeActive]);
