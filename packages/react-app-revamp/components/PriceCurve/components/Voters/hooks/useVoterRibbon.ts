@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useRef } from "react";
+import { useShallow } from "zustand/shallow";
 import useVoterRibbonStore from "../store";
 import { PositionedVote } from "../types";
 
@@ -30,8 +31,9 @@ export function useVoterRibbon(votes: PositionedVote[]) {
     }
   }
 
-  const activeVoteUuid = useVoterRibbonStore(state => state.activeVoteUuid);
-  const setActiveVoteUuid = useVoterRibbonStore(state => state.setActiveVoteUuid);
+  const { activeVoteUuid, setActiveVoteUuid } = useVoterRibbonStore(
+    useShallow(state => ({ activeVoteUuid: state.activeVoteUuid, setActiveVoteUuid: state.setActiveVoteUuid })),
+  );
 
   // Drop a cast from the "new" set once its chip has mounted (and thus started its entrance
   // animation). Mutating the ref (no re-render) is intentional — it just stops a windowed

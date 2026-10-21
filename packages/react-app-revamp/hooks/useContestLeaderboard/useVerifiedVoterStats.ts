@@ -25,6 +25,8 @@ interface UseVerifiedVoterStatsParams {
 }
 
 interface UseVerifyRefreshParams {
+  contestAddress: string;
+  chainId: number;
   ledger: ContestVoteLedger | null;
   verifyList: string[];
   verifiedMainEntryIds: Set<string>;
@@ -102,11 +104,15 @@ export function useVerifiedVoterStats({
   return useMemo(() => collectVerifiedStats(queryClient, prefix), [queryClient, prefix, data]);
 }
 
-export function useVerifyRefresh({ ledger, verifyList, verifiedMainEntryIds, enabled }: UseVerifyRefreshParams): void {
+export function useVerifyRefresh({
+  contestAddress,
+  chainId,
+  ledger,
+  verifyList,
+  verifiedMainEntryIds,
+  enabled,
+}: UseVerifyRefreshParams): void {
   const queryClient = useQueryClient();
-  const { address, chainId } = useContestConfigStore(
-    useShallow(state => ({ address: state.contestConfig.address, chainId: state.contestConfig.chainId })),
-  );
 
   const latestCast = ledger?.casts.at(-1) ?? null;
   const latestUuid = latestCast?.uuid ?? null;
@@ -137,7 +143,7 @@ export function useVerifyRefresh({ ledger, verifyList, verifiedMainEntryIds, ena
 
     const invalidate = () => {
       lastInvalidateAtRef.current = Date.now();
-      void invalidateContestLeaderboard(queryClient, { contestAddress: address, chainId });
+      void invalidateContestLeaderboard(queryClient, { contestAddress, chainId });
     };
 
     const touchesVisibleRow =
@@ -161,7 +167,7 @@ export function useVerifyRefresh({ ledger, verifyList, verifiedMainEntryIds, ena
       throttleRef.current = null;
       invalidate();
     }, wait);
-  }, [latestUuid, enabled, address, chainId, queryClient]);
+  }, [latestUuid, enabled, contestAddress, chainId, queryClient]);
 
   useEffect(
     () => () => {

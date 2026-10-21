@@ -4,12 +4,14 @@ import { useCurrencyStore } from "@hooks/useCurrency/store";
 import { useWallet } from "@hooks/useWallet";
 import { useParams, usePathname } from "next/navigation";
 import { FC } from "react";
+import { useShallow } from "zustand/shallow";
 
 const DEFAULT_NATIVE_SYMBOL = "ETH";
 
 const CurrencyToggle: FC = () => {
-  const displayCurrency = useCurrencyStore(state => state.displayCurrency);
-  const toggleCurrency = useCurrencyStore(state => state.toggleCurrency);
+  const { displayCurrency, toggleCurrency } = useCurrencyStore(
+    useShallow(state => ({ displayCurrency: state.displayCurrency, toggleCurrency: state.toggleCurrency })),
+  );
   const params = useParams();
   const pathname = usePathname();
   const { chain: walletChain } = useWallet();

@@ -1,22 +1,17 @@
-import { useModal } from "@getpara/react-sdk-lite";
 import { useWallet } from "@hooks/useWallet";
+import { useXClaimOffer } from "@hooks/useXClaim/store";
+import { useClaimFirstSignIn } from "@hooks/useXClaim/useClaimFirstSignIn";
 import { FC } from "react";
 import AccountDropdown from "./components/AccountDropdown";
+import SignInButton from "./components/SignInButton";
 
 export const ConnectButtonCustom: FC = () => {
   const { isConnected, userAddress, disconnect } = useWallet();
-  const { openModal } = useModal();
+  const signIn = useClaimFirstSignIn();
+  const claimOffer = useXClaimOffer();
 
   if (!isConnected || !userAddress) {
-    return (
-      <button
-        onClick={() => openModal()}
-        type="button"
-        className="w-36 h-8 bg-secondary-1 border border-primary-3 text-base font-bold text-neutral-9 rounded-[40px]"
-      >
-        sign in
-      </button>
-    );
+    return <SignInButton claimOffer={claimOffer} onSignIn={signIn} />;
   }
 
   return (
@@ -24,6 +19,7 @@ export const ConnectButtonCustom: FC = () => {
       address={userAddress}
       displayName={`${userAddress.slice(0, 6)}...${userAddress.slice(-4)}`}
       onDisconnect={disconnect}
+      claimOffer={claimOffer}
     />
   );
 };

@@ -2,8 +2,10 @@
 
 import { chains, transports } from "@config/wagmi";
 import { funkitConfig, funkitTheme, isFunkitConfigured } from "@config/funkit";
+import { isXClaimConfigured } from "@config/xClaim";
 import { FunkitProvider } from "@funkit/connect";
 import ParaWeb, { AuthLayout, Environment, TExternalWallet } from "@getpara/react-sdk-lite";
+import { xClaimParaCallbacks } from "@hooks/useXClaim/store";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { FC, ReactNode } from "react";
 import { ParaProvider } from "@getpara/react-sdk-lite";
@@ -37,6 +39,7 @@ const Providers: FC<ProvidersProps> = ({ children }) => {
     <QueryClientProvider client={queryClient}>
       <ParaProvider
         paraClientConfig={para}
+        callbacks={isXClaimConfigured ? xClaimParaCallbacks : undefined}
         config={{
           appName: "Confetti",
         }}

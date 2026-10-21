@@ -1,8 +1,9 @@
+import { isParaModalShown } from "@helpers/paraModal";
 import { CSSProperties, FC, useCallback, useEffect } from "react";
 import { Drawer as VaulDrawer } from "vaul";
 
-const VAUL_EXIT_ANIMATION_MS = 500;
-const BODY_LOCK_CLEANUP_DELAY_MS = VAUL_EXIT_ANIMATION_MS + 200;
+export const DRAWER_EXIT_ANIMATION_MS = 500;
+const BODY_LOCK_CLEANUP_DELAY_MS = DRAWER_EXIT_ANIMATION_MS + 200;
 const DEFAULT_CONTENT_MAX_HEIGHT = "calc(100dvh - 48px)";
 const HANDLE_CLASS_NAME: Record<DrawerHandleSize, string> = {
   default: "mx-auto! w-12! h-1.5! shrink-0! rounded-full! bg-neutral-9! my-4!",
@@ -50,12 +51,14 @@ interface DrawerProps {
 }
 
 const shouldPreventDismiss = (e: React.SyntheticEvent | Event | { detail?: { originalEvent?: Event } }) => {
+  if (isParaModalShown()) return true;
+
   const target = (e as { detail?: { originalEvent?: Event } }).detail?.originalEvent?.target ?? (e as Event).target;
 
   if (!target) return false;
 
   const el = target as HTMLElement;
-  return !!el.closest?.("cpsl-auth-modal") || !!el.closest?.(".Toastify") || !!el.closest?.("body > [data-rk]");
+  return !!el.closest?.(".Toastify") || !!el.closest?.("body > [data-rk]");
 };
 
 const Drawer: FC<DrawerProps> = ({
@@ -80,6 +83,10 @@ const Drawer: FC<DrawerProps> = ({
     if (shouldPreventDismiss(e)) {
       e.preventDefault();
     }
+  }, []);
+
+  const handleEscapeKeyDown = useCallback((e: KeyboardEvent) => {
+    if (isParaModalShown()) e.preventDefault();
   }, []);
 
   useEffect(() => {
@@ -110,6 +117,7 @@ const Drawer: FC<DrawerProps> = ({
           className={`z-50 rounded-t-[40px] border-t border-l border-r border-neutral-17 flex flex-col fixed bottom-0 left-0 right-0 outline-none ${className}`}
           onPointerDownOutside={handleInteractOutside}
           onInteractOutside={handleInteractOutside}
+          onEscapeKeyDown={handleEscapeKeyDown}
           style={{ maxHeight: DEFAULT_CONTENT_MAX_HEIGHT, ...contentStyle }}
         >
           <VaulDrawer.Title className="sr-only">Drawer</VaulDrawer.Title>

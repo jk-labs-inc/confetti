@@ -5,13 +5,18 @@ import React, { useState } from "react";
 import CustomLink from "../Link";
 import AddFundsModal from "@components/AddFunds/components/Modal";
 import SendFunds from "@components/SendFunds";
-import Drawer from "../Drawer";
+import XClaimClaimRow from "@components/XClaim/entry/XClaimClaimRow";
+import { X_CLAIM_IDS } from "@components/XClaim/constants";
+import Drawer, { DRAWER_EXIT_ANIMATION_MS } from "../Drawer";
 import ProfileSection from "@components/Connect/components/AccountDropdown/components/ProfileSection";
 import AdvancedOptions from "@components/Connect/components/AccountDropdown/components/AdvancedOptions";
 import { useAddFunds } from "@hooks/useAddFunds";
 import { useAddFundsChain } from "@hooks/useAddFundsChain";
 import { useWallet } from "@hooks/useWallet";
+import { xClaimSheet } from "@hooks/useXClaim/store";
 import { chains } from "@config/wagmi";
+import { openOfferFor } from "lib/xClaim/view";
+import type { XClaimOffer } from "lib/xClaim/types";
 import { mainnet } from "viem/chains";
 import { useEnsAvatar, useEnsName, useBalance } from "wagmi";
 
@@ -20,6 +25,7 @@ interface MobileProfileDrawerProps {
   onClose: () => void;
   address: string;
   onDisconnect: () => void;
+  claimOffer: XClaimOffer;
 }
 
 const navLinks = [
@@ -37,7 +43,13 @@ const navLinks = [
   },
 ];
 
-export const MobileProfileDrawer: React.FC<MobileProfileDrawerProps> = ({ isOpen, onClose, address, onDisconnect }) => {
+export const MobileProfileDrawer: React.FC<MobileProfileDrawerProps> = ({
+  isOpen,
+  onClose,
+  address,
+  onDisconnect,
+  claimOffer,
+}) => {
   const [isAddFundsOpen, setIsAddFundsOpen] = useState(false);
   const [isSendFundsOpen, setIsSendFundsOpen] = useState(false);
   const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
@@ -55,11 +67,25 @@ export const MobileProfileDrawer: React.FC<MobileProfileDrawerProps> = ({ isOpen
   };
 
   const displayName = `${address.slice(0, 6)}...${address.slice(-4)}`;
+  const claimOpen = openOfferFor(claimOffer, "signed_in");
 
   return (
     <>
       <Drawer isOpen={isOpen} onClose={onClose} className="bg-secondary-1 w-full h-auto">
         <div className="flex flex-col">
+          {claimOpen && (
+            <div className="px-4 pt-2">
+              <XClaimClaimRow
+                id={X_CLAIM_IDS.profileDrawerRow}
+                offer={claimOpen}
+                placement="drawer"
+                onClick={() => {
+                  onClose();
+                  setTimeout(xClaimSheet.open, DRAWER_EXIT_ANIMATION_MS);
+                }}
+              />
+            </div>
+          )}
           <ProfileSection
             address={address}
             ensAvatar={ensAvatar}

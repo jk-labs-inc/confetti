@@ -1,5 +1,7 @@
 import SignInModalTracker from "@components/Analytics/SignInModalTracker";
 import CountryFlagPolyfill from "@components/CountryFlagPolyfill";
+import XClaimRuntimeLoader from "@components/XClaim/XClaimRuntimeLoader";
+import { isXClaimConfigured } from "@config/xClaim";
 import "@funkit/connect/styles.css";
 import "@getpara/react-sdk-lite/styles.css";
 import LayoutBase from "@layouts/LayoutBase";
@@ -52,6 +54,16 @@ const saboFilled = localFont({
   variable: "--font-family-sabo-filled",
 });
 
+const saboDollar = localFont({
+  src: "./_fonts/SaboDollar-Filled.woff2",
+  weight: "400",
+  style: "normal",
+  display: "swap",
+  adjustFontFallback: false,
+  declarations: [{ prop: "unicode-range", value: "U+0024" }],
+  variable: "--font-family-sabo-dollar",
+});
+
 polyfill();
 
 export const metadata: Metadata = {
@@ -87,7 +99,7 @@ const DynamicPortal = dynamic(() => import("./portal"), { ssr: !!false });
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${lato.variable} ${saboRegular.variable} ${saboFilled.variable} antialiased`}>
+    <html lang="en" className={`${lato.variable} ${saboRegular.variable} ${saboFilled.variable} ${saboDollar.variable} antialiased`}>
       <body className={lato.className}>
         <CountryFlagPolyfill />
         <div id="__next">
@@ -96,6 +108,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <LayoutBase>{children}</LayoutBase>
             <DynamicPortal />
             <SignInModalTracker />
+            {isXClaimConfigured && <XClaimRuntimeLoader />}
             <GoogleTagManager gtmId="GTM-W2WHJ2QJ" />
           </Providers>
         </div>
