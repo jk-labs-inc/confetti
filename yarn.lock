@@ -3646,13 +3646,13 @@
   resolved "https://registry.yarnpkg.com/@lifeomic/attempt/-/attempt-3.1.0.tgz#7fc703559177b81a008b9d263e3d9a001d11d08a"
   integrity sha512-QZqem4QuAnAyzfz+Gj5/+SLxqwCAw2qmt7732ZXodr6VDWGeYLG6w1i/vYLa55JQM9wRuBKLmXmiZ2P0LtE5rw==
 
-"@lifi/sdk-provider-ethereum@^4.2.9":
-  version "4.2.10"
-  resolved "https://registry.yarnpkg.com/@lifi/sdk-provider-ethereum/-/sdk-provider-ethereum-4.2.10.tgz#84d67686dfcb39c0308f83317e5c885b4c395d7d"
-  integrity sha512-6WL5WCz1PgQF46vu+RTcLRiBBK1s6uy0qcIuy0+G/Zc6X4Mpd8PUNVATTd+m1xR4RQse39gP6NkpbrCBTmreHQ==
+"@lifi/sdk-provider-ethereum@^4.2.11":
+  version "4.2.11"
+  resolved "https://registry.yarnpkg.com/@lifi/sdk-provider-ethereum/-/sdk-provider-ethereum-4.2.11.tgz#f65cef149dfaff5e51751dac71a66a84ba42f634"
+  integrity sha512-zOr02kwhs+E9TVB2/uwhZwl/7/7CKdBzAPrfBMrGnAB8NJkZ3uW+qEK8EEQHLSt/iTCgAgMaidh5/IKfp9aI/w==
   dependencies:
     "@lifi/sdk" "4.12.1"
-    viem "^2.57.4"
+    viem "^2.57.7"
 
 "@lifi/sdk@4.12.1", "@lifi/sdk@^4.12.1":
   version "4.12.1"
@@ -3683,13 +3683,13 @@
     react-i18next "^17.1.0"
     zustand "^5.0.15"
 
-"@lifi/widget-provider-ethereum@4.1.9":
-  version "4.1.9"
-  resolved "https://registry.yarnpkg.com/@lifi/widget-provider-ethereum/-/widget-provider-ethereum-4.1.9.tgz#a350a8b629a7c52c26a58d1e2a577402cb788833"
-  integrity sha512-1BehKNv+iwp9+4sd8TTleA4+b1pd3krRQXR3ABswdirTuNDuueXTk+TGAjOIiFzz2Jl0CJE68aYXJx3OW2mY6A==
+"@lifi/widget-provider-ethereum@4.1.10":
+  version "4.1.10"
+  resolved "https://registry.yarnpkg.com/@lifi/widget-provider-ethereum/-/widget-provider-ethereum-4.1.10.tgz#89d59dac7d0a9bf6e1d6c922f48a830425882fcb"
+  integrity sha512-9bqg6o4ZcX7/Ow0mcyyM1mk2ZkhGiofMCkv88xaWovkrKahS43vtSXApViN1uaIKWo7I1MwGztcRAySqeZ0u4Q==
   dependencies:
     "@lifi/sdk" "^4.12.1"
-    "@lifi/sdk-provider-ethereum" "^4.2.9"
+    "@lifi/sdk-provider-ethereum" "^4.2.11"
     "@lifi/widget-provider" "4.6.2"
     viem ">=2.52.0"
 
@@ -14547,7 +14547,7 @@ victory-vendor@^36.6.8:
     d3-time "^3.0.0"
     d3-timer "^3.0.1"
 
-viem@2.57.7:
+viem@2.57.7, viem@^2.57.7:
   version "2.57.7"
   resolved "https://registry.yarnpkg.com/viem/-/viem-2.57.7.tgz#31c62217c90b937f7f8aa39cc3459d21811e5d8f"
   integrity sha512-x3UqqrcQuESaRVK6a0BvNmoNP0SVhu913uxEAxYLJx1lNYnj6ylTntfUdakCUKjk1+T+63gkdwFGJQ2O5C/nRw==
@@ -14601,20 +14601,6 @@ viem@^2.1.1:
     abitype "1.2.3"
     isows "1.0.7"
     ox "0.14.45"
-    ws "8.21.0"
-
-viem@^2.57.4:
-  version "2.57.5"
-  resolved "https://registry.yarnpkg.com/viem/-/viem-2.57.5.tgz#d028e2de5c6a58a6ab525def34bdb976d83c4f0e"
-  integrity sha512-BaUdS5lJJTxr6hJX17K0AjHbgUhsolsqH8CCbTq1WMunW/I/Siwc9VrTwccCcNPppgqa/gY4TqK8Zl8LLmlTlw==
-  dependencies:
-    "@noble/curves" "1.9.1"
-    "@noble/hashes" "1.8.0"
-    "@scure/bip32" "1.7.0"
-    "@scure/bip39" "1.6.0"
-    abitype "1.2.3"
-    isows "1.0.7"
-    ox "0.14.56"
     ws "8.21.0"
 
 void-elements@3.1.0:
