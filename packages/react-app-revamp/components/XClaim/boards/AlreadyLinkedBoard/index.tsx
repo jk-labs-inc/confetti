@@ -13,9 +13,9 @@ const AlreadyLinkedBoard: FC<AlreadyLinkedBoardProps> = ({ onConnectOther }) => 
     width="result"
     titleSize="regular"
     hero={<BoardHero art="shy" size={140} />}
-    title="this twitter is already taken"
-    body={`this twitter account already claimed its ${CLAIM_AMOUNT_LABEL} on another wallet. each twitter account can claim once.`}
-    note={`if that other wallet is yours, sign in with it to play with your ${CLAIM_AMOUNT_LABEL} there.`}
+    title="this twitter is linked to another wallet"
+    body={`this twitter account is already connected to a different wallet. each twitter account can claim ${CLAIM_AMOUNT_LABEL} with one wallet only.`}
+    note="if that other wallet is yours, sign in with it to check its claim status."
     primary={{ kind: "close", id: X_CLAIM_IDS.alreadyLinkedGotIt, label: "got it" }}
     secondary={{
       role: "alternative",
