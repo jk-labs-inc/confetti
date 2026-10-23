@@ -1,5 +1,6 @@
 import BurgerMenu from "@components/UI/BurgerMenu";
 import CurrencyToggle from "@components/Header/CurrencyToggle";
+import HowItWorksTrigger from "@components/HowItWorksExplainer/Trigger";
 import UserProfileDisplay from "@components/UI/UserProfileDisplay";
 import ContestNotifyButton from "@components/_pages/Contest/components/ContestNotifyButton";
 import ContestShareButton from "@components/_pages/Contest/components/ContestShareButton";
@@ -54,6 +55,7 @@ const MobileHeader: FC<MobileHeaderProps> = ({
               hideCopy
             />
             <div className="flex items-center gap-4">
+              <HowItWorksTrigger size="sm" />
               <ContestShareButton
                 contestName={contestName}
                 contestAddress={contestAddress}
