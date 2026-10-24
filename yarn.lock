@@ -12187,6 +12187,20 @@ ox@0.14.56:
     abitype "^1.2.3"
     eventemitter3 "5.0.1"
 
+ox@0.14.57:
+  version "0.14.57"
+  resolved "https://registry.yarnpkg.com/ox/-/ox-0.14.57.tgz#5d0babfd4a19996b4035a9d62f3398843d0bba65"
+  integrity sha512-CPF6aEFyAuqgL0x7VaFM0vI2/CUd5Qk8+BIL6OnViPw+gF07O/VAhqEPOPw5GYnYPwomIk8mD91gTcQ1RAtupA==
+  dependencies:
+    "@adraffy/ens-normalize" "^1.11.0"
+    "@noble/ciphers" "^1.3.0"
+    "@noble/curves" "1.9.1"
+    "@noble/hashes" "^1.8.0"
+    "@scure/bip32" "^1.7.0"
+    "@scure/bip39" "^1.6.0"
+    abitype "^1.2.3"
+    eventemitter3 "5.0.1"
+
 ox@0.14.7:
   version "0.14.7"
   resolved "https://registry.yarnpkg.com/ox/-/ox-0.14.7.tgz#efe6770f7a138f823fb2df26001b679c2565b0a4"
@@ -14578,10 +14592,10 @@ victory-vendor@^36.6.8:
     d3-time "^3.0.0"
     d3-timer "^3.0.1"
 
-viem@2.57.7, viem@^2.57.7:
-  version "2.57.7"
-  resolved "https://registry.yarnpkg.com/viem/-/viem-2.57.7.tgz#31c62217c90b937f7f8aa39cc3459d21811e5d8f"
-  integrity sha512-x3UqqrcQuESaRVK6a0BvNmoNP0SVhu913uxEAxYLJx1lNYnj6ylTntfUdakCUKjk1+T+63gkdwFGJQ2O5C/nRw==
+viem@2.57.11:
+  version "2.57.11"
+  resolved "https://registry.yarnpkg.com/viem/-/viem-2.57.11.tgz#c0fef8624432557d13fd5d13b7ab7262d1189db7"
+  integrity sha512-kvcBGXzIGmZu3GqaA83ZOLzVC57YO7WCgQrGcUHNKqZ8Cjqc9vV//uGna4Nhv0NGHn2gekw1FNdSvQePNnYePQ==
   dependencies:
     "@noble/curves" "1.9.1"
     "@noble/hashes" "1.8.0"
@@ -14589,7 +14603,7 @@ viem@2.57.7, viem@^2.57.7:
     "@scure/bip39" "1.6.0"
     abitype "1.2.3"
     isows "1.0.7"
-    ox "0.14.56"
+    ox "0.14.57"
     ws "8.21.0"
 
 viem@>=2.37.9, viem@^2.23.15, viem@^2.27.2:
@@ -14632,6 +14646,20 @@ viem@^2.1.1:
     abitype "1.2.3"
     isows "1.0.7"
     ox "0.14.45"
+    ws "8.21.0"
+
+viem@^2.57.7:
+  version "2.57.7"
+  resolved "https://registry.yarnpkg.com/viem/-/viem-2.57.7.tgz#31c62217c90b937f7f8aa39cc3459d21811e5d8f"
+  integrity sha512-x3UqqrcQuESaRVK6a0BvNmoNP0SVhu913uxEAxYLJx1lNYnj6ylTntfUdakCUKjk1+T+63gkdwFGJQ2O5C/nRw==
+  dependencies:
+    "@noble/curves" "1.9.1"
+    "@noble/hashes" "1.8.0"
+    "@scure/bip32" "1.7.0"
+    "@scure/bip39" "1.6.0"
+    abitype "1.2.3"
+    isows "1.0.7"
+    ox "0.14.56"
     ws "8.21.0"
 
 void-elements@3.1.0:
