@@ -3145,36 +3145,6 @@
   resolved "https://registry.yarnpkg.com/@getbrevo/brevo/-/brevo-6.2.0.tgz#5b7ccef6489b53d12bcbe9d45ee53c2d4f130636"
   integrity sha512-k+7w3Desc+bVF+LpJ+1/4wfiopaJDl4ky7jJMQbtjT3loVpS8b1xuFBTfdzZnAyYSmL8Rov2n8GeRxGt2p0oRA==
 
-"@getpara/core-sdk@3.23.0":
-  version "3.23.0"
-  resolved "https://registry.yarnpkg.com/@getpara/core-sdk/-/core-sdk-3.23.0.tgz#3aca88d12ddd19249ce93e02b6b7be55f406f70c"
-  integrity sha512-H+BdEhKOJbCr6lQjkPIRJhtJxzl1RyxUzaqMuTEBUNoWJ0Nd+vam4jo0sCDq1xndFKhgzy3Hk3SQm1s3dINOaw==
-  dependencies:
-    "@celo/utils" "^8.0.2"
-    "@getpara/shared" "^1.37.0"
-    "@getpara/user-management-client" "3.23.0"
-    "@noble/curves" "^1.9.7"
-    "@noble/hashes" "^1.5.0"
-    "@opentelemetry/api" "^1.9.1"
-    "@opentelemetry/context-zone" "^2.9.0"
-    "@opentelemetry/core" "^2.9.0"
-    "@opentelemetry/exporter-trace-otlp-http" "^0.220.0"
-    "@opentelemetry/instrumentation" "^0.220.0"
-    "@opentelemetry/instrumentation-fetch" "^0.220.0"
-    "@opentelemetry/instrumentation-xml-http-request" "^0.220.0"
-    "@opentelemetry/otlp-transformer" "^0.220.0"
-    "@opentelemetry/resources" "^2.9.0"
-    "@opentelemetry/sdk-trace-base" "^2.9.0"
-    "@opentelemetry/semantic-conventions" "^1.40.0"
-    "@scure/base" "^1.2.6"
-    "@types/node-forge" "^1.3.11"
-    axios "^1.8.4"
-    buffer "6.0.3"
-    libphonenumber-js "^1.11.7"
-    node-forge "^1.4.0"
-    uuid "^11.1.1"
-    xstate "^5.24.0"
-
 "@getpara/core-sdk@3.24.0":
   version "3.24.0"
   resolved "https://registry.yarnpkg.com/@getpara/core-sdk/-/core-sdk-3.24.0.tgz#98a35a3faad408d19546e9a9c1421acf62d06470"
@@ -3220,14 +3190,6 @@
     zustand "^4.5.2"
     zustand-sync-tabs "^0.2.2"
 
-"@getpara/react-common@3.23.0":
-  version "3.23.0"
-  resolved "https://registry.yarnpkg.com/@getpara/react-common/-/react-common-3.23.0.tgz#c7d4e52cf6d915e07cfa035bb97c28c9ca80f336"
-  integrity sha512-WzHsPItRezMXpENIafwxEBNRpf9iLwdxMCRpzUbuT9OGZG/Qshz1WKUG/2UXCNuCKNslYM5lxCDh7cwAc4O2Pg==
-  dependencies:
-    "@getpara/user-management-client" "3.23.0"
-    "@getpara/web-sdk" "3.23.0"
-
 "@getpara/react-common@3.24.0":
   version "3.24.0"
   resolved "https://registry.yarnpkg.com/@getpara/react-common/-/react-common-3.24.0.tgz#b918651ad017bca0eefba331a94f79352d98ee43"
@@ -3236,10 +3198,10 @@
     "@getpara/user-management-client" "3.24.0"
     "@getpara/web-sdk" "3.24.0"
 
-"@getpara/react-component-library@3.23.0":
-  version "3.23.0"
-  resolved "https://registry.yarnpkg.com/@getpara/react-component-library/-/react-component-library-3.23.0.tgz#01ed52d2ae018d849e89604dbcebd162bc9437f3"
-  integrity sha512-kR0sqErWVTfScvbQJySJYPpw6GUQF/buPI/GpSj61uxLXMPEkd+ynV74+l2ZnSd70Y5PHQCm/hsPiIqbDEJm/Q==
+"@getpara/react-component-library@3.24.0":
+  version "3.24.0"
+  resolved "https://registry.yarnpkg.com/@getpara/react-component-library/-/react-component-library-3.24.0.tgz#238516bf9f3707f4c79d915dca20d848e9938b5e"
+  integrity sha512-dFEkdocgOZJLMzznfuyu+v/o23kcDH+EaLzO8P4PJTV/M0VURk9tPywXF6MPW4Ue9OoWaP8jHb4BKjqLPqjBnw==
   dependencies:
     "@radix-ui/react-avatar" "^1.1.2"
     "@radix-ui/react-checkbox" "^1.3.3"
@@ -3275,26 +3237,26 @@
     tailwindcss-animate "^1.0.7"
     vaul "1.1.2"
 
-"@getpara/react-core@3.23.0":
-  version "3.23.0"
-  resolved "https://registry.yarnpkg.com/@getpara/react-core/-/react-core-3.23.0.tgz#734301661ab964fa2d7032d11999287b3e99d005"
-  integrity sha512-yWaTbo/1PURbBv07/uOLi6VDNGDB9FCBdRzB1ZO5d4m9JnZA37vwu3AcPQszMvfDb9YB8iFhRk0NER2aRUsW5Q==
+"@getpara/react-core@3.24.0":
+  version "3.24.0"
+  resolved "https://registry.yarnpkg.com/@getpara/react-core/-/react-core-3.24.0.tgz#97c9ecbcb3d0f0e11d12cf725efb266e20fe3ba3"
+  integrity sha512-c1sKAuBD4lANfuiaHElSIsv3HzCw6yQFsgO+gdR1O+DLJ3HSEqbt3Uu+X7azCQ2UExs5Uy+Ckk3C/98UadzIZg==
   dependencies:
-    "@getpara/core-sdk" "3.23.0"
+    "@getpara/core-sdk" "3.24.0"
     zustand "^5.0.0"
 
-"@getpara/react-sdk-lite@3.23.0":
-  version "3.23.0"
-  resolved "https://registry.yarnpkg.com/@getpara/react-sdk-lite/-/react-sdk-lite-3.23.0.tgz#c3e0903fb455d92211f1673cd957b82639abe8b3"
-  integrity sha512-T4t8PpNyAS1fVTB5xDEBV2swUle02LsvAPFyyOcG2OUfFcmxjUfrBupwX/rtnw+boozY3g17Lt6vzBEKGWyjjQ==
+"@getpara/react-sdk-lite@3.24.0":
+  version "3.24.0"
+  resolved "https://registry.yarnpkg.com/@getpara/react-sdk-lite/-/react-sdk-lite-3.24.0.tgz#25e317a51a0b60f74e8785087966c3897479fc01"
+  integrity sha512-lI080muTqZ6yACpeOzXQHLaCclLi2ecIMVRdEdkyUUQO303enszl/FMUNDue1z3wGny72d1c0AXHLv+Hy7agNA==
   dependencies:
-    "@getpara/core-sdk" "3.23.0"
-    "@getpara/react-common" "3.23.0"
-    "@getpara/react-component-library" "3.23.0"
-    "@getpara/react-core" "3.23.0"
-    "@getpara/shared" "^1.37.0"
-    "@getpara/user-management-client" "3.23.0"
-    "@getpara/web-sdk" "3.23.0"
+    "@getpara/core-sdk" "3.24.0"
+    "@getpara/react-common" "3.24.0"
+    "@getpara/react-component-library" "3.24.0"
+    "@getpara/react-core" "3.24.0"
+    "@getpara/shared" "^1.38.0"
+    "@getpara/user-management-client" "3.24.0"
+    "@getpara/web-sdk" "3.24.0"
     "@opentelemetry/api" "^1.9.1"
     date-fns "^3.6.0"
     detect-browser "^5.3.0"
@@ -3306,30 +3268,12 @@
     web-vitals "^5.2.0"
     zustand "^4.5.2"
 
-"@getpara/shared@^1.37.0":
-  version "1.38.0"
-  resolved "https://registry.yarnpkg.com/@getpara/shared/-/shared-1.38.0.tgz#f3a0297bdfc57ff2dc1ad083a4495b812177129a"
-  integrity sha512-TEmqW5+I+yx8EMSukhJVVbB1DAwRAP/awvnZq9Xji7yQ1W0CDYsKUTMuj4h2qqC4ej93F3QGifwMSww2OLUDTA==
-  dependencies:
-    zod "^3.22.4"
-
 "@getpara/shared@^1.38.0":
   version "1.39.0"
   resolved "https://registry.yarnpkg.com/@getpara/shared/-/shared-1.39.0.tgz#9e97deb010c1cac5042c545f8afcf57e6170a7cb"
   integrity sha512-byECrH4kAlp9K5TpAG8ll0notldElYgoPNiSRagE07b5W4re3Yp4BhsY9IDPFwUwUxTQpDniGh2b98yB3WU9MQ==
   dependencies:
     zod "^3.22.4"
-
-"@getpara/user-management-client@3.23.0":
-  version "3.23.0"
-  resolved "https://registry.yarnpkg.com/@getpara/user-management-client/-/user-management-client-3.23.0.tgz#8b5cc7eee3057a7d11304fe5eb631db039abeecd"
-  integrity sha512-zIBkaGBB0sg+Yecn/6g52pltp+rzDIaxD9orhsbPgwaeL/kHXCHo4OmLegHVWjlmD/FPNpgIoc7L2Q9IbPMO6Q==
-  dependencies:
-    "@getpara/shared" "^1.37.0"
-    "@opentelemetry/api" "^1.9.1"
-    axios "^1.8.4"
-    axios-retry "^4.5.0"
-    libphonenumber-js "^1.11.7"
 
 "@getpara/user-management-client@3.24.0":
   version "3.24.0"
@@ -3357,21 +3301,6 @@
     "@getpara/viem-v2-integration" "3.24.0"
     "@getpara/web-sdk" "3.24.0"
     eventemitter3 "^5.0.1"
-
-"@getpara/web-sdk@3.23.0":
-  version "3.23.0"
-  resolved "https://registry.yarnpkg.com/@getpara/web-sdk/-/web-sdk-3.23.0.tgz#885601c2600dc398a3688e4e0dc438f9b581a916"
-  integrity sha512-WAdDcH1aXs6uogOAKawuEYGG1EUF+2FhuA9H/UY8ga1IoJ62+6/i1lqMZE3tZefE3s/zsgJL63nZ7gfsifJmcQ==
-  dependencies:
-    "@getpara/core-sdk" "3.23.0"
-    "@getpara/user-management-client" "3.23.0"
-    "@opentelemetry/api" "^1.9.1"
-    "@scure/base" "^1.2.6"
-    buffer "6.0.3"
-    cbor-web "^9.0.2"
-    node-forge "^1.4.0"
-    ua-parser-js "^2.0.2"
-    uuid "^11.1.1"
 
 "@getpara/web-sdk@3.24.0":
   version "3.24.0"
