@@ -2,13 +2,15 @@ import { STAGE_HEIGHT_PX, STAGE_STYLE, STAGE_WIDTH_PX } from "@components/HowItW
 import { useParentSize } from "@visx/responsive";
 import { FC, ReactNode } from "react";
 
+const MAX_STAGE_SCALE = 1.3;
+
 interface SceneViewportProps {
   children: ReactNode;
 }
 
 const SceneViewport: FC<SceneViewportProps> = ({ children }) => {
   const { parentRef, width } = useParentSize({ debounceTime: 0 });
-  const scale = width > 0 ? Math.min(1, width / STAGE_WIDTH_PX) : 1;
+  const scale = width > 0 ? Math.min(MAX_STAGE_SCALE, width / STAGE_WIDTH_PX) : 1;
 
   return (
     <div
@@ -16,7 +18,11 @@ const SceneViewport: FC<SceneViewportProps> = ({ children }) => {
       className="flex w-full justify-center rounded-[16px] bg-neutral-1"
       style={{ height: STAGE_HEIGHT_PX * scale }}
     >
-      <div className="shrink-0" style={{ ...STAGE_STYLE, transform: `scale(${scale})`, transformOrigin: "top center" }}>
+      <div
+        aria-hidden
+        className="relative shrink-0 overflow-hidden"
+        style={{ ...STAGE_STYLE, transform: `scale(${scale})`, transformOrigin: "top center" }}
+      >
         {children}
       </div>
     </div>
