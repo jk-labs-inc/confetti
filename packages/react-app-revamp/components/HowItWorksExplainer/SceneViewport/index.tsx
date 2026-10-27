@@ -1,20 +1,18 @@
 import { STAGE_HEIGHT_PX, STAGE_STYLE, STAGE_WIDTH_PX } from "@components/HowItWorksExplainer/engine";
-import { useParentSize } from "@visx/responsive";
 import { FC, ReactNode } from "react";
 
 const MAX_STAGE_SCALE = 1.3;
 
 interface SceneViewportProps {
+  widthPx: number;
   children: ReactNode;
 }
 
-const SceneViewport: FC<SceneViewportProps> = ({ children }) => {
-  const { parentRef, width } = useParentSize({ debounceTime: 0 });
-  const scale = width > 0 ? Math.min(MAX_STAGE_SCALE, width / STAGE_WIDTH_PX) : 1;
+const SceneViewport: FC<SceneViewportProps> = ({ widthPx, children }) => {
+  const scale = widthPx > 0 ? Math.min(MAX_STAGE_SCALE, widthPx / STAGE_WIDTH_PX) : 1;
 
   return (
     <div
-      ref={parentRef}
       className="flex w-full justify-center rounded-[16px] bg-neutral-1"
       style={{ height: STAGE_HEIGHT_PX * scale }}
     >

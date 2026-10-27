@@ -7,6 +7,7 @@ import NextButton from "@components/HowItWorksExplainer/NextButton";
 import StepCopy from "@components/HowItWorksExplainer/StepCopy";
 import StepSegments from "@components/HowItWorksExplainer/StepSegments";
 import { swipeToStep, useStepper, type StepDirection } from "@components/HowItWorksExplainer/stepper";
+import { useParentSize } from "@visx/responsive";
 import { DEMO_SCRIPT } from "lib/howItWorks/demo";
 import { HOW_IT_WORKS_STEP_COUNT, HOW_IT_WORKS_STEPS } from "lib/howItWorks/steps";
 import { AnimatePresence, motion, useReducedMotion, type PanInfo } from "motion/react";
@@ -24,6 +25,7 @@ const SLIDE_TRANSITION = { duration: STEP_SLIDE_DURATION_S, ease: STEP_SLIDE_EAS
 const HowItWorksSteps: FC<HowItWorksStepsProps> = ({ isOpen, onClose }) => {
   const stepper = useStepper({ isEnabled: isOpen, onFinish: onClose });
   const reduceMotion = useReducedMotion();
+  const { parentRef: sceneRef, width: sceneWidth } = useParentSize({ debounceTime: 0 });
   const slideOffset = reduceMotion ? 0 : SLIDE_OFFSET_PX;
   const Scene = SCENES[stepper.step.id];
 
@@ -62,7 +64,7 @@ const HowItWorksSteps: FC<HowItWorksStepsProps> = ({ isOpen, onClose }) => {
           <img src="/modal/modal_close.svg" width={24} height={24} alt="" draggable={false} />
         </button>
       </div>
-      <div className="relative overflow-hidden">
+      <div ref={sceneRef} className="relative overflow-hidden">
         <AnimatePresence mode="popLayout" custom={stepper.direction} initial={false}>
           <motion.div
             key={stepper.step.id}
@@ -75,7 +77,7 @@ const HowItWorksSteps: FC<HowItWorksStepsProps> = ({ isOpen, onClose }) => {
             className="flex flex-col gap-3 touch-pan-y"
           >
             <BubblesGuide bubbles={stepper.step.bubbles} />
-            <SceneViewport>
+            <SceneViewport widthPx={sceneWidth}>
               <Scene script={DEMO_SCRIPT} />
             </SceneViewport>
           </motion.div>
@@ -90,8 +92,8 @@ const HowItWorksSteps: FC<HowItWorksStepsProps> = ({ isOpen, onClose }) => {
             <NextButton isLast={i === HOW_IT_WORKS_STEP_COUNT - 1} onNext={stepper.next} />
           </div>
         ))}
-        <div className="absolute inset-x-0 bottom-0 flex items-center gap-4">
-          <div className="relative flex-1 overflow-hidden" aria-live="polite">
+        <div className="absolute inset-0 flex items-center gap-4">
+          <div className="relative flex-1 self-end overflow-hidden" aria-live="polite">
             <AnimatePresence mode="popLayout" custom={stepper.direction} initial={false}>
               <motion.div key={stepper.step.id} {...slideProps}>
                 <StepCopy step={stepper.step} />

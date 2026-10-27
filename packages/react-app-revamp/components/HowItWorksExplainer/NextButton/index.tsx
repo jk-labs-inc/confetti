@@ -14,6 +14,7 @@ const MORPH_TRANSITION = { layout: { duration: STEP_SLIDE_DURATION_S, ease: STEP
 const NextButton: FC<NextButtonProps> = ({ isLast, onNext }) => (
   <motion.button
     layout
+    layoutDependency={isLast}
     type="button"
     onClick={onNext}
     aria-label={isLast ? undefined : "next"}
@@ -25,11 +26,11 @@ const NextButton: FC<NextButtonProps> = ({ isLast, onNext }) => (
     }`}
   >
     {isLast ? (
-      <motion.span layout="position" className="whitespace-nowrap text-[20px] font-bold">
+      <motion.span layout="position" layoutDependency={isLast} className="whitespace-nowrap text-[20px] font-bold">
         let&apos;s play
       </motion.span>
     ) : (
-      <motion.span layout="position">
+      <motion.span layout="position" layoutDependency={isLast}>
         <span className="block transition-transform group-hover:translate-x-0.5">
           <PixelArrow direction="right" sizePx={22} />
         </span>
