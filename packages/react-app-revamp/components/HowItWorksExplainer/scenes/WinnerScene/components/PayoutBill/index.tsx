@@ -1,10 +1,7 @@
 import FlyingBill from "@components/HowItWorksExplainer/actors/FlyingBill";
 import { useBillFlight } from "@components/HowItWorksExplainer/actors/FlyingBill/useBillFlight";
-import {
-  PAY_FLIGHT_S,
-  payoutBillPoint,
-  type PayoutBeats,
-} from "@components/HowItWorksExplainer/scenes/WinnerScene/beats";
+import { PAY_FLIGHT_S, payoutBillPoint } from "@components/HowItWorksExplainer/scenes/WinnerScene/beats";
+import type { PayoutBeats } from "@components/HowItWorksExplainer/scenes/WinnerScene/types";
 import { formatDemoDollars } from "lib/howItWorks/demo";
 import { type MotionValue } from "motion/react";
 import { FC } from "react";

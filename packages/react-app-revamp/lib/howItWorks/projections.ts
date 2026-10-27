@@ -1,6 +1,5 @@
 import { toFixedString } from "@helpers/formatBalance";
 import type { EntryProjection, UseVoteProjectionsReturn } from "@hooks/useVoteProjections";
-import type { DemoScript, DemoVoteScenario } from "lib/howItWorks/demo";
 import {
   VoteProjectionMode,
   calculatePushToFirst,
@@ -10,6 +9,7 @@ import {
   resolveProjectionMode,
   votesFromSpend,
 } from "lib/voteProjections";
+import type { DemoScript, DemoVoteScenario } from "lib/howItWorks/types";
 import { parseEther } from "viem";
 
 export const projectDemoVote = (

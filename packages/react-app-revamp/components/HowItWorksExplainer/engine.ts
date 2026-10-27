@@ -1,21 +1,6 @@
-import type { DemoScript } from "lib/howItWorks/demo";
-import {
-  animate,
-  useMotionValue,
-  useReducedMotion,
-  useTransform,
-  type MotionValue,
-} from "motion/react";
+import type { SceneTiming } from "@components/HowItWorksExplainer/types";
+import { animate, useMotionValue, useReducedMotion, useTransform, type MotionValue } from "motion/react";
 import { CSSProperties, useEffect, useState } from "react";
-
-export interface SceneProps {
-  script: DemoScript;
-}
-
-export interface SceneTiming {
-  durationS: number;
-  stillS: number;
-}
 
 export const STAGE_WIDTH_PX = 320;
 export const STAGE_HEIGHT_PX = 248;

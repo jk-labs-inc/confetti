@@ -1,8 +1,8 @@
-import type { SceneTiming } from "@components/HowItWorksExplainer/engine";
 import { TYPE_AT_S, typingDoneAt } from "@components/HowItWorksExplainer/typing";
-import type { DemoScript } from "lib/howItWorks/demo";
+import type { SceneTiming } from "@components/HowItWorksExplainer/types";
 import { projectDemoVote } from "lib/howItWorks/projections";
 import { rankByVotes } from "lib/howItWorks/rank";
+import type { DemoScript } from "lib/howItWorks/types";
 import { votesFromSpend } from "lib/voteProjections";
 
 const PRESS_AFTER_TYPING_S = 1.2;

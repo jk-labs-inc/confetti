@@ -1,8 +1,9 @@
 import DemoVoteWidget from "@components/HowItWorksExplainer/DemoVoteWidget";
-import { useClockState, useSceneClock, type SceneProps } from "@components/HowItWorksExplainer/engine";
+import { useClockState, useSceneClock } from "@components/HowItWorksExplainer/engine";
 import { ENTRY_CARD_SIZE_PX, entryRowLeft } from "@components/HowItWorksExplainer/realProps";
 import { pushBeats, standingsAt } from "@components/HowItWorksExplainer/scenes/PushScene/beats";
 import RankedCard from "@components/HowItWorksExplainer/scenes/PushScene/components/RankedCard";
+import type { SceneProps } from "@components/HowItWorksExplainer/types";
 import { typedPrefix } from "@components/HowItWorksExplainer/typing";
 import { FC, useMemo } from "react";
 

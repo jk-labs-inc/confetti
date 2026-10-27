@@ -1,5 +1,5 @@
-import type { HowItWorksStep } from "lib/howItWorks/steps";
 import { FC } from "react";
+import type { HowItWorksStep } from "lib/howItWorks/types";
 
 interface StepCopyProps {
   step: Pick<HowItWorksStep, "headline" | "body">;

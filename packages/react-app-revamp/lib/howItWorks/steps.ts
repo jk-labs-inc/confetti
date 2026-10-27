@@ -1,20 +1,6 @@
+import type { HowItWorksStep, HowItWorksStepId } from "lib/howItWorks/types";
+
 export const HOW_IT_WORKS_STEP_IDS = ["pool", "winner", "curve", "payout", "push", "late"] as const;
-
-export type HowItWorksStepId = (typeof HOW_IT_WORKS_STEP_IDS)[number];
-
-export type BubblesPose = "ballot" | "money" | "moneyPile" | "building" | "shy";
-
-export interface BubblesLine {
-  pose: BubblesPose;
-  line: string;
-}
-
-export interface HowItWorksStep {
-  id: HowItWorksStepId;
-  headline: string;
-  body: string;
-  bubbles: BubblesLine;
-}
 
 const COPY: Record<HowItWorksStepId, Omit<HowItWorksStep, "id">> = {
   pool: {

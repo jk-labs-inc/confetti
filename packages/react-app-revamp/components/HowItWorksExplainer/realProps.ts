@@ -5,8 +5,8 @@ import { entryPriceInput } from "@components/Voting/components/RewardsProjection
 import { ContestStatus } from "@hooks/useContestStatus/store";
 import { EntryPreview } from "@hooks/useDeployContest/slices/contestMetadataSlice";
 import type { UseVoteProjectionsReturn } from "@hooks/useVoteProjections";
-import type { DemoEntry } from "lib/howItWorks/demo";
 import { formatDemoPrice } from "lib/howItWorks/display";
+import type { DemoEntry } from "lib/howItWorks/types";
 import type { ComponentProps } from "react";
 
 type GalleryProps = ComponentProps<typeof ProposalLayoutGallery>;

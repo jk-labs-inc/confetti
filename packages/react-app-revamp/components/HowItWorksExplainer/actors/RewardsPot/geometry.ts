@@ -1,3 +1,4 @@
+import type { PileItem } from "@components/HowItWorksExplainer/actors/RewardsPot/types";
 export const POT_WIDTH_PX = 176;
 export const POT_HEIGHT_PX = 84;
 export const POT_RIM = { cx: 88, cy: 16, rx: 80, ry: 9 };
@@ -11,13 +12,6 @@ export const POT_LIP_PATH = `M${RIM_RIGHT_X},${POT_RIM.cy} ${LIP_ARC}`;
 export const POT_SHINE_PATH = "M20,32 C22,52 34,68 52,74";
 export const POT_LABEL_TOP_PX = 28;
 export const POT_LABEL_BOTTOM_PX = 10;
-
-export interface PileItem {
-  kind: "coin" | "bill";
-  x: number;
-  y: number;
-  rotate: number;
-}
 
 export const PILE_LAYERS: readonly (readonly PileItem[])[] = [
   [
@@ -52,8 +46,3 @@ export const PILE_STAGGER_S = 0.05;
 export const PILE_DROP_PX = 22;
 export const PILE_LIFT_PX = 12;
 export const PILE_LEAVE_S = 0.25;
-
-export interface PileLayerTiming {
-  landAt: number | null;
-  leaveAt: number | null;
-}

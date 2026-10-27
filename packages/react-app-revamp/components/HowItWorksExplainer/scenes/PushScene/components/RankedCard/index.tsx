@@ -1,8 +1,8 @@
 import { settleSpring } from "@components/HowItWorksExplainer/clock";
 import DemoEntryCard from "@components/HowItWorksExplainer/DemoEntryCard";
-import type { DemoEntry } from "lib/howItWorks/demo";
 import { useTransform, type MotionValue } from "motion/react";
 import { FC } from "react";
+import type { DemoEntry } from "lib/howItWorks/types";
 
 interface RankedCardProps {
   entry: DemoEntry;

@@ -1,7 +1,7 @@
-import type { StagePoint } from "@components/HowItWorksExplainer/arc";
 import { POT_HEIGHT_PX, POT_RIM, POT_WIDTH_PX } from "@components/HowItWorksExplainer/actors/RewardsPot/geometry";
 import { STAGE_WIDTH_PX } from "@components/HowItWorksExplainer/engine";
 import { ENTRY_CARD_SIZE_PX } from "@components/HowItWorksExplainer/realProps";
+import type { StagePoint } from "@components/HowItWorksExplainer/types";
 
 const CARD_POT_GAP_PX = 22;
 

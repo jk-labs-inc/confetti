@@ -6,11 +6,11 @@ import {
   BILL_SPLIT_PROGRESS,
   billPoint,
   cardCenterX,
-  type DepositBeats,
 } from "@components/HowItWorksExplainer/scenes/PoolScene/beats";
 import VotesGainedTag from "@components/HowItWorksExplainer/scenes/PoolScene/components/VotesGainedTag";
 import { CARD_TOP_PX } from "@components/HowItWorksExplainer/scenes/potStage";
 import { ENTRY_CARD_SIZE_PX } from "@components/HowItWorksExplainer/realProps";
+import type { DepositBeats } from "@components/HowItWorksExplainer/scenes/PoolScene/types";
 import { formatDemoDollars } from "lib/howItWorks/demo";
 import { useTransform, type MotionValue } from "motion/react";
 import { FC } from "react";

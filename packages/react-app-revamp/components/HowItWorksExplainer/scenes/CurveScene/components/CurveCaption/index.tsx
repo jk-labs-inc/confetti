@@ -1,5 +1,6 @@
 import { formatNumberWithCommas } from "@helpers/formatNumber";
-import { formatDemoDollars, type DemoCurveBuy } from "lib/howItWorks/demo";
+import { formatDemoDollars } from "lib/howItWorks/demo";
+import type { DemoCurveBuy } from "lib/howItWorks/types";
 import { motion, type MotionStyle } from "motion/react";
 import { FC } from "react";
 

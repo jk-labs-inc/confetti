@@ -7,9 +7,9 @@ import {
   ENTRY_CARD_SIZE_PX,
   demoProposal,
 } from "@components/HowItWorksExplainer/realProps";
-import type { DemoEntry } from "lib/howItWorks/demo";
 import { motion, type MotionStyle } from "motion/react";
 import { FC, ReactNode } from "react";
+import type { DemoEntry } from "lib/howItWorks/types";
 
 interface DemoEntryCardProps {
   entry: DemoEntry;

@@ -1,7 +1,7 @@
 import ConfettiBurst from "@components/HowItWorksExplainer/actors/ConfettiBurst";
 import RewardsPot from "@components/HowItWorksExplainer/actors/RewardsPot";
 import { bump, clampedInterpolate, settleSpring } from "@components/HowItWorksExplainer/clock";
-import { useSceneClock, type SceneProps } from "@components/HowItWorksExplainer/engine";
+import { useSceneClock } from "@components/HowItWorksExplainer/engine";
 import { POT_LEFT_PX, POT_TOP_PX } from "@components/HowItWorksExplainer/scenes/potStage";
 import {
   PAY_COUNT_S,
@@ -12,6 +12,7 @@ import {
 import PayoutBill from "@components/HowItWorksExplainer/scenes/WinnerScene/components/PayoutBill";
 import WinnerCard from "@components/HowItWorksExplainer/scenes/WinnerScene/components/WinnerCard";
 import WinnerVoterRow from "@components/HowItWorksExplainer/scenes/WinnerScene/components/WinnerVoterRow";
+import type { SceneProps } from "@components/HowItWorksExplainer/types";
 import { formatDemoDollars } from "lib/howItWorks/demo";
 import { useTransform } from "motion/react";
 import { FC, useMemo } from "react";
@@ -33,8 +34,7 @@ const WinnerScene: FC<SceneProps> = ({ script }) => {
   );
   const amountLabel = useTransform(time, t => {
     const paid = beats.payouts.reduce(
-      (sum, beat) =>
-        sum + beat.voter.payout * clampedInterpolate(t, [beat.landAt, beat.landAt + PAY_COUNT_S], [0, 1]),
+      (sum, beat) => sum + beat.voter.payout * clampedInterpolate(t, [beat.landAt, beat.landAt + PAY_COUNT_S], [0, 1]),
       0,
     );
     return formatDemoDollars(Math.max(0, Math.round(script.pool.final - paid)));

@@ -1,11 +1,7 @@
 import { cubicBezier } from "motion/react";
+import type { StagePoint } from "@components/HowItWorksExplainer/types";
 
 export const flightEase = cubicBezier(0.45, 0, 0.55, 1);
-
-export interface StagePoint {
-  x: number;
-  y: number;
-}
 
 export const arcPoint = (start: StagePoint, control: StagePoint, end: StagePoint, t: number): StagePoint => {
   const u = 1 - t;

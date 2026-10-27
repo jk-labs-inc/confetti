@@ -1,4 +1,3 @@
-import type { ChartDataPoint } from "@components/PriceCurve/types";
 import { convertToChartData } from "@hooks/usePriceCurveChartData";
 import { PriceCurveType } from "@hooks/useDeployContest/types";
 import type { PricePoint } from "lib/priceCurve/types";
@@ -9,72 +8,9 @@ import {
 } from "lib/priceCurve";
 import { projectDemoVote } from "lib/howItWorks/projections";
 import { rankByVotes } from "lib/howItWorks/rank";
-import type { HowItWorksStepId } from "lib/howItWorks/steps";
+import type { DemoDeposit, DemoDollars, DemoEntry, DemoScript, DemoVoteScenario } from "lib/howItWorks/types";
 import { votesFromSpend } from "lib/voteProjections";
 import { parseEther } from "viem";
-
-type DemoDollars = number;
-
-export interface DemoEntry {
-  id: string;
-  name: string;
-  photoSrc: string;
-  startVotes: number;
-  votes: number;
-  rank: number;
-}
-
-export interface DemoDeposit {
-  entryId: string;
-  voterSeed: string;
-  spend: DemoDollars;
-  toPool: DemoDollars;
-  skimmed: DemoDollars;
-  poolAfter: DemoDollars;
-  votes: number;
-}
-
-export interface DemoWinnerVoter {
-  seed: string;
-  votes: number;
-  payout: DemoDollars;
-  isYou: boolean;
-}
-
-export interface DemoCurveBuy {
-  pointIndex: number;
-  spend: DemoDollars;
-  votes: number;
-}
-
-export type DemoScenarioId = Extract<HowItWorksStepId, "payout" | "push" | "late">;
-
-export interface DemoVoteScenario {
-  entryId: string;
-  spend: string;
-  pricePerVote: string;
-  currentPool: DemoDollars;
-}
-
-export interface DemoScript {
-  contest: {
-    percentageToRewards: number;
-    firstPlaceSharePercentage: number;
-    updateIntervalSeconds: number;
-    startPrice: string;
-    multiple: number;
-    priceCurveType: PriceCurveType;
-  };
-  entries: readonly DemoEntry[];
-  pool: { start: DemoDollars; deposits: readonly DemoDeposit[]; final: DemoDollars };
-  winner: { entryId: string; voters: readonly DemoWinnerVoter[] };
-  curve: {
-    sameSpendBuys: readonly DemoCurveBuy[];
-    chart: ChartDataPoint[];
-    minuteIncrease: { percentageIncrease: number; isBelowThreshold: boolean };
-  };
-  scenarios: Record<DemoScenarioId, DemoVoteScenario>;
-}
 
 const PERCENTAGE_TO_REWARDS = 90;
 const FIRST_PLACE_SHARE_PERCENTAGE = 100;
@@ -105,8 +41,8 @@ const ENTRY_SEEDS: readonly Omit<DemoEntry, "votes" | "rank">[] = [
 ];
 
 const DEPOSITS = [
-  { entryId: "banana-pup", voterSeed: "bubbles.voter.alice" },
   { entryId: "cool-cat", voterSeed: "bubbles.voter.bo" },
+  { entryId: "banana-pup", voterSeed: "bubbles.voter.alice" },
   { entryId: "royal-floof", voterSeed: "bubbles.voter.hana" },
 ] as const;
 

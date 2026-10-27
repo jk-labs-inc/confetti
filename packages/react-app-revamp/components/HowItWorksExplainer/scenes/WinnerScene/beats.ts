@@ -1,8 +1,8 @@
 import { arcPoint, flightEase } from "@components/HowItWorksExplainer/arc";
-import { PILE_LAYERS, type PileLayerTiming } from "@components/HowItWorksExplainer/actors/RewardsPot/geometry";
-import type { SceneTiming } from "@components/HowItWorksExplainer/engine";
+import { PILE_LAYERS } from "@components/HowItWorksExplainer/actors/RewardsPot/geometry";
+import type { WinnerBeats } from "@components/HowItWorksExplainer/scenes/WinnerScene/types";
 import { potMouth } from "@components/HowItWorksExplainer/scenes/potStage";
-import type { DemoScript, DemoWinnerVoter } from "lib/howItWorks/demo";
+import type { DemoScript } from "lib/howItWorks/types";
 
 const CROWN_AT_S = 0.35;
 const MOVE_AT_S = 1;
@@ -19,21 +19,6 @@ const PAY_ARC_LEAN = 0.5;
 export const PAY_FLIGHT_S = 0.5;
 export const PAY_COUNT_S = 0.45;
 export const DIM_S = 0.3;
-
-export interface PayoutBeats {
-  voter: DemoWinnerVoter;
-  inAt: number;
-  launchAt: number;
-  landAt: number;
-}
-
-export interface WinnerBeats extends SceneTiming {
-  crownAt: number;
-  moveAt: number;
-  payouts: PayoutBeats[];
-  potLayers: PileLayerTiming[];
-  finaleAt: number;
-}
 
 export const WINNER_STAGE = {
   potShiftX: -82,

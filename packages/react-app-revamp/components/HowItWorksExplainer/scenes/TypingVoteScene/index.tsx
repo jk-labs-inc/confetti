@@ -1,8 +1,8 @@
 import DemoVoteWidget from "@components/HowItWorksExplainer/DemoVoteWidget";
 import { useClockState, useSceneClock } from "@components/HowItWorksExplainer/engine";
 import { typedPrefix, typingBeats } from "@components/HowItWorksExplainer/typing";
-import type { DemoScenarioId, DemoScript } from "lib/howItWorks/demo";
 import { FC, useMemo } from "react";
+import type { DemoScenarioId, DemoScript } from "lib/howItWorks/types";
 
 interface TypingVoteSceneProps {
   script: DemoScript;

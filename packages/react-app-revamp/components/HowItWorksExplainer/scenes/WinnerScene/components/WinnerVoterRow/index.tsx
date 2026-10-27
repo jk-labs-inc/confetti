@@ -1,11 +1,7 @@
 import VoterBubble from "@components/HowItWorksExplainer/actors/VoterBubble";
 import { bump, clampedInterpolate, popSpring } from "@components/HowItWorksExplainer/clock";
-import {
-  PAY_COUNT_S,
-  WINNER_STAGE,
-  voterRowTop,
-  type PayoutBeats,
-} from "@components/HowItWorksExplainer/scenes/WinnerScene/beats";
+import { PAY_COUNT_S, WINNER_STAGE, voterRowTop } from "@components/HowItWorksExplainer/scenes/WinnerScene/beats";
+import type { PayoutBeats } from "@components/HowItWorksExplainer/scenes/WinnerScene/types";
 import { formatNumberWithCommas } from "@helpers/formatNumber";
 import { formatDemoDollars } from "lib/howItWorks/demo";
 import { motion, useTransform, type MotionValue } from "motion/react";
@@ -36,11 +32,7 @@ const WinnerVoterRow: FC<WinnerVoterRowProps> = ({ index, beat, time }) => {
       className="absolute"
       style={{ left: WINNER_STAGE.voterLeft, top: voterRowTop(index), opacity: rowOpacity }}
     >
-      <VoterBubble
-        seed={voter.seed}
-        sizePx={WINNER_STAGE.voterSize}
-        style={{ left: 0, top: 0, scale: avatarScale }}
-      />
+      <VoterBubble seed={voter.seed} sizePx={WINNER_STAGE.voterSize} style={{ left: 0, top: 0, scale: avatarScale }} />
       <div
         className="flex flex-col justify-center"
         style={{ marginLeft: WINNER_STAGE.voterSize + TEXT_GAP_PX, height: WINNER_STAGE.voterSize + 4 }}

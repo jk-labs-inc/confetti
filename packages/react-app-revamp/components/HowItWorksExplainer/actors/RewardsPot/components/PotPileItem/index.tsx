@@ -1,9 +1,5 @@
-import {
-  PILE_DROP_PX,
-  PILE_LEAVE_S,
-  PILE_LIFT_PX,
-  type PileItem,
-} from "@components/HowItWorksExplainer/actors/RewardsPot/geometry";
+import { PILE_DROP_PX, PILE_LEAVE_S, PILE_LIFT_PX } from "@components/HowItWorksExplainer/actors/RewardsPot/geometry";
+import type { PileItem } from "@components/HowItWorksExplainer/actors/RewardsPot/types";
 import { clampedInterpolate, popSpring } from "@components/HowItWorksExplainer/clock";
 import { motion, useTransform, type MotionValue } from "motion/react";
 import { FC } from "react";
@@ -26,9 +22,7 @@ const PotPileItem: FC<PotPileItemProps> = ({ item, time, landAt, leaveAt }) => {
     const drop = landAt === null ? 0 : -PILE_DROP_PX * (1 - popSpring(t, landAt));
     return drop - PILE_LIFT_PX * leaveProgress(t, leaveAt);
   });
-  const opacity = useTransform(time, t =>
-    landAt !== null && t < landAt ? 0 : 1 - leaveProgress(t, leaveAt),
-  );
+  const opacity = useTransform(time, t => (landAt !== null && t < landAt ? 0 : 1 - leaveProgress(t, leaveAt)));
 
   return (
     <g transform={`translate(${item.x} ${item.y})`}>

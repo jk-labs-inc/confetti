@@ -1,14 +1,6 @@
-import { HOW_IT_WORKS_STEPS, HOW_IT_WORKS_STEP_COUNT, type HowItWorksStep } from "lib/howItWorks/steps";
+import type { StepDirection, Stepper, StepperAction, StepperState } from "@components/HowItWorksExplainer/types";
+import { HOW_IT_WORKS_STEPS, HOW_IT_WORKS_STEP_COUNT } from "lib/howItWorks/steps";
 import { useCallback, useEffect, useReducer } from "react";
-
-export type StepDirection = 1 | -1;
-
-export interface StepperState {
-  index: number;
-  direction: StepDirection;
-}
-
-export type StepperAction = { kind: "next" } | { kind: "back" } | { kind: "goTo"; index: number };
 
 const LAST_INDEX = HOW_IT_WORKS_STEP_COUNT - 1;
 
@@ -40,17 +32,6 @@ export const swipeToStep = (offsetX: number, velocityX: number): StepDirection |
   if (offsetX >= SWIPE_DISTANCE_PX || velocityX >= SWIPE_VELOCITY) return -1;
   return null;
 };
-
-export interface Stepper {
-  index: number;
-  step: HowItWorksStep;
-  direction: StepDirection;
-  isFirst: boolean;
-  isLast: boolean;
-  next: () => void;
-  back: () => void;
-  goTo: (index: number) => void;
-}
 
 export const useStepper = ({ isEnabled, onFinish }: { isEnabled: boolean; onFinish: () => void }): Stepper => {
   const [state, dispatch] = useReducer(stepperReducer, INITIAL_STEPPER_STATE);

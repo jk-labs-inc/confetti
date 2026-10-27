@@ -1,5 +1,5 @@
-import type { SceneTiming } from "@components/HowItWorksExplainer/engine";
-import type { DemoCurveBuy, DemoScript } from "lib/howItWorks/demo";
+import type { SceneTiming } from "@components/HowItWorksExplainer/types";
+import type { DemoCurveBuy, DemoScript } from "lib/howItWorks/types";
 
 const INTRO_S = 0.4;
 const HOLD_S = 1.1;

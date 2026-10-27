@@ -1,5 +1,5 @@
-import type { StagePoint } from "@components/HowItWorksExplainer/arc";
 import { clampedInterpolate, popSpring } from "@components/HowItWorksExplainer/clock";
+import type { StagePoint } from "@components/HowItWorksExplainer/types";
 import { useTransform, type MotionValue } from "motion/react";
 
 interface BillFlightOptions {

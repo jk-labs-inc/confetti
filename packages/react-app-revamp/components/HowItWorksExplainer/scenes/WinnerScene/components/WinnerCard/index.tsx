@@ -4,10 +4,11 @@ import DemoEntryCard from "@components/HowItWorksExplainer/DemoEntryCard";
 import { useClockState } from "@components/HowItWorksExplainer/engine";
 import { entryRowLeft } from "@components/HowItWorksExplainer/realProps";
 import { CARD_TOP_PX } from "@components/HowItWorksExplainer/scenes/potStage";
-import { DIM_S, type WinnerBeats } from "@components/HowItWorksExplainer/scenes/WinnerScene/beats";
-import type { DemoEntry } from "lib/howItWorks/demo";
+import { DIM_S } from "@components/HowItWorksExplainer/scenes/WinnerScene/beats";
+import type { WinnerBeats } from "@components/HowItWorksExplainer/scenes/WinnerScene/types";
 import { motion, useTransform, type MotionValue } from "motion/react";
 import { FC } from "react";
+import type { DemoEntry } from "lib/howItWorks/types";
 
 interface WinnerCardProps {
   entry: DemoEntry;

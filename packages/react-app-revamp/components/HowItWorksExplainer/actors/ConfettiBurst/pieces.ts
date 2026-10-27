@@ -1,3 +1,4 @@
+import type { ConfettiPieceSpec } from "@components/HowItWorksExplainer/actors/ConfettiBurst/types";
 const CONFETTI_COLORS = ["#66DEFF", "#78FFC6", "#FF54CC", "#BB65FF", "#FFD60A"] as const;
 const SPREAD_RAD = 1.25;
 const MIN_SPEED_PX_PER_S = 110;
@@ -7,14 +8,6 @@ const MAX_SPIN_DEG_PER_S = 900;
 export const CONFETTI_GRAVITY_PX_PER_S2 = 320;
 export const CONFETTI_LIFETIME_S = 1.6;
 export const CONFETTI_FADE_S = 0.4;
-
-export interface ConfettiPieceSpec {
-  angle: number;
-  speed: number;
-  spin: number;
-  isStrip: boolean;
-  color: string;
-}
 
 const mulberry32 = (seed: number) => {
   let t = seed + 0x6d2b79f5;

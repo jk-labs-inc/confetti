@@ -6,9 +6,9 @@ import RewardsProjectionBlocks from "@components/Voting/components/RewardsProjec
 import VoteAmountInput from "@components/Voting/components/VoteAmountInput";
 import type { VotePresets } from "@components/Voting/components/VoteAmountInput/types";
 import { VotingWidgetLayout, VotingWidgetStyle } from "@components/Voting/types";
-import type { DemoScript, DemoVoteScenario } from "lib/howItWorks/demo";
 import { CEILING_PRECISION, demoPriceDisplay } from "lib/howItWorks/display";
 import { projectDemoVote } from "lib/howItWorks/projections";
+import type { DemoScript, DemoVoteScenario } from "lib/howItWorks/types";
 import { motion, useTransform, type MotionValue } from "motion/react";
 import { FC, useRef } from "react";
 
@@ -34,15 +34,7 @@ const PUSH_CHIP_ONLY: VotePresets = {
   onPreset: noop,
 };
 
-const DemoVoteWidget: FC<DemoVoteWidgetProps> = ({
-  script,
-  scenario,
-  spend,
-  time,
-  popAt,
-  widthPx,
-  topPx,
-}) => {
+const DemoVoteWidget: FC<DemoVoteWidgetProps> = ({ script, scenario, spend, time, popAt, widthPx, topPx }) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const projections = projectDemoVote(script, scenario, spend);
   const display = demoProjectionDisplay(projections);

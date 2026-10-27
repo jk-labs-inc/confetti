@@ -2,11 +2,12 @@ import { bump, popSpring } from "@components/HowItWorksExplainer/clock";
 import DemoEntryCard from "@components/HowItWorksExplainer/DemoEntryCard";
 import { useClockState } from "@components/HowItWorksExplainer/engine";
 import { entryRowLeft } from "@components/HowItWorksExplainer/realProps";
-import { CARD_STAGGER_S, type PoolBeats } from "@components/HowItWorksExplainer/scenes/PoolScene/beats";
+import { CARD_STAGGER_S } from "@components/HowItWorksExplainer/scenes/PoolScene/beats";
+import type { PoolBeats } from "@components/HowItWorksExplainer/scenes/PoolScene/types";
 import { CARD_TOP_PX } from "@components/HowItWorksExplainer/scenes/potStage";
-import type { DemoEntry } from "lib/howItWorks/demo";
 import { useTransform, type MotionValue } from "motion/react";
 import { FC } from "react";
+import type { DemoEntry } from "lib/howItWorks/types";
 
 interface PoolCardProps {
   entry: DemoEntry;

@@ -1,8 +1,9 @@
 import { clampedInterpolate } from "@components/HowItWorksExplainer/clock";
 import DemoPriceCurve, { CURVE_INSET_PX } from "@components/HowItWorksExplainer/DemoPriceCurve";
-import { useClockState, useSceneClock, type SceneProps } from "@components/HowItWorksExplainer/engine";
+import { useClockState, useSceneClock } from "@components/HowItWorksExplainer/engine";
 import { captionStopAt, curveBeats, curveMoment } from "@components/HowItWorksExplainer/scenes/CurveScene/beats";
 import CurveCaption from "@components/HowItWorksExplainer/scenes/CurveScene/components/CurveCaption";
+import type { SceneProps } from "@components/HowItWorksExplainer/types";
 import { useTransform } from "motion/react";
 import { FC, useMemo } from "react";
 

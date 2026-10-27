@@ -1,9 +1,9 @@
 /* eslint-disable @next/next/no-img-element */
 import { STEP_SLIDE_DURATION_S } from "@components/HowItWorksExplainer/engine";
 import SpeechBubble from "@components/HowItWorksExplainer/SpeechBubble";
-import type { BubblesLine, BubblesPose } from "lib/howItWorks/steps";
 import { motion, useReducedMotion } from "motion/react";
 import { FC } from "react";
+import type { BubblesLine, BubblesPose } from "lib/howItWorks/types";
 
 interface BubblesGuideProps {
   bubbles: BubblesLine;

@@ -1,9 +1,8 @@
 import { arcPoint, flightEase } from "@components/HowItWorksExplainer/arc";
-import type { PileLayerTiming } from "@components/HowItWorksExplainer/actors/RewardsPot/geometry";
-import type { SceneTiming } from "@components/HowItWorksExplainer/engine";
 import { ENTRY_CARD_SIZE_PX, entryRowLeft } from "@components/HowItWorksExplainer/realProps";
+import type { PoolBeats } from "@components/HowItWorksExplainer/scenes/PoolScene/types";
 import { CARD_TOP_PX, potMouth } from "@components/HowItWorksExplainer/scenes/potStage";
-import type { DemoDeposit, DemoScript } from "lib/howItWorks/demo";
+import type { DemoScript } from "lib/howItWorks/types";
 
 const FIRST_LAUNCH_S = 0.74;
 const DEPOSIT_EVERY_S = 1.1;
@@ -18,21 +17,6 @@ export const BILL_FLIGHT_S = 0.67;
 export const BILL_SPLIT_PROGRESS = 0.45;
 export const CARD_STAGGER_S = 0.13;
 export const POT_MOUTH = potMouth();
-
-export interface DepositBeats {
-  deposit: DemoDeposit;
-  entryIndex: number;
-  launchAt: number;
-  splitAt: number;
-  landAt: number;
-}
-
-export interface PoolBeats extends SceneTiming {
-  deposits: DepositBeats[];
-  potIntroAt: number;
-  potLayers: PileLayerTiming[];
-  finaleAt: number;
-}
 
 export const poolBeats = (script: DemoScript): PoolBeats => {
   const deposits = script.pool.deposits.map((deposit, k) => {

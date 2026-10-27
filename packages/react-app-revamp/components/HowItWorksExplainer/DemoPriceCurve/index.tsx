@@ -1,8 +1,8 @@
 import { STAGE_WIDTH_PX } from "@components/HowItWorksExplainer/engine";
 import RealFrame from "@components/HowItWorksExplainer/RealFrame";
 import PriceCurve from "@components/PriceCurve";
-import type { DemoScript } from "lib/howItWorks/demo";
 import { CEILING_PRECISION, formatDemoPrice } from "lib/howItWorks/display";
+import type { DemoScript } from "lib/howItWorks/types";
 import { FC } from "react";
 
 interface DemoPriceCurveProps {

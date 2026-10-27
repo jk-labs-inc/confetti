@@ -1,11 +1,12 @@
 import ConfettiBurst from "@components/HowItWorksExplainer/actors/ConfettiBurst";
 import RewardsPot from "@components/HowItWorksExplainer/actors/RewardsPot";
 import { bump, popSpring, settleSpring } from "@components/HowItWorksExplainer/clock";
-import { useSceneClock, type SceneProps } from "@components/HowItWorksExplainer/engine";
+import { useSceneClock } from "@components/HowItWorksExplainer/engine";
 import { POT_MOUTH, liveVotesAt, poolBeats } from "@components/HowItWorksExplainer/scenes/PoolScene/beats";
 import PoolCard from "@components/HowItWorksExplainer/scenes/PoolScene/components/PoolCard";
 import PoolDeposit from "@components/HowItWorksExplainer/scenes/PoolScene/components/PoolDeposit";
 import { POT_LEFT_PX, POT_TOP_PX } from "@components/HowItWorksExplainer/scenes/potStage";
+import type { SceneProps } from "@components/HowItWorksExplainer/types";
 import { formatDemoDollars } from "lib/howItWorks/demo";
 import { rankByVotes } from "lib/howItWorks/rank";
 import { useTransform } from "motion/react";

@@ -2,8 +2,8 @@ import {
   CONFETTI_FADE_S,
   CONFETTI_GRAVITY_PX_PER_S2,
   CONFETTI_LIFETIME_S,
-  type ConfettiPieceSpec,
 } from "@components/HowItWorksExplainer/actors/ConfettiBurst/pieces";
+import type { ConfettiPieceSpec } from "@components/HowItWorksExplainer/actors/ConfettiBurst/types";
 import { motion, useTransform, type MotionValue } from "motion/react";
 import { FC } from "react";
 
