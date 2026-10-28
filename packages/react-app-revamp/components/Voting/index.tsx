@@ -3,10 +3,11 @@ import { useModal } from "@getpara/react-sdk-lite";
 import { MOBILE_MAX_WIDTH_PX } from "@helpers/isMobileViewport";
 import { useCastVotesStore } from "@hooks/useCastVotes/store";
 import useContestConfigStore from "@hooks/useContestConfig/store";
+import useDisplayPrice from "@hooks/useCurrency/useDisplayPrice";
 import { useVoteBalance } from "@hooks/useVoteBalance";
 import { useVoteProjections } from "@hooks/useVoteProjections";
 import { useWallet } from "@hooks/useWallet";
-import { FC, RefObject, useEffect, useRef } from "react";
+import { FC, useEffect, useRef } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useShallow } from "zustand/shallow";
 import VotingWidgetRewardsProjection from "./components/RewardsProjection";
@@ -19,13 +20,11 @@ import VotePercentRow from "./components/VotePercentRow";
 import { useEffectiveCostToVote } from "./hooks/useEffectiveCostToVote";
 import useKeypadInput from "./hooks/useKeypadInput";
 import { useVoteExecution } from "./hooks/useVoteExecution";
+import { useVotePresets } from "./hooks/useVotePresets";
 import { useVotingStore } from "./store";
-import { AddFundsEntryReason, VotingWidgetLayout } from "./types";
+import { AddFundsEntryReason, VotingWidgetLayout, VotingWidgetStyle } from "./types";
 
-export enum VotingWidgetStyle {
-  classic = "classic",
-  muted = "muted",
-}
+export { VotingWidgetStyle };
 
 interface VotingWidgetProps {
   costToVote: string;
@@ -99,6 +98,20 @@ const VotingWidget: FC<VotingWidgetProps> = ({
     pricePerVoteNative: effectiveCostToVote,
     submissionsCount,
   });
+  const pricePerVote = useDisplayPrice(
+    effectiveCostToVote,
+    contestConfig.chainNativeCurrencySymbol,
+    undefined,
+    undefined,
+    { ceilingPrecision: true },
+  );
+  const presets = useVotePresets({
+    maxBalance,
+    isConnected,
+    pushToFirstFillAmount: projections.pushToFirstFillAmount,
+    allowPercentPresets: !isMobile,
+    onMax: handleDisplayMax,
+  });
 
   useEffect(() => {
     if (isMobile) return;
@@ -142,23 +155,19 @@ const VotingWidget: FC<VotingWidgetProps> = ({
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-2">
         <VoteAmountInput
-          maxBalance={maxBalance}
-          symbol={contestConfig.chainNativeCurrencySymbol}
-          costToVote={effectiveCostToVote}
-          isConnected={isConnected}
           displayValue={displayValue}
           displaySymbol={displaySymbol}
           isDisplayLoading={isDisplayLoading}
           onDisplayChange={handleDisplayChange}
-          onDisplayMax={handleDisplayMax}
+          pricePerVote={pricePerVote}
+          totalVotes={totalVotes}
+          presets={presets}
           isBelowMinimum={isBelowMinimum}
-          pushToFirstAmount={projections.pushToFirstFillAmount}
           style={style}
           layout={layout}
           autoFocus={!isMobile}
           isReadOnly={isMobile}
-          showPresets={!isMobile}
-          inputRef={inputRef as RefObject<HTMLInputElement>}
+          inputRef={inputRef}
           onKeyDown={handleKeyDownInputWithVote}
         />
         <VoteInfoBlocks

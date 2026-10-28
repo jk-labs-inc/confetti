@@ -1,3 +1,4 @@
+import { MAX_PERCENT, PERCENT_PRESETS } from "@components/Voting/components/VoteAmountInput/constants";
 import { VotingWidgetLayout } from "@components/Voting/types";
 import { motion } from "motion/react";
 import { FC } from "react";
@@ -16,9 +17,6 @@ interface PresetChipsClassNames {
   chip: string;
   pushChip: string;
 }
-
-const PERCENT_PRESETS = [25, 50, 75, 100];
-const MAX_PERCENT = 100;
 
 const LAYOUT_CLASS_NAMES: Record<VotingWidgetLayout, PresetChipsClassNames> = {
   [VotingWidgetLayout.regular]: {

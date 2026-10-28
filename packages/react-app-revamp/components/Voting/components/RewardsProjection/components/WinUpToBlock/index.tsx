@@ -1,20 +1,24 @@
 import CompactAmount from "@components/UI/CompactAmount";
 import GradientText from "@components/UI/GradientText";
 import { VotingWidgetLayout } from "@components/Voting/types";
-import useNativeDisplayPrice from "@hooks/useCurrency/useNativeDisplayPrice";
 import { FC } from "react";
 import Skeleton from "react-loading-skeleton";
 import { PROJECTION_LAYOUT_CLASS_NAMES } from "../../constants";
 import VotingWidgetRewardsProjectionTooltip from "../Tooltip";
 
 interface WinUpToBlockProps {
-  amount: string;
+  formatted: string;
+  isLoading: boolean;
   centered?: boolean;
   layout?: VotingWidgetLayout;
 }
 
-const WinUpToBlock: FC<WinUpToBlockProps> = ({ amount, centered, layout = VotingWidgetLayout.regular }) => {
-  const { formatted, isLoading } = useNativeDisplayPrice(amount);
+const WinUpToBlock: FC<WinUpToBlockProps> = ({
+  formatted,
+  isLoading,
+  centered,
+  layout = VotingWidgetLayout.regular,
+}) => {
   const classNames = PROJECTION_LAYOUT_CLASS_NAMES[layout];
 
   return (

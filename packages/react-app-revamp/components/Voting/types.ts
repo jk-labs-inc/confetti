@@ -4,6 +4,11 @@ export enum VoteFlowScreen {
   Confirm = "confirm",
 }
 
+export enum VotingWidgetStyle {
+  classic = "classic",
+  muted = "muted",
+}
+
 export enum VotingWidgetLayout {
   regular = "regular",
   compact = "compact",
