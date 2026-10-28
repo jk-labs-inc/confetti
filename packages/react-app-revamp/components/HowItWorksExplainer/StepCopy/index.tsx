@@ -8,7 +8,11 @@ interface StepCopyProps {
 const StepCopy: FC<StepCopyProps> = ({ step }) => (
   <div className="flex flex-col gap-1">
     <p className="text-[20px] font-bold text-neutral-11">{step.headline}</p>
-    <p className="text-[16px] text-neutral-9">{step.body}</p>
+    {step.body && (
+      <p className="text-[16px] text-neutral-9">
+        {step.body.map((part, i) => (typeof part === "string" ? part : <em key={i}>{part.emphasis}</em>))}
+      </p>
+    )}
   </div>
 );
 

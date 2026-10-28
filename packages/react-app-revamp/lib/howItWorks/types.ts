@@ -6,10 +6,12 @@ export type HowItWorksStepId = (typeof HOW_IT_WORKS_STEP_IDS)[number];
 
 export type BubblesPose = "ballot" | "money" | "moneyPile" | "building" | "shy";
 
+export type StepCopyText = readonly (string | { emphasis: string })[];
+
 export interface HowItWorksStep {
   id: HowItWorksStepId;
   headline: string;
-  body: string;
+  body?: StepCopyText;
   pose: BubblesPose;
 }
 

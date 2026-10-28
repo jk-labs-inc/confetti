@@ -1,8 +1,13 @@
 import ConfettiBurst from "@components/HowItWorksExplainer/actors/ConfettiBurst";
 import RewardsPot from "@components/HowItWorksExplainer/actors/RewardsPot";
-import { bump, clampedInterpolate, popSpring, settleSpring } from "@components/HowItWorksExplainer/clock";
+import { bump, popSpring, settleSpring } from "@components/HowItWorksExplainer/clock";
 import { useSceneClock } from "@components/HowItWorksExplainer/engine";
-import { POT_MOUTH, liveVotesAt, poolBeats } from "@components/HowItWorksExplainer/scenes/PoolScene/beats";
+import {
+  POT_MOUTH,
+  liveVotesAt,
+  othersFillAt,
+  poolBeats,
+} from "@components/HowItWorksExplainer/scenes/PoolScene/beats";
 import PoolCard from "@components/HowItWorksExplainer/scenes/PoolScene/components/PoolCard";
 import PoolDeposit from "@components/HowItWorksExplainer/scenes/PoolScene/components/PoolDeposit";
 import { POT_LEFT_PX, POT_TOP_PX } from "@components/HowItWorksExplainer/scenes/potStage";
@@ -11,8 +16,6 @@ import { formatDemoDollars } from "lib/howItWorks/demo";
 import { rankByVotes } from "lib/howItWorks/rank";
 import { useTransform } from "motion/react";
 import { FC, useMemo } from "react";
-
-const POOL_FILL_S = 0.9;
 
 const PoolScene: FC<SceneProps> = ({ script }) => {
   const beats = useMemo(() => poolBeats(script), [script]);
@@ -26,7 +29,7 @@ const PoolScene: FC<SceneProps> = ({ script }) => {
       Math.round(
         beats.deposits.reduce(
           (sum, beat) => sum + Math.min(1, settleSpring(t, beat.landAt)) * beat.deposit.toPool,
-          script.pool.start * clampedInterpolate(t, [beats.potIntroAt, beats.potIntroAt + POOL_FILL_S], [0, 1]),
+          script.pool.start * othersFillAt(beats, t),
         ),
       ),
     ),

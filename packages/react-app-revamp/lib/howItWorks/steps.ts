@@ -5,32 +5,39 @@ export const HOW_IT_WORKS_STEP_IDS = ["pool", "winner", "payout", "curve", "late
 const COPY: Record<HowItWorksStepId, Omit<HowItWorksStep, "id">> = {
   pool: {
     headline: "buy votes on your favorite entries.",
-    body: "90% of your funds go into a rewards pool.",
+    body: ["90% of your funds go into a rewards pool."],
     pose: "ballot",
   },
   winner: {
-    headline: "vote on the winner,",
-    body: "and claim your share of rewards.",
+    headline: "vote on the winner and claim your share of rewards.",
     pose: "money",
   },
   payout: {
     headline: "see how much you can make.",
-    body: "estimated payout is how much you'd get if the contest ended now.",
+    body: ["estimated payout is how much you'd get if the contest ended now."],
     pose: "moneyPile",
   },
   curve: {
     headline: "vote earlier to earn more.",
-    body: "the price per vote keeps going up, so it's cheapest to vote early. higher risk, higher reward.",
+    body: [
+      "the price per vote keeps going up, so it's cheapest to vote early. higher risk, ",
+      { emphasis: "higher reward" },
+      ".",
+    ],
     pose: "building",
   },
   late: {
-    headline: "but careful!",
-    body: "wait too long and you could lose money… even if you vote on 1st.",
+    headline: "but be careful!",
+    body: ["wait too long and you could lose money… even if you vote on 1st."],
     pose: "shy",
   },
   push: {
     headline: "pro tip",
-    body: "to earn more, vote on low-ranking entries and drive them into first. higher risk, higher reward.",
+    body: [
+      "to earn more, vote on low-ranking entries and drive them into first. again… higher risk, ",
+      { emphasis: "higher reward" },
+      ".",
+    ],
     pose: "ballot",
   },
 };

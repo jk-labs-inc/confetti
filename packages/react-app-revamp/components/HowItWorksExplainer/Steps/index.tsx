@@ -53,15 +53,11 @@ const HowItWorksSteps: FC<HowItWorksStepsProps> = ({ isOpen, onClose }) => {
 
   return (
     <div className="flex flex-col gap-5 px-6 pt-2 pb-11 lg:p-2 lg:pb-6 text-left">
-      <div className="flex flex-col gap-2">
-        <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3">
-          <div className="justify-self-start">
-            <BackButton isHidden={stepper.isFirst} onBack={stepper.back} />
-          </div>
-          <h2 className="text-center text-[16px] font-bold text-neutral-11">how it works</h2>
-          <div className="justify-self-end">
-            <NextButton isLast={stepper.isLast} onNext={stepper.next} />
-          </div>
+      <div className="flex flex-col gap-3">
+        <div className="flex items-center gap-3">
+          <h2 className="flex-1 font-sabo-filled text-[24px] leading-none text-neutral-11">how it works</h2>
+          <BackButton isHidden={stepper.isFirst} onBack={stepper.back} />
+          <NextButton isLast={stepper.isLast} onNext={stepper.next} />
         </div>
         <StepSegments count={HOW_IT_WORKS_STEP_COUNT} index={stepper.index} onSelect={stepper.goTo} />
       </div>

@@ -1,11 +1,12 @@
 import { arcPoint, flightEase } from "@components/HowItWorksExplainer/arc";
+import { clampedInterpolate } from "@components/HowItWorksExplainer/clock";
 import { ENTRY_CARD_CENTER_X } from "@components/HowItWorksExplainer/realProps";
 import type { PoolBeats } from "@components/HowItWorksExplainer/scenes/PoolScene/types";
 import { CARD_SIZE_PX, CARD_TOP_PX, potMouth } from "@components/HowItWorksExplainer/scenes/potStage";
 import type { DemoScript } from "lib/howItWorks/types";
 
 const POT_INTRO_AT_S = 0.2;
-const FIRST_LAUNCH_S = 0.74;
+const FIRST_LAUNCH_S = 1.1;
 const DEPOSIT_EVERY_S = 1.1;
 const FINALE_GAP_S = 0.2;
 const FINALE_S = 1.6;
@@ -36,7 +37,8 @@ export const poolBeats = (script: DemoScript): PoolBeats => {
   return {
     deposits,
     potIntroAt,
-    potLayers: [potIntroAt, ...deposits.map(beat => beat.landAt)].map(landAt => ({ landAt, leaveAt: null })),
+    fillStartAt: deposits[0].landAt,
+    potLayers: [...deposits.map(beat => beat.landAt), finaleAt].map(landAt => ({ landAt, leaveAt: null })),
     finaleAt,
     durationS: finaleAt + FINALE_S + HOLD_S,
     stillS: finaleAt + FINALE_S,
@@ -56,3 +58,6 @@ export const liveVotesAt = (script: DemoScript, beats: PoolBeats, t: number) =>
       entry.startVotes,
     ),
   );
+
+export const othersFillAt = (beats: PoolBeats, t: number) =>
+  clampedInterpolate(t, [beats.fillStartAt, beats.finaleAt], [0, 1]) ** 3;

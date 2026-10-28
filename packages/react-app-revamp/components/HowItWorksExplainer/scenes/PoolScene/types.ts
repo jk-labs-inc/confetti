@@ -13,6 +13,7 @@ export interface DepositBeats {
 export interface PoolBeats extends SceneTiming {
   deposits: DepositBeats[];
   potIntroAt: number;
+  fillStartAt: number;
   potLayers: PileLayerTiming[];
   finaleAt: number;
 }
