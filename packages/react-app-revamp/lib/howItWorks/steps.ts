@@ -5,7 +5,7 @@ export const HOW_IT_WORKS_STEP_IDS = ["pool", "winner", "payout", "curve", "late
 const COPY: Record<HowItWorksStepId, Omit<HowItWorksStep, "id">> = {
   pool: {
     headline: "buy votes on your favorite entries.",
-    body: ["90% of your funds go into a rewards pool."],
+    body: ["90% of funds go into a rewards pool."],
     pose: "ballot",
   },
   winner: {
@@ -28,7 +28,7 @@ const COPY: Record<HowItWorksStepId, Omit<HowItWorksStep, "id">> = {
   },
   late: {
     headline: "but be careful!",
-    body: ["wait too long and you could lose money… even if you vote on 1st."],
+    body: ["wait too long and you could lose money… even if you vote on the winner."],
     pose: "shy",
   },
   push: {
