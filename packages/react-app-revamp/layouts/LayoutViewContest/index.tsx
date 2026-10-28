@@ -1,9 +1,12 @@
 "use client";
+import HowItWorksTrigger from "@components/HowItWorksExplainer/Trigger";
 import Loader from "@components/UI/Loader";
 import ContestNotifyButton from "@components/_pages/Contest/components/ContestNotifyButton";
 import ContestShareButton from "@components/_pages/Contest/components/ContestShareButton";
 import ContestTabs, { Tab } from "@components/_pages/Contest/components/Tabs";
 import { populateBugReportLink } from "@helpers/githubIssue";
+import { DESKTOP_HEADER_MIN_WIDTH_PX, MOBILE_MAX_WIDTH_PX } from "@helpers/isMobileViewport";
+import { MediaQuery } from "@helpers/mediaQuery";
 import { useContestStore } from "@hooks/useContest/store";
 import {
   CONTEST_ULTRAWIDE_WIDTH_CLASS_NAME,
@@ -119,6 +122,9 @@ const LayoutViewContest = () => {
           onChange={tab => setTab(tab)}
           rightContent={
             <div className="hidden md:flex items-center gap-3">
+              <MediaQuery minWidth={MOBILE_MAX_WIDTH_PX + 1} maxWidth={DESKTOP_HEADER_MIN_WIDTH_PX - 1}>
+                <HowItWorksTrigger />
+              </MediaQuery>
               <ContestShareButton
                 contestName={contestName}
                 contestAddress={contestConfig.address}

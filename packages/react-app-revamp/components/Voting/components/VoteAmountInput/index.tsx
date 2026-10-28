@@ -1,35 +1,28 @@
 import { useFitTextToBox } from "@components/EntryCarousel/useFitTextToBox";
-import { VotingWidgetStyle } from "@components/Voting";
-import { VotingWidgetLayout } from "@components/Voting/types";
-import { useVotingStore } from "@components/Voting/store";
+import { VotingWidgetLayout, VotingWidgetStyle } from "@components/Voting/types";
 import { formatVoteCount } from "@helpers/formatNumber";
 import { MOBILE_MAX_WIDTH_PX } from "@helpers/isMobileViewport";
-import useDisplayPrice from "@hooks/useCurrency/useDisplayPrice";
-import { useVotesFromInput } from "@hooks/useVotesFromInput";
 import { FC, RefObject } from "react";
 import Skeleton from "react-loading-skeleton";
 import { useMediaQuery } from "react-responsive";
-import { useShallow } from "zustand/shallow";
 import PresetChips from "./components/PresetChips";
+import type { PriceDisplay } from "@hooks/useCurrency/useDisplayPrice";
+import type { VotePresets } from "./types";
 
 interface VoteAmountInputProps {
-  maxBalance: string;
-  symbol: string;
-  costToVote: string;
-  inputRef: RefObject<HTMLInputElement>;
-  isConnected: boolean;
+  inputRef: RefObject<HTMLInputElement | null>;
   displayValue: string;
   displaySymbol: string;
   isDisplayLoading: boolean;
   onDisplayChange: (value: string) => void;
-  onDisplayMax: () => void;
+  pricePerVote: PriceDisplay;
+  totalVotes: number;
+  presets: VotePresets | null;
   isBelowMinimum?: boolean;
-  pushToFirstAmount?: string | null;
   style?: VotingWidgetStyle;
   layout?: VotingWidgetLayout;
   autoFocus?: boolean;
   isReadOnly?: boolean;
-  showPresets?: boolean;
   onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 }
 
@@ -64,60 +57,28 @@ const VOTES_TEXT_SIZE_CLASS_NAME: Record<VotingWidgetLayout, string> = {
 };
 
 const VoteAmountInput: FC<VoteAmountInputProps> = ({
-  maxBalance,
-  symbol,
-  costToVote,
-  isConnected,
   displayValue,
   displaySymbol,
   isDisplayLoading,
   onDisplayChange,
-  onDisplayMax,
+  pricePerVote,
+  totalVotes,
+  presets,
   isBelowMinimum = false,
-  pushToFirstAmount,
   style = VotingWidgetStyle.classic,
   layout = VotingWidgetLayout.regular,
   autoFocus = false,
   isReadOnly = false,
-  showPresets = true,
   inputRef,
   onKeyDown,
 }) => {
-  const { displayValue: pricePerVoteDisplay, displaySymbol: pricePerVoteSymbol } = useDisplayPrice(
-    costToVote,
-    symbol,
-    undefined,
-    undefined,
-    { ceilingPrecision: true },
-  );
   const formattedPricePerVote =
-    pricePerVoteSymbol === "$" ? `$${pricePerVoteDisplay}` : `${pricePerVoteDisplay} ${pricePerVoteSymbol}`;
-  const { inputValue, setInputValue, setSliderValue } = useVotingStore(
-    useShallow(state => ({
-      inputValue: state.inputValue,
-      setInputValue: state.setInputValue,
-      setSliderValue: state.setSliderValue,
-    })),
-  );
-  const totalVotes = useVotesFromInput({ inputValue, costToVote });
-
-  const handlePreset = (percent: number) => {
-    if (percent === 100) {
-      onDisplayMax();
-    } else {
-      setSliderValue(percent, maxBalance, isConnected);
-    }
-  };
-
-  // Fill the raw native amount, not the display string — display can be abbreviated ("1.5m") or rate-rounded.
-  const handlePushToFirst = () => {
-    if (pushToFirstAmount) {
-      setInputValue(pushToFirstAmount, maxBalance);
-    }
-  };
+    pricePerVote.displaySymbol === "$"
+      ? `$${pricePerVote.displayValue}`
+      : `${pricePerVote.displayValue} ${pricePerVote.displaySymbol}`;
 
   // Strip digit grouping so the placeholder is always typeable as shown.
-  const placeholder = (pricePerVoteDisplay || "0").replace(/,/g, "");
+  const placeholder = (pricePerVote.displayValue || "0").replace(/,/g, "");
   const valueString = displayValue || placeholder;
   const dotCount = (valueString.match(/\./g) || []).length;
   const charCount = valueString.length - dotCount * 0.5;
@@ -131,7 +92,6 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
     isMobile ? MOBILE_INPUT_MAX_FONT_PX : INPUT_MAX_FONT_PX[layout],
   );
 
-  const hasBalance = parseFloat(maxBalance) > 0;
   const styleConfig = STYLE_CONFIG[style];
   const hasError = isBelowMinimum;
   const textColor = hasError ? "text-negative-11" : "text-neutral-11";
@@ -142,18 +102,15 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
   const hasInput = displayValue.length > 0;
   const votesText = formatVoteCount(hasInput ? totalVotes : 1);
 
-  const showPercentPresets = showPresets && hasBalance && isConnected;
-  const showPushToFirst = Boolean(pushToFirstAmount);
-  const hasChips = showPushToFirst || showPercentPresets;
   const isCompact = layout === VotingWidgetLayout.compact;
-  const presetChips = (
+  const presetChips = presets && (
     <PresetChips
       layout={layout}
       chipBorderColor={styleConfig.chipBorderColor}
-      showPushToFirst={showPushToFirst}
-      showPercentPresets={showPercentPresets}
-      onPushToFirst={handlePushToFirst}
-      onPreset={handlePreset}
+      showPushToFirst={presets.showPushToFirst}
+      showPercentPresets={presets.showPercentPresets}
+      onPushToFirst={presets.onPushToFirst}
+      onPreset={presets.onPreset}
     />
   );
 
@@ -206,7 +163,7 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
         </div>
 
         <div className="flex flex-col items-end gap-3 ml-auto shrink-0">
-          {hasChips && !isCompact && presetChips}
+          {!isCompact && presetChips}
           <span
             className={`${VOTES_TEXT_SIZE_CLASS_NAME[layout]} text-neutral-9 font-bold ${hasInput ? "" : "invisible"}`}
           >
@@ -214,7 +171,7 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
           </span>
         </div>
       </div>
-      {hasChips && isCompact && presetChips}
+      {isCompact && presetChips}
       {isBelowMinimum && (
         <p className="text-[14px] font-bold text-negative-11 px-6">
           must be at least {formattedPricePerVote} to buy a vote

@@ -55,6 +55,7 @@ interface PriceCurveProps {
   entryTitlesById?: Map<string, string>;
   rankById?: Map<string, number>;
   showVoterRibbon?: boolean;
+  showIntervalText?: boolean;
   headerTone?: PriceCurveHeaderTone;
   chartPadding?: ChartPadding;
 }
@@ -86,6 +87,7 @@ const PriceCurve: FC<PriceCurveProps> = ({
   entryTitlesById = EMPTY_ENTRY_TITLES,
   rankById = EMPTY_RANKS,
   showVoterRibbon = true,
+  showIntervalText = true,
   headerTone,
   chartPadding,
 }) => {
@@ -143,7 +145,7 @@ const PriceCurve: FC<PriceCurveProps> = ({
     >
       <PriceCurveHeader
         headerPrice={headerPrice}
-        intervalText={intervalText}
+        intervalText={showIntervalText ? intervalText : ""}
         isExpanded={isExpanded}
         onToggleExpand={onToggleExpand}
         tone={headerTone}

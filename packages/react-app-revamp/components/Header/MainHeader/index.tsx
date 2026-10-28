@@ -1,3 +1,4 @@
+import HowItWorksLoader from "@components/HowItWorksExplainer/Loader";
 import { DESKTOP_HEADER_MIN_WIDTH_PX } from "@helpers/isMobileViewport";
 import { MediaQuery } from "@helpers/mediaQuery";
 import { useWallet } from "@hooks/useWallet";
@@ -23,6 +24,7 @@ const MainHeader: FC<MainHeaderProps> = ({ showProfile, isContestPage = false })
       <MediaQuery minWidth={DESKTOP_HEADER_MIN_WIDTH_PX}>
         <MainHeaderDesktopLayout isContestPage={isContestPage} />
       </MediaQuery>
+      {isContestPage && <HowItWorksLoader />}
     </div>
   );
 };

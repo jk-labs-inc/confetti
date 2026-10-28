@@ -34,6 +34,7 @@ const HoverInfoTooltip: FC<HoverInfoTooltipProps> = ({
         {...tooltip.getReferenceProps()}
         type="button"
         aria-label={ariaLabel}
+        data-hover-info
         className={`flex items-center justify-center transition-colors ${buttonClassName}`}
       >
         <InformationCircleIcon className={iconClassName} />
