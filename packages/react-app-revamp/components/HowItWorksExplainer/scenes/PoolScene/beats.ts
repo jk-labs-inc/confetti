@@ -1,9 +1,10 @@
 import { arcPoint, flightEase } from "@components/HowItWorksExplainer/arc";
-import { ENTRY_CARD_SIZE_PX, entryRowLeft } from "@components/HowItWorksExplainer/realProps";
+import { ENTRY_CARD_CENTER_X } from "@components/HowItWorksExplainer/realProps";
 import type { PoolBeats } from "@components/HowItWorksExplainer/scenes/PoolScene/types";
-import { CARD_TOP_PX, potMouth } from "@components/HowItWorksExplainer/scenes/potStage";
+import { CARD_SIZE_PX, CARD_TOP_PX, potMouth } from "@components/HowItWorksExplainer/scenes/potStage";
 import type { DemoScript } from "lib/howItWorks/types";
 
+const POT_INTRO_AT_S = 0.2;
 const FIRST_LAUNCH_S = 0.74;
 const DEPOSIT_EVERY_S = 1.1;
 const FINALE_GAP_S = 0.2;
@@ -12,24 +13,25 @@ const HOLD_S = 1.4;
 const BILL_ARC_LIFT_PX = 18;
 const BILL_ARC_LEAN = 0.2;
 const BILL_START_INSET_PX = 4;
+const BILL_SPREAD_PX = 28;
 
 export const BILL_FLIGHT_S = 0.67;
 export const BILL_SPLIT_PROGRESS = 0.45;
-export const CARD_STAGGER_S = 0.13;
 export const POT_MOUTH = potMouth();
 
 export const poolBeats = (script: DemoScript): PoolBeats => {
+  const middle = (script.pool.deposits.length - 1) / 2;
   const deposits = script.pool.deposits.map((deposit, k) => {
     const launchAt = FIRST_LAUNCH_S + k * DEPOSIT_EVERY_S;
     return {
       deposit,
-      entryIndex: script.entries.findIndex(entry => entry.id === deposit.entryId),
+      startX: ENTRY_CARD_CENTER_X + (k - middle) * BILL_SPREAD_PX,
       launchAt,
       splitAt: launchAt + BILL_FLIGHT_S * BILL_SPLIT_PROGRESS,
       landAt: launchAt + BILL_FLIGHT_S,
     };
   });
-  const potIntroAt = CARD_STAGGER_S * script.entries.length;
+  const potIntroAt = POT_INTRO_AT_S;
   const finaleAt = deposits[deposits.length - 1].landAt + FINALE_GAP_S;
   return {
     deposits,
@@ -41,10 +43,8 @@ export const poolBeats = (script: DemoScript): PoolBeats => {
   };
 };
 
-export const cardCenterX = (entryIndex: number) => entryRowLeft(entryIndex) + ENTRY_CARD_SIZE_PX / 2;
-
-export const billPoint = (entryIndex: number, progress: number) => {
-  const start = { x: cardCenterX(entryIndex), y: CARD_TOP_PX + ENTRY_CARD_SIZE_PX - BILL_START_INSET_PX };
+export const billPoint = (startX: number, progress: number) => {
+  const start = { x: startX, y: CARD_TOP_PX + CARD_SIZE_PX - BILL_START_INSET_PX };
   const control = { x: start.x + (POT_MOUTH.x - start.x) * BILL_ARC_LEAN, y: start.y - BILL_ARC_LIFT_PX };
   return arcPoint(start, control, POT_MOUTH, flightEase(progress));
 };

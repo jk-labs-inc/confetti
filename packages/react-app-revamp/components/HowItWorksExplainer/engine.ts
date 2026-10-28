@@ -3,7 +3,7 @@ import { animate, useMotionValue, useReducedMotion, useTransform, type MotionVal
 import { CSSProperties, useEffect, useState } from "react";
 
 export const STAGE_WIDTH_PX = 320;
-export const STAGE_HEIGHT_PX = 248;
+export const STAGE_HEIGHT_PX = 260;
 export const STAGE_STYLE: CSSProperties = { width: STAGE_WIDTH_PX, height: STAGE_HEIGHT_PX };
 
 export const STEP_SLIDE_DURATION_S = 0.28;

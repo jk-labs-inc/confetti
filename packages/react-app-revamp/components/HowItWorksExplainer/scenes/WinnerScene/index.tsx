@@ -22,6 +22,7 @@ const CONFETTI_ORIGIN = { x: WINNER_STAGE.voterLeft + 50, y: voterRowTop(1) };
 
 const WinnerScene: FC<SceneProps> = ({ script }) => {
   const beats = useMemo(() => winnerBeats(script), [script]);
+  const winner = script.entries.find(entry => entry.id === script.winner.entryId) ?? script.entries[0];
   const time = useSceneClock(beats);
 
   const moved = useTransform(time, t => settleSpring(t, beats.moveAt));
@@ -42,16 +43,7 @@ const WinnerScene: FC<SceneProps> = ({ script }) => {
 
   return (
     <>
-      {script.entries.map((entry, i) => (
-        <WinnerCard
-          key={entry.id}
-          entry={entry}
-          index={i}
-          isWinner={entry.id === script.winner.entryId}
-          beats={beats}
-          time={time}
-        />
-      ))}
+      <WinnerCard entry={winner} beats={beats} time={time} />
       <RewardsPot
         time={time}
         amountLabel={amountLabel}

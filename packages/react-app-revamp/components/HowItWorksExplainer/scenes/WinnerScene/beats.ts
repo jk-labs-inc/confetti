@@ -18,15 +18,14 @@ const PAY_ARC_LEAN = 0.5;
 
 export const PAY_FLIGHT_S = 0.5;
 export const PAY_COUNT_S = 0.45;
-export const DIM_S = 0.3;
 
 export const WINNER_STAGE = {
   potShiftX: -82,
   potShiftY: 2,
   potScale: 0.75,
   voterLeft: 188,
-  voterTop: 140,
-  voterRowGap: 36,
+  voterTop: 158,
+  voterRowGap: 32,
   voterSize: 28,
 };
 

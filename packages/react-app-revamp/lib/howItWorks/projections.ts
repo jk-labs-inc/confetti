@@ -12,6 +12,8 @@ import {
 import type { DemoScript, DemoVoteScenario } from "lib/howItWorks/types";
 import { parseEther } from "viem";
 
+const PUSH_FILL_STEP = 100;
+
 export const projectDemoVote = (
   script: DemoScript,
   scenario: DemoVoteScenario,
@@ -71,4 +73,9 @@ export const projectDemoVote = (
     pushToFirstFillAmount,
     winUpTo: { amount: toFixedString(winUpToAmount), shouldShow: true },
   };
+};
+
+export const demoPushFillAmount = (script: DemoScript, scenario: DemoVoteScenario): string | null => {
+  const exactFill = projectDemoVote(script, scenario, scenario.spend).pushToFirstFillAmount;
+  return exactFill ? String(Math.ceil(Number(exactFill) / PUSH_FILL_STEP) * PUSH_FILL_STEP) : null;
 };

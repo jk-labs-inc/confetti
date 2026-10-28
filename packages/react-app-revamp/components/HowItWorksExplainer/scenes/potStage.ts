@@ -1,12 +1,14 @@
 import { POT_HEIGHT_PX, POT_RIM, POT_WIDTH_PX } from "@components/HowItWorksExplainer/actors/RewardsPot/geometry";
 import { STAGE_WIDTH_PX } from "@components/HowItWorksExplainer/engine";
-import { ENTRY_CARD_SIZE_PX } from "@components/HowItWorksExplainer/realProps";
+import { entryCardLeft } from "@components/HowItWorksExplainer/realProps";
 import type { StagePoint } from "@components/HowItWorksExplainer/types";
 
-const CARD_POT_GAP_PX = 22;
+const CARD_POT_GAP_PX = 14;
 
-export const CARD_TOP_PX = 24;
-export const POT_TOP_PX = CARD_TOP_PX + ENTRY_CARD_SIZE_PX + CARD_POT_GAP_PX;
+export const CARD_SIZE_PX = 120;
+export const CARD_TOP_PX = 16;
+export const CARD_LEFT_PX = entryCardLeft(CARD_SIZE_PX);
+export const POT_TOP_PX = CARD_TOP_PX + CARD_SIZE_PX + CARD_POT_GAP_PX;
 export const POT_LEFT_PX = (STAGE_WIDTH_PX - POT_WIDTH_PX) / 2;
 
 interface PotPlacement {

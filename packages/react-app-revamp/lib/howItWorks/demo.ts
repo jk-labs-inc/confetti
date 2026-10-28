@@ -1,12 +1,8 @@
 import { convertToChartData } from "@hooks/usePriceCurveChartData";
 import { PriceCurveType } from "@hooks/useDeployContest/types";
 import type { PricePoint } from "lib/priceCurve/types";
-import {
-  calculateExponentialMultiple,
-  calculateStaticMinuteToMinutePercentage,
-  generatePricePointsForType,
-} from "lib/priceCurve";
-import { projectDemoVote } from "lib/howItWorks/projections";
+import { calculateExponentialMultiple, generatePricePointsForType } from "lib/priceCurve";
+import { demoPushFillAmount, projectDemoVote } from "lib/howItWorks/projections";
 import { rankByVotes } from "lib/howItWorks/rank";
 import type { DemoDeposit, DemoDollars, DemoEntry, DemoScript, DemoVoteScenario } from "lib/howItWorks/types";
 import { votesFromSpend } from "lib/voteProjections";
@@ -15,40 +11,34 @@ import { parseEther } from "viem";
 const PERCENTAGE_TO_REWARDS = 90;
 const FIRST_PLACE_SHARE_PERCENTAGE = 100;
 const PRICE_CURVE_TYPE = PriceCurveType.Exponential;
-const DEPOSIT_SPEND: DemoDollars = 100;
-const STARTING_POOL: DemoDollars = 1230;
+const DEPOSIT_SPEND: DemoDollars = 1000;
+const STARTING_POOL: DemoDollars = 12300;
 const CURVE_START_PRICE: DemoDollars = 0.01;
-const CURVE_END_PRICE: DemoDollars = 0.08;
+const CURVE_END_PRICE: DemoDollars = 0.12;
 const CURVE_DURATION_MS = 100 * 60 * 1000;
 const CURVE_UPDATE_INTERVAL_SECONDS = 60;
 const CURVE_SPEND: DemoDollars = 10;
-const CURVE_BUY_PERCENTS = [0, 50, 90] as const;
+const CURVE_BUY_PERCENTS = [0, 50, 100] as const;
 const TYPED_SPEND = "20";
 const PUSH_TYPED_SPEND = "5";
 const EARLY_PERCENT = 0;
 const LATE_PERCENT = 100;
 const DEMO_EPOCH = new Date(0);
 
-const CURVE_DURATION_MINUTES = CURVE_DURATION_MS / 60_000;
 const CURVE_MULTIPLE = calculateExponentialMultiple({ startPrice: CURVE_START_PRICE, endPrice: CURVE_END_PRICE });
 const STORY_LEADER_ID = "cool-cat";
 const STORY_UNDERDOG_ID = "royal-floof";
 
 const ENTRY_SEEDS: readonly Omit<DemoEntry, "votes" | "rank">[] = [
-  { id: "cool-cat", name: "cool cat", photoSrc: "/how-it-works/cool-cat.jpg", startVotes: 24000 },
-  { id: "banana-pup", name: "banana pup", photoSrc: "/how-it-works/banana-pup.jpg", startVotes: 17000 },
-  { id: "royal-floof", name: "royal floof", photoSrc: "/how-it-works/royal-floof.jpg", startVotes: 9000 },
+  { id: "cool-cat", name: "cool cat", photoSrc: "/how-it-works/cool-cat.jpg", startVotes: 240000 },
+  { id: "banana-pup", name: "banana pup", photoSrc: "/how-it-works/banana-pup.jpg", startVotes: 170000 },
+  { id: "royal-floof", name: "royal floof", photoSrc: "/how-it-works/royal-floof.jpg", startVotes: 95000 },
 ];
 
-const DEPOSITS = [
-  { entryId: "cool-cat", voterSeed: "bubbles.voter.bo" },
-  { entryId: "banana-pup", voterSeed: "bubbles.voter.alice" },
-  { entryId: "royal-floof", voterSeed: "bubbles.voter.hana" },
-] as const;
-
-const WINNER_EARLIER_VOTERS = [
-  { seed: "0x76cf691686e23e7726b1fd817ea771d2bf415040", votes: 14000 },
-  { seed: "0x32c94adb6b3202db2dc78d30ee3249ce2cf9623a", votes: 10000 },
+const LEADER_VOTERS = [
+  { seed: "bubbles.voter.bo", earlierVotes: 0, isYou: true },
+  { seed: "0x76cf691686e23e7726b1fd817ea771d2bf415040", earlierVotes: 140000, isYou: false },
+  { seed: "0x32c94adb6b3202db2dc78d30ee3249ce2cf9623a", earlierVotes: 100000, isYou: false },
 ] as const;
 
 const roundCents = (value: number): DemoDollars => Math.round(value * 100) / 100;
@@ -56,12 +46,12 @@ const roundCents = (value: number): DemoDollars => Math.round(value * 100) / 100
 const buildDeposits = (): DemoDeposit[] => {
   let pool = STARTING_POOL;
   const votes = votesFromSpend(String(DEPOSIT_SPEND), String(CURVE_START_PRICE));
-  return DEPOSITS.map(({ entryId, voterSeed }) => {
+  return LEADER_VOTERS.map(({ seed }) => {
     const toPool = roundCents((DEPOSIT_SPEND * PERCENTAGE_TO_REWARDS) / 100);
     pool = roundCents(pool + toPool);
     return {
-      entryId,
-      voterSeed,
+      entryId: STORY_LEADER_ID,
+      voterSeed: seed,
       spend: DEPOSIT_SPEND,
       toPool,
       skimmed: roundCents(DEPOSIT_SPEND - toPool),
@@ -92,12 +82,7 @@ const buildCurve = (prices: readonly PricePoint[]): DemoScript["curve"] => {
     spend: CURVE_SPEND,
     votes: votesFromSpend(String(CURVE_SPEND), priceAt(prices, percentThrough)),
   }));
-  const minuteIncrease = calculateStaticMinuteToMinutePercentage(
-    CURVE_START_PRICE,
-    CURVE_MULTIPLE,
-    CURVE_DURATION_MINUTES,
-  );
-  return { sameSpendBuys, chart, minuteIncrease };
+  return { sameSpendBuys, chart };
 };
 
 const buildEntries = (deposits: readonly DemoDeposit[]): DemoEntry[] => {
@@ -114,17 +99,16 @@ const buildEntries = (deposits: readonly DemoDeposit[]): DemoEntry[] => {
 
 const buildWinner = (entries: readonly DemoEntry[], deposits: readonly DemoDeposit[], pool: DemoDollars) => {
   const leader = entries.find(entry => entry.rank === 1) ?? entries[0];
-  const yourVotes = deposits
-    .filter(deposit => deposit.entryId === leader.id)
-    .map(deposit => ({ seed: deposit.voterSeed, votes: deposit.votes, isYou: true }));
-  const earlierVotes = WINNER_EARLIER_VOTERS.map(voter => ({ ...voter, isYou: false }));
   const firstPlacePool = (pool * FIRST_PLACE_SHARE_PERCENTAGE) / 100;
   return {
     entryId: leader.id,
-    voters: [...yourVotes, ...earlierVotes].map(voter => ({
-      ...voter,
-      payout: roundCents((firstPlacePool * voter.votes) / leader.votes),
-    })),
+    voters: LEADER_VOTERS.map(({ seed, earlierVotes, isYou }) => {
+      const votes = deposits.reduce<number>(
+        (sum, deposit) => (deposit.voterSeed === seed && deposit.entryId === leader.id ? sum + deposit.votes : sum),
+        earlierVotes,
+      );
+      return { seed, votes, isYou, payout: roundCents((firstPlacePool * votes) / leader.votes) };
+    }),
   };
 };
 
@@ -158,7 +142,7 @@ const assertDemoStory = (script: DemoScript) => {
 
   const pushTyped = projectDemoVote(script, push, push.spend);
   assertStory(pushTyped.entryProjection?.kind === "pushToFirst", "push must start short of 1st");
-  const pushFilled = projectDemoVote(script, push, pushTyped.pushToFirstFillAmount ?? "");
+  const pushFilled = projectDemoVote(script, push, demoPushFillAmount(script, push) ?? "");
   assertStory(pushFilled.entryProjection?.kind === "wouldWinNow", "push fill must reach 1st");
 
   const lateEntry = projectDemoVote(script, late, late.spend).entryProjection;

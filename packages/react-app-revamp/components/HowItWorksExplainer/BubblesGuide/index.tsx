@@ -1,12 +1,12 @@
 /* eslint-disable @next/next/no-img-element */
 import { STEP_SLIDE_DURATION_S } from "@components/HowItWorksExplainer/engine";
-import SpeechBubble from "@components/HowItWorksExplainer/SpeechBubble";
+import StepCopy from "@components/HowItWorksExplainer/StepCopy";
 import { motion, useReducedMotion } from "motion/react";
 import { FC } from "react";
-import type { BubblesLine, BubblesPose } from "lib/howItWorks/types";
+import type { BubblesPose, HowItWorksStep } from "lib/howItWorks/types";
 
 interface BubblesGuideProps {
-  bubbles: BubblesLine;
+  step: HowItWorksStep;
 }
 
 const POSE_SRC: Record<BubblesPose, string> = {
@@ -18,15 +18,18 @@ const POSE_SRC: Record<BubblesPose, string> = {
 };
 
 const BUBBLES_SIZE_PX = 72;
+const COPY_GAP_PX = 16;
 const HOP_TRANSITION = { delay: STEP_SLIDE_DURATION_S, type: "spring", bounce: 0.55, duration: 0.5 } as const;
 
-const BubblesGuide: FC<BubblesGuideProps> = ({ bubbles }) => {
+export const GUIDE_COPY_INSET_PX = BUBBLES_SIZE_PX + COPY_GAP_PX;
+
+const BubblesGuide: FC<BubblesGuideProps> = ({ step }) => {
   const reduceMotion = useReducedMotion();
 
   return (
-    <div className="flex items-center gap-4">
+    <div className="flex h-full items-center" style={{ gap: COPY_GAP_PX }}>
       <motion.img
-        src={POSE_SRC[bubbles.pose]}
+        src={POSE_SRC[step.pose]}
         alt=""
         draggable={false}
         width={BUBBLES_SIZE_PX}
@@ -37,7 +40,9 @@ const BubblesGuide: FC<BubblesGuideProps> = ({ bubbles }) => {
         animate={{ scale: 1, y: 0, rotate: 0 }}
         transition={HOP_TRANSITION}
       />
-      <SpeechBubble line={bubbles.line} isTyping={!reduceMotion} />
+      <div className="min-w-0 flex-1">
+        <StepCopy step={step} />
+      </div>
     </div>
   );
 };

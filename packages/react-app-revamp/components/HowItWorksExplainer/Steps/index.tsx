@@ -1,5 +1,5 @@
 import BackButton from "@components/HowItWorksExplainer/BackButton";
-import BubblesGuide from "@components/HowItWorksExplainer/BubblesGuide";
+import BubblesGuide, { GUIDE_COPY_INSET_PX } from "@components/HowItWorksExplainer/BubblesGuide";
 import { STEP_SLIDE_DURATION_S, STEP_SLIDE_EASE } from "@components/HowItWorksExplainer/engine";
 import SceneViewport from "@components/HowItWorksExplainer/SceneViewport";
 import { SCENES } from "@components/HowItWorksExplainer/scenes";
@@ -52,18 +52,35 @@ const HowItWorksSteps: FC<HowItWorksStepsProps> = ({ isOpen, onClose }) => {
   };
 
   return (
-    <div className="flex flex-col gap-6 px-6 pt-2 pb-11 lg:p-2 lg:pb-6 text-left">
-      <div className="flex items-center gap-3">
-        <BackButton isHidden={stepper.isFirst} onBack={stepper.back} />
+    <div className="flex flex-col gap-5 px-6 pt-2 pb-11 lg:p-2 lg:pb-6 text-left">
+      <div className="flex flex-col gap-2">
+        <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3">
+          <div className="justify-self-start">
+            <BackButton isHidden={stepper.isFirst} onBack={stepper.back} />
+          </div>
+          <h2 className="text-center text-[16px] font-bold text-neutral-11">how it works</h2>
+          <div className="justify-self-end">
+            <NextButton isLast={stepper.isLast} onNext={stepper.next} />
+          </div>
+        </div>
         <StepSegments count={HOW_IT_WORKS_STEP_COUNT} index={stepper.index} onSelect={stepper.goTo} />
-        <button
-          type="button"
-          onClick={onClose}
-          aria-label="close how it works"
-          className="flex size-8 shrink-0 translate-x-1 -translate-y-2 lg:translate-x-3 lg:-translate-y-5 items-center justify-center transition-transform hover:scale-[1.1]"
-        >
-          <img src="/modal/modal_close.svg" width={24} height={24} alt="" draggable={false} />
-        </button>
+      </div>
+      <div className="relative grid overflow-hidden" aria-live="polite">
+        {HOW_IT_WORKS_STEPS.map(step => (
+          <div
+            key={step.id}
+            aria-hidden
+            className="invisible col-start-1 row-start-1"
+            style={{ paddingLeft: GUIDE_COPY_INSET_PX }}
+          >
+            <StepCopy step={step} />
+          </div>
+        ))}
+        <AnimatePresence mode="popLayout" custom={stepper.direction} initial={false}>
+          <motion.div key={stepper.step.id} {...slideProps} className="col-start-1 row-start-1">
+            <BubblesGuide step={stepper.step} />
+          </motion.div>
+        </AnimatePresence>
       </div>
       <div ref={sceneRef} className="relative overflow-hidden">
         <AnimatePresence mode="popLayout" custom={stepper.direction} initial={false}>
@@ -75,34 +92,13 @@ const HowItWorksSteps: FC<HowItWorksStepsProps> = ({ isOpen, onClose }) => {
             dragElastic={SWIPE_ELASTIC}
             dragDirectionLock
             onDragEnd={handleDragEnd}
-            className="flex flex-col gap-3 touch-pan-y"
+            className="touch-pan-y"
           >
-            <BubblesGuide bubbles={stepper.step.bubbles} />
             <SceneViewport widthPx={sceneWidth}>
               <Scene script={DEMO_SCRIPT} />
             </SceneViewport>
           </motion.div>
         </AnimatePresence>
-      </div>
-      <div className="relative grid">
-        {HOW_IT_WORKS_STEPS.map((step, i) => (
-          <div key={step.id} aria-hidden className="invisible col-start-1 row-start-1 flex items-center gap-4">
-            <div className="flex-1">
-              <StepCopy step={step} />
-            </div>
-            <NextButton isLast={i === HOW_IT_WORKS_STEP_COUNT - 1} onNext={stepper.next} />
-          </div>
-        ))}
-        <div className="absolute inset-0 flex items-center gap-4">
-          <div className="relative flex-1 self-end overflow-hidden" aria-live="polite">
-            <AnimatePresence mode="popLayout" custom={stepper.direction} initial={false}>
-              <motion.div key={stepper.step.id} {...slideProps}>
-                <StepCopy step={stepper.step} />
-              </motion.div>
-            </AnimatePresence>
-          </div>
-          <NextButton isLast={stepper.isLast} onNext={stepper.next} />
-        </div>
       </div>
     </div>
   );

@@ -6,16 +6,11 @@ export type HowItWorksStepId = (typeof HOW_IT_WORKS_STEP_IDS)[number];
 
 export type BubblesPose = "ballot" | "money" | "moneyPile" | "building" | "shy";
 
-export interface BubblesLine {
-  pose: BubblesPose;
-  line: string;
-}
-
 export interface HowItWorksStep {
   id: HowItWorksStepId;
   headline: string;
   body: string;
-  bubbles: BubblesLine;
+  pose: BubblesPose;
 }
 
 export type DemoDollars = number;
@@ -76,7 +71,6 @@ export interface DemoScript {
   curve: {
     sameSpendBuys: readonly DemoCurveBuy[];
     chart: ChartDataPoint[];
-    minuteIncrease: { percentageIncrease: number; isBelowThreshold: boolean };
   };
   scenarios: Record<DemoScenarioId, DemoVoteScenario>;
 }

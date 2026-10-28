@@ -4,7 +4,7 @@ import type { DemoDeposit } from "lib/howItWorks/types";
 
 export interface DepositBeats {
   deposit: DemoDeposit;
-  entryIndex: number;
+  startX: number;
   launchAt: number;
   splitAt: number;
   landAt: number;

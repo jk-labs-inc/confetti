@@ -13,12 +13,8 @@ type GalleryProps = ComponentProps<typeof ProposalLayoutGallery>;
 
 export const ENTRY_CARD_LAYOUT_WIDTH_PX = 232;
 export const ENTRY_CARD_SIZE_PX = 96;
-const ENTRY_CARD_GAP_PX = 8;
-const ENTRY_ROW_SIZE = 3;
-const ENTRY_ROW_LEFT_PX =
-  (STAGE_WIDTH_PX - ENTRY_ROW_SIZE * ENTRY_CARD_SIZE_PX - (ENTRY_ROW_SIZE - 1) * ENTRY_CARD_GAP_PX) / 2;
-
-export const entryRowLeft = (index: number) => ENTRY_ROW_LEFT_PX + index * (ENTRY_CARD_SIZE_PX + ENTRY_CARD_GAP_PX);
+export const entryCardLeft = (sizePx: number) => (STAGE_WIDTH_PX - sizePx) / 2;
+export const ENTRY_CARD_CENTER_X = STAGE_WIDTH_PX / 2;
 
 const DEMO_AUTHOR_ADDRESS = "0x0000000000000000000000000000000000000000";
 

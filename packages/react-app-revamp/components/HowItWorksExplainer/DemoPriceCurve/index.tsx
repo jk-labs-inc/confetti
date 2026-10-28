@@ -20,7 +20,7 @@ const SECONDS_PER_POINT = 60;
 const formatHeaderPrice = (price: number) => formatDemoPrice(price, CEILING_PRECISION);
 
 const DemoPriceCurve: FC<DemoPriceCurveProps> = ({ script, pointIndex, heightPx }) => {
-  const { chart, minuteIncrease } = script.curve;
+  const { chart } = script.curve;
 
   return (
     <RealFrame layoutWidthPx={CURVE_WIDTH_PX} stageWidthPx={CURVE_WIDTH_PX} style={CURVE_POSITION}>
@@ -34,8 +34,8 @@ const DemoPriceCurve: FC<DemoPriceCurveProps> = ({ script, pointIndex, heightPx 
         chartPadding={CHART_PADDING}
         formatPrice={formatDemoPrice}
         formatHeaderPrice={formatHeaderPrice}
-        percentageIncrease={minuteIncrease.percentageIncrease}
-        isBelowThreshold={minuteIncrease.isBelowThreshold}
+        percentageIncrease={null}
+        isBelowThreshold
         secondsUntilNextUpdate={SECONDS_PER_POINT}
         votingTimeLeft={0}
         contestPhase="during"
@@ -43,6 +43,7 @@ const DemoPriceCurve: FC<DemoPriceCurveProps> = ({ script, pointIndex, heightPx 
         endPriceValue={chart[chart.length - 1].pv}
         updateIntervalSeconds={script.contest.updateIntervalSeconds}
         showVoterRibbon={false}
+        showIntervalText={false}
       />
     </RealFrame>
   );
