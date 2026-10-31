@@ -11957,10 +11957,10 @@ node-gyp-build@^4.2.2, node-gyp-build@^4.3.0:
   resolved "https://registry.yarnpkg.com/node-gyp-build/-/node-gyp-build-4.8.4.tgz#8a70ee85464ae52327772a90d66c6077a900cfc8"
   integrity sha512-LA4ZjwlnUblHVgq0oBF3Jl/6h/Nvs5fzBLwdEF4nuxnFdsfajde4WfxtJr3CaiH+F6ewcIB/q4jQ4UzPyid+CQ==
 
-node-html-parser@9.0.5:
-  version "9.0.5"
-  resolved "https://registry.yarnpkg.com/node-html-parser/-/node-html-parser-9.0.5.tgz#02a46ee0e397c8adf099225dd05a8bf9b76d7079"
-  integrity sha512-LpUc74Ax3L6AsxTEqoep0GDqCBbsPjtn74sYaiazxGXfwhe6iqD4E5sHTJFCU+wBxVMX+Dd7mvLim0QM1vsvpw==
+node-html-parser@9.0.6:
+  version "9.0.6"
+  resolved "https://registry.yarnpkg.com/node-html-parser/-/node-html-parser-9.0.6.tgz#1b2120fc5ef1588380db86c64d55855dcc640ba2"
+  integrity sha512-q3ETJ2gU+VlERyYbiJ5JQ6+mMVV1Bc6mZQ7MdJ30moq+h3oN0kQGj3rWDORaSX1SOLSkPbY/bN+sBzDlliVOBA==
   dependencies:
     css-select "^5.1.0"
     entities "^8.0.0"
