@@ -69,7 +69,7 @@
     "libphonenumber-js": "1.13.15",
     "lodash": "4.18.1",
     "lokijs": "1.5.12",
-    "minimatch": "10.2.6",
+    "minimatch": "11.0.3",
     "moment": "2.31.0",
     "moment-timezone": "0.6.5",
     "motion": "14.8.0",
