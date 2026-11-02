@@ -1,5 +1,5 @@
+import ClaimVoteSticker from "@components/ClaimVote/ClaimVoteSticker";
 import { Avatar } from "@components/UI/Avatar";
-import XClaimUnclaimedDot from "@components/XClaim/entry/XClaimUnclaimedDot";
 import { MenuButton } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import { ChainWithIcon } from "@config/wagmi";
@@ -12,7 +12,7 @@ interface AccountButtonProps {
   ensAvatar: string | null | undefined;
   displayName: string;
   currentChain?: ChainWithIcon;
-  hasClaimDot: boolean;
+  hasCreditSticker: boolean;
 }
 
 const AccountButton: FC<AccountButtonProps> = ({
@@ -21,11 +21,11 @@ const AccountButton: FC<AccountButtonProps> = ({
   ensAvatar,
   displayName,
   currentChain,
-  hasClaimDot,
+  hasCreditSticker,
 }) => {
   return (
     <MenuButton
-      className={`w-auto h-8 flex items-center gap-2 bg-secondary-1 p-4 text-base text-neutral-9 font-bold focus:not-data-focus:outline-none data-focus:outline data-focus:outline-white border border-primary-3 rounded-4xl`}
+      className={`relative w-auto h-8 flex items-center gap-2 bg-secondary-1 p-4 text-base text-neutral-9 font-bold focus:not-data-focus:outline-none data-focus:outline data-focus:outline-white border border-primary-3 rounded-4xl`}
     >
       {({ open }) => (
         <>
@@ -40,7 +40,6 @@ const AccountButton: FC<AccountButtonProps> = ({
                 className="absolute -bottom-0.5 -right-0.5 rounded-full ring-2 ring-secondary-1"
               />
             )}
-            {hasClaimDot && <XClaimUnclaimedDot className="-top-0.5 -right-0.5 border-secondary-1" />}
           </div>
           {ensName || displayName}
           <ChevronDownIcon
@@ -48,6 +47,9 @@ const AccountButton: FC<AccountButtonProps> = ({
               open ? "rotate-180" : "rotate-0"
             }`}
           />
+          {hasCreditSticker && (
+            <ClaimVoteSticker className="absolute -top-3 -right-1.5 px-2 py-0.5 text-[12px] rotate-8" />
+          )}
         </>
       )}
     </MenuButton>

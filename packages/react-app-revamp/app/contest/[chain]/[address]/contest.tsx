@@ -1,5 +1,8 @@
 "use client";
+import ClaimVoteRuntime from "@components/ClaimVote/ClaimVoteRuntime";
+import { isXClaimConfigured } from "@config/xClaim";
 import { getNativeTokenSymbol } from "@helpers/nativeToken";
+import { ClaimVoteStoreProvider } from "@hooks/useClaimVote/store";
 import { CastVotesWrapper } from "@hooks/useCastVotes/store";
 import { ContestWrapper } from "@hooks/useContest/store";
 import { ContestConfigStoreProvider } from "@hooks/useContestConfig/store";
@@ -33,7 +36,10 @@ const Contest: FC<ContestProps> = ({ address, chain, chainId, abi, version }) =>
         <DeleteProposalWrapper>
           <CastVotesWrapper>
             <ContestConfigStoreProvider contestConfig={contestConfig}>
-              <LayoutViewContest />
+              <ClaimVoteStoreProvider>
+                {isXClaimConfigured && <ClaimVoteRuntime />}
+                <LayoutViewContest />
+              </ClaimVoteStoreProvider>
             </ContestConfigStoreProvider>
           </CastVotesWrapper>
         </DeleteProposalWrapper>

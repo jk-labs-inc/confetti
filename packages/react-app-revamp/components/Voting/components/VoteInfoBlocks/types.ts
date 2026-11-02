@@ -12,6 +12,7 @@ export interface MyVotesProps extends BaseVoteInfoBlocksProps {
   symbol: string;
   insufficientBalance: boolean;
   isConnected: boolean;
+  isBalancePending: boolean;
   onAddFunds?: () => void;
   layout?: VotingWidgetLayout;
 }

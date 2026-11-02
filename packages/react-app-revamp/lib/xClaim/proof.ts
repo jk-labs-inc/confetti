@@ -1,13 +1,10 @@
-import type { Address, Hex } from "viem";
-import { createSiweMessage } from "viem/siwe";
+import type { Address } from "viem";
 import { z } from "zod";
-import { PARA_TOKEN_FALLBACK_LIFETIME_MS, PARA_TOKEN_REUSE_MARGIN_MS, SIWE_STATEMENT } from "./constants";
-import type { XClaimNonce } from "./types";
+import { PARA_TOKEN_FALLBACK_LIFETIME_MS, PARA_TOKEN_REUSE_MARGIN_MS } from "./constants";
 
 export type WalletProofHeader = string & { readonly __brand: "WalletProofHeader" };
 
-type WalletProofPayload =
-  { kind: "para"; jwt: string; address: Address } | { kind: "siwe"; message: string; signature: Hex };
+type WalletProofPayload = { kind: "para"; jwt: string; address: Address };
 
 const jwtPayloadSchema = z.object({ exp: z.number() });
 
@@ -26,31 +23,6 @@ const brandProof = (header: string): WalletProofHeader => header as WalletProofH
 
 export const encodeWalletProof = (payload: WalletProofPayload): WalletProofHeader =>
   brandProof(toBase64Url(new TextEncoder().encode(JSON.stringify(payload))));
-
-export const buildSiweMessage = ({
-  address,
-  nonce,
-  issuedAt,
-  host,
-  origin,
-}: {
-  address: Address;
-  nonce: XClaimNonce;
-  issuedAt: Date;
-  host: string;
-  origin: string;
-}) =>
-  createSiweMessage({
-    address,
-    chainId: nonce.chainId,
-    domain: host,
-    uri: origin,
-    nonce: nonce.value,
-    version: "1",
-    statement: SIWE_STATEMENT,
-    issuedAt,
-    expirationTime: nonce.expiresAt,
-  });
 
 const parseJwtSegment = (segment: string | undefined): unknown => {
   if (!segment) return null;

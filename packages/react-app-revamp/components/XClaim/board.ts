@@ -1,4 +1,5 @@
 import { DESKTOP_HEADER_MIN_WIDTH_PX } from "@helpers/isMobileViewport";
+import type { ClaimVoteBoard } from "lib/claimVote/types";
 import type { XClaimActionState, XClaimBoard, XClaimCheck, XClaimCheckStatus } from "lib/xClaim/types";
 import { createContext, useContext } from "react";
 import { useMediaQuery } from "react-responsive";
@@ -6,7 +7,7 @@ import { useMediaQuery } from "react-responsive";
 export type XClaimLayout = "sheet" | "modal";
 
 export interface XClaimBoardEnv {
-  board: XClaimBoard;
+  board: XClaimBoard | ClaimVoteBoard;
   layout: XClaimLayout;
   action: XClaimActionState;
   settling: boolean;

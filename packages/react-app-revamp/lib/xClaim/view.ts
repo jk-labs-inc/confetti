@@ -7,16 +7,13 @@ import type {
   XClaimInput,
   XClaimNoSpotsCause,
   XClaimOffer,
-  XClaimOfferAudience,
-  XClaimOpenOffer,
   XClaimResult,
   XClaimSheetView,
   XClaimSpots,
-  XClaimTeaserOffer,
 } from "./types";
 
 export const paysOnChain = (spots: Pick<XClaimSpots, "network">, chain: string | null) =>
-  !chain || chain.toLowerCase() === spots.network;
+  chain !== null && chain.toLowerCase() === spots.network;
 
 const knownHandle = (me: ClaimMe | null) => me?.link?.handle ?? null;
 
@@ -27,11 +24,9 @@ const spotsOpenNow = (input: XClaimInput) => {
   return spots !== null && spots.open > 0 && !spots.paused;
 };
 
-const isSettled = ({ me, wallet, memory }: XClaimInput) =>
-  me ? isSettledResult(resultFromMe(me)) : wallet.kind === "external" && memory === "settled";
+const isSettled = ({ me }: XClaimInput) => !!me && isSettledResult(resultFromMe(me));
 
-const isLinked = ({ me, wallet, memory }: XClaimInput) =>
-  me ? !!me.link?.eligible : wallet.kind === "external" && memory === "retryable";
+const isLinked = ({ me }: XClaimInput) => !!me?.link?.eligible;
 
 const canClaimNow = (input: XClaimInput) => {
   if (input.me && (isSettled(input) || !isLinked(input))) return false;
@@ -75,7 +70,7 @@ const notEligibleBoard = (input: XClaimInput, failedCheck: XClaimCheck): XClaimB
   };
 };
 
-const resultBoard = (result: XClaimResult, input: XClaimInput): XClaimBoardView => {
+export const boardForResult = (result: XClaimResult, input: XClaimInput): XClaimBoardView => {
   switch (result.kind) {
     case "paid":
     case "pending":
@@ -105,41 +100,36 @@ const resultBoard = (result: XClaimResult, input: XClaimInput): XClaimBoardView 
 };
 
 const offerBoard = (input: XClaimInput): XClaimBoardView => {
-  const { wallet, me, action } = input;
+  const { wallet, me } = input;
   if (isSettled(input)) return claimedBoard(input);
   if (isLinked(input)) {
     if (!me || spotsOpenNow(input)) return { board: "ClaimLinked", handle: knownHandle(me) };
     return noSpotsBoard(input, spotsCause(input.spots ?? me.spots));
   }
-  if (wallet.kind === "external") {
-    const signed = action.name === "start_x" && (action.stage === "submitting" || action.stage === "redirecting");
-    return { board: "ClaimExternalWallet", activeStep: signed ? 2 : 1, wallet };
-  }
   if (wallet.kind === "signed_out") return { board: "ClaimSignedOut" };
+  if (wallet.kind === "external") return { board: "ClaimStart" };
   if (wallet.signedInWithX) return { board: "ClaimConfirmX" };
   return { board: "ClaimStart" };
 };
 
 const flowBoard = (flow: XClaimFlowResult, input: XClaimInput): XClaimBoardView => {
-  const { result, source, at } = flow;
-  if (result.kind === "x_cancelled") return resultBoard(result, input);
+  const { result, at } = flow;
+  if (result.kind === "x_cancelled") return boardForResult(result, input);
 
   if (input.me && input.meUpdatedAt > at) {
     const truth = confirmOutcome(result, input.me);
-    return truth ? resultBoard(truth, input) : offerBoard(input);
+    return truth ? boardForResult(truth, input) : offerBoard(input);
   }
 
   const awaitingConfirmation =
-    source === "redirect" &&
     !flow.walletWaitOver &&
     ((input.wallet.kind === "embedded" && input.meFailedAt <= at) || input.wallet.kind === "signed_out");
-  return awaitingConfirmation ? { board: "Checking", handle: null } : resultBoard(result, input);
+  return awaitingConfirmation ? { board: "Checking", handle: null } : boardForResult(result, input);
 };
 
 const deriveBoard = (input: XClaimInput): XClaimBoardView => {
   const { action, result } = input;
-  const isClaimingOrChecking = action.name === "retry_claim" || action.name === "check_status";
-  if (isClaimingOrChecking && action.stage === "submitting") {
+  if (action.name === "check_status" && action.stage === "submitting") {
     return { board: "Checking", handle: knownHandle(input.me) };
   }
   return result ? flowBoard(result, input) : offerBoard(input);
@@ -166,12 +156,4 @@ export const deriveOffer = (input: XClaimInput): XClaimOffer => {
     return { status: "waiting", audience, nextReleaseAt: spots.nextReleaseAt, paused: spots.paused };
   }
   return { status: "open", audience, spots, linked: isLinked(input) };
-};
-
-export const openOfferFor = (offer: XClaimOffer, audience: XClaimOfferAudience): XClaimOpenOffer | null =>
-  offer.status === "open" && offer.audience === audience ? offer : null;
-
-export const signedOutTeaserFor = (offer: XClaimOffer): XClaimTeaserOffer | null => {
-  if (offer.status === "off" || offer.audience !== "signed_out") return null;
-  return offer.status === "waiting" && offer.paused ? null : offer;
 };

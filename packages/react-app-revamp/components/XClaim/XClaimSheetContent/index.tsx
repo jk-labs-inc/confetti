@@ -2,7 +2,6 @@ import { TODO_CHECKS, XClaimBoardContext, type CheckStickerStates, type XClaimLa
 import AlreadyClaimedBoard from "@components/XClaim/boards/AlreadyClaimedBoard";
 import AlreadyLinkedBoard from "@components/XClaim/boards/AlreadyLinkedBoard";
 import CheckingBoard from "@components/XClaim/boards/CheckingBoard";
-import ClaimExternalWalletBoard from "@components/XClaim/boards/ClaimExternalWalletBoard";
 import ClaimOfferBoard from "@components/XClaim/boards/ClaimOfferBoard";
 import NoSpotsBoard from "@components/XClaim/boards/NoSpotsBoard";
 import NotEligibleBoard from "@components/XClaim/boards/NotEligibleBoard";
@@ -48,7 +47,7 @@ const boardFor = (view: XClaimSheetView, actions: XClaimActions, onAddFunds: () 
       return (
         <ClaimOfferBoard
           bubble="on_us"
-          body={`verify your twitter and we'll give you ${CLAIM_AMOUNT_LABEL} to play with.`}
+          body={`verify your twitter and we'll put ${CLAIM_AMOUNT_LABEL} into your vote.`}
           primary={{
             kind: "run",
             id: X_CLAIM_IDS.connectX,
@@ -64,7 +63,7 @@ const boardFor = (view: XClaimSheetView, actions: XClaimActions, onAddFunds: () 
       return (
         <ClaimOfferBoard
           bubble="one_more_tap"
-          body={`you signed in with twitter. confirm it once more and we'll give you ${CLAIM_AMOUNT_LABEL} to play with.`}
+          body={`you signed in with twitter. confirm it once more and we'll put ${CLAIM_AMOUNT_LABEL} into your vote.`}
           primary={{
             kind: "run",
             id: X_CLAIM_IDS.confirmX,
@@ -76,20 +75,11 @@ const boardFor = (view: XClaimSheetView, actions: XClaimActions, onAddFunds: () 
           spots={view.spots}
         />
       );
-    case "ClaimExternalWallet":
-      return (
-        <ClaimExternalWalletBoard
-          wallet={view.wallet}
-          activeStep={view.activeStep}
-          spots={view.spots}
-          onSign={() => actions.startXClaim()}
-        />
-      );
     case "ClaimLinked":
       return (
         <ClaimOfferBoard
           bubble="on_us"
-          body={`${handleText(view.handle)} is already verified. one tap and the ${CLAIM_AMOUNT_LABEL} pops right into your wallet.`}
+          body={`${handleText(view.handle)} is already verified. one tap and the ${CLAIM_AMOUNT_LABEL} goes into your vote.`}
           primary={{
             kind: "run",
             id: X_CLAIM_IDS.linkedClaim,

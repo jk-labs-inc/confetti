@@ -9,6 +9,7 @@ const VoteInfoBlocks: FC<VoteInfoBlocksProps> = props => {
       return (
         <MyVotes
           isConnected={props.isConnected}
+          isBalancePending={props.isBalancePending}
           balance={props.balance}
           symbol={props.symbol}
           insufficientBalance={props.insufficientBalance}

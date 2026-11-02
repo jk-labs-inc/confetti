@@ -14,15 +14,16 @@ interface CastVotesState {
 }
 
 const initialState = {
-  pickedProposal: null,
+  pickedProposal: null as string | null,
   isModalOpen: false,
   transactionData: null,
   castPositiveAmountOfVotes: true,
 };
 
-export const createCastVotesStore = () =>
+export const createCastVotesStore = (initialPickedProposal: string | null = null) =>
   createStore<CastVotesState>(set => ({
     ...initialState,
+    pickedProposal: initialPickedProposal,
     setTransactionData: value => set({ transactionData: value }),
     setPickedProposal: value => set({ pickedProposal: value }),
     setIsModalOpen: value => set({ isModalOpen: value }),
@@ -32,8 +33,14 @@ export const createCastVotesStore = () =>
 
 export const CastVotesContext = createContext<ReturnType<typeof createCastVotesStore> | null>(null);
 
-export function CastVotesWrapper({ children }: { children: React.ReactNode }) {
-  const storeRef = useRef<ReturnType<typeof createCastVotesStore>>(createCastVotesStore());
+export function CastVotesWrapper({
+  children,
+  initialPickedProposal = null,
+}: {
+  children: React.ReactNode;
+  initialPickedProposal?: string | null;
+}) {
+  const storeRef = useRef<ReturnType<typeof createCastVotesStore>>(createCastVotesStore(initialPickedProposal));
   return <CastVotesContext.Provider value={storeRef.current}>{children}</CastVotesContext.Provider>;
 }
 

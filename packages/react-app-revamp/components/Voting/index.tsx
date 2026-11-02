@@ -1,6 +1,8 @@
+import ClaimVoteLine from "@components/ClaimVote/ClaimVoteLine";
 import NumericKeypad from "@components/UI/NumericKeypad";
 import { useModal } from "@getpara/react-sdk-lite";
 import { MOBILE_MAX_WIDTH_PX } from "@helpers/isMobileViewport";
+import { useClaimVoteLine } from "@hooks/useClaimVote/useClaimVoteLine";
 import { useCastVotesStore } from "@hooks/useCastVotes/store";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import useDisplayPrice from "@hooks/useCurrency/useDisplayPrice";
@@ -41,7 +43,7 @@ interface VotingWidgetProps {
 }
 
 const PINNED_VOTE_BUTTON_CLASS_NAME = "sticky bottom-0 z-10 -mx-3 -mb-3 px-3 pb-3 pt-6 -mt-6 rounded-b-2xl";
-const PINNED_VOTE_BUTTON_BACKDROP = "linear-gradient(to bottom, rgba(20, 20, 20, 0) 0%, #141414 40%)";
+const PINNED_VOTE_BUTTON_BACKDROP = "linear-gradient(to bottom, rgba(20, 20, 20, 0) 0px, #141414 24px)";
 
 const VotingWidget: FC<VotingWidgetProps> = ({
   costToVote,
@@ -105,6 +107,7 @@ const VotingWidget: FC<VotingWidgetProps> = ({
     undefined,
     { ceilingPrecision: true },
   );
+  const claimVote = useClaimVoteLine({ pricePerVoteNative: effectiveCostToVote, isVotingClosed });
   const presets = useVotePresets({
     maxBalance,
     isConnected,
@@ -124,10 +127,17 @@ const VotingWidget: FC<VotingWidgetProps> = ({
   const totalVotes = projections.votes;
   const isZeroValue = !inputValue || parseFloat(inputValue) === 0;
   const isBelowMinimum = !isZeroValue && totalVotes === 0;
-  const voteDisabled = isZeroValue || isBelowMinimum || isLoading || (isConnected && isBalanceLoading);
+  const creditOffer = claimVote.line.kind === "offer" ? claimVote.line.offer : null;
+  const voteDisabled = creditOffer
+    ? isLoading
+    : isZeroValue || isBelowMinimum || isLoading || (isConnected && isBalanceLoading) || claimVote.isBusy;
 
   const handlePrimaryAction = () => {
     if (voteDisabled) return;
+    if (creditOffer) {
+      claimVote.press();
+      return;
+    }
     if (!isConnected) {
       if (onConnectRequest) {
         onConnectRequest();
@@ -176,6 +186,7 @@ const VotingWidget: FC<VotingWidgetProps> = ({
           symbol={contestConfig.chainNativeCurrencySymbol}
           insufficientBalance={insufficientBalance}
           isConnected={isConnected}
+          isBalancePending={claimVote.isBusy}
           onAddFunds={() => onAddFunds?.(AddFundsEntryReason.Manual)}
           layout={layout}
         />
@@ -191,13 +202,15 @@ const VotingWidget: FC<VotingWidgetProps> = ({
           </div>
         )}
         <div
-          className={pinVoteButton ? PINNED_VOTE_BUTTON_CLASS_NAME : ""}
+          className={`flex flex-col gap-4 ${pinVoteButton ? PINNED_VOTE_BUTTON_CLASS_NAME : ""}`}
           style={pinVoteButton ? { background: PINNED_VOTE_BUTTON_BACKDROP } : undefined}
         >
+          <ClaimVoteLine line={claimVote.line} />
           <VoteButton
             isDisabled={voteDisabled}
-            isInvalidBalance={insufficientBalance && isConnected}
+            isInvalidBalance={!creditOffer && insufficientBalance && isConnected}
             isConnected={isConnected}
+            creditOffer={creditOffer}
             onClick={handlePrimaryAction}
           />
         </div>

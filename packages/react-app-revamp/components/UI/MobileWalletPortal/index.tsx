@@ -4,19 +4,17 @@ import { ChevronRightIcon, PowerIcon } from "@heroicons/react/24/outline";
 import React, { useState } from "react";
 import CustomLink from "../Link";
 import AddFundsModal from "@components/AddFunds/components/Modal";
+import WalletCreditHint from "@components/ClaimVote/WalletCreditHint";
 import SendFunds from "@components/SendFunds";
-import XClaimClaimRow from "@components/XClaim/entry/XClaimClaimRow";
-import { X_CLAIM_IDS } from "@components/XClaim/constants";
-import Drawer, { DRAWER_EXIT_ANIMATION_MS } from "../Drawer";
+import Drawer from "../Drawer";
 import ProfileSection from "@components/Connect/components/AccountDropdown/components/ProfileSection";
 import AdvancedOptions from "@components/Connect/components/AccountDropdown/components/AdvancedOptions";
 import { useAddFunds } from "@hooks/useAddFunds";
 import { useAddFundsChain } from "@hooks/useAddFundsChain";
+import { useWalletCreditHint } from "@hooks/useClaimVote/useWalletCreditHint";
+import { useSwitchToEmbeddedSignIn } from "@hooks/useParaSignIn";
 import { useWallet } from "@hooks/useWallet";
-import { xClaimSheet } from "@hooks/useXClaim/store";
 import { chains } from "@config/wagmi";
-import { openOfferFor } from "lib/xClaim/view";
-import type { XClaimOffer } from "lib/xClaim/types";
 import { mainnet } from "viem/chains";
 import { useEnsAvatar, useEnsName, useBalance } from "wagmi";
 
@@ -25,7 +23,6 @@ interface MobileProfileDrawerProps {
   onClose: () => void;
   address: string;
   onDisconnect: () => void;
-  claimOffer: XClaimOffer;
 }
 
 const navLinks = [
@@ -43,13 +40,7 @@ const navLinks = [
   },
 ];
 
-export const MobileProfileDrawer: React.FC<MobileProfileDrawerProps> = ({
-  isOpen,
-  onClose,
-  address,
-  onDisconnect,
-  claimOffer,
-}) => {
+export const MobileProfileDrawer: React.FC<MobileProfileDrawerProps> = ({ isOpen, onClose, address, onDisconnect }) => {
   const [isAddFundsOpen, setIsAddFundsOpen] = useState(false);
   const [isSendFundsOpen, setIsSendFundsOpen] = useState(false);
   const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
@@ -59,6 +50,8 @@ export const MobileProfileDrawer: React.FC<MobileProfileDrawerProps> = ({
   const { data: ensAvatar } = useEnsAvatar({ name: ensName as string, chainId: mainnet.id });
   const { data: balance } = useBalance({ address: address as `0x${string}` });
   const { openAddFunds } = useAddFunds({ chain: chainName });
+  const creditSpots = useWalletCreditHint();
+  const switchToEmbeddedSignIn = useSwitchToEmbeddedSignIn();
 
   const handleAddFunds = async () => {
     onClose();
@@ -67,21 +60,18 @@ export const MobileProfileDrawer: React.FC<MobileProfileDrawerProps> = ({
   };
 
   const displayName = `${address.slice(0, 6)}...${address.slice(-4)}`;
-  const claimOpen = openOfferFor(claimOffer, "signed_in");
 
   return (
     <>
       <Drawer isOpen={isOpen} onClose={onClose} className="bg-secondary-1 w-full h-auto">
         <div className="flex flex-col">
-          {claimOpen && (
-            <div className="px-4 pt-2">
-              <XClaimClaimRow
-                id={X_CLAIM_IDS.profileDrawerRow}
-                offer={claimOpen}
-                placement="drawer"
-                onClick={() => {
+          {creditSpots && (
+            <div className="px-4 pt-4">
+              <WalletCreditHint
+                spots={creditSpots}
+                onSwitch={() => {
                   onClose();
-                  setTimeout(xClaimSheet.open, DRAWER_EXIT_ANIMATION_MS);
+                  switchToEmbeddedSignIn();
                 }}
               />
             </div>
