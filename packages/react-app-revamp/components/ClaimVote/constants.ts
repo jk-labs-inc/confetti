@@ -3,6 +3,7 @@ import type { ClaimVoteBoard } from "lib/claimVote/types";
 export const CLAIM_VOTE_IDS = {
   voteWithCredit: "claim_vote_with_credit",
   walletSwitch: "claim_vote_wallet_switch",
+  walletHintDismiss: "claim_vote_wallet_hint_dismiss",
   votedDone: "claim_vote_voted_done",
   finishVote: "claim_vote_finish",
   payoutSlowGotIt: "claim_vote_payout_slow_got_it",

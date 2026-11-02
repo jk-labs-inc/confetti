@@ -20,6 +20,8 @@ export const WALLET_CREDIT_HINT =
 
 export const SWITCH_SIGN_IN_LABEL = "switch account";
 
+export const WALLET_HINT_DISMISS_LABEL = "don't show this again";
+
 export const withCreditLabel = (label: string) => `${label} with ${CLAIM_AMOUNT_LABEL} on us`;
 
 export const EXTERNAL_WALLET_LINE = `${CLAIM_AMOUNT_LABEL} on us is for accounts made with email or social sign-in`;
