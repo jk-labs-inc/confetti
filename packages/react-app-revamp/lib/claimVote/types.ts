@@ -74,7 +74,7 @@ export type VoteFailure =
 export type VoteOutcome =
   | { kind: "voted"; result: CastVotesResult; entryTitle: string; wantedMore: boolean }
   | { kind: "already_voted"; entryTitle: string }
-  | { kind: "failed"; failure: VoteFailure };
+  | { kind: "failed"; failure: VoteFailure; isShown?: boolean };
 
 export type ClaimVoteRun =
   | { phase: "idle" }
@@ -85,8 +85,8 @@ export type ClaimVoteRun =
   | { phase: "confirming"; hint: XClaimResult; landedAt: number }
   | { phase: "funding"; payout: XClaimPayout; until: number }
   | { phase: "voting"; payout: FundedPayout | null }
-  | { phase: "voted"; result: CastVotesResult | null; entryTitle: string; wantedMore: boolean; isOwnVote: boolean }
-  | { phase: "vote_failed"; failure: VoteFailure; isOwnVote: boolean }
+  | { phase: "voted"; result: CastVotesResult | null; entryTitle: string; wantedMore: boolean }
+  | { phase: "vote_failed"; failure: VoteFailure }
   | { phase: "payout_slow" }
   | { phase: "claim_failed"; failure: XClaimFailure; retry: ClaimRetry }
   | { phase: "ended"; ending: RunEnding };
@@ -132,6 +132,7 @@ export interface Transition {
   modal: ModalCommand;
   intent: IntentCommand;
   declinesOffer?: true;
+  skipsOffer?: true;
 }
 
 export interface ClaimVoteCasterMount {
@@ -167,9 +168,9 @@ export type ClaimVoteLine = { kind: "hidden" } | { kind: "offer"; offer: XClaimO
 
 export type ClaimVoteModalView =
   | { kind: "claim_board"; view: XClaimSheetView }
-  | { kind: "running"; isOwnVote: boolean }
-  | { kind: "voted"; entryTitle: string; result: CastVotesResult | null; wantedMore: boolean; isOwnVote: boolean }
-  | { kind: "finish"; entryTitle: string; failure: VoteFailure; isOwnVote: boolean }
+  | { kind: "running" }
+  | { kind: "voted"; entryTitle: string; result: CastVotesResult | null; wantedMore: boolean }
+  | { kind: "finish"; entryTitle: string; failure: VoteFailure }
   | { kind: "payout_slow"; entryTitle: string }
   | { kind: "check_failed" }
   | { kind: "external_info" };

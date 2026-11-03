@@ -186,7 +186,7 @@ const VotingWidget: FC<VotingWidgetProps> = ({
           symbol={contestConfig.chainNativeCurrencySymbol}
           insufficientBalance={insufficientBalance}
           isConnected={isConnected}
-          isBalancePending={claimVote.isBusy}
+          isBalancePending={claimVote.isBalancePending}
           onAddFunds={() => onAddFunds?.(AddFundsEntryReason.Manual)}
           layout={layout}
         />

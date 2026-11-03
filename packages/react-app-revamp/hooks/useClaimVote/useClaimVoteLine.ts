@@ -23,8 +23,13 @@ export const useClaimVoteLine = ({
   isVotingClosed: boolean;
 }) => {
   const hasRun = useHasClaimVoteRun();
-  const { run, declinedOffer, dispatch } = useClaimVoteStore(
-    useShallow(state => ({ run: state.run, declinedOffer: state.declinedOffer, dispatch: state.dispatch })),
+  const { run, declinedOffer, skippedWallets, dispatch } = useClaimVoteStore(
+    useShallow(state => ({
+      run: state.run,
+      declinedOffer: state.declinedOffer,
+      skippedWallets: state.skippedWallets,
+      dispatch: state.dispatch,
+    })),
   );
   const facts = useClaimVoteFacts({ enabled: hasRun, pollUntil: null });
   const nativeSymbol = useContestConfigStore(state => state.contestConfig.chainNativeCurrencySymbol);
@@ -39,7 +44,10 @@ export const useClaimVoteLine = ({
   });
   const derived = hasRun ? claimVoteLine({ run, facts, gate }) : HIDDEN_LINE;
   const address = walletAddressOf(facts.wallet);
-  const isDeclined = address !== null && declinedOffer === offerKey({ wallet: address, contest: facts.contest });
+  const isDeclined =
+    address !== null &&
+    (skippedWallets.includes(address.toLowerCase()) ||
+      declinedOffer === offerKey({ wallet: address, contest: facts.contest }));
   const line = derived.kind === "offer" && (!pickedProposal || isVotingClosed || isDeclined) ? HIDDEN_LINE : derived;
 
   const press = useCallback(() => {
@@ -54,5 +62,8 @@ export const useClaimVoteLine = ({
     });
   }, [line.kind, pickedProposal, title, dispatch]);
 
-  return { line, press, isBusy: line.kind === "busy" };
+  const isBusy = line.kind === "busy";
+  const isOwnVote = run.phase === "voting" && run.payout === null;
+
+  return { line, press, isBusy, isBalancePending: isBusy && !isOwnVote };
 };

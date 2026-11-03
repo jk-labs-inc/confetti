@@ -89,23 +89,16 @@ export const claimVoteModalView = ({
     case "claiming":
     case "confirming":
     case "funding":
-      return { kind: "running", isOwnVote: false };
     case "voting":
-      return { kind: "running", isOwnVote: run.payout === null };
+      return { kind: "running" };
     case "pitch":
       return claimBoard(facts, { board: "ClaimSignedOut" });
     case "verify_x":
       return claimBoard(facts, verifyBoard(facts));
     case "voted":
-      return {
-        kind: "voted",
-        entryTitle: run.entryTitle,
-        result: run.result,
-        wantedMore: run.wantedMore,
-        isOwnVote: run.isOwnVote,
-      };
+      return { kind: "voted", entryTitle: run.entryTitle, result: run.result, wantedMore: run.wantedMore };
     case "vote_failed":
-      return { kind: "finish", entryTitle, failure: run.failure, isOwnVote: run.isOwnVote };
+      return { kind: "finish", entryTitle, failure: run.failure };
     case "payout_slow":
       return { kind: "payout_slow", entryTitle };
     case "claim_failed":

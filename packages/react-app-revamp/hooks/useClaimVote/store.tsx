@@ -1,4 +1,5 @@
 import { offerKey } from "lib/claimVote/intent";
+import { readSkippedWallets, rememberSkippedWallet } from "lib/claimVote/skippedOffer";
 import { voteIntentStore } from "lib/claimVote/storage";
 import { IDLE_RUN, transition } from "lib/claimVote/transition";
 import type { ClaimVoteEvent, ClaimVoteRun, IntentCommand } from "lib/claimVote/types";
@@ -11,6 +12,7 @@ interface ClaimVoteState {
   begun: number;
   modalOpen: boolean;
   declinedOffer: string | null;
+  skippedWallets: string[];
   dispatch: (event: ClaimVoteEvent) => void;
   begin: (step: number) => boolean;
   isCurrent: (step: number) => boolean;
@@ -45,17 +47,19 @@ const createClaimVoteStore = (): ClaimVoteStore =>
     begun: 0,
     modalOpen: false,
     declinedOffer: null,
+    skippedWallets: readSkippedWallets(),
     dispatch: event => {
       const state = get();
       const next = transition(state.run, event, Date.now());
       if (!next) return;
-      const declining = next.declinesOffer ? voteIntentStore.read() : null;
+      const stored = next.declinesOffer || next.skipsOffer ? voteIntentStore.read() : null;
       applyIntentCommand(next.intent);
       set({
         run: next.run,
         step: next.run === state.run ? state.step : state.step + 1,
         modalOpen: next.modal === "keep" ? state.modalOpen : next.modal === "open",
-        declinedOffer: declining ? offerKey(declining) : state.declinedOffer,
+        declinedOffer: next.declinesOffer && stored ? offerKey(stored) : state.declinedOffer,
+        skippedWallets: next.skipsOffer && stored ? rememberSkippedWallet(stored.wallet) : state.skippedWallets,
       });
     },
     begin: step => {

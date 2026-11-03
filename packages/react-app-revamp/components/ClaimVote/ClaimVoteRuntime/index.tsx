@@ -7,7 +7,6 @@ import { CastVotesWrapper } from "@hooks/useCastVotes/store";
 import { useEmbeddedOnlySignIn } from "@hooks/useParaSignIn";
 import { xClaimKeys } from "@hooks/useXClaim/queries";
 import { useQueryClient } from "@tanstack/react-query";
-import type { VoteOutcome } from "lib/claimVote/types";
 import { claimVoteModalView, finishablePayout, ownVoteIntent } from "lib/claimVote/view";
 import type { XClaimActions } from "lib/xClaim/types";
 import { walletAddressOf } from "lib/xClaim/wallet";
@@ -17,12 +16,12 @@ import { FC, useCallback, useMemo } from "react";
 const ClaimVoteModal = dynamic(() => import("@components/ClaimVote/ClaimVoteModal"), { ssr: false });
 
 const ClaimVoteRuntime: FC = () => {
-  const { run, modalOpen, facts, caster, contest, dispatch } = useClaimVoteDriver();
+  const { run, modalOpen, facts, caster, contest, dispatch, finishVote } = useClaimVoteDriver();
   const signIn = useEmbeddedOnlySignIn();
   const queryClient = useQueryClient();
   const view = useMemo(() => claimVoteModalView({ run, facts }), [run, facts]);
   const ownVote = ownVoteIntent({ run, facts, now: Date.now() });
-  const finishPayout = run.phase === "vote_failed" && !run.isOwnVote ? finishablePayout(facts, Date.now()) : null;
+  const finishPayout = run.phase === "vote_failed" ? finishablePayout(facts, Date.now()) : null;
   const address = walletAddressOf(facts.wallet);
 
   const actions = useMemo(
@@ -40,11 +39,9 @@ const ClaimVoteRuntime: FC = () => {
     [run, facts, address, signIn, queryClient, dispatch],
   );
 
-  const onDone = useCallback((outcome: VoteOutcome) => dispatch({ type: "vote_done", outcome }), [dispatch]);
   const voteOwnFunds = () =>
     dispatch(ownVoteIntent({ run, facts, now: Date.now() }) ? { type: "just_vote" } : { type: "close" });
-  const finishVote = finishPayout ? () => dispatch({ type: "finish", payout: finishPayout }) : null;
-  const onFinish = ownVote && run.phase === "vote_failed" ? voteOwnFunds : finishVote;
+  const onFinish = finishPayout ? () => dispatch({ type: "finish", payout: finishPayout }) : null;
   const justVote = useJustVoteOffer({
     intent: ownVote,
     creditUsd: facts.spots?.usdAmount ?? null,
@@ -72,7 +69,7 @@ const ClaimVoteRuntime: FC = () => {
             target={contest}
             contestKey={facts.contest}
             wallet={facts.wallet}
-            onDone={onDone}
+            onDone={finishVote}
           />
         </CastVotesWrapper>
       )}

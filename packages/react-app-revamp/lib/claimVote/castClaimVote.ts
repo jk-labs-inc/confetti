@@ -122,6 +122,7 @@ export const castClaimVote = async ({
   const funding = payout ?? OWN_FUNDS;
   const { target } = contest;
   let sentHash = null as Hash | null;
+  let isCasting = false;
 
   try {
     const config = getWagmiConfig();
@@ -150,10 +151,11 @@ export const castClaimVote = async ({
     if (!isMounted()) return failed({ kind: "error", message: LEFT_THE_PAGE });
     if (!isWalletConnected(intent.wallet)) return failed({ kind: "no_intent" });
     voteIntentStore.update({ castingAt: Date.now() });
+    isCasting = true;
 
     const result = await cast(size.votes, {
       pricePerVoteRaw: priceWei,
-      feedback: "silent",
+      feedback: payout ? "silent" : "standard",
       onSent: hash => {
         sentHash = hash;
         voteIntentStore.update({ sentTxHash: hash });
@@ -161,8 +163,12 @@ export const castClaimVote = async ({
     });
     return { kind: "voted", result, entryTitle, wantedMore: size.wantedMore };
   } catch (error) {
-    if (sentHash) return await settleSentVote({ intent, hash: sentHash, chainId: target.chainId, isMounted });
-    return failed(failureFor(error, contest.key.chain));
+    if (sentHash) {
+      const settled = await settleSentVote({ intent, hash: sentHash, chainId: target.chainId, isMounted });
+      return settled.kind === "failed" && !payout ? { ...settled, isShown: true } : settled;
+    }
+    const failure = failureFor(error, contest.key.chain);
+    return isCasting && !payout ? { kind: "failed", failure, isShown: true } : failed(failure);
   } finally {
     if (!sentHash) voteIntentStore.update({ sendingAt: null, castingAt: null });
   }

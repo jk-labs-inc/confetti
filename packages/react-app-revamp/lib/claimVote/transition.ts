@@ -14,8 +14,8 @@ import type {
   StartOrigin,
   StartPlan,
   Transition,
-  VoteFailure,
   VoteIntent,
+  VoteOutcome,
 } from "./types";
 
 export const IDLE_RUN: ClaimVoteRun = { phase: "idle" };
@@ -44,7 +44,7 @@ const ABORTABLE_PHASES: readonly ClaimVotePhase[] = ["starting", "verify_x", "cl
 
 const RETRYABLE_RESULTS: readonly XClaimResult["kind"][] = ["no_spots", "paused", "payout_failed"];
 
-const FINAL_OWN_VOTE_FAILURES: readonly VoteFailure["kind"][] = ["voting_closed", "cannot_afford"];
+const isOtherTabSending = (outcome: VoteOutcome) => outcome.kind === "failed" && outcome.failure.kind === "in_flight";
 
 export const canStartOwnVote = (run: ClaimVoteRun) => {
   switch (run.phase) {
@@ -52,8 +52,6 @@ export const canStartOwnVote = (run: ClaimVoteRun) => {
       return true;
     case "claim_failed":
       return run.retry.via !== "landing";
-    case "vote_failed":
-      return run.isOwnVote && !FINAL_OWN_VOTE_FAILURES.includes(run.failure.kind);
     case "ended":
       return (
         (run.ending.kind === "claim_outcome" || run.ending.kind === "landing_only") &&
@@ -142,7 +140,7 @@ export const transition = (run: ClaimVoteRun, event: ClaimVoteEvent, now: number
     }
     case "just_vote":
       return canStartOwnVote(run)
-        ? { ...to({ phase: "voting", payout: null }, "open", TOUCH), declinesOffer: true }
+        ? { ...to({ phase: "voting", payout: null }, "close", TOUCH), declinesOffer: true }
         : null;
     case "reopen":
       return isRunBusy(run) ? to(run, "open") : null;
@@ -192,28 +190,22 @@ export const transition = (run: ClaimVoteRun, event: ClaimVoteEvent, now: number
     case "vote_done": {
       if (run.phase !== "voting") return null;
       const { outcome } = event;
-      const isOwnVote = run.payout === null;
+      if (run.payout === null) {
+        return outcome.kind === "failed"
+          ? to(IDLE_RUN, "close", isOtherTabSending(outcome) ? KEEP : CLEAR)
+          : { ...to(IDLE_RUN, "close", CLEAR), skipsOffer: true };
+      }
       if (outcome.kind === "voted") {
         return to(
-          {
-            phase: "voted",
-            result: outcome.result,
-            entryTitle: outcome.entryTitle,
-            wantedMore: outcome.wantedMore,
-            isOwnVote,
-          },
+          { phase: "voted", result: outcome.result, entryTitle: outcome.entryTitle, wantedMore: outcome.wantedMore },
           "open",
           CLEAR,
         );
       }
       if (outcome.kind === "already_voted") {
-        return to(
-          { phase: "voted", result: null, entryTitle: outcome.entryTitle, wantedMore: false, isOwnVote },
-          "open",
-          CLEAR,
-        );
+        return to({ phase: "voted", result: null, entryTitle: outcome.entryTitle, wantedMore: false }, "open", CLEAR);
       }
-      return to({ phase: "vote_failed", failure: outcome.failure, isOwnVote }, "open");
+      return to({ phase: "vote_failed", failure: outcome.failure }, "open");
     }
     case "retry":
       return retryTransition(run, event.via, now);

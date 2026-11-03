@@ -7,7 +7,6 @@ export const CLAIM_VOTE_IDS = {
   votedDone: "claim_vote_voted_done",
   votedAddFunds: "claim_vote_voted_add_funds",
   finishVote: "claim_vote_finish",
-  ownVoteRetry: "claim_vote_own_vote_retry",
   payoutSlowGotIt: "claim_vote_payout_slow_got_it",
   checkRetry: "claim_vote_check_retry",
   externalGotIt: "claim_vote_external_got_it",

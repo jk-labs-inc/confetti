@@ -43,26 +43,18 @@ const runBoard = (
 ): ReactElement => {
   switch (view.kind) {
     case "running":
-      return <RunningBoard isOwnVote={view.isOwnVote} />;
+      return <RunningBoard />;
     case "voted":
       return (
         <VotedBoard
           entryTitle={view.entryTitle}
           result={view.result}
           wantedMore={view.wantedMore}
-          isOwnVote={view.isOwnVote}
           onAddFunds={onAddFunds}
         />
       );
     case "finish":
-      return (
-        <FinishVoteBoard
-          entryTitle={view.entryTitle}
-          failure={view.failure}
-          isOwnVote={view.isOwnVote}
-          onFinish={onFinish}
-        />
-      );
+      return <FinishVoteBoard entryTitle={view.entryTitle} failure={view.failure} onFinish={onFinish} />;
     case "payout_slow":
       return <PayoutSlowBoard entryTitle={view.entryTitle} />;
     case "check_failed":

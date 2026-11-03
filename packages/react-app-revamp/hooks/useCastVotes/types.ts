@@ -3,7 +3,7 @@ import type { Hash } from "viem";
 
 export interface CastVotesOptions {
   pricePerVoteRaw: bigint;
-  feedback: "silent";
+  feedback: "silent" | "standard";
   onSent: (hash: Hash) => void;
 }
 

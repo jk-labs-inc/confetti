@@ -1,3 +1,4 @@
+import { reportOwnVote } from "@components/ClaimVote/reportOwnVote";
 import { useModal } from "@getpara/react-sdk-lite";
 import { useContestStore } from "@hooks/useContest/store";
 import useContestConfigStore from "@hooks/useContestConfig/store";
@@ -26,12 +27,14 @@ import type {
   StartPlan,
   VoteChoice,
   VoteIntent,
+  VoteOutcome,
 } from "lib/claimVote/types";
 import { startXLogin, submitClaim, toXClaimFailure } from "lib/xClaim/client";
 import { LANDING_WALLET_WAIT_MS } from "lib/xClaim/constants";
 import { confirmOutcome, isDecimalAmount, safeReturnPath } from "lib/xClaim/outcomes";
 import type { XClaimEmbeddedWallet } from "lib/xClaim/types";
-import { useEffect, useMemo } from "react";
+import { walletAddressOf } from "lib/xClaim/wallet";
+import { useCallback, useEffect, useMemo } from "react";
 import { parseEther } from "viem";
 import { useShallow } from "zustand/shallow";
 import { useClaimVoteStore } from "./store";
@@ -100,11 +103,12 @@ const planWithIntent = async ({
 };
 
 export const useClaimVoteDriver = () => {
-  const { run, step, modalOpen, dispatch, begin, isCurrent } = useClaimVoteStore(
+  const { run, step, modalOpen, skippedWallets, dispatch, begin, isCurrent } = useClaimVoteStore(
     useShallow(state => ({
       run: state.run,
       step: state.step,
       modalOpen: state.modalOpen,
+      skippedWallets: state.skippedWallets,
       dispatch: state.dispatch,
       begin: state.begin,
       isCurrent: state.isCurrent,
@@ -126,6 +130,13 @@ export const useClaimVoteDriver = () => {
   const contest = useMemo((): ContestTarget => ({ address, abi, chainId, version }), [address, abi, chainId, version]);
 
   const { wallet, intent, me, meUpdatedAt, meFailedAt, meSettled, spots, spotsFailed } = facts;
+  const finishVote = useCallback(
+    (outcome: VoteOutcome) => {
+      if (run.phase === "voting" && run.payout === null) reportOwnVote(outcome);
+      dispatch({ type: "vote_done", outcome });
+    },
+    [run, dispatch],
+  );
   const isPlanReady = wallet.kind !== "embedded" || (meSettled && (spots !== null || spotsFailed));
 
   useEffect(() => {
@@ -143,11 +154,16 @@ export const useClaimVoteDriver = () => {
 
   useEffect(() => {
     if (run.phase !== "starting" || !isPlanReady || !begin(step)) return;
+    const address = walletAddressOf(facts.wallet);
+    if (address && skippedWallets.includes(address.toLowerCase())) {
+      dispatch({ type: "abort" });
+      return;
+    }
     const decision = planStart(facts, run.origin);
     void planWithIntent({ decision, choice: run.choice, facts, contest }).then(plan => {
       if (isCurrent(step)) dispatch({ type: "planned", plan });
     });
-  }, [run, step, isPlanReady, facts, contest, begin, isCurrent, dispatch]);
+  }, [run, step, isPlanReady, facts, contest, skippedWallets, begin, isCurrent, dispatch]);
 
   useEffect(() => {
     if (run.phase === "pitch" && wallet.kind !== "signed_out" && !isParaModalOpen) dispatch({ type: "signed_in" });
@@ -277,19 +293,14 @@ export const useClaimVoteDriver = () => {
     if (run.phase !== "voting") return;
     const timer = setTimeout(() => {
       if (voteIntentStore.read()?.castingAt) return;
-      dispatch({
-        type: "vote_done",
-        outcome: { kind: "failed", failure: { kind: "error", message: VOTE_NOT_STARTED } },
-      });
+      finishVote({ kind: "failed", failure: { kind: "error", message: VOTE_NOT_STARTED } });
     }, VOTING_WATCHDOG_MS);
     return () => clearTimeout(timer);
-  }, [run, dispatch]);
+  }, [run, finishVote]);
 
   useEffect(() => {
-    if (run.phase === "voting" && !intent) {
-      dispatch({ type: "vote_done", outcome: { kind: "failed", failure: { kind: "no_intent" } } });
-    }
-  }, [run.phase, intent, dispatch]);
+    if (run.phase === "voting" && !intent) finishVote({ kind: "failed", failure: { kind: "no_intent" } });
+  }, [run.phase, intent, finishVote]);
 
   const caster = useMemo(
     (): ClaimVoteCasterMount | null =>
@@ -297,5 +308,5 @@ export const useClaimVoteDriver = () => {
     [run, intent, isContestLoaded, step],
   );
 
-  return { run, modalOpen, facts, caster, contest, dispatch };
+  return { run, modalOpen, facts, caster, contest, dispatch, finishVote };
 };

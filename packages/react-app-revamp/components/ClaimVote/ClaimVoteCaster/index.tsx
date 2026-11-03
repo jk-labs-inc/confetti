@@ -1,6 +1,10 @@
+import { resolveOverlayPlacement } from "@components/UI/TransactionOverlay/placement";
+import { txOverlay } from "@components/UI/TransactionOverlay/store";
+import { TransactionOverlayFlow } from "@components/UI/TransactionOverlay/types";
 import { useClaimVoteStore } from "@hooks/useClaimVote/store";
 import useCastVotes from "@hooks/useCastVotes";
 import { useContestStore } from "@hooks/useContest/store";
+import { useHasVoteRail } from "@hooks/useContestLayoutBand";
 import usePriceCurveUpdateInterval from "@hooks/usePriceCurveUpdateInterval";
 import { castClaimVote } from "lib/claimVote/castClaimVote";
 import { voteIntentStore } from "lib/claimVote/storage";
@@ -24,7 +28,8 @@ const ClaimVoteCaster: FC<ClaimVoteCasterProps> = ({ mount, target, contestKey, 
   const { charge, votesClose } = useContestStore(
     useShallow(state => ({ charge: state.charge, votesClose: state.votesClose })),
   );
-  const { castVotes, isReady } = useCastVotes({ charge, votesClose });
+  const hasVoteRail = useHasVoteRail();
+  const { castVotes, isReady } = useCastVotes({ charge, votesClose, inlineOverlay: hasVoteRail });
   const { priceCurveUpdateInterval, isLoading: isIntervalLoading } = usePriceCurveUpdateInterval({
     address: target.address,
     abi: target.abi,
@@ -32,6 +37,8 @@ const ClaimVoteCaster: FC<ClaimVoteCasterProps> = ({ mount, target, contestKey, 
   });
   const castRef = useRef(castVotes);
   const mountedRef = useRef(false);
+  const hasStartedFeedback = useRef(false);
+  const isOwnVote = !mount.payout;
 
   useEffect(() => {
     castRef.current = castVotes;
@@ -45,6 +52,14 @@ const ClaimVoteCaster: FC<ClaimVoteCasterProps> = ({ mount, target, contestKey, 
   }, []);
 
   useEffect(() => {
+    if (isOwnVote && !hasStartedFeedback.current) {
+      hasStartedFeedback.current = true;
+      const placement = resolveOverlayPlacement(hasVoteRail);
+      if (placement) txOverlay.start(TransactionOverlayFlow.VOTE, { placement });
+    }
+  }, [isOwnVote, hasVoteRail]);
+
+  useEffect(() => {
     if (!isReady || isIntervalLoading || !begin(mount.step)) return;
     void castClaimVote({
       intent: voteIntentStore.read(),
@@ -56,7 +71,11 @@ const ClaimVoteCaster: FC<ClaimVoteCasterProps> = ({ mount, target, contestKey, 
       isMounted: () => mountedRef.current,
       cast: (votes, options) => castRef.current(votes, options),
     }).then(outcome => {
-      if (isCurrent(mount.step)) onDone(outcome);
+      if (mountedRef.current) {
+        if (isCurrent(mount.step)) onDone(outcome);
+      } else if (!mount.payout && outcome.kind === "failed" && !outcome.isShown) {
+        txOverlay.dismiss();
+      }
     });
   }, [
     isReady,
