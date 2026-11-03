@@ -1,3 +1,4 @@
+import { offerKey } from "lib/claimVote/intent";
 import { voteIntentStore } from "lib/claimVote/storage";
 import { IDLE_RUN, transition } from "lib/claimVote/transition";
 import type { ClaimVoteEvent, ClaimVoteRun, IntentCommand } from "lib/claimVote/types";
@@ -9,6 +10,7 @@ interface ClaimVoteState {
   step: number;
   begun: number;
   modalOpen: boolean;
+  declinedOffer: string | null;
   dispatch: (event: ClaimVoteEvent) => void;
   begin: (step: number) => boolean;
   isCurrent: (step: number) => boolean;
@@ -42,15 +44,18 @@ const createClaimVoteStore = (): ClaimVoteStore =>
     step: 0,
     begun: 0,
     modalOpen: false,
+    declinedOffer: null,
     dispatch: event => {
       const state = get();
       const next = transition(state.run, event, Date.now());
       if (!next) return;
+      const declining = next.declinesOffer ? voteIntentStore.read() : null;
       applyIntentCommand(next.intent);
       set({
         run: next.run,
         step: next.run === state.run ? state.step : state.step + 1,
         modalOpen: next.modal === "keep" ? state.modalOpen : next.modal === "open",
+        declinedOffer: declining ? offerKey(declining) : state.declinedOffer,
       });
     },
     begin: step => {

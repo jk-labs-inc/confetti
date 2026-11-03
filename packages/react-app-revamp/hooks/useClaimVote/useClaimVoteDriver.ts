@@ -4,10 +4,18 @@ import useContestConfigStore from "@hooks/useContestConfig/store";
 import { xClaimKeys } from "@hooks/useXClaim/queries";
 import { useWalletProof } from "@hooks/useXClaim/useWalletProof";
 import { useQueryClient } from "@tanstack/react-query";
-import { readUserVotes, waitForReceiptStatus } from "lib/claimVote/chain";
+import { hasReceipt, readOwnFundsCover, readUserVotes, waitForReceiptStatus } from "lib/claimVote/chain";
 import { PAYOUT_WINDOW_MS, RECEIPT_CONFIRMATIONS, VOTING_WATCHDOG_MS } from "lib/claimVote/constants";
-import { intentFor, intentPath, isClaimForIntent, matchIntent } from "lib/claimVote/intent";
+import {
+  intentFor,
+  intentPath,
+  isClaimForIntent,
+  matchIntent,
+  normalizedAmount,
+  sameEntrySentHash,
+} from "lib/claimVote/intent";
 import { takeLanding } from "lib/claimVote/landing";
+import { voteIntentStore } from "lib/claimVote/storage";
 import { isRetryableEnding, planStart } from "lib/claimVote/transition";
 import type {
   ClaimVoteCasterMount,
@@ -28,6 +36,8 @@ import { parseEther } from "viem";
 import { useShallow } from "zustand/shallow";
 import { useClaimVoteStore } from "./store";
 import { useClaimVoteFacts } from "./useClaimVoteFacts";
+
+const VOTE_NOT_STARTED = "we couldn't start your vote. try again.";
 
 const WALLET_BOUND_PHASES: readonly ClaimVoteRun["phase"][] = ["verify_x", "claiming", "funding"];
 
@@ -54,14 +64,39 @@ const planWithIntent = async ({
       intent: null,
     };
   }
-  const intentWith = (votesBefore: bigint | null): VoteIntent =>
-    intentFor({ choice, wallet: wallet.address, contest: facts.contest, votesBefore, now: Date.now() });
-  if (decision.kind === "refuse")
-    return { ...decision, intent: isRetryableEnding(decision.ending) ? intentWith(null) : null };
-  const votesBefore = await readUserVotes({ contest, proposalId: choice.proposalId, wallet: wallet.address }).catch(
-    () => null,
-  );
-  return { kind: decision.kind, intent: intentWith(votesBefore) };
+  const earlierHash = sameEntrySentHash(facts.intent, {
+    wallet,
+    contest: facts.contest,
+    proposalId: choice.proposalId,
+    now: Date.now(),
+  });
+  const hasEarlierLanded = earlierHash
+    ? await hasReceipt({ hash: earlierHash, chainId: contest.chainId }).catch(() => false)
+    : false;
+  const sentTxHash = hasEarlierLanded ? null : earlierHash;
+  const intentWith = (votesBefore: bigint | null, ownFundsCover: boolean): VoteIntent =>
+    intentFor({
+      choice,
+      wallet: wallet.address,
+      contest: facts.contest,
+      votesBefore,
+      ownFundsCover,
+      sentTxHash,
+      now: Date.now(),
+    });
+  if (decision.kind === "refuse" && !isRetryableEnding(decision.ending)) return { ...decision, intent: null };
+  const [votesBefore, ownFundsCover] = await Promise.all([
+    decision.kind === "refuse"
+      ? null
+      : readUserVotes({ contest, proposalId: choice.proposalId, wallet: wallet.address }).catch(() => null),
+    readOwnFundsCover({
+      contest,
+      wallet: wallet.address,
+      amountNative: normalizedAmount(choice.amountNative),
+    }).catch(() => false),
+  ]);
+  const intent = intentWith(votesBefore, ownFundsCover);
+  return decision.kind === "refuse" ? { ...decision, intent } : { kind: decision.kind, intent };
 };
 
 export const useClaimVoteDriver = () => {
@@ -240,10 +275,13 @@ export const useClaimVoteDriver = () => {
 
   useEffect(() => {
     if (run.phase !== "voting") return;
-    const timer = setTimeout(
-      () => dispatch({ type: "vote_done", outcome: { kind: "failed", failure: { kind: "taking_long" } } }),
-      VOTING_WATCHDOG_MS,
-    );
+    const timer = setTimeout(() => {
+      if (voteIntentStore.read()?.castingAt) return;
+      dispatch({
+        type: "vote_done",
+        outcome: { kind: "failed", failure: { kind: "error", message: VOTE_NOT_STARTED } },
+      });
+    }, VOTING_WATCHDOG_MS);
     return () => clearTimeout(timer);
   }, [run, dispatch]);
 

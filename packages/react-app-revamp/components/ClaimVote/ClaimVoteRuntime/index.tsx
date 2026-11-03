@@ -2,12 +2,13 @@
 
 import ClaimVoteCaster from "@components/ClaimVote/ClaimVoteCaster";
 import { useClaimVoteDriver } from "@hooks/useClaimVote/useClaimVoteDriver";
+import { useJustVoteOffer } from "@hooks/useClaimVote/useJustVoteOffer";
 import { CastVotesWrapper } from "@hooks/useCastVotes/store";
 import { useEmbeddedOnlySignIn } from "@hooks/useParaSignIn";
 import { xClaimKeys } from "@hooks/useXClaim/queries";
 import { useQueryClient } from "@tanstack/react-query";
 import type { VoteOutcome } from "lib/claimVote/types";
-import { claimVoteModalView, finishablePayout } from "lib/claimVote/view";
+import { claimVoteModalView, finishablePayout, ownVoteIntent } from "lib/claimVote/view";
 import type { XClaimActions } from "lib/xClaim/types";
 import { walletAddressOf } from "lib/xClaim/wallet";
 import dynamic from "next/dynamic";
@@ -20,13 +21,14 @@ const ClaimVoteRuntime: FC = () => {
   const signIn = useEmbeddedOnlySignIn();
   const queryClient = useQueryClient();
   const view = useMemo(() => claimVoteModalView({ run, facts }), [run, facts]);
-  const finishPayout = run.phase === "vote_failed" ? finishablePayout(facts, Date.now()) : null;
+  const ownVote = ownVoteIntent({ run, facts, now: Date.now() });
+  const finishPayout = run.phase === "vote_failed" && !run.isOwnVote ? finishablePayout(facts, Date.now()) : null;
   const address = walletAddressOf(facts.wallet);
 
   const actions = useMemo(
     (): XClaimActions => ({
       open: () => dispatch({ type: "reopen" }),
-      close: () => dispatch({ type: "close" }),
+      close: () => dispatch({ type: "close", canJustVote: ownVoteIntent({ run, facts, now: Date.now() }) !== null }),
       signIn,
       startXClaim: async () =>
         dispatch(run.phase === "verify_x" ? { type: "verify" } : { type: "retry", via: "x_redirect" }),
@@ -35,11 +37,19 @@ const ClaimVoteRuntime: FC = () => {
         if (address) await queryClient.refetchQueries({ queryKey: xClaimKeys.me(address) });
       },
     }),
-    [run.phase, address, signIn, queryClient, dispatch],
+    [run, facts, address, signIn, queryClient, dispatch],
   );
 
   const onDone = useCallback((outcome: VoteOutcome) => dispatch({ type: "vote_done", outcome }), [dispatch]);
-  const onFinish = finishPayout ? () => dispatch({ type: "finish", payout: finishPayout }) : null;
+  const voteOwnFunds = () =>
+    dispatch(ownVoteIntent({ run, facts, now: Date.now() }) ? { type: "just_vote" } : { type: "close" });
+  const finishVote = finishPayout ? () => dispatch({ type: "finish", payout: finishPayout }) : null;
+  const onFinish = ownVote && run.phase === "vote_failed" ? voteOwnFunds : finishVote;
+  const justVote = useJustVoteOffer({
+    intent: ownVote,
+    creditUsd: facts.spots?.usdAmount ?? null,
+    onPress: voteOwnFunds,
+  });
   const onRetryCheck = useCallback(() => dispatch({ type: "retry", via: null }), [dispatch]);
 
   return (
@@ -49,6 +59,7 @@ const ClaimVoteRuntime: FC = () => {
         view={view}
         actions={actions}
         onFinish={onFinish}
+        justVote={justVote}
         onRetryCheck={onRetryCheck}
       />
       {caster && (

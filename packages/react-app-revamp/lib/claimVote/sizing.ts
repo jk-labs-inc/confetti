@@ -2,8 +2,6 @@ import { parseEther } from "viem";
 import { PRICE_SETTLE_PAD_S, PRICE_WINDOW_GUARD_S } from "./constants";
 import type { CreditGate, VoteSize } from "./types";
 
-const maxOf = (left: bigint, right: bigint) => (left > right ? left : right);
-
 const minOf = (left: bigint, right: bigint) => (left < right ? left : right);
 
 export const chosenWei = (amountNative: string): bigint => {
@@ -27,14 +25,45 @@ export const sizeClaimVote = ({
   priceWei: bigint;
 }): VoteSize => {
   if (priceWei <= 0n) return { votes: 0, reason: "no_price" };
-  const spend = minOf(maxOf(chosenWei, creditWei), spendableWei);
+  const spend = minOf(chosenWei + creditWei, spendableWei);
   const votes = spend / priceWei;
   if (votes <= 0n) return { votes: 0, reason: "cannot_afford" };
-  return { votes: Number(votes), valueWei: votes * priceWei };
+  return {
+    votes: Number(votes),
+    valueWei: votes * priceWei,
+    wantedMore: chosenWei > creditWei && votes < chosenWei / priceWei,
+  };
 };
+
+export const coversOwnVote = ({
+  balanceWei,
+  spendableWei,
+  chosenWei,
+  priceWei,
+}: {
+  balanceWei: bigint;
+  spendableWei: bigint;
+  chosenWei: bigint;
+  priceWei: bigint;
+}): boolean => priceWei > 0n && chosenWei >= priceWei && spendableWei >= priceWei && balanceWei >= chosenWei;
 
 const positive = (value: number | undefined): value is number =>
   value !== undefined && Number.isFinite(value) && value > 0;
+
+export const totalWithCredit = ({
+  amountNative,
+  creditUsd,
+  nativeUsdRate,
+}: {
+  amountNative: string;
+  creditUsd: string | null;
+  nativeUsdRate: number | undefined;
+}): string | null => {
+  const amount = Number(amountNative);
+  const credit = creditUsd === null ? undefined : Number(creditUsd);
+  if (!positive(amount) || !positive(credit) || !positive(nativeUsdRate)) return null;
+  return String(amount + credit / nativeUsdRate);
+};
 
 export const creditGate = ({
   creditUsd,

@@ -29,10 +29,18 @@ export type XClaimButtonSpec = { id: string; label: string } & (
   { kind: "run"; onPress: () => void; withXLogo?: boolean } | { kind: "link"; href: string } | { kind: "close" }
 );
 
+export interface XClaimJustVote {
+  onPress: () => void;
+  note: string;
+  ownAmount: string;
+  totalAmount: string | null;
+}
+
 export type XClaimDismissLabel = "maybe later" | "close" | "done";
 
 export type XClaimSecondarySpec =
-  { role: "dismiss"; label: XClaimDismissLabel } | ({ role: "alternative"; modalLabel?: string } & XClaimButtonSpec);
+  | { role: "dismiss"; label: XClaimDismissLabel }
+  | ({ role: "alternative"; modalLabel?: string; isStrong?: boolean } & XClaimButtonSpec);
 
 export type CheckStickerState = XClaimCheckStatus | "todo" | "running" | "queued";
 

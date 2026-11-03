@@ -16,6 +16,8 @@ export const RECEIPT_CONFIRMATIONS = 1;
 
 export const SENT_VOTE_RECEIPT_TIMEOUT_MS = 60_000;
 
+export const SENT_VOTE_RECHECK_MS = 5_000;
+
 export const BLOCK_CATCH_UP_TIMEOUT_MS = 15_000;
 
 export const BLOCK_CATCH_UP_POLL_MS = 1_000;

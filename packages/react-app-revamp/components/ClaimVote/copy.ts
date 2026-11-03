@@ -28,6 +28,8 @@ export const EXTERNAL_WALLET_LINE = `${CLAIM_AMOUNT_LABEL} on us is for accounts
 
 export const GETTING_CREDIT_LABEL = `getting your ${CLAIM_AMOUNT_LABEL}…`;
 
+export const CASTING_VOTE_LABEL = "casting your vote…";
+
 export const KEEP_PAGE_OPEN_NOTE = "keep this page open, or your claim will fail.";
 
 export const finishLineLabel = (entryTitle: string) => `finish your vote: ${entryName(entryTitle)}`;
@@ -35,6 +37,20 @@ export const finishLineLabel = (entryTitle: string) => `finish your vote: ${entr
 export const VOTED_TITLE = `you claimed ${CLAIM_AMOUNT_LABEL}`;
 
 export const votedBody = (entryTitle: string) => `and voted for ${entryName(entryTitle)}.`;
+
+export const VOTED_ADD_FUNDS_NOTE = `the ${CLAIM_AMOUNT_LABEL} was on us. to vote more, add funds.`;
+
+export const OWN_VOTE_TITLE = "you voted";
+
+export const ownVoteBody = (entryTitle: string) => `for ${entryName(entryTitle)}.`;
+
+export const OWN_VOTE_FAILED_TITLE = "your vote didn't go through";
+
+export const OWN_VOTE_RETRY_LABEL = "try again";
+
+export const OWN_VOTE_SHORT_NOTE = "that's what your balance covered. to vote more, add funds.";
+
+export const ownVoteNote = (entryTitle: string) => `on ${entryName(entryTitle)}`;
 
 export const votesCastText = (votes: number) => pluralize(votes, "vote cast", "votes cast");
 
@@ -58,7 +74,6 @@ export const VOTE_FAILURE_LINE: Readonly<Record<Exclude<VoteFailure["kind"], "er
   rejected: "you cancelled the vote.",
   credit_unknown: "we couldn't read your $5 amount. type an amount and finish your vote.",
   in_flight: "your last vote is still going through. give it a moment.",
-  taking_long: "your vote is taking longer than usual. if it went through, it will show up on the entry.",
 };
 
 export const voteFailureLine = (failure: VoteFailure) =>

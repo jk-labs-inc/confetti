@@ -14,6 +14,8 @@ import type {
   StartOrigin,
   StartPlan,
   Transition,
+  VoteFailure,
+  VoteIntent,
 } from "./types";
 
 export const IDLE_RUN: ClaimVoteRun = { phase: "idle" };
@@ -36,9 +38,31 @@ const TERMINAL_PHASES: readonly ClaimVotePhase[] = ["voted", "vote_failed", "pay
 
 const RUNS_ON_AFTER_CLOSE: readonly ClaimVotePhase[] = ["claiming", "confirming", "funding", "voting"];
 
+const KEEPS_OFFER_ON_CLOSE: readonly ClaimVotePhase[] = [...RUNS_ON_AFTER_CLOSE, "verify_x"];
+
 const ABORTABLE_PHASES: readonly ClaimVotePhase[] = ["starting", "verify_x", "claiming", "funding"];
 
 const RETRYABLE_RESULTS: readonly XClaimResult["kind"][] = ["no_spots", "paused", "payout_failed"];
+
+const FINAL_OWN_VOTE_FAILURES: readonly VoteFailure["kind"][] = ["voting_closed", "cannot_afford"];
+
+export const canStartOwnVote = (run: ClaimVoteRun) => {
+  switch (run.phase) {
+    case "verify_x":
+      return true;
+    case "claim_failed":
+      return run.retry.via !== "landing";
+    case "vote_failed":
+      return run.isOwnVote && !FINAL_OWN_VOTE_FAILURES.includes(run.failure.kind);
+    case "ended":
+      return (
+        (run.ending.kind === "claim_outcome" || run.ending.kind === "landing_only") &&
+        !isSettledResult(run.ending.result)
+      );
+    default:
+      return false;
+  }
+};
 
 export const isRunBusy = (run: ClaimVoteRun) => BUSY_PHASES.includes(run.phase);
 
@@ -68,17 +92,20 @@ const closeTransition = (run: ClaimVoteRun): Transition | null => {
 };
 
 const plannedTransition = (run: Extract<ClaimVoteRun, { phase: "starting" }>, plan: StartPlan): Transition => {
+  const prompt = (intent: VoteIntent) => to({ phase: "verify_x" }, "open", { kind: "save", intent });
   switch (plan.kind) {
     case "sign_in":
       return to({ phase: "pitch", choice: run.choice }, "open");
     case "verify_x":
-      return to({ phase: "verify_x" }, "open", { kind: "save", intent: plan.intent });
+      return prompt(plan.intent);
     case "go_x":
-      return claimingVia("x_redirect", { kind: "save", intent: plan.intent });
+      return plan.intent.ownFundsCover
+        ? prompt(plan.intent)
+        : claimingVia("x_redirect", { kind: "save", intent: plan.intent });
     case "claim":
       return claimingVia("worker", { kind: "save", intent: plan.intent });
     case "refuse":
-      return ended(plan.ending, plan.intent ? { kind: "save", intent: plan.intent } : KEEP);
+      return ended(plan.ending, plan.intent ? { kind: "save", intent: plan.intent } : CLEAR);
     default: {
       const exhaustive: never = plan;
       return exhaustive;
@@ -107,8 +134,16 @@ export const isRetryableEnding = (ending: RunEnding) =>
 
 export const transition = (run: ClaimVoteRun, event: ClaimVoteEvent, now: number): Transition | null => {
   switch (event.type) {
-    case "close":
-      return closeTransition(run);
+    case "close": {
+      const closed = closeTransition(run);
+      return closed && event.canJustVote && !KEEPS_OFFER_ON_CLOSE.includes(run.phase)
+        ? { ...closed, declinesOffer: true }
+        : closed;
+    }
+    case "just_vote":
+      return canStartOwnVote(run)
+        ? { ...to({ phase: "voting", payout: null }, "open", TOUCH), declinesOffer: true }
+        : null;
     case "reopen":
       return isRunBusy(run) ? to(run, "open") : null;
     case "abort":
@@ -157,13 +192,28 @@ export const transition = (run: ClaimVoteRun, event: ClaimVoteEvent, now: number
     case "vote_done": {
       if (run.phase !== "voting") return null;
       const { outcome } = event;
+      const isOwnVote = run.payout === null;
       if (outcome.kind === "voted") {
-        return to({ phase: "voted", result: outcome.result, entryTitle: outcome.entryTitle }, "open", CLEAR);
+        return to(
+          {
+            phase: "voted",
+            result: outcome.result,
+            entryTitle: outcome.entryTitle,
+            wantedMore: outcome.wantedMore,
+            isOwnVote,
+          },
+          "open",
+          CLEAR,
+        );
       }
       if (outcome.kind === "already_voted") {
-        return to({ phase: "voted", result: null, entryTitle: outcome.entryTitle }, "open", CLEAR);
+        return to(
+          { phase: "voted", result: null, entryTitle: outcome.entryTitle, wantedMore: false, isOwnVote },
+          "open",
+          CLEAR,
+        );
       }
-      return to({ phase: "vote_failed", failure: outcome.failure }, "open");
+      return to({ phase: "vote_failed", failure: outcome.failure, isOwnVote }, "open");
     }
     case "retry":
       return retryTransition(run, event.via, now);

@@ -5,13 +5,13 @@ import PayoutSlowBoard from "@components/ClaimVote/boards/PayoutSlowBoard";
 import RunningBoard from "@components/ClaimVote/boards/RunningBoard";
 import VotedBoard from "@components/ClaimVote/boards/VotedBoard";
 import { CLAIM_VOTE_BOARD_IDS } from "@components/ClaimVote/constants";
-import { XClaimBoardContext, type XClaimLayout } from "@components/XClaim/board";
+import { XClaimBoardContext, type XClaimJustVote, type XClaimLayout } from "@components/XClaim/board";
 import XClaimAddFunds from "@components/XClaim/XClaimAddFunds";
 import XClaimSheetContent from "@components/XClaim/XClaimSheetContent";
 import XClaimSheetFrame from "@components/XClaim/XClaimSheetFrame";
 import type { ClaimVoteBoard, ClaimVoteModalView } from "lib/claimVote/types";
 import type { XClaimActions } from "lib/xClaim/types";
-import { FC, ReactElement, useState } from "react";
+import { FC, ReactElement, useRef, useState } from "react";
 
 type RunView = Exclude<ClaimVoteModalView, { kind: "claim_board" }>;
 
@@ -20,6 +20,7 @@ interface ClaimVoteModalProps {
   view: ClaimVoteModalView | null;
   actions: XClaimActions;
   onFinish: (() => void) | null;
+  justVote: XClaimJustVote | null;
   onRetryCheck: () => void;
 }
 
@@ -34,14 +35,34 @@ const BOARD_FOR: Readonly<Record<RunView["kind"], ClaimVoteBoard>> = {
 
 const IDLE_ACTION = { stage: "idle", error: null } as const;
 
-const runBoard = (view: RunView, onFinish: (() => void) | null, onRetryCheck: () => void): ReactElement => {
+const runBoard = (
+  view: RunView,
+  onFinish: (() => void) | null,
+  onRetryCheck: () => void,
+  onAddFunds: () => void,
+): ReactElement => {
   switch (view.kind) {
     case "running":
-      return <RunningBoard />;
+      return <RunningBoard isOwnVote={view.isOwnVote} />;
     case "voted":
-      return <VotedBoard entryTitle={view.entryTitle} result={view.result} />;
+      return (
+        <VotedBoard
+          entryTitle={view.entryTitle}
+          result={view.result}
+          wantedMore={view.wantedMore}
+          isOwnVote={view.isOwnVote}
+          onAddFunds={onAddFunds}
+        />
+      );
     case "finish":
-      return <FinishVoteBoard entryTitle={view.entryTitle} failure={view.failure} onFinish={onFinish} />;
+      return (
+        <FinishVoteBoard
+          entryTitle={view.entryTitle}
+          failure={view.failure}
+          isOwnVote={view.isOwnVote}
+          onFinish={onFinish}
+        />
+      );
     case "payout_slow":
       return <PayoutSlowBoard entryTitle={view.entryTitle} />;
     case "check_failed":
@@ -51,8 +72,10 @@ const runBoard = (view: RunView, onFinish: (() => void) | null, onRetryCheck: ()
   }
 };
 
-const ClaimVoteModal: FC<ClaimVoteModalProps> = ({ isOpen, view, actions, onFinish, onRetryCheck }) => {
+const ClaimVoteModal: FC<ClaimVoteModalProps> = ({ isOpen, view, actions, onFinish, justVote, onRetryCheck }) => {
   const [addFundsRequest, setAddFundsRequest] = useState(0);
+  const shownJustVote = useRef(justVote);
+  if (isOpen) shownJustVote.current = justVote;
 
   const addFunds = () => {
     actions.close();
@@ -62,14 +85,22 @@ const ClaimVoteModal: FC<ClaimVoteModalProps> = ({ isOpen, view, actions, onFini
   const content = (current: ClaimVoteModalView | null, layout: XClaimLayout) => {
     if (!current) return null;
     if (current.kind === "claim_board") {
-      return <XClaimSheetContent view={current.view} actions={actions} layout={layout} onAddFunds={addFunds} />;
+      return (
+        <XClaimSheetContent
+          view={current.view}
+          actions={actions}
+          layout={layout}
+          onAddFunds={addFunds}
+          justVote={shownJustVote.current}
+        />
+      );
     }
     const board = BOARD_FOR[current.kind];
     return (
       <XClaimBoardContext.Provider
         value={{ board, layout, action: IDLE_ACTION, settling: false, close: actions.close }}
       >
-        <div id={CLAIM_VOTE_BOARD_IDS[board]}>{runBoard(current, onFinish, onRetryCheck)}</div>
+        <div id={CLAIM_VOTE_BOARD_IDS[board]}>{runBoard(current, onFinish, onRetryCheck, addFunds)}</div>
       </XClaimBoardContext.Provider>
     );
   };

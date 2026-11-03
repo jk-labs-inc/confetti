@@ -17,6 +17,12 @@ export const CLAIM_BUTTON_LABEL = `claim ${CLAIM_AMOUNT_LABEL}`;
 
 export const VERIFY_TWITTER_LABEL = "verify twitter";
 
+export const voteAmountLabel = (amount: string) => `vote ${amount}`;
+
+export const skipTwitterLabel = (amount: string) => `skip twitter, vote ${amount}`;
+
+export const withVoteTotal = (label: string, total: string) => `${label}, vote ${total}`;
+
 export const CLAIM_PITCH = `create an account with email or social sign-in, verify your twitter, and we'll put ${CLAIM_AMOUNT_LABEL} into your vote.`;
 
 export const CLAIM_FINE_PRINT = "one claim per twitter account and wallet. we only read your public profile.";

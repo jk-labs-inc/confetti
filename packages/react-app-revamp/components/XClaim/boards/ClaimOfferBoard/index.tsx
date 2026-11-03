@@ -12,6 +12,7 @@ interface ClaimOfferBoardProps {
   body: string;
   primary: XClaimButtonSpec;
   secondary?: XClaimSecondarySpec;
+  note?: string;
   checks: CheckStickerStates;
   spots: XClaimSpots | null;
 }
@@ -23,6 +24,7 @@ const ClaimOfferBoard: FC<ClaimOfferBoardProps> = ({
   body,
   primary,
   secondary = MAYBE_LATER,
+  note,
   checks,
   spots,
 }) => (
@@ -34,6 +36,7 @@ const ClaimOfferBoard: FC<ClaimOfferBoardProps> = ({
     body={body}
     primary={primary}
     secondary={secondary}
+    note={note}
     finePrint={CLAIM_FINE_PRINT}
   >
     <CheckStickers states={checks} />

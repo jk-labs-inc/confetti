@@ -15,6 +15,7 @@ export const X_CLAIM_IDS = {
   alreadyClaimedBackToContest: "x_claim_already_claimed_back_to_contest",
   checkAgain: "x_claim_check_again",
   addFunds: "x_claim_add_funds",
+  justVote: "x_claim_just_vote",
   alreadyLinkedGotIt: "x_claim_already_linked_got_it",
   noSpotsGotIt: "x_claim_no_spots_got_it",
   connectOtherX: "x_claim_connect_other_x",

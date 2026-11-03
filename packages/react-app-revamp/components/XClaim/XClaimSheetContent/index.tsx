@@ -1,4 +1,10 @@
-import { TODO_CHECKS, XClaimBoardContext, type CheckStickerStates, type XClaimLayout } from "@components/XClaim/board";
+import {
+  TODO_CHECKS,
+  XClaimBoardContext,
+  type CheckStickerStates,
+  type XClaimJustVote,
+  type XClaimLayout,
+} from "@components/XClaim/board";
 import AlreadyClaimedBoard from "@components/XClaim/boards/AlreadyClaimedBoard";
 import AlreadyLinkedBoard from "@components/XClaim/boards/AlreadyLinkedBoard";
 import CheckingBoard from "@components/XClaim/boards/CheckingBoard";
@@ -9,6 +15,7 @@ import PayoutFailedBoard from "@components/XClaim/boards/PayoutFailedBoard";
 import SuccessBoard from "@components/XClaim/boards/SuccessBoard";
 import XCancelledBoard from "@components/XClaim/boards/XCancelledBoard";
 import { X_CLAIM_IDS } from "@components/XClaim/constants";
+import { justVoteSecondary, labelWithTotal } from "@components/XClaim/justVote";
 import { CLAIM_BUTTON_LABEL, CLAIM_PITCH, handleText, VERIFY_TWITTER_LABEL } from "@components/XClaim/copy";
 import { CLAIM_AMOUNT_LABEL } from "lib/xClaim/constants";
 import type { XClaimActions, XClaimSheetView } from "lib/xClaim/types";
@@ -19,11 +26,20 @@ interface XClaimSheetContentProps {
   actions: XClaimActions;
   layout: XClaimLayout;
   onAddFunds: () => void;
+  justVote: XClaimJustVote | null;
 }
 
 const PASSED_CHECKS: CheckStickerStates = { verified: "passed", verifiedFollowers: "passed", ratio: "passed" };
 
-const boardFor = (view: XClaimSheetView, actions: XClaimActions, onAddFunds: () => void): ReactElement => {
+const justVoteOfferProps = (justVote: XClaimJustVote | null) =>
+  justVote ? { secondary: justVoteSecondary(justVote), note: justVote.note } : {};
+
+const boardFor = (
+  view: XClaimSheetView,
+  actions: XClaimActions,
+  onAddFunds: () => void,
+  justVote: XClaimJustVote | null,
+): ReactElement => {
   switch (view.board) {
     case "ClaimSignedOut":
       return (
@@ -51,10 +67,11 @@ const boardFor = (view: XClaimSheetView, actions: XClaimActions, onAddFunds: () 
           primary={{
             kind: "run",
             id: X_CLAIM_IDS.connectX,
-            label: VERIFY_TWITTER_LABEL,
+            label: labelWithTotal(VERIFY_TWITTER_LABEL, justVote),
             onPress: () => actions.startXClaim(),
             withXLogo: true,
           }}
+          {...justVoteOfferProps(justVote)}
           checks={TODO_CHECKS}
           spots={view.spots}
         />
@@ -67,10 +84,11 @@ const boardFor = (view: XClaimSheetView, actions: XClaimActions, onAddFunds: () 
           primary={{
             kind: "run",
             id: X_CLAIM_IDS.confirmX,
-            label: "confirm twitter",
+            label: labelWithTotal("confirm twitter", justVote),
             onPress: () => actions.startXClaim(),
             withXLogo: true,
           }}
+          {...justVoteOfferProps(justVote)}
           checks={TODO_CHECKS}
           spots={view.spots}
         />
@@ -83,9 +101,10 @@ const boardFor = (view: XClaimSheetView, actions: XClaimActions, onAddFunds: () 
           primary={{
             kind: "run",
             id: X_CLAIM_IDS.linkedClaim,
-            label: CLAIM_BUTTON_LABEL,
+            label: labelWithTotal(CLAIM_BUTTON_LABEL, justVote),
             onPress: () => actions.retryClaim(),
           }}
+          {...justVoteOfferProps(justVote)}
           checks={PASSED_CHECKS}
           spots={view.spots}
         />
@@ -101,9 +120,17 @@ const boardFor = (view: XClaimSheetView, actions: XClaimActions, onAddFunds: () 
         />
       );
     case "NotEligible":
-      return <NotEligibleBoard handle={view.handle} checks={view.checks} stats={view.stats} onAddFunds={onAddFunds} />;
+      return (
+        <NotEligibleBoard
+          handle={view.handle}
+          checks={view.checks}
+          stats={view.stats}
+          onAddFunds={onAddFunds}
+          justVote={justVote}
+        />
+      );
     case "AlreadyLinked":
-      return <AlreadyLinkedBoard onConnectOther={() => actions.startXClaim()} />;
+      return <AlreadyLinkedBoard onConnectOther={() => actions.startXClaim()} justVote={justVote} />;
     case "AlreadyClaimed":
       return <AlreadyClaimedBoard handle={view.handle} claimedAt={view.claimedAt} onContest={view.onContest} />;
     case "NoSpots":
@@ -118,15 +145,22 @@ const boardFor = (view: XClaimSheetView, actions: XClaimActions, onAddFunds: () 
     case "PayoutFailed":
       return <PayoutFailedBoard handle={view.handle} onRetry={() => actions.retryClaim()} />;
     case "XCancelled":
-      return <XCancelledBoard reason={view.reason} spots={view.spots} onRetry={() => actions.startXClaim()} />;
+      return (
+        <XCancelledBoard
+          reason={view.reason}
+          spots={view.spots}
+          onRetry={() => actions.startXClaim()}
+          justVote={justVote}
+        />
+      );
   }
 };
 
-const XClaimSheetContent: FC<XClaimSheetContentProps> = ({ view, actions, layout, onAddFunds }) => (
+const XClaimSheetContent: FC<XClaimSheetContentProps> = ({ view, actions, layout, onAddFunds, justVote }) => (
   <XClaimBoardContext.Provider
     value={{ board: view.board, layout, action: view.action, settling: view.settling, close: actions.close }}
   >
-    {boardFor(view, actions, onAddFunds)}
+    {boardFor(view, actions, onAddFunds, justVote)}
   </XClaimBoardContext.Provider>
 );
 

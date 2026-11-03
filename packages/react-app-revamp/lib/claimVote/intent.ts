@@ -14,6 +14,7 @@ const intentSchema = z.object({
   proposalId: z.string().regex(/^\d+$/),
   entryTitle: z.string(),
   amountNative: z.string().refine(value => value === "" || isDecimalAmount(value)),
+  ownFundsCover: z.boolean().default(false),
   wallet: lowerAddress,
   contest: z.object({
     chain: z
@@ -25,6 +26,7 @@ const intentSchema = z.object({
   votesBefore: z.string().regex(/^\d+$/).nullable(),
   sentTxHash: z.custom<Hash>(value => typeof value === "string" && isHash(value)).nullable(),
   sendingAt: z.number().nullable().default(null),
+  castingAt: z.number().nullable().default(null),
   createdAt: z.number(),
   savedAt: z.number(),
 });
@@ -53,27 +55,36 @@ export const intentFor = ({
   wallet,
   contest,
   votesBefore,
+  ownFundsCover,
+  sentTxHash = null,
   now,
 }: {
   choice: VoteChoice;
   wallet: Address;
   contest: ContestKey;
   votesBefore: bigint | null;
+  ownFundsCover: boolean;
+  sentTxHash?: Hash | null;
   now: number;
 }): VoteIntent => ({
   ...choice,
   amountNative: normalizedAmount(choice.amountNative),
+  ownFundsCover,
   wallet: wallet.toLowerCase() as Address,
   contest: contestKeyOf(contest),
   votesBefore: votesBefore === null ? null : votesBefore.toString(),
-  sentTxHash: null,
+  sentTxHash,
   sendingAt: null,
+  castingAt: null,
   createdAt: now,
   savedAt: now,
 });
 
 const isSameContest = (left: ContestKey, right: ContestKey) =>
   left.chain === right.chain.toLowerCase() && left.address === right.address.toLowerCase();
+
+export const offerKey = ({ wallet, contest }: { wallet: string; contest: ContestKey }) =>
+  `${wallet.toLowerCase()}:${contest.chain.toLowerCase()}:${contest.address.toLowerCase()}`;
 
 export const isIntentForWallet = (intent: VoteIntent, wallet: XClaimWallet) =>
   wallet.kind === "embedded" && wallet.address.toLowerCase() === intent.wallet;
@@ -84,6 +95,14 @@ export const matchIntent = (
 ): VoteIntent | null => {
   if (!intent || !isIntentForWallet(intent, at.wallet) || !isSameContest(intent.contest, at.contest)) return null;
   return at.now - intent.savedAt <= INTENT_TTL_MS ? intent : null;
+};
+
+export const sameEntrySentHash = (
+  stored: VoteIntent | null,
+  at: { wallet: XClaimWallet; contest: ContestKey; proposalId: string; now: number },
+): Hash | null => {
+  const earlier = matchIntent(stored, at);
+  return earlier?.proposalId === at.proposalId ? earlier.sentTxHash : null;
 };
 
 export const isClaimForIntent = (claim: Pick<XClaimRecord, "createdAt">, intent: VoteIntent) =>

@@ -1,8 +1,8 @@
 import { boardForResult } from "lib/xClaim/view";
 import type { XClaimBoardView, XClaimFailure, XClaimInput, XClaimPayout, XClaimSheetView } from "lib/xClaim/types";
 import { isClaimForIntent, matchIntent } from "./intent";
-import { isRunBusy } from "./transition";
-import type { ClaimVoteFacts, ClaimVoteLine, ClaimVoteModalView, ClaimVoteRun, CreditGate } from "./types";
+import { canStartOwnVote, isRunBusy } from "./transition";
+import type { ClaimVoteFacts, ClaimVoteLine, ClaimVoteModalView, ClaimVoteRun, CreditGate, VoteIntent } from "./types";
 
 export const claimInputOf = (facts: ClaimVoteFacts): XClaimInput => ({
   configured: true,
@@ -24,6 +24,20 @@ export const finishablePayout = (facts: ClaimVoteFacts, now: number): XClaimPayo
   if (!intent || !claim || (claim.status !== "paid" && claim.status !== "pending")) return null;
   if (!isClaimForIntent(claim, intent)) return null;
   return claim.payout.txHash ? claim.payout : null;
+};
+
+export const ownVoteIntent = ({
+  run,
+  facts,
+  now,
+}: {
+  run: ClaimVoteRun;
+  facts: ClaimVoteFacts;
+  now: number;
+}): VoteIntent | null => {
+  if (!canStartOwnVote(run)) return null;
+  const intent = matchIntent(facts.intent, { wallet: facts.wallet, contest: facts.contest, now });
+  return intent?.ownFundsCover ? intent : null;
 };
 
 export const claimVoteLine = ({
@@ -75,16 +89,23 @@ export const claimVoteModalView = ({
     case "claiming":
     case "confirming":
     case "funding":
+      return { kind: "running", isOwnVote: false };
     case "voting":
-      return { kind: "running" };
+      return { kind: "running", isOwnVote: run.payout === null };
     case "pitch":
       return claimBoard(facts, { board: "ClaimSignedOut" });
     case "verify_x":
       return claimBoard(facts, verifyBoard(facts));
     case "voted":
-      return { kind: "voted", entryTitle: run.entryTitle, result: run.result };
+      return {
+        kind: "voted",
+        entryTitle: run.entryTitle,
+        result: run.result,
+        wantedMore: run.wantedMore,
+        isOwnVote: run.isOwnVote,
+      };
     case "vote_failed":
-      return { kind: "finish", entryTitle, failure: run.failure };
+      return { kind: "finish", entryTitle, failure: run.failure, isOwnVote: run.isOwnVote };
     case "payout_slow":
       return { kind: "payout_slow", entryTitle };
     case "claim_failed":

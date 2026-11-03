@@ -17,7 +17,9 @@ const XClaimSheet: FC<XClaimSheetProps> = ({ sheet, actions }) => {
   return (
     <>
       <XClaimSheetFrame isOpen={sheet.isOpen} value={sheet.view} onClose={actions.close}>
-        {(view, layout) => <XClaimSheetContent view={view} actions={actions} layout={layout} onAddFunds={addFunds} />}
+        {(view, layout) => (
+          <XClaimSheetContent view={view} actions={actions} layout={layout} onAddFunds={addFunds} justVote={null} />
+        )}
       </XClaimSheetFrame>
       {addFundsRequest > 0 && <XClaimAddFunds request={addFundsRequest} />}
     </>

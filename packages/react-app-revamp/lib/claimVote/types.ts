@@ -33,11 +33,13 @@ export interface VoteChoice {
 }
 
 export interface VoteIntent extends VoteChoice {
+  ownFundsCover: boolean;
   wallet: Address;
   contest: ContestKey;
   votesBefore: string | null;
   sentTxHash: Hash | null;
   sendingAt: number | null;
+  castingAt: number | null;
   createdAt: number;
   savedAt: number;
 }
@@ -65,13 +67,12 @@ export type VoteFailure =
   | { kind: "voting_closed" }
   | { kind: "cannot_afford" }
   | { kind: "rejected" }
-  | { kind: "taking_long" }
   | { kind: "in_flight" }
   | { kind: "credit_unknown" }
   | { kind: "error"; message: string };
 
 export type VoteOutcome =
-  | { kind: "voted"; result: CastVotesResult; entryTitle: string }
+  | { kind: "voted"; result: CastVotesResult; entryTitle: string; wantedMore: boolean }
   | { kind: "already_voted"; entryTitle: string }
   | { kind: "failed"; failure: VoteFailure };
 
@@ -83,9 +84,9 @@ export type ClaimVoteRun =
   | { phase: "claiming"; via: ClaimPath }
   | { phase: "confirming"; hint: XClaimResult; landedAt: number }
   | { phase: "funding"; payout: XClaimPayout; until: number }
-  | { phase: "voting"; payout: FundedPayout }
-  | { phase: "voted"; result: CastVotesResult | null; entryTitle: string }
-  | { phase: "vote_failed"; failure: VoteFailure }
+  | { phase: "voting"; payout: FundedPayout | null }
+  | { phase: "voted"; result: CastVotesResult | null; entryTitle: string; wantedMore: boolean; isOwnVote: boolean }
+  | { phase: "vote_failed"; failure: VoteFailure; isOwnVote: boolean }
   | { phase: "payout_slow" }
   | { phase: "claim_failed"; failure: XClaimFailure; retry: ClaimRetry }
   | { phase: "ended"; ending: RunEnding };
@@ -105,7 +106,8 @@ export type ClaimVoteEvent =
   | { type: "finish"; payout: XClaimPayout }
   | { type: "verify" }
   | { type: "retry"; via: ClaimPath | null }
-  | { type: "close" }
+  | { type: "close"; canJustVote?: boolean }
+  | { type: "just_vote" }
   | { type: "reopen" }
   | { type: "planned"; plan: StartPlan }
   | { type: "signed_in" }
@@ -129,11 +131,12 @@ export interface Transition {
   run: ClaimVoteRun;
   modal: ModalCommand;
   intent: IntentCommand;
+  declinesOffer?: true;
 }
 
 export interface ClaimVoteCasterMount {
   intent: VoteIntent;
-  payout: FundedPayout;
+  payout: FundedPayout | null;
   step: number;
 }
 
@@ -152,7 +155,8 @@ export interface ClaimVoteFacts {
 
 export type CreditGate = "covers" | "too_expensive" | "unknown";
 
-export type VoteSize = { votes: number; valueWei: bigint } | { votes: 0; reason: "cannot_afford" | "no_price" };
+export type VoteSize =
+  { votes: number; valueWei: bigint; wantedMore: boolean } | { votes: 0; reason: "cannot_afford" | "no_price" };
 
 export type ClaimVoteBoard =
   "VoteRunning" | "VoteDone" | "VoteFinish" | "PayoutSlow" | "CheckFailed" | "ExternalWalletInfo";
@@ -163,9 +167,9 @@ export type ClaimVoteLine = { kind: "hidden" } | { kind: "offer"; offer: XClaimO
 
 export type ClaimVoteModalView =
   | { kind: "claim_board"; view: XClaimSheetView }
-  | { kind: "running" }
-  | { kind: "voted"; entryTitle: string; result: CastVotesResult | null }
-  | { kind: "finish"; entryTitle: string; failure: VoteFailure }
+  | { kind: "running"; isOwnVote: boolean }
+  | { kind: "voted"; entryTitle: string; result: CastVotesResult | null; wantedMore: boolean; isOwnVote: boolean }
+  | { kind: "finish"; entryTitle: string; failure: VoteFailure; isOwnVote: boolean }
   | { kind: "payout_slow"; entryTitle: string }
   | { kind: "check_failed" }
   | { kind: "external_info" };

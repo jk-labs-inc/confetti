@@ -2,8 +2,9 @@ import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import { getBalance, getBlockNumber, getGasPrice, getPublicClient, readContract } from "@wagmi/core";
 import { compareVersions } from "compare-versions";
 import { spendableWei } from "lib/voteBalance/spendable";
-import { type Address, type Hash, TransactionNotFoundError } from "viem";
+import { type Address, type Hash, TransactionNotFoundError, TransactionReceiptNotFoundError } from "viem";
 import { BLOCK_CATCH_UP_POLL_MS, BLOCK_CATCH_UP_TIMEOUT_MS } from "./constants";
+import { chosenWei, coversOwnVote } from "./sizing";
 import type { ContestTarget, ReceiptStatus } from "./types";
 
 const DOWNVOTES_REMOVED_IN = "5.1";
@@ -69,6 +70,31 @@ export const readSpendableAfter = async ({
   }
 };
 
+export const readOwnFundsCover = async ({
+  contest,
+  wallet,
+  amountNative,
+}: {
+  contest: ContestTarget;
+  wallet: Address;
+  amountNative: string;
+}): Promise<boolean> => {
+  const chosen = chosenWei(amountNative);
+  if (chosen === 0n) return false;
+  const config = getWagmiConfig();
+  const [balance, gasPriceWei, priceWei] = await Promise.all([
+    getBalance(config, { address: wallet, chainId: contest.chainId }),
+    getGasPrice(config, { chainId: contest.chainId }),
+    readPricePerVote(contest),
+  ]);
+  return coversOwnVote({
+    balanceWei: balance.value,
+    spendableWei: spendableWei({ balanceWei: balance.value, gasPriceWei }),
+    chosenWei: chosen,
+    priceWei,
+  });
+};
+
 export const waitForReceiptStatus = async ({
   hash,
   chainId,
@@ -86,6 +112,18 @@ export const waitForReceiptStatus = async ({
   return receipt.status === "success"
     ? { status: "success", blockNumber: receipt.blockNumber }
     : { status: "reverted" };
+};
+
+export const hasReceipt = async ({ hash, chainId }: { hash: Hash; chainId: number }): Promise<boolean> => {
+  const client = getPublicClient(getWagmiConfig(), { chainId });
+  if (!client) throw new Error(`no client for chain ${chainId}`);
+  try {
+    await client.getTransactionReceipt({ hash });
+    return true;
+  } catch (error) {
+    if (error instanceof TransactionReceiptNotFoundError) return false;
+    throw error;
+  }
 };
 
 export const isTransactionKnown = async ({ hash, chainId }: { hash: Hash; chainId: number }): Promise<boolean> => {

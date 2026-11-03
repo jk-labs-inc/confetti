@@ -3,8 +3,8 @@ import type { CastVotesOptions, CastVotesResult } from "@hooks/useCastVotes/type
 import { getAccount, switchChain } from "@wagmi/core";
 import type { XClaimWallet } from "lib/xClaim/types";
 import { didUserReject, handleError as describeError } from "utils/error";
-import { WaitForTransactionReceiptTimeoutError } from "viem";
-import { SENDING_GUARD_MS, SENT_VOTE_RECEIPT_TIMEOUT_MS } from "./constants";
+import { type Hash, WaitForTransactionReceiptTimeoutError } from "viem";
+import { SENDING_GUARD_MS, SENT_VOTE_RECEIPT_TIMEOUT_MS, SENT_VOTE_RECHECK_MS } from "./constants";
 import {
   isTransactionKnown,
   readPricePerVote,
@@ -20,7 +20,11 @@ import type { ContestKey, ContestTarget, FundedPayout, VoteFailure, VoteIntent, 
 
 const LEFT_THE_PAGE = "you left the contest page before your vote was sent.";
 
+const SENT_VOTE_DROPPED = "the network didn't take your vote. try again.";
+
 const EARLIER_VOTE_CONFIRMING = "your last vote is still confirming. try again in a minute.";
+
+const OWN_FUNDS: Pick<FundedPayout, "receiptBlock" | "creditWei"> = { receiptBlock: 0n, creditWei: 0n };
 
 const failed = (failure: VoteFailure): VoteOutcome => ({ kind: "failed", failure });
 
@@ -51,6 +55,30 @@ const settleEarlierVote = async (intent: VoteIntent, chainId: number): Promise<"
   return "not_voted";
 };
 
+const settleSentVote = async ({
+  intent,
+  hash,
+  chainId,
+  isMounted,
+}: {
+  intent: VoteIntent;
+  hash: Hash;
+  chainId: number;
+  isMounted: () => boolean;
+}): Promise<VoteOutcome> => {
+  while (isMounted()) {
+    try {
+      const settled = await settleEarlierVote({ ...intent, sentTxHash: hash }, chainId);
+      if (settled === "voted") return { kind: "already_voted", entryTitle: intent.entryTitle };
+      voteIntentStore.update({ sendingAt: null, castingAt: null });
+      return failed({ kind: "error", message: SENT_VOTE_DROPPED });
+    } catch {
+      await sleep(SENT_VOTE_RECHECK_MS);
+    }
+  }
+  return failed({ kind: "error", message: LEFT_THE_PAGE });
+};
+
 const isSendingElsewhere = (intent: VoteIntent, now: number) =>
   intent.sendingAt !== null && intent.sentTxHash === null && now - intent.sendingAt < SENDING_GUARD_MS;
 
@@ -78,7 +106,7 @@ export const castClaimVote = async ({
 }: {
   intent: VoteIntent | null;
   wallet: XClaimWallet;
-  payout: FundedPayout;
+  payout: FundedPayout | null;
   contest: { key: ContestKey; target: ContestTarget };
   votesCloseMs: number;
   priceIntervalSec: number | undefined;
@@ -91,8 +119,9 @@ export const castClaimVote = async ({
   if (isSendingElsewhere(intent, Date.now())) return failed({ kind: "in_flight" });
   voteIntentStore.update({ sendingAt: Date.now() });
   const { entryTitle } = intent;
+  const funding = payout ?? OWN_FUNDS;
   const { target } = contest;
-  let isSent = false;
+  let sentHash = null as Hash | null;
 
   try {
     const config = getWagmiConfig();
@@ -103,36 +132,38 @@ export const castClaimVote = async ({
     if (alreadyVoted) return { kind: "already_voted", entryTitle };
 
     const typedWei = chosenWei(intent.amountNative);
-    if (payout.creditWei === null && typedWei === 0n) return failed({ kind: "credit_unknown" });
+    if (funding.creditWei === null && typedWei === 0n) return failed({ kind: "credit_unknown" });
     const spendable = await readSpendableAfter({
       wallet: intent.wallet,
       chainId: target.chainId,
-      minBlock: payout.receiptBlock,
+      minBlock: funding.receiptBlock,
     });
     await sleep(msUntilPriceSettles({ now: Date.now(), votesCloseMs, intervalSec: priceIntervalSec }));
     const priceWei = await readPricePerVote(target);
     const size = sizeClaimVote({
       spendableWei: spendable,
       chosenWei: typedWei,
-      creditWei: payout.creditWei ?? 0n,
+      creditWei: funding.creditWei ?? 0n,
       priceWei,
     });
-    if (size.votes === 0) return failed({ kind: "cannot_afford" });
+    if ("reason" in size) return failed({ kind: "cannot_afford" });
     if (!isMounted()) return failed({ kind: "error", message: LEFT_THE_PAGE });
     if (!isWalletConnected(intent.wallet)) return failed({ kind: "no_intent" });
+    voteIntentStore.update({ castingAt: Date.now() });
 
     const result = await cast(size.votes, {
       pricePerVoteRaw: priceWei,
       feedback: "silent",
       onSent: hash => {
-        isSent = true;
+        sentHash = hash;
         voteIntentStore.update({ sentTxHash: hash });
       },
     });
-    return { kind: "voted", result, entryTitle };
+    return { kind: "voted", result, entryTitle, wantedMore: size.wantedMore };
   } catch (error) {
+    if (sentHash) return await settleSentVote({ intent, hash: sentHash, chainId: target.chainId, isMounted });
     return failed(failureFor(error, contest.key.chain));
   } finally {
-    if (!isSent) voteIntentStore.update({ sendingAt: null });
+    if (!sentHash) voteIntentStore.update({ sendingAt: null, castingAt: null });
   }
 };
