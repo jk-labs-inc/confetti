@@ -1,13 +1,10 @@
-import { ownVoteNote } from "@components/ClaimVote/copy";
+import { amountText, ownVoteNote } from "@components/ClaimVote/copy";
 import type { XClaimJustVote } from "@components/XClaim/board";
 import useContestConfigStore from "@hooks/useContestConfig/store";
-import useDisplayPrice, { type PriceDisplay } from "@hooks/useCurrency/useDisplayPrice";
+import useDisplayPrice from "@hooks/useCurrency/useDisplayPrice";
 import useNativeRates from "@hooks/useCurrency/useNativeRates";
 import { totalWithCredit } from "lib/claimVote/sizing";
 import type { VoteIntent } from "lib/claimVote/types";
-
-const amountText = ({ displayValue, displaySymbol }: PriceDisplay) =>
-  displaySymbol === "$" ? `$${displayValue}` : `${displayValue} ${displaySymbol}`;
 
 export const useJustVoteOffer = ({
   intent,

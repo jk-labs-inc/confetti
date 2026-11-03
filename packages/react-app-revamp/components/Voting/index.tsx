@@ -128,9 +128,11 @@ const VotingWidget: FC<VotingWidgetProps> = ({
   const isZeroValue = !inputValue || parseFloat(inputValue) === 0;
   const isBelowMinimum = !isZeroValue && totalVotes === 0;
   const creditOffer = claimVote.line.kind === "offer" ? claimVote.line.offer : null;
-  const voteDisabled = creditOffer
-    ? isLoading
-    : isZeroValue || isBelowMinimum || isLoading || (isConnected && isBalanceLoading) || claimVote.isBusy;
+  const voteDisabled =
+    isZeroValue ||
+    isBelowMinimum ||
+    isLoading ||
+    (!creditOffer && ((isConnected && isBalanceLoading) || claimVote.isBusy));
 
   const handlePrimaryAction = () => {
     if (voteDisabled) return;

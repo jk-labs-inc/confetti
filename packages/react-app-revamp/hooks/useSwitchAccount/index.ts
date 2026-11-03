@@ -1,12 +1,13 @@
-import { useLogout, useModal } from "@getpara/react-sdk-lite";
+import { useLogout } from "@getpara/react-sdk-lite";
+import { useEmbeddedOnlySignIn } from "@hooks/useParaSignIn";
 import { useCallback } from "react";
 
 export const useSwitchAccount = () => {
   const { logoutAsync } = useLogout();
-  const { openModal } = useModal();
+  const signIn = useEmbeddedOnlySignIn();
 
   return useCallback(async () => {
     await logoutAsync();
-    openModal();
-  }, [logoutAsync, openModal]);
+    signIn();
+  }, [logoutAsync, signIn]);
 };

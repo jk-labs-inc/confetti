@@ -148,6 +148,7 @@ export interface XClaimActions {
   open: () => void;
   close: () => void;
   signIn: () => void;
+  createAccount: () => void;
   startXClaim: (returnPath?: string) => Promise<void>;
   retryClaim: () => Promise<void>;
   checkStatus: () => Promise<void>;

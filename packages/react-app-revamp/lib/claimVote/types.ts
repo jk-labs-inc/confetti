@@ -72,8 +72,8 @@ export type VoteFailure =
   | { kind: "error"; message: string };
 
 export type VoteOutcome =
-  | { kind: "voted"; result: CastVotesResult; entryTitle: string; wantedMore: boolean }
-  | { kind: "already_voted"; entryTitle: string }
+  | { kind: "voted"; result: CastVotesResult; spentNative: string; wantedNative: string | null }
+  | { kind: "already_voted" }
   | { kind: "failed"; failure: VoteFailure; isShown?: boolean };
 
 export type ClaimVoteRun =
@@ -85,7 +85,7 @@ export type ClaimVoteRun =
   | { phase: "confirming"; hint: XClaimResult; landedAt: number }
   | { phase: "funding"; payout: XClaimPayout; until: number }
   | { phase: "voting"; payout: FundedPayout | null }
-  | { phase: "voted"; result: CastVotesResult | null; entryTitle: string; wantedMore: boolean }
+  | { phase: "voted"; result: CastVotesResult | null; spentNative: string | null; wantedNative: string | null }
   | { phase: "vote_failed"; failure: VoteFailure }
   | { phase: "payout_slow" }
   | { phase: "claim_failed"; failure: XClaimFailure; retry: ClaimRetry }
@@ -167,7 +167,7 @@ export type ClaimVoteLine = { kind: "hidden" } | { kind: "offer"; offer: XClaimO
 export type ClaimVoteModalView =
   | { kind: "claim_board"; view: XClaimSheetView }
   | { kind: "running" }
-  | { kind: "voted"; entryTitle: string; result: CastVotesResult | null; wantedMore: boolean }
+  | { kind: "voted"; result: CastVotesResult | null; spentNative: string | null; wantedNative: string | null }
   | { kind: "finish"; entryTitle: string; failure: VoteFailure }
   | { kind: "payout_slow"; entryTitle: string }
   | { kind: "check_failed" }

@@ -3,7 +3,7 @@ import type { CastVotesOptions, CastVotesResult } from "@hooks/useCastVotes/type
 import { getAccount, switchChain } from "@wagmi/core";
 import type { XClaimWallet } from "lib/xClaim/types";
 import { didUserReject, handleError as describeError } from "utils/error";
-import { type Hash, WaitForTransactionReceiptTimeoutError } from "viem";
+import { formatEther, type Hash, WaitForTransactionReceiptTimeoutError } from "viem";
 import { SENDING_GUARD_MS, SENT_VOTE_RECEIPT_TIMEOUT_MS, SENT_VOTE_RECHECK_MS } from "./constants";
 import {
   isTransactionKnown,
@@ -69,7 +69,7 @@ const settleSentVote = async ({
   while (isMounted()) {
     try {
       const settled = await settleEarlierVote({ ...intent, sentTxHash: hash }, chainId);
-      if (settled === "voted") return { kind: "already_voted", entryTitle: intent.entryTitle };
+      if (settled === "voted") return { kind: "already_voted" };
       voteIntentStore.update({ sendingAt: null, castingAt: null });
       return failed({ kind: "error", message: SENT_VOTE_DROPPED });
     } catch {
@@ -118,7 +118,6 @@ export const castClaimVote = async ({
   if (Date.now() >= votesCloseMs) return failed({ kind: "voting_closed" });
   if (isSendingElsewhere(intent, Date.now())) return failed({ kind: "in_flight" });
   voteIntentStore.update({ sendingAt: Date.now() });
-  const { entryTitle } = intent;
   const funding = payout ?? OWN_FUNDS;
   const { target } = contest;
   let sentHash = null as Hash | null;
@@ -130,7 +129,7 @@ export const castClaimVote = async ({
 
     const alreadyVoted =
       (await settleEarlierVote(intent, target.chainId)) === "voted" || (await votesRoseSince(intent, target));
-    if (alreadyVoted) return { kind: "already_voted", entryTitle };
+    if (alreadyVoted) return { kind: "already_voted" };
 
     const typedWei = chosenWei(intent.amountNative);
     if (funding.creditWei === null && typedWei === 0n) return failed({ kind: "credit_unknown" });
@@ -161,7 +160,12 @@ export const castClaimVote = async ({
         voteIntentStore.update({ sentTxHash: hash });
       },
     });
-    return { kind: "voted", result, entryTitle, wantedMore: size.wantedMore };
+    return {
+      kind: "voted",
+      result,
+      spentNative: formatEther(size.valueWei),
+      wantedNative: size.wantedMore ? intent.amountNative : null,
+    };
   } catch (error) {
     if (sentHash) {
       const settled = await settleSentVote({ intent, hash: sentHash, chainId: target.chainId, isMounted });

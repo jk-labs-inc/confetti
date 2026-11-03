@@ -162,15 +162,15 @@ const VotingActionBar: FC<VotingActionBarProps> = ({ entryPreview, isVotingClose
 
   const isZeroValue = !inputValue || parseFloat(inputValue) === 0;
   const isBelowMinimum = !isZeroValue && totalVotes === 0;
-  const voteDisabled =
-    !pickedProposal || isBalanceLoading || isPriceLoading || isCastLoading || isZeroValue || isBelowMinimum;
+  const hasNoAmount = isZeroValue || isBelowMinimum;
+  const voteDisabled = !pickedProposal || isBalanceLoading || isPriceLoading || isCastLoading || hasNoAmount;
   const claimVote = useClaimVoteLine({ pricePerVoteNative: effectiveCost, isVotingClosed: isClosed });
   const creditOffer = claimVote.line.kind === "offer" ? claimVote.line.offer : null;
   const backEntryId = creditOffer ? CLAIM_VOTE_IDS.voteWithCredit : undefined;
   const backEntryLabel = creditOffer ? withCreditLabel("back entry") : "back entry";
-  const isBackEntryDisabled = creditOffer
-    ? isCastLoading
-    : claimVote.isBusy || (isConnected && insufficientBalance ? false : voteDisabled);
+  const isBackEntryDisabled =
+    hasNoAmount ||
+    (creditOffer ? isCastLoading : claimVote.isBusy || (isConnected && insufficientBalance ? false : voteDisabled));
 
   const handleClick = async () => {
     if (creditOffer) {
@@ -306,7 +306,7 @@ const VotingActionBar: FC<VotingActionBarProps> = ({ entryPreview, isVotingClose
               }}
               disabled={isBackEntryDisabled}
               aria-label={backEntryLabel}
-              className="relative flex h-10 shrink-0 items-center justify-center whitespace-nowrap rounded-full px-3 text-[14px] font-bold text-true-black transition-opacity disabled:opacity-50"
+              className="relative flex h-10 shrink-0 items-center justify-center whitespace-nowrap rounded-full px-3 text-[14px] font-bold text-true-black transition-opacity disabled:pointer-events-none disabled:opacity-50"
               style={{ backgroundImage: UPVOTE_GRADIENT }}
             >
               back entry

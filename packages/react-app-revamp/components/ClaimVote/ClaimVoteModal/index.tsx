@@ -47,9 +47,9 @@ const runBoard = (
     case "voted":
       return (
         <VotedBoard
-          entryTitle={view.entryTitle}
           result={view.result}
-          wantedMore={view.wantedMore}
+          spentNative={view.spentNative}
+          wantedNative={view.wantedNative}
           onAddFunds={onAddFunds}
         />
       );

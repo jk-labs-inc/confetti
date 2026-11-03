@@ -5,6 +5,7 @@ import { useModal } from "@getpara/react-sdk-lite";
 import { useClaimVoteDriver } from "@hooks/useClaimVote/useClaimVoteDriver";
 import { useJustVoteOffer } from "@hooks/useClaimVote/useJustVoteOffer";
 import { CastVotesWrapper } from "@hooks/useCastVotes/store";
+import { useEmbeddedOnlySignIn } from "@hooks/useParaSignIn";
 import { xClaimKeys } from "@hooks/useXClaim/queries";
 import { useQueryClient } from "@tanstack/react-query";
 import { claimVoteModalView, finishablePayout, ownVoteIntent } from "lib/claimVote/view";
@@ -18,6 +19,7 @@ const ClaimVoteModal = dynamic(() => import("@components/ClaimVote/ClaimVoteModa
 const ClaimVoteRuntime: FC = () => {
   const { run, modalOpen, facts, caster, contest, dispatch, finishVote } = useClaimVoteDriver();
   const { openModal } = useModal();
+  const createAccount = useEmbeddedOnlySignIn();
   const queryClient = useQueryClient();
   const view = useMemo(() => claimVoteModalView({ run, facts }), [run, facts]);
   const ownVote = ownVoteIntent({ run, facts, now: Date.now() });
@@ -29,6 +31,7 @@ const ClaimVoteRuntime: FC = () => {
       open: () => dispatch({ type: "reopen" }),
       close: () => dispatch({ type: "close" }),
       signIn: () => openModal(),
+      createAccount,
       startXClaim: async () =>
         dispatch(run.phase === "verify_x" ? { type: "verify" } : { type: "retry", via: "x_redirect" }),
       retryClaim: async () => dispatch({ type: "retry", via: "worker" }),
@@ -36,7 +39,7 @@ const ClaimVoteRuntime: FC = () => {
         if (address) await queryClient.refetchQueries({ queryKey: xClaimKeys.me(address) });
       },
     }),
-    [run.phase, address, openModal, queryClient, dispatch],
+    [run.phase, address, openModal, createAccount, queryClient, dispatch],
   );
 
   const voteOwnFunds = () =>

@@ -185,13 +185,18 @@ export const transition = (run: ClaimVoteRun, event: ClaimVoteEvent, now: number
       if (run.payout === null) return to(IDLE_RUN, "close", isOtherTabSending(outcome) ? KEEP : CLEAR);
       if (outcome.kind === "voted") {
         return to(
-          { phase: "voted", result: outcome.result, entryTitle: outcome.entryTitle, wantedMore: outcome.wantedMore },
+          {
+            phase: "voted",
+            result: outcome.result,
+            spentNative: outcome.spentNative,
+            wantedNative: outcome.wantedNative,
+          },
           "open",
           CLEAR,
         );
       }
       if (outcome.kind === "already_voted") {
-        return to({ phase: "voted", result: null, entryTitle: outcome.entryTitle, wantedMore: false }, "open", CLEAR);
+        return to({ phase: "voted", result: null, spentNative: null, wantedNative: null }, "open", CLEAR);
       }
       return to({ phase: "vote_failed", failure: outcome.failure }, "open");
     }

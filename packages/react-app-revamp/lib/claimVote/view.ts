@@ -96,7 +96,7 @@ export const claimVoteModalView = ({
     case "verify_x":
       return claimBoard(facts, verifyBoard(facts));
     case "voted":
-      return { kind: "voted", entryTitle: run.entryTitle, result: run.result, wantedMore: run.wantedMore };
+      return { kind: "voted", result: run.result, spentNative: run.spentNative, wantedNative: run.wantedNative };
     case "vote_failed":
       return { kind: "finish", entryTitle, failure: run.failure };
     case "payout_slow":

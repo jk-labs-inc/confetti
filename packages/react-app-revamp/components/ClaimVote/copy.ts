@@ -1,10 +1,14 @@
 import { CLAIM_PITCH } from "@components/XClaim/copy";
 import { pluralize } from "@helpers/pluralize";
+import type { PriceDisplay } from "@hooks/useCurrency/useDisplayPrice";
 import type { VoteFailure } from "lib/claimVote/types";
 import { CLAIM_AMOUNT_LABEL } from "lib/xClaim/constants";
 import type { XClaimOpenOffer } from "lib/xClaim/types";
 
 const entryName = (entryTitle: string) => entryTitle || "this entry";
+
+export const amountText = ({ displayValue, displaySymbol }: PriceDisplay) =>
+  displaySymbol === "$" ? `$${displayValue}` : `${displayValue} ${displaySymbol}`;
 
 const CREDIT_LINE = `verify your twitter and we'll put ${CLAIM_AMOUNT_LABEL} into this vote.`;
 
@@ -32,11 +36,17 @@ export const KEEP_PAGE_OPEN_NOTE = "keep this page open, or your claim will fail
 
 export const finishLineLabel = (entryTitle: string) => `finish your vote: ${entryName(entryTitle)}`;
 
-export const VOTED_TITLE = `you claimed ${CLAIM_AMOUNT_LABEL}`;
+export const VOTED_TITLE = `congrats! you\u00a0got\u00a0${CLAIM_AMOUNT_LABEL}`;
 
-export const votedBody = (entryTitle: string) => `and voted for ${entryName(entryTitle)}.`;
+export const votedBody = (amount: string | null) =>
+  `we've rewarded you as a new user. ${amount ? `you now have ${amount}` : "your votes are"} on your entry. you can get more by voting more.`;
 
-export const VOTED_ADD_FUNDS_NOTE = `the ${CLAIM_AMOUNT_LABEL} was on us. to vote more, add funds.`;
+export const VOTED_SHORT_TITLE = `we just put ${CLAIM_AMOUNT_LABEL} on\u00a0your\u00a0entry!`;
+
+export const votedShortBody = ({ wanted, spent }: { wanted: string; spent: string }) =>
+  `we know you wanted to put ${wanted}, but since your first ${CLAIM_AMOUNT_LABEL} is on us, we went ahead and put that on your entry. it's on the house. you now have ${spent} there.`;
+
+export const VOTED_SHORT_NOTE = "to put more money, you'll need to fund your wallet first. want to do that now?";
 
 export const ownVoteNote = (entryTitle: string) => `on ${entryName(entryTitle)}`;
 

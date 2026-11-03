@@ -46,7 +46,7 @@ const boardFor = (
         <ClaimOfferBoard
           bubble="on_us"
           body={CLAIM_PITCH}
-          primary={{ kind: "run", id: X_CLAIM_IDS.createWallet, label: "create account", onPress: actions.signIn }}
+          primary={{ kind: "run", id: X_CLAIM_IDS.createWallet, label: "create account", onPress: actions.createAccount }}
           secondary={{
             role: "alternative",
             kind: "run",
