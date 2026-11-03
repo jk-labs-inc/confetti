@@ -143,7 +143,7 @@ const boardFor = (
         />
       );
     case "PayoutFailed":
-      return <PayoutFailedBoard handle={view.handle} onRetry={() => actions.retryClaim()} />;
+      return <PayoutFailedBoard handle={view.handle} onRetry={() => actions.retryClaim()} justVote={justVote} />;
     case "XCancelled":
       return (
         <XCancelledBoard

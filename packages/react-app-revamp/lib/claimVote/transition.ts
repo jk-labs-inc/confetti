@@ -38,8 +38,6 @@ const TERMINAL_PHASES: readonly ClaimVotePhase[] = ["voted", "vote_failed", "pay
 
 const RUNS_ON_AFTER_CLOSE: readonly ClaimVotePhase[] = ["claiming", "confirming", "funding", "voting"];
 
-const KEEPS_OFFER_ON_CLOSE: readonly ClaimVotePhase[] = [...RUNS_ON_AFTER_CLOSE, "verify_x"];
-
 const ABORTABLE_PHASES: readonly ClaimVotePhase[] = ["starting", "verify_x", "claiming", "funding"];
 
 const RETRYABLE_RESULTS: readonly XClaimResult["kind"][] = ["no_spots", "paused", "payout_failed"];
@@ -132,16 +130,10 @@ export const isRetryableEnding = (ending: RunEnding) =>
 
 export const transition = (run: ClaimVoteRun, event: ClaimVoteEvent, now: number): Transition | null => {
   switch (event.type) {
-    case "close": {
-      const closed = closeTransition(run);
-      return closed && event.canJustVote && !KEEPS_OFFER_ON_CLOSE.includes(run.phase)
-        ? { ...closed, declinesOffer: true }
-        : closed;
-    }
+    case "close":
+      return closeTransition(run);
     case "just_vote":
-      return canStartOwnVote(run)
-        ? { ...to({ phase: "voting", payout: null }, "close", TOUCH), declinesOffer: true }
-        : null;
+      return canStartOwnVote(run) ? to({ phase: "voting", payout: null }, "close", TOUCH) : null;
     case "reopen":
       return isRunBusy(run) ? to(run, "open") : null;
     case "abort":
@@ -190,11 +182,7 @@ export const transition = (run: ClaimVoteRun, event: ClaimVoteEvent, now: number
     case "vote_done": {
       if (run.phase !== "voting") return null;
       const { outcome } = event;
-      if (run.payout === null) {
-        return outcome.kind === "failed"
-          ? to(IDLE_RUN, "close", isOtherTabSending(outcome) ? KEEP : CLEAR)
-          : { ...to(IDLE_RUN, "close", CLEAR), skipsOffer: true };
-      }
+      if (run.payout === null) return to(IDLE_RUN, "close", isOtherTabSending(outcome) ? KEEP : CLEAR);
       if (outcome.kind === "voted") {
         return to(
           { phase: "voted", result: outcome.result, entryTitle: outcome.entryTitle, wantedMore: outcome.wantedMore },

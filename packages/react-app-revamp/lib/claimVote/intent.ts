@@ -83,9 +83,6 @@ export const intentFor = ({
 const isSameContest = (left: ContestKey, right: ContestKey) =>
   left.chain === right.chain.toLowerCase() && left.address === right.address.toLowerCase();
 
-export const offerKey = ({ wallet, contest }: { wallet: string; contest: ContestKey }) =>
-  `${wallet.toLowerCase()}:${contest.chain.toLowerCase()}:${contest.address.toLowerCase()}`;
-
 export const isIntentForWallet = (intent: VoteIntent, wallet: XClaimWallet) =>
   wallet.kind === "embedded" && wallet.address.toLowerCase() === intent.wallet;
 

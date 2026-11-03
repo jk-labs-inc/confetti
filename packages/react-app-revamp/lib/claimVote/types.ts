@@ -106,7 +106,7 @@ export type ClaimVoteEvent =
   | { type: "finish"; payout: XClaimPayout }
   | { type: "verify" }
   | { type: "retry"; via: ClaimPath | null }
-  | { type: "close"; canJustVote?: boolean }
+  | { type: "close" }
   | { type: "just_vote" }
   | { type: "reopen" }
   | { type: "planned"; plan: StartPlan }
@@ -131,8 +131,6 @@ export interface Transition {
   run: ClaimVoteRun;
   modal: ModalCommand;
   intent: IntentCommand;
-  declinesOffer?: true;
-  skipsOffer?: true;
 }
 
 export interface ClaimVoteCasterMount {

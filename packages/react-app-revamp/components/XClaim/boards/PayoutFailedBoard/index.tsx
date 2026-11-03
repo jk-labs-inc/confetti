@@ -1,5 +1,7 @@
+import type { XClaimJustVote } from "@components/XClaim/board";
 import { X_CLAIM_IDS } from "@components/XClaim/constants";
 import { savedForText } from "@components/XClaim/copy";
+import { justVoteSecondary, labelWithTotal } from "@components/XClaim/justVote";
 import BoardHero from "@components/XClaim/parts/BoardHero";
 import BoardLayout from "@components/XClaim/parts/BoardLayout";
 import InfoPill from "@components/XClaim/parts/InfoPill";
@@ -10,17 +12,24 @@ import { FC } from "react";
 interface PayoutFailedBoardProps {
   handle: string | null;
   onRetry: () => void;
+  justVote: XClaimJustVote | null;
 }
 
-const PayoutFailedBoard: FC<PayoutFailedBoardProps> = ({ handle, onRetry }) => (
+const PayoutFailedBoard: FC<PayoutFailedBoardProps> = ({ handle, onRetry, justVote }) => (
   <BoardLayout
     width="result"
     titleSize="regular"
     hero={<BoardHero art="building" size={160} />}
     title="we couldn't send it yet"
     body={`the network was busy. your ${CLAIM_AMOUNT_LABEL} is saved, so nothing is lost. try again in a moment.`}
-    primary={{ kind: "run", id: X_CLAIM_IDS.payoutRetry, label: "try again", onPress: onRetry }}
-    secondary={{ role: "dismiss", label: "close" }}
+    note={justVote?.note}
+    primary={{
+      kind: "run",
+      id: X_CLAIM_IDS.payoutRetry,
+      label: labelWithTotal("try again", justVote),
+      onPress: onRetry,
+    }}
+    secondary={justVote ? justVoteSecondary(justVote) : { role: "dismiss", label: "close" }}
     footer={
       <>
         still stuck?{" "}

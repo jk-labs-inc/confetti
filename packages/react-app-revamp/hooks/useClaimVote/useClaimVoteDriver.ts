@@ -33,7 +33,6 @@ import { startXLogin, submitClaim, toXClaimFailure } from "lib/xClaim/client";
 import { LANDING_WALLET_WAIT_MS } from "lib/xClaim/constants";
 import { confirmOutcome, isDecimalAmount, safeReturnPath } from "lib/xClaim/outcomes";
 import type { XClaimEmbeddedWallet } from "lib/xClaim/types";
-import { walletAddressOf } from "lib/xClaim/wallet";
 import { useCallback, useEffect, useMemo } from "react";
 import { parseEther } from "viem";
 import { useShallow } from "zustand/shallow";
@@ -103,12 +102,11 @@ const planWithIntent = async ({
 };
 
 export const useClaimVoteDriver = () => {
-  const { run, step, modalOpen, skippedWallets, dispatch, begin, isCurrent } = useClaimVoteStore(
+  const { run, step, modalOpen, dispatch, begin, isCurrent } = useClaimVoteStore(
     useShallow(state => ({
       run: state.run,
       step: state.step,
       modalOpen: state.modalOpen,
-      skippedWallets: state.skippedWallets,
       dispatch: state.dispatch,
       begin: state.begin,
       isCurrent: state.isCurrent,
@@ -154,16 +152,11 @@ export const useClaimVoteDriver = () => {
 
   useEffect(() => {
     if (run.phase !== "starting" || !isPlanReady || !begin(step)) return;
-    const address = walletAddressOf(facts.wallet);
-    if (address && skippedWallets.includes(address.toLowerCase())) {
-      dispatch({ type: "abort" });
-      return;
-    }
     const decision = planStart(facts, run.origin);
     void planWithIntent({ decision, choice: run.choice, facts, contest }).then(plan => {
       if (isCurrent(step)) dispatch({ type: "planned", plan });
     });
-  }, [run, step, isPlanReady, facts, contest, skippedWallets, begin, isCurrent, dispatch]);
+  }, [run, step, isPlanReady, facts, contest, begin, isCurrent, dispatch]);
 
   useEffect(() => {
     if (run.phase === "pitch" && wallet.kind !== "signed_out" && !isParaModalOpen) dispatch({ type: "signed_in" });

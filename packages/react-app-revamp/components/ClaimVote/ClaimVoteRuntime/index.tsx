@@ -27,7 +27,7 @@ const ClaimVoteRuntime: FC = () => {
   const actions = useMemo(
     (): XClaimActions => ({
       open: () => dispatch({ type: "reopen" }),
-      close: () => dispatch({ type: "close", canJustVote: ownVoteIntent({ run, facts, now: Date.now() }) !== null }),
+      close: () => dispatch({ type: "close" }),
       signIn,
       startXClaim: async () =>
         dispatch(run.phase === "verify_x" ? { type: "verify" } : { type: "retry", via: "x_redirect" }),
@@ -36,7 +36,7 @@ const ClaimVoteRuntime: FC = () => {
         if (address) await queryClient.refetchQueries({ queryKey: xClaimKeys.me(address) });
       },
     }),
-    [run, facts, address, signIn, queryClient, dispatch],
+    [run.phase, address, signIn, queryClient, dispatch],
   );
 
   const voteOwnFunds = () =>
