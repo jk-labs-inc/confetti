@@ -5,7 +5,7 @@ import { Menu, MenuItems } from "@headlessui/react";
 import { useAddFunds } from "@hooks/useAddFunds";
 import { useAddFundsChain } from "@hooks/useAddFundsChain";
 import { useWalletCreditHint } from "@hooks/useClaimVote/useWalletCreditHint";
-import { useSwitchToEmbeddedSignIn } from "@hooks/useParaSignIn";
+import { useSwitchAccount } from "@hooks/useSwitchAccount";
 import { useWallet } from "@hooks/useWallet";
 import { chains } from "@config/wagmi";
 import { FC, useState } from "react";
@@ -34,7 +34,7 @@ const AccountDropdown: FC<AccountDropdownProps> = ({ address, displayName, onDis
   const { data: balance } = useBalance({ address: address as `0x${string}` });
   const { openAddFunds } = useAddFunds({ chain: chainName });
   const creditSpots = useWalletCreditHint();
-  const switchToEmbeddedSignIn = useSwitchToEmbeddedSignIn();
+  const switchAccount = useSwitchAccount();
 
   const handleAddFunds = async () => {
     if (await openAddFunds()) return;
@@ -67,7 +67,7 @@ const AccountDropdown: FC<AccountDropdownProps> = ({ address, displayName, onDis
                       spots={creditSpots}
                       onSwitch={() => {
                         close();
-                        switchToEmbeddedSignIn();
+                        switchAccount();
                       }}
                     />
                   </div>

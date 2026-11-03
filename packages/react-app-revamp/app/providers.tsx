@@ -1,11 +1,9 @@
 "use client";
 
-import ParaSignInModeReset from "@components/ParaSignInModeReset";
 import { chains, transports } from "@config/wagmi";
 import { funkitConfig, funkitTheme, isFunkitConfigured } from "@config/funkit";
 import { FunkitProvider } from "@funkit/connect";
-import ParaWeb, { AuthLayout, Environment, TExternalWallet } from "@getpara/react-sdk-lite";
-import { useParaSignInStore } from "@hooks/useParaSignIn/store";
+import ParaWeb, { Environment, TExternalWallet } from "@getpara/react-sdk-lite";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { FC, ReactNode } from "react";
 import { ParaProvider } from "@getpara/react-sdk-lite";
@@ -34,12 +32,7 @@ const EXTERNAL_WALLETS: TExternalWallet[] = [
   "SAFE",
 ];
 
-const DEFAULT_AUTH_LAYOUT = [AuthLayout.AUTH_FULL, AuthLayout.EXTERNAL_FULL];
-const EMBEDDED_ONLY_AUTH_LAYOUT = [AuthLayout.AUTH_FULL];
-
 const Providers: FC<ProvidersProps> = ({ children }) => {
-  const isEmbeddedOnly = useParaSignInStore(state => state.isEmbeddedOnly);
-
   return (
     <QueryClientProvider client={queryClient}>
       <ParaProvider
@@ -57,7 +50,6 @@ const Providers: FC<ProvidersProps> = ({ children }) => {
           },
           logo: "/confetti-logo-high-res.png",
           oAuthMethods: ["GOOGLE", "TWITTER", "DISCORD", "TELEGRAM"],
-          authLayout: isEmbeddedOnly ? EMBEDDED_ONLY_AUTH_LAYOUT : DEFAULT_AUTH_LAYOUT,
         }}
         configOverrides={{
           modalConfig: {
@@ -77,7 +69,6 @@ const Providers: FC<ProvidersProps> = ({ children }) => {
           },
         }}
       >
-        <ParaSignInModeReset />
         {isFunkitConfigured ? (
           <FunkitProvider funkitConfig={funkitConfig} theme={funkitTheme} modalSize="medium" locale="en">
             {children}

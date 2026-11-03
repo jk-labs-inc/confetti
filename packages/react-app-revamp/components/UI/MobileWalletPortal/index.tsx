@@ -12,7 +12,7 @@ import AdvancedOptions from "@components/Connect/components/AccountDropdown/comp
 import { useAddFunds } from "@hooks/useAddFunds";
 import { useAddFundsChain } from "@hooks/useAddFundsChain";
 import { useWalletCreditHint } from "@hooks/useClaimVote/useWalletCreditHint";
-import { useSwitchToEmbeddedSignIn } from "@hooks/useParaSignIn";
+import { useSwitchAccount } from "@hooks/useSwitchAccount";
 import { useWallet } from "@hooks/useWallet";
 import { chains } from "@config/wagmi";
 import { mainnet } from "viem/chains";
@@ -51,7 +51,7 @@ export const MobileProfileDrawer: React.FC<MobileProfileDrawerProps> = ({ isOpen
   const { data: balance } = useBalance({ address: address as `0x${string}` });
   const { openAddFunds } = useAddFunds({ chain: chainName });
   const creditSpots = useWalletCreditHint();
-  const switchToEmbeddedSignIn = useSwitchToEmbeddedSignIn();
+  const switchAccount = useSwitchAccount();
 
   const handleAddFunds = async () => {
     onClose();
@@ -71,7 +71,7 @@ export const MobileProfileDrawer: React.FC<MobileProfileDrawerProps> = ({ isOpen
                 spots={creditSpots}
                 onSwitch={() => {
                   onClose();
-                  switchToEmbeddedSignIn();
+                  switchAccount();
                 }}
               />
             </div>

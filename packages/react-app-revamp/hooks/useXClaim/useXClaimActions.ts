@@ -1,4 +1,4 @@
-import { useEmbeddedOnlySignIn } from "@hooks/useParaSignIn";
+import { useModal } from "@getpara/react-sdk-lite";
 import { useQueryClient } from "@tanstack/react-query";
 import { intentPath } from "lib/claimVote/intent";
 import { voteIntentStore } from "lib/claimVote/storage";
@@ -11,7 +11,7 @@ import { xClaimAction, xClaimSheet } from "./store";
 
 export const useXClaimActions = ({ wallet }: { wallet: XClaimWallet }): XClaimActions => {
   const queryClient = useQueryClient();
-  const signIn = useEmbeddedOnlySignIn();
+  const { openModal } = useModal();
   const router = useRouter();
 
   const backToVote = useCallback(async () => {
@@ -35,11 +35,11 @@ export const useXClaimActions = ({ wallet }: { wallet: XClaimWallet }): XClaimAc
     () => ({
       open: xClaimSheet.open,
       close: xClaimSheet.close,
-      signIn,
+      signIn: () => openModal(),
       startXClaim: backToVote,
       retryClaim: backToVote,
       checkStatus,
     }),
-    [signIn, backToVote, checkStatus],
+    [openModal, backToVote, checkStatus],
   );
 };
