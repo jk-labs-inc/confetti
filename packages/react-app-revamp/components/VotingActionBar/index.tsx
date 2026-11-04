@@ -1,5 +1,9 @@
 "use client";
 import AddFunds from "@components/AddFunds";
+import ClaimVoteLine from "@components/ClaimVote/ClaimVoteLine";
+import ClaimVoteSticker from "@components/ClaimVote/ClaimVoteSticker";
+import { CLAIM_VOTE_IDS } from "@components/ClaimVote/constants";
+import { withCreditLabel } from "@components/ClaimVote/copy";
 import { useFitTextToBox } from "@components/EntryCarousel/useFitTextToBox";
 import Drawer from "@components/UI/Drawer";
 import NumericKeypad from "@components/UI/NumericKeypad";
@@ -15,11 +19,14 @@ import { useVotingFocusModeStore } from "@components/VotingActionBar/store";
 import { EntryPreviewHeaderProps } from "@components/Voting/components/EntryPreviewHeader";
 import VotePercentRow from "@components/Voting/components/VotePercentRow";
 import useVotingInputDisplay from "@components/Voting/components/VoteAmountInput/hooks/useVotingInputDisplay";
+import { useDefaultVoteAmount } from "@components/Voting/hooks/useDefaultVoteAmount";
 import useKeypadInput from "@components/Voting/hooks/useKeypadInput";
 import { useVoteExecution } from "@components/Voting/hooks/useVoteExecution";
 import { useVotingStore } from "@components/Voting/store";
+import { useModal } from "@getpara/react-sdk-lite";
 import { formatVoteCount } from "@helpers/formatNumber";
 import { useAddFunds } from "@hooks/useAddFunds";
+import { useClaimVoteLine } from "@hooks/useClaimVote/useClaimVoteLine";
 import useCastVotes from "@hooks/useCastVotes";
 import { useCastVotesStore } from "@hooks/useCastVotes/store";
 import { useContestStore } from "@hooks/useContest/store";
@@ -33,7 +40,6 @@ import { useProposalStore } from "@hooks/useProposal/store";
 import { useVoteBalance } from "@hooks/useVoteBalance";
 import { useVoteProjections } from "@hooks/useVoteProjections";
 import { useWallet } from "@hooks/useWallet";
-import { useClaimFirstSignIn } from "@hooks/useXClaim/useClaimFirstSignIn";
 import { AnimatePresence, motion } from "motion/react";
 import { FC, useEffect, useState } from "react";
 import ReactDOM from "react-dom";
@@ -56,7 +62,7 @@ const VotingActionBar: FC<VotingActionBarProps> = ({ entryPreview, isVotingClose
   const submissionsCount = useProposalStore(useShallow(state => state.submissionsCount));
   const pickedProposal = useCastVotesStore(useShallow(state => state.pickedProposal));
   const { isConnected } = useWallet();
-  const signIn = useClaimFirstSignIn(contestConfig.chainName);
+  const { openModal } = useModal();
   const { inputValue, setInputValue, resetVotingInput } = useVotingStore(
     useShallow(state => ({
       inputValue: state.inputValue,
@@ -101,12 +107,17 @@ const VotingActionBar: FC<VotingActionBarProps> = ({ entryPreview, isVotingClose
   });
   const maxBalance = balance?.formatted || "0";
 
-  const { displayValue, displaySymbol, handleDisplayChange } = useVotingInputDisplay({
+  useDefaultVoteAmount({
+    contest: contestConfig.address,
+    nativeSymbol: contestConfig.chainNativeCurrencySymbol,
+    pricePerVoteNative: effectiveCost,
+  });
+  const { displayValue, displaySymbol, isPrefilled, handleDisplayChange } = useVotingInputDisplay({
     nativeCurrencySymbol: contestConfig.chainNativeCurrencySymbol,
     maxBalance,
     isConnected,
   });
-  const { handleKey } = useKeypadInput({ displayValue, onDisplayChange: handleDisplayChange });
+  const { handleKey } = useKeypadInput({ displayValue, isPrefilled, onDisplayChange: handleDisplayChange });
 
   const hasPrice = parseFloat(effectiveCost) > 0;
   const isGhost = !displayValue && hasPrice;
@@ -148,18 +159,32 @@ const VotingActionBar: FC<VotingActionBarProps> = ({ entryPreview, isVotingClose
     }
   };
 
+  const isClosed = isVotingClosed ?? contestStatus === ContestStatus.VotingClosed;
   const { handleVote } = useVoteExecution({
     costToVote: effectiveCost,
-    isVotingClosed: isVotingClosed ?? contestStatus === ContestStatus.VotingClosed,
+    isVotingClosed: isClosed,
     onVote,
   });
 
   const isZeroValue = !inputValue || parseFloat(inputValue) === 0;
   const isBelowMinimum = !isZeroValue && totalVotes === 0;
-  const voteDisabled =
-    !pickedProposal || isBalanceLoading || isPriceLoading || isCastLoading || isZeroValue || isBelowMinimum;
+  const hasNoAmount = isZeroValue || isBelowMinimum;
+  const voteDisabled = !pickedProposal || isBalanceLoading || isPriceLoading || isCastLoading || hasNoAmount;
+  const claimVote = useClaimVoteLine({ pricePerVoteNative: effectiveCost, isVotingClosed: isClosed });
+  const creditOffer = claimVote.line.kind === "offer" ? claimVote.line.offer : null;
+  const backEntryId = creditOffer ? CLAIM_VOTE_IDS.voteWithCredit : undefined;
+  const backEntryLabel = creditOffer ? withCreditLabel("back entry") : "back entry";
+  const isBackEntryDisabled =
+    hasNoAmount ||
+    (creditOffer ? isCastLoading : claimVote.isBusy || (isConnected && insufficientBalance ? false : voteDisabled));
 
   const handleClick = async () => {
+    if (creditOffer) {
+      setIsFocusMode(false);
+      claimVote.press();
+      onClose?.();
+      return;
+    }
     if (isConnected && insufficientBalance) {
       if (await openAddFunds()) return;
       setIsFocusMode(false);
@@ -167,7 +192,7 @@ const VotingActionBar: FC<VotingActionBarProps> = ({ entryPreview, isVotingClose
       return;
     }
     if (!isConnected) {
-      signIn();
+      openModal();
       return;
     }
     if (!pickedProposal) return;
@@ -246,13 +271,11 @@ const VotingActionBar: FC<VotingActionBarProps> = ({ entryPreview, isVotingClose
                 className="pointer-events-none min-w-0 bg-transparent text-right font-bold text-neutral-11 placeholder-neutral-9 outline-none"
                 style={{ fontSize: `${inputFontSize}px`, width: `${charCount || 1}ch`, maxWidth: "56px" }}
               />
-              {isFocusMode && (
-                <span
-                  aria-hidden="true"
-                  className="w-[1.5px] shrink-0 animate-caret-blink rounded-full bg-neutral-11"
-                  style={{ height: Math.round(inputFontSize * 0.85) }}
-                />
-              )}
+              <span
+                aria-hidden="true"
+                className="w-[1.5px] shrink-0 animate-caret-blink rounded-full bg-neutral-11"
+                style={{ height: Math.round(inputFontSize * 0.85) }}
+              />
               {displaySymbol !== "$" && (
                 <span className="shrink-0 text-[11px] font-bold uppercase text-neutral-9">{displaySymbol}</span>
               )}
@@ -280,16 +303,20 @@ const VotingActionBar: FC<VotingActionBarProps> = ({ entryPreview, isVotingClose
 
           {!isFocusMode && (
             <button
+              id={backEntryId}
               onClick={e => {
                 e.stopPropagation();
                 handleClick();
               }}
-              disabled={isConnected && insufficientBalance ? false : voteDisabled}
-              aria-label="back entry"
-              className="flex h-10 shrink-0 items-center justify-center whitespace-nowrap rounded-full px-3 text-[14px] font-bold text-true-black transition-opacity disabled:opacity-50"
+              disabled={isBackEntryDisabled}
+              aria-label={backEntryLabel}
+              className="relative flex h-10 shrink-0 items-center justify-center whitespace-nowrap rounded-full px-3 text-[14px] font-bold text-true-black transition-opacity disabled:pointer-events-none disabled:opacity-50"
               style={{ backgroundImage: UPVOTE_GRADIENT }}
             >
               back entry
+              {creditOffer && (
+                <ClaimVoteSticker className="absolute -top-2.5 -right-1.5 px-1.5 py-px text-[11px] rotate-8" />
+              )}
             </button>
           )}
         </div>
@@ -307,14 +334,19 @@ const VotingActionBar: FC<VotingActionBarProps> = ({ entryPreview, isVotingClose
             <div className="flex flex-col gap-4 px-3 pb-[calc(8px+env(safe-area-inset-bottom))] pt-2">
               <VotePercentRow maxBalance={maxBalance} isConnected={isConnected} />
               <NumericKeypad onKey={handleKey} />
+              <ClaimVoteLine line={claimVote.line} />
               <button
+                id={backEntryId}
                 onClick={handleClick}
-                disabled={isConnected && insufficientBalance ? false : voteDisabled}
-                aria-label="back entry"
-                className="flex h-12 w-full items-center justify-center rounded-[40px] text-[18px] font-bold text-true-black transition-opacity disabled:opacity-50"
+                disabled={isBackEntryDisabled}
+                aria-label={backEntryLabel}
+                className="relative flex h-12 w-full items-center justify-center rounded-[40px] text-[18px] font-bold text-true-black transition-opacity disabled:opacity-50"
                 style={{ backgroundImage: UPVOTE_GRADIENT }}
               >
                 back entry
+                {creditOffer && (
+                  <ClaimVoteSticker className="absolute -top-3 -right-1.5 px-2.5 py-0.5 text-[14px] rotate-8" />
+                )}
               </button>
             </div>
           </motion.div>

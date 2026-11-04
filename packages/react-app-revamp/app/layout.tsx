@@ -60,7 +60,7 @@ const saboDollar = localFont({
   style: "normal",
   display: "swap",
   adjustFontFallback: false,
-  declarations: [{ prop: "unicode-range", value: "U+0024" }],
+  declarations: [{ prop: "unicode-range", value: "U+0024, U+0027, U+2019" }],
   variable: "--font-family-sabo-dollar",
 });
 

@@ -5,13 +5,15 @@ import BoardLayout from "@components/XClaim/parts/BoardLayout";
 import CheckStickers from "@components/XClaim/parts/CheckStickers";
 import SpotsLine from "@components/XClaim/parts/SpotsLine";
 import type { XClaimSpots } from "lib/xClaim/types";
-import { FC } from "react";
+import { FC, ReactNode } from "react";
 
 interface ClaimOfferBoardProps {
   bubble: BoardHeroBubble;
   body: string;
   primary: XClaimButtonSpec;
   secondary?: XClaimSecondarySpec;
+  note?: string;
+  footer?: ReactNode;
   checks: CheckStickerStates;
   spots: XClaimSpots | null;
 }
@@ -23,6 +25,8 @@ const ClaimOfferBoard: FC<ClaimOfferBoardProps> = ({
   body,
   primary,
   secondary = MAYBE_LATER,
+  note,
+  footer,
   checks,
   spots,
 }) => (
@@ -34,6 +38,8 @@ const ClaimOfferBoard: FC<ClaimOfferBoardProps> = ({
     body={body}
     primary={primary}
     secondary={secondary}
+    note={note}
+    footer={footer}
     finePrint={CLAIM_FINE_PRINT}
   >
     <CheckStickers states={checks} />

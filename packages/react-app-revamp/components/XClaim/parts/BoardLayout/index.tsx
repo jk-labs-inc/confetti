@@ -108,7 +108,7 @@ const BoardLayout: FC<BoardLayoutProps> = ({
           aria-label="close"
           autoFocus
           onClick={close}
-          className="absolute top-4 right-4 flex size-11 items-center justify-center"
+          className="absolute top-4 right-4 z-10 flex size-11 items-center justify-center"
         >
           <img src="/modal/modal_close.svg" alt="" width={24} height={23} />
         </button>
@@ -127,7 +127,13 @@ const BoardLayout: FC<BoardLayoutProps> = ({
 
       <ActionErrorLine error={action.error} />
 
-      {isModal && primary && alternative && (
+      {isModal && primary && alternative?.isStrong && (
+        <div className="flex flex-col gap-2.5">
+          <BoardButton spec={primary} tone="primary" />
+          <BoardButton spec={alternative} tone="choice" />
+        </div>
+      )}
+      {isModal && primary && alternative && !alternative.isStrong && (
         <div className="flex gap-3 *:flex-1">
           <BoardButton spec={{ ...alternative, label: alternative.modalLabel ?? alternative.label }} tone="outline" />
           <BoardButton spec={primary} tone="primary" />
@@ -135,9 +141,9 @@ const BoardLayout: FC<BoardLayoutProps> = ({
       )}
       {isModal && primary && !alternative && <BoardButton spec={primary} tone="primary" />}
       {!isModal && (primary || sheetSecondary) && (
-        <div className="flex flex-col gap-0.5">
+        <div className={`flex flex-col ${alternative?.isStrong ? "gap-2.5" : "gap-0.5"}`}>
           {primary && <BoardButton spec={primary} tone="primary" />}
-          {sheetSecondary && <BoardButton spec={sheetSecondary} tone="text" />}
+          {sheetSecondary && <BoardButton spec={sheetSecondary} tone={alternative?.isStrong ? "choice" : "text"} />}
         </div>
       )}
 

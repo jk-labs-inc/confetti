@@ -1,29 +1,25 @@
 import Drawer from "@components/UI/Drawer";
 import DialogModalV4 from "@components/UI/DialogModalV4";
-import { useViewportLayout } from "@components/XClaim/board";
-import XClaimSheetContent from "@components/XClaim/XClaimSheetContent";
-import type { XClaimActions, XClaimSheetView } from "lib/xClaim/types";
-import { FC, useState } from "react";
+import { useViewportLayout, type XClaimLayout } from "@components/XClaim/board";
+import { ReactNode, useState } from "react";
 
-interface XClaimSheetFrameProps {
+interface XClaimSheetFrameProps<T> {
   isOpen: boolean;
-  view: XClaimSheetView;
-  actions: XClaimActions;
-  onAddFunds: () => void;
+  value: T;
+  onClose: () => void;
+  children: (value: T, layout: XClaimLayout) => ReactNode;
 }
 
-const XClaimSheetFrame: FC<XClaimSheetFrameProps> = ({ isOpen, view, actions, onAddFunds }) => {
+const XClaimSheetFrame = <T,>({ isOpen, value, onClose, children }: XClaimSheetFrameProps<T>) => {
   const layout = useViewportLayout();
-  const [lastOpenView, setLastOpenView] = useState(view);
-  if (isOpen && lastOpenView !== view) setLastOpenView(view);
+  const [lastOpenValue, setLastOpenValue] = useState(value);
+  if (isOpen && lastOpenValue !== value) setLastOpenValue(value);
 
-  const content = (
-    <XClaimSheetContent view={isOpen ? view : lastOpenView} actions={actions} layout={layout} onAddFunds={onAddFunds} />
-  );
+  const content = children(isOpen ? value : lastOpenValue, layout);
 
   if (layout === "modal") {
     return (
-      <DialogModalV4 isOpen={isOpen} onClose={actions.close} allowsExternalOverlays panel="bare">
+      <DialogModalV4 isOpen={isOpen} onClose={onClose} allowsExternalOverlays panel="bare">
         {content}
       </DialogModalV4>
     );
@@ -32,7 +28,7 @@ const XClaimSheetFrame: FC<XClaimSheetFrameProps> = ({ isOpen, view, actions, on
   return (
     <Drawer
       isOpen={isOpen}
-      onClose={actions.close}
+      onClose={onClose}
       handleSize="compact"
       className="bg-true-black w-full h-auto border-neutral-9! border-x-0! md:max-w-[550px] m-auto"
     >
