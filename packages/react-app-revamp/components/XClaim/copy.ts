@@ -30,6 +30,11 @@ export const CLAIM_FINE_PRINT = "one claim per twitter account and wallet. we on
 export const releaseTimeText = (nextReleaseAt: Date) =>
   `${isToday(nextReleaseAt) ? "" : "tomorrow "}at ${formatTimeOfDay(nextReleaseAt)}`;
 
+export const noSpotsText = (nextReleaseAt: Date) =>
+  isToday(nextReleaseAt)
+    ? `all spots have been claimed for now. please try again at ${formatTimeOfDay(nextReleaseAt)}!`
+    : "all spots have been claimed for today. please try again tomorrow!";
+
 export const CANCELLED_BODY: Readonly<Record<XCancelledReason, string>> = {
   x_denied: "you cancelled on twitter, or it took too long. nothing was linked, so you can try again.",
   x_browser_mismatch:

@@ -32,9 +32,12 @@ const MobileNavAccountTab: FC<MobileNavAccountTabProps> = ({
         <p className="text-[12px]">profile</p>
       </div>
     ) : (
-      <div className="flex flex-col items-center" onClick={onSignInClick}>
+      <div className="relative flex flex-col items-center" onClick={onSignInClick}>
         <img width={24} height={24} src="/header/wallet.svg" alt="wallet" />
         <p className="text-[12px]">wallet</p>
+        {hasCreditSticker && (
+          <ClaimVoteSticker className="absolute -top-1.5 left-3.5 px-[7px] py-px text-[11px] -rotate-8" />
+        )}
       </div>
     )}
   </div>
