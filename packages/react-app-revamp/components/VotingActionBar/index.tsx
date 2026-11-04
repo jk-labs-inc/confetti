@@ -19,6 +19,7 @@ import { useVotingFocusModeStore } from "@components/VotingActionBar/store";
 import { EntryPreviewHeaderProps } from "@components/Voting/components/EntryPreviewHeader";
 import VotePercentRow from "@components/Voting/components/VotePercentRow";
 import useVotingInputDisplay from "@components/Voting/components/VoteAmountInput/hooks/useVotingInputDisplay";
+import { useDefaultVoteAmount } from "@components/Voting/hooks/useDefaultVoteAmount";
 import useKeypadInput from "@components/Voting/hooks/useKeypadInput";
 import { useVoteExecution } from "@components/Voting/hooks/useVoteExecution";
 import { useVotingStore } from "@components/Voting/store";
@@ -106,12 +107,17 @@ const VotingActionBar: FC<VotingActionBarProps> = ({ entryPreview, isVotingClose
   });
   const maxBalance = balance?.formatted || "0";
 
-  const { displayValue, displaySymbol, handleDisplayChange } = useVotingInputDisplay({
+  useDefaultVoteAmount({
+    contest: contestConfig.address,
+    nativeSymbol: contestConfig.chainNativeCurrencySymbol,
+    pricePerVoteNative: effectiveCost,
+  });
+  const { displayValue, displaySymbol, isPrefilled, handleDisplayChange } = useVotingInputDisplay({
     nativeCurrencySymbol: contestConfig.chainNativeCurrencySymbol,
     maxBalance,
     isConnected,
   });
-  const { handleKey } = useKeypadInput({ displayValue, onDisplayChange: handleDisplayChange });
+  const { handleKey } = useKeypadInput({ displayValue, isPrefilled, onDisplayChange: handleDisplayChange });
 
   const hasPrice = parseFloat(effectiveCost) > 0;
   const isGhost = !displayValue && hasPrice;
@@ -265,13 +271,11 @@ const VotingActionBar: FC<VotingActionBarProps> = ({ entryPreview, isVotingClose
                 className="pointer-events-none min-w-0 bg-transparent text-right font-bold text-neutral-11 placeholder-neutral-9 outline-none"
                 style={{ fontSize: `${inputFontSize}px`, width: `${charCount || 1}ch`, maxWidth: "56px" }}
               />
-              {isFocusMode && (
-                <span
-                  aria-hidden="true"
-                  className="w-[1.5px] shrink-0 animate-caret-blink rounded-full bg-neutral-11"
-                  style={{ height: Math.round(inputFontSize * 0.85) }}
-                />
-              )}
+              <span
+                aria-hidden="true"
+                className="w-[1.5px] shrink-0 animate-caret-blink rounded-full bg-neutral-11"
+                style={{ height: Math.round(inputFontSize * 0.85) }}
+              />
               {displaySymbol !== "$" && (
                 <span className="shrink-0 text-[11px] font-bold uppercase text-neutral-9">{displaySymbol}</span>
               )}

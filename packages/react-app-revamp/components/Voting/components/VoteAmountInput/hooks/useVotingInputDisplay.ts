@@ -16,6 +16,7 @@ interface UseVotingInputDisplayReturn {
   displaySymbol: string;
   isLoading: boolean;
   isInvalid: boolean;
+  isPrefilled: boolean;
   handleDisplayChange: (value: string) => void;
   handleDisplayMax: () => void;
   setIsFocused: (focused: boolean) => void;
@@ -36,6 +37,13 @@ const convertDisplayToNative = (displayValue: string, rate: number | undefined):
   return toFixedString(num / rate);
 };
 
+const WHOLE_DOLLAR_DECIMALS = /\.00$/;
+
+const displayFor = (nativeValue: string, rate: number | undefined, isPrefilled: boolean): string => {
+  const value = convertNativeToDisplay(nativeValue, rate);
+  return isPrefilled ? value.replace(WHOLE_DOLLAR_DECIMALS, "") : value;
+};
+
 const useVotingInputDisplay = ({
   nativeCurrencySymbol,
   maxBalance,
@@ -48,9 +56,10 @@ const useVotingInputDisplay = ({
   const usdRate = isUsd ? rate : undefined;
   const isLoading = displayCurrency === "usd" && isNativeRatesLoading;
 
-  const { inputValue, setInputValue, setIsFocused, isInvalid, handleMaxClick } = useVotingStore(
+  const { inputValue, isAmountEdited, setInputValue, setIsFocused, isInvalid, handleMaxClick } = useVotingStore(
     useShallow(state => ({
       inputValue: state.inputValue,
+      isAmountEdited: state.isAmountEdited,
       setInputValue: state.setInputValue,
       setIsFocused: state.setIsFocused,
       isInvalid: state.isInvalid,
@@ -58,7 +67,9 @@ const useVotingInputDisplay = ({
     })),
   );
 
-  const [displayValue, setDisplayValue] = useState(() => convertNativeToDisplay(inputValue, usdRate));
+  const isPrefilled = !isAmountEdited && inputValue !== "";
+
+  const [displayValue, setDisplayValue] = useState(() => displayFor(inputValue, usdRate, isPrefilled));
   const isUserInputRef = useRef(false);
 
   useEffect(() => {
@@ -66,13 +77,14 @@ const useVotingInputDisplay = ({
       isUserInputRef.current = false;
       return;
     }
-    setDisplayValue(convertNativeToDisplay(inputValue, usdRate));
-  }, [inputValue, usdRate]);
+    setDisplayValue(displayFor(inputValue, usdRate, isPrefilled));
+  }, [inputValue, usdRate, isPrefilled]);
 
   const handleDisplayChange = (value: string) => {
+    const nativeValue = convertDisplayToNative(value, usdRate);
     setDisplayValue(value);
-    isUserInputRef.current = true;
-    setInputValue(convertDisplayToNative(value, usdRate), maxBalance);
+    isUserInputRef.current = nativeValue !== inputValue;
+    setInputValue(nativeValue, maxBalance);
   };
 
   const handleDisplayMax = () => {
@@ -86,6 +98,7 @@ const useVotingInputDisplay = ({
     displaySymbol,
     isLoading,
     isInvalid,
+    isPrefilled,
     handleDisplayChange,
     handleDisplayMax,
     setIsFocused,

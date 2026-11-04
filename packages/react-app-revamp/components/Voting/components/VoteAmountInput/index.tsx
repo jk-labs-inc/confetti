@@ -19,11 +19,13 @@ interface VoteAmountInputProps {
   totalVotes: number;
   presets: VotePresets | null;
   isBelowMinimum?: boolean;
+  showIdleCaret?: boolean;
   style?: VotingWidgetStyle;
   layout?: VotingWidgetLayout;
   autoFocus?: boolean;
   isReadOnly?: boolean;
   onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
+  onPaste?: React.ClipboardEventHandler<HTMLInputElement>;
 }
 
 const STYLE_CONFIG = {
@@ -65,12 +67,14 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
   totalVotes,
   presets,
   isBelowMinimum = false,
+  showIdleCaret = false,
   style = VotingWidgetStyle.classic,
   layout = VotingWidgetLayout.regular,
   autoFocus = false,
   isReadOnly = false,
   inputRef,
   onKeyDown,
+  onPaste,
 }) => {
   const formattedPricePerVote =
     pricePerVote.displaySymbol === "$"
@@ -152,9 +156,17 @@ const VoteAmountInput: FC<VoteAmountInputProps> = ({
                 onChange={e => onDisplayChange(e.target.value)}
                 placeholder={placeholder}
                 onKeyDown={onKeyDown}
-                className={`bg-transparent text-right outline-none ${styleConfig.placeholderColor} min-w-0 transition-[font-size] duration-150`}
+                onPaste={onPaste}
+                className={`peer bg-transparent text-right outline-none ${styleConfig.placeholderColor} min-w-0 transition-[font-size] duration-150`}
                 style={{ fontSize: `${inputFontSize}px`, width: `${charCount || 1}ch`, maxWidth: "100%" }}
               />
+              {showIdleCaret && (
+                <span
+                  aria-hidden="true"
+                  className="ml-0.5 w-[1.5px] shrink-0 animate-caret-blink rounded-full bg-secondary-11 peer-focus:hidden"
+                  style={{ height: Math.round(inputFontSize * 0.85) }}
+                />
+              )}
               {displaySymbol !== "$" && (
                 <span className="text-[16px] text-neutral-9 whitespace-nowrap ml-2 uppercase">{displaySymbol}</span>
               )}

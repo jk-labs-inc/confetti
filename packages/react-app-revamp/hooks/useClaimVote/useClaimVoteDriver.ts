@@ -1,20 +1,13 @@
-import { reportOwnVote } from "@components/ClaimVote/reportOwnVote";
+import { reportFallbackFailure, reportOwnVote } from "@components/ClaimVote/reportOwnVote";
 import { useModal } from "@getpara/react-sdk-lite";
 import { useContestStore } from "@hooks/useContest/store";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import { xClaimKeys } from "@hooks/useXClaim/queries";
 import { useWalletProof } from "@hooks/useXClaim/useWalletProof";
 import { useQueryClient } from "@tanstack/react-query";
-import { hasReceipt, readOwnFundsCover, readUserVotes, waitForReceiptStatus } from "lib/claimVote/chain";
+import { hasReceipt, NO_OWN_FUNDS, readOwnFunds, readUserVotes, waitForReceiptStatus } from "lib/claimVote/chain";
 import { PAYOUT_WINDOW_MS, RECEIPT_CONFIRMATIONS, VOTING_WATCHDOG_MS } from "lib/claimVote/constants";
-import {
-  intentFor,
-  intentPath,
-  isClaimForIntent,
-  matchIntent,
-  normalizedAmount,
-  sameEntrySentHash,
-} from "lib/claimVote/intent";
+import { canFallBackToOwnFunds, intentFor, intentPath, isClaimForIntent, matchIntent, normalizedAmount, sameEntrySentHash } from "lib/claimVote/intent";
 import { takeLanding } from "lib/claimVote/landing";
 import { voteIntentStore } from "lib/claimVote/storage";
 import { isRetryableEnding, planStart } from "lib/claimVote/transition";
@@ -76,28 +69,28 @@ const planWithIntent = async ({
     ? await hasReceipt({ hash: earlierHash, chainId: contest.chainId }).catch(() => false)
     : false;
   const sentTxHash = hasEarlierLanded ? null : earlierHash;
-  const intentWith = (votesBefore: bigint | null, ownFundsCover: boolean): VoteIntent =>
+  const intentWith = (votesBefore: bigint | null, ownFunds: typeof NO_OWN_FUNDS): VoteIntent =>
     intentFor({
       choice,
       wallet: wallet.address,
       contest: facts.contest,
       votesBefore,
-      ownFundsCover,
+      ...ownFunds,
       sentTxHash,
       now: Date.now(),
     });
   if (decision.kind === "refuse" && !isRetryableEnding(decision.ending)) return { ...decision, intent: null };
-  const [votesBefore, ownFundsCover] = await Promise.all([
+  const [votesBefore, ownFunds] = await Promise.all([
     decision.kind === "refuse"
       ? null
       : readUserVotes({ contest, proposalId: choice.proposalId, wallet: wallet.address }).catch(() => null),
-    readOwnFundsCover({
+    readOwnFunds({
       contest,
       wallet: wallet.address,
       amountNative: normalizedAmount(choice.amountNative),
-    }).catch(() => false),
+    }).catch(() => NO_OWN_FUNDS),
   ]);
-  const intent = intentWith(votesBefore, ownFundsCover);
+  const intent = intentWith(votesBefore, ownFunds);
   return decision.kind === "refuse" ? { ...decision, intent } : { kind: decision.kind, intent };
 };
 
@@ -130,7 +123,12 @@ export const useClaimVoteDriver = () => {
   const { wallet, intent, me, meUpdatedAt, meFailedAt, meSettled, spots, spotsFailed } = facts;
   const finishVote = useCallback(
     (outcome: VoteOutcome) => {
-      if (run.phase === "voting" && run.payout === null) reportOwnVote(outcome);
+      if (run.phase === "voting" && run.fallback) {
+        reportFallbackFailure(outcome);
+        if (outcome.kind === "failed" && outcome.failure.kind === "cannot_afford") {
+          voteIntentStore.update({ ownFundsCanVote: false });
+        }
+      } else if (run.phase === "voting" && run.payout === null) reportOwnVote(outcome);
       dispatch({ type: "vote_done", outcome });
     },
     [run, dispatch],
@@ -152,7 +150,7 @@ export const useClaimVoteDriver = () => {
 
   useEffect(() => {
     if (run.phase !== "starting" || !isPlanReady || !begin(step)) return;
-    const decision = planStart(facts, run.origin);
+    const decision = planStart(facts);
     void planWithIntent({ decision, choice: run.choice, facts, contest }).then(plan => {
       if (isCurrent(step)) dispatch({ type: "planned", plan });
     });
@@ -183,7 +181,7 @@ export const useClaimVoteDriver = () => {
     if (run.via === "worker") {
       void withParaProof({ wallet: signedIn, call: submitClaim })
         .then(result => {
-          if (isCurrent(step)) dispatch({ type: "claim_settled", result });
+          if (isCurrent(step)) dispatch({ type: "claim_settled", result, canFallBack: canFallBackToOwnFunds(matched) });
         })
         .catch(error => {
           if (isCurrent(step)) dispatch({ type: "claim_failed", failure: toXClaimFailure(error) });
@@ -220,12 +218,12 @@ export const useClaimVoteDriver = () => {
       const truth = confirmOutcome(run.hint, me);
       const isStaleClaim = !!me.claim && !isClaimForIntent(me.claim, matched);
       if (truth && isStaleClaim && (truth.kind === "paid" || truth.kind === "pending")) {
-        dispatch({ type: "claim_settled", result: { kind: "wallet_claimed" } });
+        dispatch({ type: "claim_settled", result: { kind: "wallet_claimed" }, canFallBack: false });
         return;
       }
       dispatch(
         truth
-          ? { type: "claim_settled", result: truth }
+          ? { type: "claim_settled", result: truth, canFallBack: canFallBackToOwnFunds(matched) }
           : { type: "claim_failed", failure: { reason: "temporary", detail: "unconfirmed" } },
       );
       return;
@@ -297,7 +295,9 @@ export const useClaimVoteDriver = () => {
 
   const caster = useMemo(
     (): ClaimVoteCasterMount | null =>
-      run.phase === "voting" && intent && isContestLoaded ? { intent, payout: run.payout, step } : null,
+      run.phase === "voting" && intent && isContestLoaded
+        ? { intent, payout: run.payout, isSilent: run.payout !== null || !!run.fallback, step }
+        : null,
     [run, intent, isContestLoaded, step],
   );
 

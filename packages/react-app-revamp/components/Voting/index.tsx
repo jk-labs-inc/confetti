@@ -20,6 +20,7 @@ import VoteButton from "./components/VoteButton";
 import VoteInfoBlocks from "./components/VoteInfoBlocks";
 import VotePercentRow from "./components/VotePercentRow";
 import { useEffectiveCostToVote } from "./hooks/useEffectiveCostToVote";
+import { useDefaultVoteAmount } from "./hooks/useDefaultVoteAmount";
 import useKeypadInput from "./hooks/useKeypadInput";
 import { useVoteExecution } from "./hooks/useVoteExecution";
 import { useVotePresets } from "./hooks/useVotePresets";
@@ -41,6 +42,8 @@ interface VotingWidgetProps {
   onConnectRequest?: () => void;
   pinVoteButton?: boolean;
 }
+
+const AMOUNT_KEY = /^([\d.]|Backspace|Delete|Unidentified)$/;
 
 const PINNED_VOTE_BUTTON_CLASS_NAME = "sticky bottom-0 z-10 -mx-3 -mb-3 px-3 pb-3 pt-6 -mt-6 rounded-b-2xl";
 const PINNED_VOTE_BUTTON_BACKDROP = "linear-gradient(to bottom, rgba(20, 20, 20, 0) 0px, #141414 24px)";
@@ -65,6 +68,11 @@ const VotingWidget: FC<VotingWidgetProps> = ({
   const inputRef = useRef<HTMLInputElement>(null);
   const inputValue = useVotingStore(state => state.inputValue);
   const effectiveCostToVote = useEffectiveCostToVote(costToVote);
+  useDefaultVoteAmount({
+    contest: contestConfig.address,
+    nativeSymbol: contestConfig.chainNativeCurrencySymbol,
+    pricePerVoteNative: effectiveCostToVote,
+  });
   const {
     balance,
     insufficientBalance,
@@ -85,6 +93,7 @@ const VotingWidget: FC<VotingWidgetProps> = ({
     displayValue,
     displaySymbol,
     isLoading: isDisplayLoading,
+    isPrefilled,
     handleDisplayChange,
     handleDisplayMax,
   } = useVotingInputDisplay({
@@ -92,7 +101,7 @@ const VotingWidget: FC<VotingWidgetProps> = ({
     maxBalance,
     isConnected,
   });
-  const { handleKey } = useKeypadInput({ displayValue, onDisplayChange: handleDisplayChange });
+  const { handleKey } = useKeypadInput({ displayValue, isPrefilled, onDisplayChange: handleDisplayChange });
   const pickedProposal = useCastVotesStore(useShallow(state => state.pickedProposal));
   const projections = useVoteProjections({
     proposalId: pickedProposal,
@@ -157,8 +166,12 @@ const VotingWidget: FC<VotingWidgetProps> = ({
 
   const handleKeyDownInputWithVote = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
-      handlePrimaryAction();
+      if (!isPrefilled) handlePrimaryAction();
+      return;
     }
+    if (!isPrefilled || e.metaKey || e.ctrlKey) return;
+    if (AMOUNT_KEY.test(e.key)) e.currentTarget.select();
+    else if (e.key.length === 1) e.preventDefault();
   };
 
   if (isContestCanceled) return null;
@@ -175,12 +188,16 @@ const VotingWidget: FC<VotingWidgetProps> = ({
           totalVotes={totalVotes}
           presets={presets}
           isBelowMinimum={isBelowMinimum}
+          showIdleCaret
           style={style}
           layout={layout}
           autoFocus={!isMobile}
           isReadOnly={isMobile}
           inputRef={inputRef}
           onKeyDown={handleKeyDownInputWithVote}
+          onPaste={e => {
+            if (isPrefilled) e.currentTarget.select();
+          }}
         />
         <VoteInfoBlocks
           type="my-votes"

@@ -34,6 +34,8 @@ export interface VoteChoice {
 
 export interface VoteIntent extends VoteChoice {
   ownFundsCover: boolean;
+  ownFundsCanVote: boolean;
+  spendableNative: string | null;
   wallet: Address;
   contest: ContestKey;
   votesBefore: string | null;
@@ -44,7 +46,7 @@ export interface VoteIntent extends VoteChoice {
   savedAt: number;
 }
 
-export type StartOrigin = "tap" | "after_sign_in";
+export type OwnFunds = Pick<VoteIntent, "ownFundsCover" | "ownFundsCanVote" | "spendableNative">;
 
 export type ClaimPath = "worker" | "x_redirect";
 
@@ -78,14 +80,20 @@ export type VoteOutcome =
 
 export type ClaimVoteRun =
   | { phase: "idle" }
-  | { phase: "starting"; choice: VoteChoice; origin: StartOrigin }
+  | { phase: "starting"; choice: VoteChoice }
   | { phase: "pitch"; choice: VoteChoice }
   | { phase: "verify_x" }
   | { phase: "claiming"; via: ClaimPath }
   | { phase: "confirming"; hint: XClaimResult; landedAt: number }
   | { phase: "funding"; payout: XClaimPayout; until: number }
-  | { phase: "voting"; payout: FundedPayout | null }
-  | { phase: "voted"; result: CastVotesResult | null; spentNative: string | null; wantedNative: string | null }
+  | { phase: "voting"; payout: FundedPayout | null; fallback?: XClaimResult }
+  | {
+      phase: "voted";
+      result: CastVotesResult | null;
+      spentNative: string | null;
+      wantedNative: string | null;
+      isFallback?: boolean;
+    }
   | { phase: "vote_failed"; failure: VoteFailure }
   | { phase: "payout_slow" }
   | { phase: "claim_failed"; failure: XClaimFailure; retry: ClaimRetry }
@@ -94,11 +102,11 @@ export type ClaimVoteRun =
 export type ClaimVotePhase = ClaimVoteRun["phase"];
 
 export type StartDecision =
-  { kind: "sign_in" } | { kind: "verify_x" | "go_x" | "claim" } | { kind: "refuse"; ending: RunEnding };
+  { kind: "sign_in" } | { kind: "verify_x" | "claim" } | { kind: "refuse"; ending: RunEnding };
 
 export type StartPlan =
   | { kind: "sign_in" }
-  | { kind: "verify_x" | "go_x" | "claim"; intent: VoteIntent }
+  | { kind: "verify_x" | "claim"; intent: VoteIntent }
   | { kind: "refuse"; ending: RunEnding; intent: VoteIntent | null };
 
 export type ClaimVoteEvent =
@@ -112,7 +120,7 @@ export type ClaimVoteEvent =
   | { type: "planned"; plan: StartPlan }
   | { type: "signed_in" }
   | { type: "landed"; hint: XClaimResult; at: number }
-  | { type: "claim_settled"; result: XClaimResult }
+  | { type: "claim_settled"; result: XClaimResult; canFallBack: boolean }
   | { type: "claim_failed"; failure: XClaimFailure }
   | { type: "wallet_unavailable" }
   | { type: "payout_updated"; payout: XClaimPayout }
@@ -136,6 +144,7 @@ export interface Transition {
 export interface ClaimVoteCasterMount {
   intent: VoteIntent;
   payout: FundedPayout | null;
+  isSilent: boolean;
   step: number;
 }
 
@@ -158,7 +167,7 @@ export type VoteSize =
   { votes: number; valueWei: bigint; wantedMore: boolean } | { votes: 0; reason: "cannot_afford" | "no_price" };
 
 export type ClaimVoteBoard =
-  "VoteRunning" | "VoteDone" | "VoteFinish" | "PayoutSlow" | "CheckFailed" | "ExternalWalletInfo";
+  "VoteRunning" | "VoteDone" | "VoteFallbackDone" | "VoteFinish" | "PayoutSlow" | "CheckFailed" | "ExternalWalletInfo";
 
 export type LandingTaker = "run" | "sheet";
 
@@ -166,8 +175,9 @@ export type ClaimVoteLine = { kind: "hidden" } | { kind: "offer"; offer: XClaimO
 
 export type ClaimVoteModalView =
   | { kind: "claim_board"; view: XClaimSheetView }
-  | { kind: "running" }
+  | { kind: "running"; isFallback: boolean }
   | { kind: "voted"; result: CastVotesResult | null; spentNative: string | null; wantedNative: string | null }
+  | { kind: "fallback_voted"; result: CastVotesResult | null; spentNative: string | null }
   | { kind: "finish"; entryTitle: string; failure: VoteFailure }
   | { kind: "payout_slow"; entryTitle: string }
   | { kind: "check_failed" }

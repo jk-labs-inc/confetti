@@ -2,7 +2,9 @@ import { INTENT_KEY } from "./constants";
 import { parseIntent } from "./intent";
 import type { VoteIntent } from "./types";
 
-type IntentPatch = Partial<Pick<VoteIntent, "savedAt" | "votesBefore" | "sentTxHash" | "sendingAt" | "castingAt">>;
+type IntentPatch = Partial<
+  Pick<VoteIntent, "amountNative" | "ownFundsCanVote" | "savedAt" | "votesBefore" | "sentTxHash" | "sendingAt" | "castingAt">
+>;
 
 const listeners = new Set<() => void>();
 

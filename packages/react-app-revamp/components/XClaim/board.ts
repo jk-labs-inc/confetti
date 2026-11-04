@@ -1,7 +1,7 @@
 import { DESKTOP_HEADER_MIN_WIDTH_PX } from "@helpers/isMobileViewport";
 import type { ClaimVoteBoard } from "lib/claimVote/types";
 import type { XClaimActionState, XClaimBoard, XClaimCheck, XClaimCheckStatus } from "lib/xClaim/types";
-import { createContext, useContext } from "react";
+import { createContext, type ReactNode, useContext } from "react";
 import { useMediaQuery } from "react-responsive";
 
 export type XClaimLayout = "sheet" | "modal";
@@ -41,6 +41,11 @@ export type XClaimDismissLabel = "maybe later" | "close" | "done";
 export type XClaimSecondarySpec =
   | { role: "dismiss"; label: XClaimDismissLabel }
   | ({ role: "alternative"; modalLabel?: string; isStrong?: boolean } & XClaimButtonSpec);
+
+export interface XClaimPromptExtras {
+  secondary?: XClaimSecondarySpec;
+  footer: ReactNode;
+}
 
 export type CheckStickerState = XClaimCheckStatus | "todo" | "running" | "queued";
 

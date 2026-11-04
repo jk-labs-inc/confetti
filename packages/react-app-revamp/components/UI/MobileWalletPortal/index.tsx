@@ -4,6 +4,7 @@ import { ChevronRightIcon, PowerIcon } from "@heroicons/react/24/outline";
 import React, { useState } from "react";
 import CustomLink from "../Link";
 import AddFundsModal from "@components/AddFunds/components/Modal";
+import ClaimOfferRestore from "@components/ClaimVote/ClaimOfferRestore";
 import WalletCreditHint from "@components/ClaimVote/WalletCreditHint";
 import SendFunds from "@components/SendFunds";
 import Drawer from "../Drawer";
@@ -11,6 +12,7 @@ import ProfileSection from "@components/Connect/components/AccountDropdown/compo
 import AdvancedOptions from "@components/Connect/components/AccountDropdown/components/AdvancedOptions";
 import { useAddFunds } from "@hooks/useAddFunds";
 import { useAddFundsChain } from "@hooks/useAddFundsChain";
+import { useHiddenOfferRestore } from "@hooks/useClaimVote/useHiddenOfferRestore";
 import { useWalletCreditHint } from "@hooks/useClaimVote/useWalletCreditHint";
 import { useSwitchAccount } from "@hooks/useSwitchAccount";
 import { useWallet } from "@hooks/useWallet";
@@ -51,6 +53,7 @@ export const MobileProfileDrawer: React.FC<MobileProfileDrawerProps> = ({ isOpen
   const { data: balance } = useBalance({ address: address as `0x${string}` });
   const { openAddFunds } = useAddFunds({ chain: chainName });
   const creditSpots = useWalletCreditHint();
+  const restoreOffer = useHiddenOfferRestore();
   const switchAccount = useSwitchAccount();
 
   const handleAddFunds = async () => {
@@ -72,6 +75,16 @@ export const MobileProfileDrawer: React.FC<MobileProfileDrawerProps> = ({ isOpen
                 onSwitch={() => {
                   onClose();
                   switchAccount();
+                }}
+              />
+            </div>
+          )}
+          {restoreOffer && (
+            <div className="px-4 pt-4">
+              <ClaimOfferRestore
+                onRestore={() => {
+                  onClose();
+                  restoreOffer();
                 }}
               />
             </div>

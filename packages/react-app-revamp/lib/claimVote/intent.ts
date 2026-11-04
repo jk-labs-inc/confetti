@@ -15,6 +15,8 @@ const intentSchema = z.object({
   entryTitle: z.string(),
   amountNative: z.string().refine(value => value === "" || isDecimalAmount(value)),
   ownFundsCover: z.boolean().default(false),
+  ownFundsCanVote: z.boolean().default(false),
+  spendableNative: z.string().refine(value => isDecimalAmount(value)).nullable().default(null),
   wallet: lowerAddress,
   contest: z.object({
     chain: z
@@ -50,12 +52,20 @@ export const normalizedAmount = (typed: string) => {
   return withLeadingZero.endsWith(".") ? withLeadingZero.slice(0, -1) : withLeadingZero;
 };
 
+export const canFallBackToOwnFunds = (intent: Pick<VoteIntent, "ownFundsCover" | "ownFundsCanVote">) =>
+  intent.ownFundsCanVote && !intent.ownFundsCover;
+
+export const isKnownOutOfFunds = (intent: VoteIntent | null) =>
+  intent !== null && intent.spendableNative !== null && !intent.ownFundsCanVote;
+
 export const intentFor = ({
   choice,
   wallet,
   contest,
   votesBefore,
   ownFundsCover,
+  ownFundsCanVote,
+  spendableNative,
   sentTxHash = null,
   now,
 }: {
@@ -64,12 +74,16 @@ export const intentFor = ({
   contest: ContestKey;
   votesBefore: bigint | null;
   ownFundsCover: boolean;
+  ownFundsCanVote: boolean;
+  spendableNative: string | null;
   sentTxHash?: Hash | null;
   now: number;
 }): VoteIntent => ({
   ...choice,
   amountNative: normalizedAmount(choice.amountNative),
   ownFundsCover,
+  ownFundsCanVote,
+  spendableNative,
   wallet: wallet.toLowerCase() as Address,
   contest: contestKeyOf(contest),
   votesBefore: votesBefore === null ? null : votesBefore.toString(),

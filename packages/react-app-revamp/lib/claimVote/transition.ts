@@ -11,10 +11,8 @@ import type {
   ModalCommand,
   RunEnding,
   StartDecision,
-  StartOrigin,
   StartPlan,
   Transition,
-  VoteIntent,
   VoteOutcome,
 } from "./types";
 
@@ -88,16 +86,11 @@ const closeTransition = (run: ClaimVoteRun): Transition | null => {
 };
 
 const plannedTransition = (run: Extract<ClaimVoteRun, { phase: "starting" }>, plan: StartPlan): Transition => {
-  const prompt = (intent: VoteIntent) => to({ phase: "verify_x" }, "open", { kind: "save", intent });
   switch (plan.kind) {
     case "sign_in":
       return to({ phase: "pitch", choice: run.choice }, "open");
     case "verify_x":
-      return prompt(plan.intent);
-    case "go_x":
-      return plan.intent.ownFundsCover
-        ? prompt(plan.intent)
-        : claimingVia("x_redirect", { kind: "save", intent: plan.intent });
+      return to({ phase: "verify_x" }, "open", { kind: "save", intent: plan.intent });
     case "claim":
       return claimingVia("worker", { kind: "save", intent: plan.intent });
     case "refuse":
@@ -109,10 +102,13 @@ const plannedTransition = (run: Extract<ClaimVoteRun, { phase: "starting" }>, pl
   }
 };
 
-const settledTransition = (result: XClaimResult, now: number): Transition =>
-  isPayout(result)
-    ? to({ phase: "funding", payout: result.payout, until: now + PAYOUT_WINDOW_MS })
-    : ended({ kind: "claim_outcome", result });
+const settledTransition = (result: XClaimResult, canFallBack: boolean, now: number): Transition => {
+  if (isPayout(result)) return to({ phase: "funding", payout: result.payout, until: now + PAYOUT_WINDOW_MS });
+  if (result.kind === "not_eligible" && canFallBack) {
+    return to({ phase: "voting", payout: null, fallback: result }, "open", TOUCH);
+  }
+  return ended({ kind: "claim_outcome", result });
+};
 
 const retryTransition = (run: ClaimVoteRun, via: ClaimPath | null, now: number): Transition | null => {
   if (run.phase === "claim_failed") {
@@ -139,7 +135,7 @@ export const transition = (run: ClaimVoteRun, event: ClaimVoteEvent, now: number
     case "abort":
       return ABORTABLE_PHASES.includes(run.phase) ? to(IDLE_RUN, "close") : null;
     case "start":
-      return run.phase === "idle" ? to({ phase: "starting", choice: event.choice, origin: "tap" }) : null;
+      return run.phase === "idle" ? to({ phase: "starting", choice: event.choice }) : null;
     case "finish":
       return run.phase === "idle" || run.phase === "vote_failed" || run.phase === "payout_slow"
         ? to({ phase: "funding", payout: event.payout, until: now + PAYOUT_WINDOW_MS }, "open", TOUCH)
@@ -152,12 +148,12 @@ export const transition = (run: ClaimVoteRun, event: ClaimVoteEvent, now: number
     case "planned":
       return run.phase === "starting" ? plannedTransition(run, event.plan) : null;
     case "signed_in":
-      return run.phase === "pitch" ? to({ phase: "starting", choice: run.choice, origin: "after_sign_in" }) : null;
+      return run.phase === "pitch" ? to({ phase: "starting", choice: run.choice }) : null;
     case "verify":
       return run.phase === "verify_x" ? claimingVia("x_redirect", KEEP) : null;
     case "claim_settled":
       if (run.phase === "confirming" || (run.phase === "claiming" && run.via === "worker")) {
-        return settledTransition(event.result, now);
+        return settledTransition(event.result, event.canFallBack, now);
       }
       return null;
     case "claim_failed":
@@ -182,6 +178,21 @@ export const transition = (run: ClaimVoteRun, event: ClaimVoteEvent, now: number
     case "vote_done": {
       if (run.phase !== "voting") return null;
       const { outcome } = event;
+      if (run.fallback) {
+        if (outcome.kind === "failed") return ended({ kind: "claim_outcome", result: run.fallback });
+        const isVoted = outcome.kind === "voted";
+        return to(
+          {
+            phase: "voted",
+            result: isVoted ? outcome.result : null,
+            spentNative: isVoted ? outcome.spentNative : null,
+            wantedNative: null,
+            isFallback: true,
+          },
+          "open",
+          CLEAR,
+        );
+      }
       if (run.payout === null) return to(IDLE_RUN, "close", isOtherTabSending(outcome) ? KEEP : CLEAR);
       if (outcome.kind === "voted") {
         return to(
@@ -211,7 +222,7 @@ export const transition = (run: ClaimVoteRun, event: ClaimVoteEvent, now: number
 
 const refuse = (ending: RunEnding): StartDecision => ({ kind: "refuse", ending });
 
-export const planStart = (facts: ClaimVoteFacts, origin: StartOrigin): StartDecision => {
+export const planStart = (facts: ClaimVoteFacts): StartDecision => {
   const { wallet, me, offer } = facts;
   if (wallet.kind === "signed_out") return { kind: "sign_in" };
   if (wallet.kind === "external") return refuse({ kind: "external_wallet" });
@@ -235,5 +246,5 @@ export const planStart = (facts: ClaimVoteFacts, origin: StartOrigin): StartDeci
       result: fromMe ?? { kind: "no_spots", nextReleaseAt: me.spots.nextReleaseAt },
     });
   }
-  return origin === "after_sign_in" ? { kind: "verify_x" } : { kind: "go_x" };
+  return { kind: "verify_x" };
 };

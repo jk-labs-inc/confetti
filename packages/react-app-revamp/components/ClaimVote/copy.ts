@@ -24,7 +24,11 @@ export const WALLET_CREDIT_HINT =
 
 export const SWITCH_SIGN_IN_LABEL = "switch account";
 
-export const WALLET_HINT_DISMISS_LABEL = "don't show this again";
+export const DONT_SHOW_AGAIN_LABEL = "don't show this again";
+
+export const OFFER_RESTORE_LINE = "you hid this from your votes.";
+
+export const OFFER_RESTORE_LABEL = "bring it back";
 
 export const withCreditLabel = (label: string) => `${label} with ${CLAIM_AMOUNT_LABEL} on us`;
 
@@ -45,6 +49,13 @@ export const VOTED_SHORT_TITLE = `we just put ${CLAIM_AMOUNT_LABEL} on\u00a0your
 
 export const votedShortBody = ({ wanted, spent }: { wanted: string; spent: string }) =>
   `we know you wanted to put ${wanted}, but since your first ${CLAIM_AMOUNT_LABEL} is on us, we went ahead and put that on your entry. it's on the house. you now have ${spent} there.`;
+
+export const FALLBACK_TITLE = "not quite yet";
+
+export const FALLBACK_RUNNING_BODY = "your twitter didn't pass every check yet, so we're voting with your funds.";
+
+export const fallbackVotedBody = (amount: string | null) =>
+  `your twitter didn't pass every check yet, so we couldn't add the ${CLAIM_AMOUNT_LABEL}. ${amount ? `we put your ${amount} on your entry instead.` : "your votes are on your entry."}`;
 
 export const VOTED_SHORT_NOTE = "to put more money, you'll need to fund your wallet first. want to do that now?";
 

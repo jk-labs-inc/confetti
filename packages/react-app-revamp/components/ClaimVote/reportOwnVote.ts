@@ -7,6 +7,12 @@ import type { VoteOutcome } from "lib/claimVote/types";
 
 const OWN_VOTE_LANDED = "your votes have been deployed successfully";
 
+export const reportFallbackFailure = (outcome: VoteOutcome) => {
+  if (outcome.kind === "failed" && outcome.failure.kind !== "cannot_afford") {
+    toastError({ message: voteFailureLine(outcome.failure) });
+  }
+};
+
 export const reportOwnVote = (outcome: VoteOutcome) => {
   const isOverlayShowing = txOverlay.isShowing(TransactionOverlayFlow.VOTE);
   if (outcome.kind === "already_voted") {

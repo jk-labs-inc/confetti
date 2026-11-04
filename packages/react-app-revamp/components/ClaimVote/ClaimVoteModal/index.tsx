@@ -2,9 +2,11 @@ import CheckFailedBoard from "@components/ClaimVote/boards/CheckFailedBoard";
 import ExternalWalletBoard from "@components/ClaimVote/boards/ExternalWalletBoard";
 import FinishVoteBoard from "@components/ClaimVote/boards/FinishVoteBoard";
 import PayoutSlowBoard from "@components/ClaimVote/boards/PayoutSlowBoard";
+import FallbackVotedBoard from "@components/ClaimVote/boards/FallbackVotedBoard";
+import HideOfferLink from "@components/ClaimVote/HideOfferLink";
 import RunningBoard from "@components/ClaimVote/boards/RunningBoard";
 import VotedBoard from "@components/ClaimVote/boards/VotedBoard";
-import { CLAIM_VOTE_BOARD_IDS } from "@components/ClaimVote/constants";
+import { CLAIM_VOTE_BOARD_IDS, CLAIM_VOTE_IDS } from "@components/ClaimVote/constants";
 import { XClaimBoardContext, type XClaimJustVote, type XClaimLayout } from "@components/XClaim/board";
 import XClaimAddFunds from "@components/XClaim/XClaimAddFunds";
 import XClaimSheetContent from "@components/XClaim/XClaimSheetContent";
@@ -21,12 +23,15 @@ interface ClaimVoteModalProps {
   actions: XClaimActions;
   onFinish: (() => void) | null;
   justVote: XClaimJustVote | null;
+  isOutOfFunds: boolean;
+  onHideOffer: () => void;
   onRetryCheck: () => void;
 }
 
 const BOARD_FOR: Readonly<Record<RunView["kind"], ClaimVoteBoard>> = {
   running: "VoteRunning",
   voted: "VoteDone",
+  fallback_voted: "VoteFallbackDone",
   finish: "VoteFinish",
   payout_slow: "PayoutSlow",
   check_failed: "CheckFailed",
@@ -43,7 +48,7 @@ const runBoard = (
 ): ReactElement => {
   switch (view.kind) {
     case "running":
-      return <RunningBoard />;
+      return <RunningBoard isFallback={view.isFallback} />;
     case "voted":
       return (
         <VotedBoard
@@ -53,6 +58,8 @@ const runBoard = (
           onAddFunds={onAddFunds}
         />
       );
+    case "fallback_voted":
+      return <FallbackVotedBoard result={view.result} spentNative={view.spentNative} onAddFunds={onAddFunds} />;
     case "finish":
       return <FinishVoteBoard entryTitle={view.entryTitle} failure={view.failure} onFinish={onFinish} />;
     case "payout_slow":
@@ -64,10 +71,19 @@ const runBoard = (
   }
 };
 
-const ClaimVoteModal: FC<ClaimVoteModalProps> = ({ isOpen, view, actions, onFinish, justVote, onRetryCheck }) => {
+const ClaimVoteModal: FC<ClaimVoteModalProps> = ({
+  isOpen,
+  view,
+  actions,
+  onFinish,
+  justVote,
+  isOutOfFunds,
+  onHideOffer,
+  onRetryCheck,
+}) => {
   const [addFundsRequest, setAddFundsRequest] = useState(0);
-  const shownJustVote = useRef(justVote);
-  if (isOpen) shownJustVote.current = justVote;
+  const shown = useRef({ justVote, isOutOfFunds });
+  if (isOpen) shown.current = { justVote, isOutOfFunds };
 
   const addFunds = () => {
     actions.close();
@@ -83,7 +99,20 @@ const ClaimVoteModal: FC<ClaimVoteModalProps> = ({ isOpen, view, actions, onFini
           actions={actions}
           layout={layout}
           onAddFunds={addFunds}
-          justVote={shownJustVote.current}
+          justVote={shown.current.justVote}
+          promptExtras={{
+            secondary: shown.current.isOutOfFunds
+              ? {
+                  role: "alternative",
+                  isStrong: true,
+                  kind: "run",
+                  id: CLAIM_VOTE_IDS.promptAddFunds,
+                  label: "add funds",
+                  onPress: addFunds,
+                }
+              : undefined,
+            footer: <HideOfferLink onHide={onHideOffer} />,
+          }}
         />
       );
     }

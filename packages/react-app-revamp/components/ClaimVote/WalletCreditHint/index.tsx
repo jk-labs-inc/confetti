@@ -1,5 +1,5 @@
 import { CLAIM_VOTE_IDS } from "@components/ClaimVote/constants";
-import { SWITCH_SIGN_IN_LABEL, WALLET_CREDIT_HINT, WALLET_HINT_DISMISS_LABEL } from "@components/ClaimVote/copy";
+import { DONT_SHOW_AGAIN_LABEL, SWITCH_SIGN_IN_LABEL, WALLET_CREDIT_HINT } from "@components/ClaimVote/copy";
 import { X_CLAIM_ART } from "@components/XClaim/constants";
 import { CLAIM_TITLE } from "@components/XClaim/copy";
 import SpotsLine from "@components/XClaim/parts/SpotsLine";
@@ -39,7 +39,7 @@ const WalletCreditHint: FC<WalletCreditHintProps> = ({ spots, onSwitch }) => {
         onClick={dismiss}
         className="self-center text-[13px] text-neutral-9 transition-colors hover:text-neutral-11"
       >
-        {WALLET_HINT_DISMISS_LABEL}
+        {DONT_SHOW_AGAIN_LABEL}
       </button>
     </div>
   );

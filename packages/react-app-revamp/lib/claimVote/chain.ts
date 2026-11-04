@@ -2,10 +2,10 @@ import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import { getBalance, getBlockNumber, getGasPrice, getPublicClient, readContract } from "@wagmi/core";
 import { compareVersions } from "compare-versions";
 import { spendableWei } from "lib/voteBalance/spendable";
-import { type Address, type Hash, TransactionNotFoundError, TransactionReceiptNotFoundError } from "viem";
+import { type Address, formatEther, type Hash, TransactionNotFoundError, TransactionReceiptNotFoundError } from "viem";
 import { BLOCK_CATCH_UP_POLL_MS, BLOCK_CATCH_UP_TIMEOUT_MS } from "./constants";
-import { chosenWei, coversOwnVote } from "./sizing";
-import type { ContestTarget, ReceiptStatus } from "./types";
+import { chosenWei, buysOneVote, coversOwnVote } from "./sizing";
+import type { ContestTarget, OwnFunds, ReceiptStatus } from "./types";
 
 const DOWNVOTES_REMOVED_IN = "5.1";
 
@@ -70,7 +70,9 @@ export const readSpendableAfter = async ({
   }
 };
 
-export const readOwnFundsCover = async ({
+export const NO_OWN_FUNDS: OwnFunds = { ownFundsCover: false, ownFundsCanVote: false, spendableNative: null };
+
+export const readOwnFunds = async ({
   contest,
   wallet,
   amountNative,
@@ -78,21 +80,21 @@ export const readOwnFundsCover = async ({
   contest: ContestTarget;
   wallet: Address;
   amountNative: string;
-}): Promise<boolean> => {
+}): Promise<OwnFunds> => {
   const chosen = chosenWei(amountNative);
-  if (chosen === 0n) return false;
+  if (chosen === 0n) return NO_OWN_FUNDS;
   const config = getWagmiConfig();
   const [balance, gasPriceWei, priceWei] = await Promise.all([
     getBalance(config, { address: wallet, chainId: contest.chainId }),
     getGasPrice(config, { chainId: contest.chainId }),
     readPricePerVote(contest),
   ]);
-  return coversOwnVote({
-    balanceWei: balance.value,
-    spendableWei: spendableWei({ balanceWei: balance.value, gasPriceWei }),
-    chosenWei: chosen,
-    priceWei,
-  });
+  const spendable = spendableWei({ balanceWei: balance.value, gasPriceWei });
+  return {
+    ownFundsCover: coversOwnVote({ balanceWei: balance.value, spendableWei: spendable, chosenWei: chosen, priceWei }),
+    ownFundsCanVote: buysOneVote({ spendableWei: spendable, priceWei }),
+    spendableNative: formatEther(spendable),
+  };
 };
 
 export const waitForReceiptStatus = async ({

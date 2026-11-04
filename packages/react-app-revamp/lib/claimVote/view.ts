@@ -37,7 +37,7 @@ export const ownVoteIntent = ({
 }): VoteIntent | null => {
   if (!canStartOwnVote(run)) return null;
   const intent = matchIntent(facts.intent, { wallet: facts.wallet, contest: facts.contest, now });
-  return intent?.ownFundsCover ? intent : null;
+  return intent?.ownFundsCanVote ? intent : null;
 };
 
 export const claimVoteLine = ({
@@ -89,14 +89,17 @@ export const claimVoteModalView = ({
     case "claiming":
     case "confirming":
     case "funding":
+      return { kind: "running", isFallback: false };
     case "voting":
-      return { kind: "running" };
+      return { kind: "running", isFallback: !!run.fallback };
     case "pitch":
       return claimBoard(facts, { board: "ClaimSignedOut" });
     case "verify_x":
       return claimBoard(facts, verifyBoard(facts));
     case "voted":
-      return { kind: "voted", result: run.result, spentNative: run.spentNative, wantedNative: run.wantedNative };
+      return run.isFallback
+        ? { kind: "fallback_voted", result: run.result, spentNative: run.spentNative }
+        : { kind: "voted", result: run.result, spentNative: run.spentNative, wantedNative: run.wantedNative };
     case "vote_failed":
       return { kind: "finish", entryTitle, failure: run.failure };
     case "payout_slow":

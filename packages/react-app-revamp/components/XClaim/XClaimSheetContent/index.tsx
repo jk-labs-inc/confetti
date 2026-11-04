@@ -4,6 +4,7 @@ import {
   type CheckStickerStates,
   type XClaimJustVote,
   type XClaimLayout,
+  type XClaimPromptExtras,
 } from "@components/XClaim/board";
 import AlreadyClaimedBoard from "@components/XClaim/boards/AlreadyClaimedBoard";
 import AlreadyLinkedBoard from "@components/XClaim/boards/AlreadyLinkedBoard";
@@ -27,6 +28,7 @@ interface XClaimSheetContentProps {
   layout: XClaimLayout;
   onAddFunds: () => void;
   justVote: XClaimJustVote | null;
+  promptExtras?: XClaimPromptExtras;
 }
 
 const PASSED_CHECKS: CheckStickerStates = { verified: "passed", verifiedFollowers: "passed", ratio: "passed" };
@@ -34,11 +36,18 @@ const PASSED_CHECKS: CheckStickerStates = { verified: "passed", verifiedFollower
 const justVoteOfferProps = (justVote: XClaimJustVote | null) =>
   justVote ? { secondary: justVoteSecondary(justVote), note: justVote.note } : {};
 
+const promptProps = (justVote: XClaimJustVote | null, extras: XClaimPromptExtras | undefined) => ({
+  secondary: extras?.secondary,
+  ...justVoteOfferProps(justVote),
+  footer: extras?.footer,
+});
+
 const boardFor = (
   view: XClaimSheetView,
   actions: XClaimActions,
   onAddFunds: () => void,
   justVote: XClaimJustVote | null,
+  promptExtras: XClaimPromptExtras | undefined,
 ): ReactElement => {
   switch (view.board) {
     case "ClaimSignedOut":
@@ -71,7 +80,7 @@ const boardFor = (
             onPress: () => actions.startXClaim(),
             withXLogo: true,
           }}
-          {...justVoteOfferProps(justVote)}
+          {...promptProps(justVote, promptExtras)}
           checks={TODO_CHECKS}
           spots={view.spots}
         />
@@ -88,7 +97,7 @@ const boardFor = (
             onPress: () => actions.startXClaim(),
             withXLogo: true,
           }}
-          {...justVoteOfferProps(justVote)}
+          {...promptProps(justVote, promptExtras)}
           checks={TODO_CHECKS}
           spots={view.spots}
         />
@@ -156,11 +165,11 @@ const boardFor = (
   }
 };
 
-const XClaimSheetContent: FC<XClaimSheetContentProps> = ({ view, actions, layout, onAddFunds, justVote }) => (
+const XClaimSheetContent: FC<XClaimSheetContentProps> = ({ view, actions, layout, onAddFunds, justVote, promptExtras }) => (
   <XClaimBoardContext.Provider
     value={{ board: view.board, layout, action: view.action, settling: view.settling, close: actions.close }}
   >
-    {boardFor(view, actions, onAddFunds, justVote)}
+    {boardFor(view, actions, onAddFunds, justVote, promptExtras)}
   </XClaimBoardContext.Provider>
 );
 

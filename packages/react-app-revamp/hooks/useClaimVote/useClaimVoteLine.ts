@@ -6,8 +6,10 @@ import useNativeRates from "@hooks/useCurrency/useNativeRates";
 import { creditGate } from "lib/claimVote/sizing";
 import type { ClaimVoteLine } from "lib/claimVote/types";
 import { claimVoteLine } from "lib/claimVote/view";
+import { walletAddressOf } from "lib/xClaim/wallet";
 import { useCallback } from "react";
 import { useShallow } from "zustand/shallow";
+import { useHiddenOfferStore } from "./hiddenOfferStore";
 import { useClaimVoteStore, useHasClaimVoteRun } from "./store";
 import { useClaimVoteFacts } from "./useClaimVoteFacts";
 
@@ -23,6 +25,8 @@ export const useClaimVoteLine = ({
   const hasRun = useHasClaimVoteRun();
   const { run, dispatch } = useClaimVoteStore(useShallow(state => ({ run: state.run, dispatch: state.dispatch })));
   const facts = useClaimVoteFacts({ enabled: hasRun, pollUntil: null });
+  const address = walletAddressOf(facts.wallet)?.toLowerCase();
+  const isOfferHidden = useHiddenOfferStore(state => !!address && state.wallets.includes(address));
   const nativeSymbol = useContestConfigStore(state => state.contestConfig.chainNativeCurrencySymbol);
   const { data: nativeRates } = useNativeRates();
   const pickedProposal = useCastVotesStore(state => state.pickedProposal);
@@ -34,7 +38,7 @@ export const useClaimVoteLine = ({
     pricePerVoteNative,
   });
   const derived = hasRun ? claimVoteLine({ run, facts, gate }) : HIDDEN_LINE;
-  const line = derived.kind === "offer" && (!pickedProposal || isVotingClosed) ? HIDDEN_LINE : derived;
+  const line = derived.kind === "offer" && (!pickedProposal || isVotingClosed || isOfferHidden) ? HIDDEN_LINE : derived;
 
   const press = useCallback(() => {
     if (line.kind !== "offer" || !pickedProposal) return;

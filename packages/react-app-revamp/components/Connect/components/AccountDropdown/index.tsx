@@ -1,9 +1,11 @@
 import AddFundsModal from "@components/AddFunds/components/Modal";
+import ClaimOfferRestore from "@components/ClaimVote/ClaimOfferRestore";
 import WalletCreditHint from "@components/ClaimVote/WalletCreditHint";
 import SendFunds from "@components/SendFunds";
 import { Menu, MenuItems } from "@headlessui/react";
 import { useAddFunds } from "@hooks/useAddFunds";
 import { useAddFundsChain } from "@hooks/useAddFundsChain";
+import { useHiddenOfferRestore } from "@hooks/useClaimVote/useHiddenOfferRestore";
 import { useWalletCreditHint } from "@hooks/useClaimVote/useWalletCreditHint";
 import { useSwitchAccount } from "@hooks/useSwitchAccount";
 import { useWallet } from "@hooks/useWallet";
@@ -34,6 +36,7 @@ const AccountDropdown: FC<AccountDropdownProps> = ({ address, displayName, onDis
   const { data: balance } = useBalance({ address: address as `0x${string}` });
   const { openAddFunds } = useAddFunds({ chain: chainName });
   const creditSpots = useWalletCreditHint();
+  const restoreOffer = useHiddenOfferRestore();
   const switchAccount = useSwitchAccount();
 
   const handleAddFunds = async () => {
@@ -68,6 +71,16 @@ const AccountDropdown: FC<AccountDropdownProps> = ({ address, displayName, onDis
                       onSwitch={() => {
                         close();
                         switchAccount();
+                      }}
+                    />
+                  </div>
+                )}
+                {restoreOffer && (
+                  <div className="px-3 pt-4">
+                    <ClaimOfferRestore
+                      onRestore={() => {
+                        close();
+                        restoreOffer();
                       }}
                     />
                   </div>

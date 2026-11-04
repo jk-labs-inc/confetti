@@ -5,6 +5,8 @@ import { create } from "zustand";
 
 interface VotingStore {
   inputValue: string;
+  isAmountEdited: boolean;
+  prefilledFor: string | null;
   sliderValue: number;
   isInvalid: boolean;
   isFocused: boolean;
@@ -12,6 +14,7 @@ interface VotingStore {
   phoneNumber: string;
   resetSignupsNonce: number;
   setInputValue: (value: string, maxBalance: string) => void;
+  prefillAmount: (value: string, contest: string | null) => void;
   setSliderValue: (value: number, maxBalance: string, isConnected: boolean) => void;
   setIsFocused: (focused: boolean) => void;
   setEmailAddress: (email: string) => void;
@@ -22,6 +25,8 @@ interface VotingStore {
 
 const INITIAL_STATE = {
   inputValue: "",
+  isAmountEdited: false,
+  prefilledFor: null,
   sliderValue: 0,
   isInvalid: false,
   isFocused: true,
@@ -46,7 +51,11 @@ export const useVotingStore = create<VotingStore>((set, get) => ({
       isInvalid = numericInput > maxBalanceNum;
     }
 
-    set({ inputValue: value, sliderValue: newSliderValue, isInvalid });
+    set({ inputValue: value, sliderValue: newSliderValue, isInvalid, isAmountEdited: true });
+  },
+
+  prefillAmount: (value: string, contest: string | null) => {
+    set({ inputValue: value, sliderValue: 0, isInvalid: false, isAmountEdited: false, prefilledFor: contest });
   },
 
   setSliderValue: (value: number, maxBalance: string, isConnected: boolean) => {
@@ -63,6 +72,7 @@ export const useVotingStore = create<VotingStore>((set, get) => ({
       inputValue: balanceString,
       sliderValue: value,
       isInvalid: false,
+      isAmountEdited: true,
     });
   },
 
@@ -91,6 +101,7 @@ export const useVotingStore = create<VotingStore>((set, get) => ({
       inputValue: maxBalance,
       sliderValue: 100,
       isInvalid: false,
+      isAmountEdited: true,
     });
   },
 

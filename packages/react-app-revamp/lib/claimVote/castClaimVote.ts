@@ -98,6 +98,7 @@ export const castClaimVote = async ({
   intent: stored,
   wallet,
   payout,
+  isSilent,
   contest,
   votesCloseMs,
   priceIntervalSec,
@@ -107,6 +108,7 @@ export const castClaimVote = async ({
   intent: VoteIntent | null;
   wallet: XClaimWallet;
   payout: FundedPayout | null;
+  isSilent: boolean;
   contest: { key: ContestKey; target: ContestTarget };
   votesCloseMs: number;
   priceIntervalSec: number | undefined;
@@ -154,7 +156,7 @@ export const castClaimVote = async ({
 
     const result = await cast(size.votes, {
       pricePerVoteRaw: priceWei,
-      feedback: payout ? "silent" : "standard",
+      feedback: isSilent ? "silent" : "standard",
       onSent: hash => {
         sentHash = hash;
         voteIntentStore.update({ sentTxHash: hash });
@@ -169,10 +171,10 @@ export const castClaimVote = async ({
   } catch (error) {
     if (sentHash) {
       const settled = await settleSentVote({ intent, hash: sentHash, chainId: target.chainId, isMounted });
-      return settled.kind === "failed" && !payout ? { ...settled, isShown: true } : settled;
+      return settled.kind === "failed" && !isSilent ? { ...settled, isShown: true } : settled;
     }
     const failure = failureFor(error, contest.key.chain);
-    return isCasting && !payout ? { kind: "failed", failure, isShown: true } : failed(failure);
+    return isCasting && !isSilent ? { kind: "failed", failure, isShown: true } : failed(failure);
   } finally {
     if (!sentHash) voteIntentStore.update({ sendingAt: null, castingAt: null });
   }

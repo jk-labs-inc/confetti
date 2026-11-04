@@ -19,9 +19,11 @@ const knownHandle = (me: ClaimMe | null) => me?.link?.handle ?? null;
 
 const latestSpots = ({ spots, me }: XClaimInput) => spots ?? me?.spots ?? null;
 
+export const hasOpenSpots = (spots: Pick<XClaimSpots, "open" | "paused">) => spots.open > 0 && !spots.paused;
+
 const spotsOpenNow = (input: XClaimInput) => {
   const spots = latestSpots(input);
-  return spots !== null && spots.open > 0 && !spots.paused;
+  return spots !== null && hasOpenSpots(spots);
 };
 
 const isSettled = ({ me }: XClaimInput) => !!me && isSettledResult(resultFromMe(me));

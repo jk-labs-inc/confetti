@@ -1,6 +1,8 @@
 import { parseEther } from "viem";
 import { PRICE_SETTLE_PAD_S, PRICE_WINDOW_GUARD_S } from "./constants";
-import type { CreditGate, VoteSize } from "./types";
+import type { CreditGate, VoteIntent, VoteSize } from "./types";
+
+const CREDIT_MATCH_MARGIN_PERCENT = 5n;
 
 const minOf = (left: bigint, right: bigint) => (left < right ? left : right);
 
@@ -12,6 +14,9 @@ export const chosenWei = (amountNative: string): bigint => {
     return 0n;
   }
 };
+
+export const ownVoteNative = ({ amountNative, spendableNative }: Pick<VoteIntent, "amountNative" | "spendableNative">) =>
+  spendableNative !== null && chosenWei(spendableNative) < chosenWei(amountNative) ? spendableNative : amountNative;
 
 export const sizeClaimVote = ({
   spendableWei,
@@ -31,7 +36,7 @@ export const sizeClaimVote = ({
   return {
     votes: Number(votes),
     valueWei: votes * priceWei,
-    wantedMore: chosenWei > creditWei && votes < chosenWei / priceWei,
+    wantedMore: chosenWei * 100n > creditWei * (100n + CREDIT_MATCH_MARGIN_PERCENT) && votes < chosenWei / priceWei,
   };
 };
 
@@ -46,6 +51,9 @@ export const coversOwnVote = ({
   chosenWei: bigint;
   priceWei: bigint;
 }): boolean => priceWei > 0n && chosenWei >= priceWei && spendableWei >= priceWei && balanceWei >= chosenWei;
+
+export const buysOneVote = ({ spendableWei, priceWei }: { spendableWei: bigint; priceWei: bigint }): boolean =>
+  priceWei > 0n && spendableWei >= priceWei;
 
 const positive = (value: number | undefined): value is number =>
   value !== undefined && Number.isFinite(value) && value > 0;
