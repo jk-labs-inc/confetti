@@ -1,4 +1,5 @@
 import MobileNavAccountTab from "@components/Header/MobileNavAccountTab";
+import MobileNavSlot from "@components/Header/MobileNavSlot";
 import { IconMagnifyingGlassSolid } from "@components/UI/Icons";
 import CustomLink from "@components/UI/Link";
 import { MobileProfileDrawer } from "@components/UI/MobileWalletPortal";
@@ -21,7 +22,7 @@ import {
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { useWalletCreditHint } from "@hooks/useClaimVote/useWalletCreditHint";
-import { MOBILE_NAV_SLOT_ID } from "@hooks/useMobileNavSlot";
+import { useSpotsTakenUntil } from "@hooks/useXClaim/useSpotsTakenUntil";
 import { useWallet } from "@hooks/useWallet";
 
 const LandingHeaderMobileFooter = () => {
@@ -30,6 +31,7 @@ const LandingHeaderMobileFooter = () => {
   const { logoutAsync } = useLogout();
   const pathname = usePathname();
   const creditSpots = useWalletCreditHint();
+  const takenUntil = useSpotsTakenUntil();
   const [isInPwaMode, setIsInPwaMode] = useState(false);
   const [isClient, setIsClient] = useState(false);
   const isActive = (route: string) => (pathname === route ? "font-bold" : "");
@@ -68,7 +70,7 @@ const LandingHeaderMobileFooter = () => {
           isVotingFocusMode ? "rounded-t-[16px] border-transparent bg-neutral-1" : "border-neutral-2 bg-true-black"
         } ${isClient && isInPwaMode ? "pb-8" : "pb-2"}`}
       >
-        <div id={MOBILE_NAV_SLOT_ID} />
+        <MobileNavSlot />
 
         <div
           className={`text-neutral-10 border-b text-[14px] overflow-hidden relative transition-all duration-200 ${
@@ -137,7 +139,7 @@ const LandingHeaderMobileFooter = () => {
           <MobileNavAccountTab
             isConnected={isConnected}
             isProfileOpen={showWalletPortal}
-            hasCreditSticker={creditSpots !== null}
+            hasCreditSticker={creditSpots !== null || takenUntil !== null}
             onProfileClick={handleWalletClick}
             onSignInClick={() => openModal()}
           />

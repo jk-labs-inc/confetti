@@ -1,5 +1,6 @@
 import CurrencyToggle from "@components/Header/CurrencyToggle";
 import MobileNavAccountTab from "@components/Header/MobileNavAccountTab";
+import MobileNavSlot from "@components/Header/MobileNavSlot";
 import BurgerMenu from "@components/UI/BurgerMenu";
 import { IconMagnifyingGlassSolid } from "@components/UI/Icons";
 import CustomLink from "@components/UI/Link";
@@ -21,7 +22,7 @@ import {
   TrophyIcon as TrophyIconSolid,
 } from "@heroicons/react/24/solid";
 import { useWalletCreditHint } from "@hooks/useClaimVote/useWalletCreditHint";
-import { MOBILE_NAV_SLOT_ID } from "@hooks/useMobileNavSlot";
+import { useSpotsTakenUntil } from "@hooks/useXClaim/useSpotsTakenUntil";
 import { usePathname } from "next/navigation";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
@@ -36,6 +37,7 @@ interface MainHeaderMobileLayoutProps {
 const MainHeaderMobileLayout: FC<MainHeaderMobileLayoutProps> = ({ isConnected, address, openConnectModal }) => {
   const pathname = usePathname();
   const creditSpots = useWalletCreditHint();
+  const takenUntil = useSpotsTakenUntil();
   const isVotingFocusMode = useVotingFocusModeStore(state => state.isFocusMode);
   const [isClient, setIsClient] = useState(false);
   const [isInPwaMode, setIsInPwaMode] = useState(false);
@@ -99,7 +101,7 @@ const MainHeaderMobileLayout: FC<MainHeaderMobileLayoutProps> = ({ isConnected, 
           isVotingFocusMode ? "rounded-t-[16px] bg-neutral-1" : "bg-true-black"
         }`}
       >
-        <div id={MOBILE_NAV_SLOT_ID} />
+        <MobileNavSlot />
 
         <div
           className={`flex flex-row items-center justify-between overflow-hidden border-t-2 px-8 transition-all duration-200 ${
@@ -141,7 +143,7 @@ const MainHeaderMobileLayout: FC<MainHeaderMobileLayoutProps> = ({ isConnected, 
           <MobileNavAccountTab
             isConnected={isConnected}
             isProfileOpen={showWalletPortal}
-            hasCreditSticker={creditSpots !== null}
+            hasCreditSticker={creditSpots !== null || takenUntil !== null}
             onProfileClick={handleWalletClick}
             onSignInClick={openConnectModal}
           />
