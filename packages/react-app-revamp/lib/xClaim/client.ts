@@ -13,7 +13,7 @@ import {
 } from "./constants";
 import { isMemberOf, isRejectReason, parseDate, resultFromCode } from "./outcomes";
 import type { WalletProofHeader } from "./proof";
-import type { ClaimMe, XClaimCheckStatus, XClaimFailure, XClaimNonce, XClaimResult, XClaimSpots } from "./types";
+import type { ClaimMe, XClaimCheckStatus, XClaimFailure, XClaimResult, XClaimSpots } from "./types";
 
 export class XClaimError extends Error {
   readonly failure: XClaimFailure;
@@ -48,10 +48,6 @@ const spotsSchema = z.object({
   currency: z.string(),
   network: z.string(),
 });
-
-const nonceSchema = z
-  .object({ nonce: z.string(), expiresAt: isoDate, chainId: z.number() })
-  .transform(({ nonce, expiresAt, chainId }): XClaimNonce => ({ value: nonce, expiresAt, chainId }));
 
 const startSchema = z.object({
   authorizeUrl: z.url().refine(value => {
@@ -243,9 +239,6 @@ const proofHeaders = (proof: WalletProofHeader) => ({ [WALLET_PROOF_HEADER]: pro
 
 export const fetchSpots = (): Promise<XClaimSpots> =>
   request({ path: "/spots", init: { method: "GET" }, schema: spotsSchema });
-
-export const requestNonce = (): Promise<XClaimNonce> =>
-  request({ path: "/nonce", init: { method: "POST" }, schema: nonceSchema });
 
 export const startXLogin = ({
   proof,

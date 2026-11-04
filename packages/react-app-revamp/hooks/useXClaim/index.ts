@@ -1,34 +1,20 @@
 import { isXClaimConfigured } from "@config/xClaim";
 import { useWallet } from "@hooks/useWallet";
-import type { XClaimActions, XClaimInput, XClaimOffer, XClaimSheetView, XClaimWallet } from "lib/xClaim/types";
-import { deriveOffer, deriveView } from "lib/xClaim/view";
+import type { XClaimActions, XClaimInput, XClaimSheetView } from "lib/xClaim/types";
+import { deriveView } from "lib/xClaim/view";
+import { toXClaimWallet } from "lib/xClaim/wallet";
 import { useParams } from "next/navigation";
 import { useMemo } from "react";
 import { useShallow } from "zustand/shallow";
-import { useXClaimMe, useXClaimSpots, walletAddressOf } from "./queries";
+import { useXClaimMe, useXClaimSpots } from "./queries";
 import { useXClaimStore } from "./store";
 import { useWalletProof } from "./useWalletProof";
 import { useXClaimActions } from "./useXClaimActions";
 
 export interface XClaimHookReturn {
-  offer: XClaimOffer;
   sheet: { isOpen: boolean; view: XClaimSheetView };
   actions: XClaimActions;
 }
-
-const toXClaimWallet = ({
-  userAddress,
-  isConnected,
-  walletKind,
-  loginMethod,
-  walletName,
-}: Pick<ReturnType<typeof useWallet>, "userAddress" | "isConnected" | "walletKind" | "loginMethod"> & {
-  walletName: string | null;
-}): XClaimWallet => {
-  if (!isConnected || !userAddress || !walletKind) return { kind: "signed_out" };
-  if (walletKind === "external") return { kind: "external", address: userAddress, walletName };
-  return { kind: "embedded", address: userAddress, signedInWithX: loginMethod === "TWITTER" };
-};
 
 export const useXClaim = (): XClaimHookReturn => {
   const { userAddress, isConnected, walletKind, loginMethod, connector } = useWallet();
@@ -40,30 +26,20 @@ export const useXClaim = (): XClaimHookReturn => {
     [userAddress, isConnected, walletKind, loginMethod, walletName],
   );
 
-  const { isOpen, result, action, pollUntil, memory, signInPending } = useXClaimStore(
+  const { isOpen, result, action, pollUntil } = useXClaimStore(
     useShallow(state => ({
       isOpen: state.isOpen,
       result: state.result,
       action: state.action,
       pollUntil: state.pollUntil,
-      memory: state.memory,
-      signInPending: state.signIn.pending,
     })),
   );
 
-  const { withParaProof, runWithProof } = useWalletProof(connector);
-  const spotsQuery = useXClaimSpots();
-  const spotsOpen = !!spotsQuery.data && spotsQuery.data.open > 0 && !spotsQuery.data.paused;
-  const meQuery = useXClaimMe({
-    wallet,
-    shouldFetch: spotsOpen || isOpen || result !== null || signInPending,
-    pollUntil,
-    withParaProof,
-  });
-  const actions = useXClaimActions({ wallet, runWithProof });
-
-  const address = walletAddressOf(wallet);
-  const memoryState = wallet.kind === "external" && memory?.address === address ? memory.state : null;
+  const isSheetActive = isOpen || result !== null;
+  const { withParaProof } = useWalletProof();
+  const spotsQuery = useXClaimSpots({ enabled: isSheetActive });
+  const meQuery = useXClaimMe({ wallet, shouldFetch: isSheetActive, pollUntil, withParaProof });
+  const actions = useXClaimActions({ wallet });
 
   const input = useMemo(
     (): XClaimInput => ({
@@ -76,7 +52,6 @@ export const useXClaim = (): XClaimHookReturn => {
       meUpdatedAt: meQuery.dataUpdatedAt,
       meFailedAt: meQuery.isError ? meQuery.errorUpdatedAt : 0,
       meLoading: meQuery.isLoading,
-      memory: memoryState,
       result,
       action,
     }),
@@ -90,14 +65,12 @@ export const useXClaim = (): XClaimHookReturn => {
       meQuery.isError,
       meQuery.errorUpdatedAt,
       meQuery.isLoading,
-      memoryState,
       result,
       action,
     ],
   );
 
   const view = useMemo(() => deriveView(input), [input]);
-  const offer = useMemo(() => deriveOffer(input), [input]);
 
-  return { offer, sheet: { isOpen, view }, actions };
+  return { sheet: { isOpen, view }, actions };
 };
