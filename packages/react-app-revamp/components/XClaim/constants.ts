@@ -23,6 +23,7 @@ export const X_CLAIM_IDS = {
   payoutRetry: "x_claim_payout_retry",
   tryXAgain: "x_claim_try_x_again",
   contactUs: "x_claim_contact_us",
+  tipDismiss: "x_claim_tip_dismiss",
 } as const;
 
 export const X_CLAIM_ART = {

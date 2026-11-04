@@ -21,6 +21,11 @@ const latestSpots = ({ spots, me }: XClaimInput) => spots ?? me?.spots ?? null;
 
 export const hasOpenSpots = (spots: Pick<XClaimSpots, "open" | "paused">) => spots.open > 0 && !spots.paused;
 
+export const spotsTakenUntil = (spots: XClaimSpots, contestChain: string | null) => {
+  if (spots.open > 0 || spots.paused) return null;
+  return contestChain === null || paysOnChain(spots, contestChain) ? spots.nextReleaseAt : null;
+};
+
 const spotsOpenNow = (input: XClaimInput) => {
   const spots = latestSpots(input);
   return spots !== null && hasOpenSpots(spots);
