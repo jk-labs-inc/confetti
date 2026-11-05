@@ -49,7 +49,7 @@ const VoteButton: FC<VoteButtonProps> = ({ isDisabled, isInvalidBalance, isConne
         </p>
       )}
     <div
-      className="group/vote relative"
+      className="group/vote relative [anchor-name:--claim-vote-button]"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
