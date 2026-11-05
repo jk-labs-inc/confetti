@@ -10232,12 +10232,12 @@ framer-motion@14.4.0:
     motion-utils "14.1.1"
     tslib "^2.4.0"
 
-framer-motion@14.9.0:
-  version "14.9.0"
-  resolved "https://registry.yarnpkg.com/framer-motion/-/framer-motion-14.9.0.tgz#d4813a846e9214edac8cdf0653ae907b5c0d6137"
-  integrity sha512-g1hZu8WoTwgsoVAaqEEcefhvR03cKGtkmrKaRrWpXhnM3LGR8jl1u2qyJ1PMVlO7LKQHE8TTRQYUlMmnrY4L+g==
+framer-motion@14.9.1:
+  version "14.9.1"
+  resolved "https://registry.yarnpkg.com/framer-motion/-/framer-motion-14.9.1.tgz#dcdfd7b6f8ae8cd2c8eafa130ca9576baefbe17b"
+  integrity sha512-WDWNT2ixHdmpvGg02BZWI/SWwRYzPiMUf4aIkTBgrxxD8RYFdZO3fCM4pnLMo6j8mUpj0+BuJRHQBChI4v3Anw==
   dependencies:
-    motion-dom "14.9.0"
+    motion-dom "14.9.1"
     motion-utils "14.7.0"
     tslib "^2.4.0"
 
@@ -11769,10 +11769,10 @@ motion-dom@14.4.0:
   dependencies:
     motion-utils "14.1.1"
 
-motion-dom@14.9.0:
-  version "14.9.0"
-  resolved "https://registry.yarnpkg.com/motion-dom/-/motion-dom-14.9.0.tgz#b29229de4740f9d98f621835945051a13c291d53"
-  integrity sha512-wGjKbNDMHd75aLStkxLCKZ+T8/wusZHklmNLK1Ak68UrdBt2X8I4yweYR/0WonxGnBsw6oloDTIV8pN+UTvzzA==
+motion-dom@14.9.1:
+  version "14.9.1"
+  resolved "https://registry.yarnpkg.com/motion-dom/-/motion-dom-14.9.1.tgz#a341830a384647c84a5956791c2cdd95f9844135"
+  integrity sha512-2eCCGXH2Yv09lM8GHK3TdfChrcvHxzVY19LD9VraoHEaQl5+PuGnTNnmJaBAR+5MdxUVdsLFXygFJjR9RwRSxw==
   dependencies:
     motion-utils "14.7.0"
 
@@ -11849,12 +11849,12 @@ motion-utils@^12.39.0:
   resolved "https://registry.yarnpkg.com/motion-utils/-/motion-utils-12.39.0.tgz#e1c66f0e912999804bc5e69b4630c3bc794ef29f"
   integrity sha512-8nadJAJjTtqRkmRF36FoJTrywK9nnFmnPwnSMyxaOCU7GDjN9RTMJIxx9De8ErM+vpPhMccr/6fo5WciyQLnMQ==
 
-motion@14.9.0:
-  version "14.9.0"
-  resolved "https://registry.yarnpkg.com/motion/-/motion-14.9.0.tgz#126339c734e1ccbfcfa6fba66c08d00029ba8dd6"
-  integrity sha512-Oc+jjq/AyhwsnEUaAq2xEu/SsfKTphgsXqoxddTSLzgTdXZc6FwHcp9RLGSECccTykN1/p3gWUN4kMJAamm+1g==
+motion@14.9.1:
+  version "14.9.1"
+  resolved "https://registry.yarnpkg.com/motion/-/motion-14.9.1.tgz#5492269eb843c9dbdf57a49ac5eb28ef337acbb8"
+  integrity sha512-u58zTNOs6vefAwvPncTJ8vkQm+P08V4+mhNgap8p/mFZjl8+gWp7SG4cMTamebVSgpX6PcDtqzWpZngqKcfd7A==
   dependencies:
-    framer-motion "14.9.0"
+    framer-motion "14.9.1"
     tslib "^2.4.0"
 
 motion@^12.0.11:
