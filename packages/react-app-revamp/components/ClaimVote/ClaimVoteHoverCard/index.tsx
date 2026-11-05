@@ -13,7 +13,7 @@ const ClaimVoteHoverCard: FC<ClaimVoteHoverCardProps> = ({ offer }) => (
   <div
     role="tooltip"
     data-claim-vote-hover-card
-    className="invisible absolute inset-x-0 bottom-full z-50 mb-4 flex items-center gap-2.5 rounded-3xl bg-neutral-3 pt-3.5 pr-4 pb-4 pl-2.5 text-left opacity-0 transition-opacity duration-150 group-hover/vote:visible group-hover/vote:opacity-100 group-has-[:focus-visible]/vote:visible group-has-[:focus-visible]/vote:opacity-100"
+    className="invisible absolute -inset-x-4 bottom-full z-50 mb-4 flex items-center gap-2.5 rounded-3xl bg-neutral-3 pt-3.5 pr-4 pb-4 pl-2.5 text-left opacity-0 transition-opacity duration-150 group-hover/vote:visible group-hover/vote:opacity-100 group-has-[:focus-visible]/vote:visible group-has-[:focus-visible]/vote:opacity-100 anchored:fixed anchored:[position-anchor:--claim-vote-button] anchored:left-auto anchored:right-[anchor(right)] anchored:bottom-[anchor(top)] anchored:-mr-4 anchored:w-[max(400px,calc(anchor-size(width)+2rem))] anchored:3xl:right-auto anchored:3xl:mr-0 anchored:3xl:[justify-self:anchor-center] anchored:gap-8"
   >
     <img
       src={X_CLAIM_ART.money.src}
@@ -23,8 +23,8 @@ const ClaimVoteHoverCard: FC<ClaimVoteHoverCardProps> = ({ offer }) => (
       className="size-21 shrink-0 object-contain"
     />
     <div className="flex flex-col gap-1.5">
-      <p className="font-sabo-filled text-[18px] leading-[1.15] text-neutral-11">{CLAIM_TITLE}</p>
-      <p className="text-[14px] leading-[1.45] text-neutral-9">{creditLine(offer)}</p>
+      <p className="font-sabo-filled text-[18px] leading-[1.15] text-balance text-neutral-11">{CLAIM_TITLE}</p>
+      <p className="text-[14px] leading-[1.45] text-balance text-neutral-9">{creditLine(offer)}</p>
       <SpotsLine spots={offer.spots} placement="card" />
     </div>
   </div>
