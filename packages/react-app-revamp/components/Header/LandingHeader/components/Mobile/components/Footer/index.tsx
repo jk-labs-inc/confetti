@@ -12,7 +12,7 @@ import {
   ROUTE_VIEW_CONTESTS,
   ROUTE_VIEW_LIVE_CONTESTS,
 } from "@config/routes";
-import { useLogout } from "@getpara/react-sdk-lite";
+import { useLogout, useModal } from "@getpara/react-sdk-lite";
 import { HomeIcon, MagnifyingGlassIcon, PencilSquareIcon, TrophyIcon } from "@heroicons/react/24/outline";
 import {
   HomeIcon as HomeIconSolid,
@@ -21,21 +21,22 @@ import {
 } from "@heroicons/react/24/solid";
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
-import { useXClaimOffer } from "@hooks/useXClaim/store";
-import { useClaimFirstSignIn } from "@hooks/useXClaim/useClaimFirstSignIn";
+import { useWalletCreditHint } from "@hooks/useClaimVote/useWalletCreditHint";
+import { useSpotsTakenUntil } from "@hooks/useXClaim/useSpotsTakenUntil";
 import { useWallet } from "@hooks/useWallet";
 
 const LandingHeaderMobileFooter = () => {
   const { isConnected, userAddress } = useWallet();
   const isVotingFocusMode = useVotingFocusModeStore(state => state.isFocusMode);
-  const claimOffer = useXClaimOffer();
   const { logoutAsync } = useLogout();
   const pathname = usePathname();
+  const creditSpots = useWalletCreditHint();
+  const takenUntil = useSpotsTakenUntil();
   const [isInPwaMode, setIsInPwaMode] = useState(false);
   const [isClient, setIsClient] = useState(false);
   const isActive = (route: string) => (pathname === route ? "font-bold" : "");
   const isOneOfActive = (routes: string[]) => (routes.includes(pathname ?? "") ? "font-bold" : "");
-  const signIn = useClaimFirstSignIn();
+  const { openModal } = useModal();
   const allowedLinks = ["Github", "Linktree", "Report a bug", "Terms", "Privacy Policy", "Docs", "Media Kit", "FAQ"];
   const filteredLinks = FOOTER_LINKS.filter(link => allowedLinks.includes(link.label));
   const [showWalletPortal, setShowWalletPortal] = useState(false);
@@ -69,7 +70,7 @@ const LandingHeaderMobileFooter = () => {
           isVotingFocusMode ? "rounded-t-[16px] border-transparent bg-neutral-1" : "border-neutral-2 bg-true-black"
         } ${isClient && isInPwaMode ? "pb-8" : "pb-2"}`}
       >
-        <MobileNavSlot claimOffer={claimOffer} />
+        <MobileNavSlot />
 
         <div
           className={`text-neutral-10 border-b text-[14px] overflow-hidden relative transition-all duration-200 ${
@@ -138,9 +139,9 @@ const LandingHeaderMobileFooter = () => {
           <MobileNavAccountTab
             isConnected={isConnected}
             isProfileOpen={showWalletPortal}
+            hasCreditSticker={creditSpots !== null || takenUntil !== null}
             onProfileClick={handleWalletClick}
-            onSignInClick={signIn}
-            claimOffer={claimOffer}
+            onSignInClick={() => openModal()}
           />
         </div>
       </div>
@@ -150,7 +151,6 @@ const LandingHeaderMobileFooter = () => {
           onClose={closeWalletPortal}
           address={userAddress ?? ""}
           onDisconnect={handleDisconnect}
-          claimOffer={claimOffer}
         />
       )}
     </footer>

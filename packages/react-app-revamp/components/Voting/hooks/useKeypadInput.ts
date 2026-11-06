@@ -4,23 +4,26 @@ const MAX_INPUT_LENGTH = 12;
 
 interface UseKeypadInputProps {
   displayValue: string;
+  isPrefilled: boolean;
   onDisplayChange: (value: string) => void;
 }
 
-const useKeypadInput = ({ displayValue, onDisplayChange }: UseKeypadInputProps) => {
+const useKeypadInput = ({ displayValue, isPrefilled, onDisplayChange }: UseKeypadInputProps) => {
+  const typed = isPrefilled ? "" : displayValue;
+
   const handleKey = (key: NumericKeypadKey) => {
     if (key === "backspace") {
       if (!displayValue) return;
-      onDisplayChange(displayValue.slice(0, -1));
+      onDisplayChange(typed.slice(0, -1));
       return;
     }
     if (key === ".") {
-      if (displayValue.includes(".")) return;
-      onDisplayChange(displayValue ? `${displayValue}.` : "0.");
+      if (typed.includes(".")) return;
+      onDisplayChange(typed ? `${typed}.` : "0.");
       return;
     }
-    if (displayValue.length >= MAX_INPUT_LENGTH) return;
-    onDisplayChange(displayValue === "0" ? key : displayValue + key);
+    if (typed.length >= MAX_INPUT_LENGTH) return;
+    onDisplayChange(typed === "0" ? key : typed + key);
   };
 
   return { handleKey };

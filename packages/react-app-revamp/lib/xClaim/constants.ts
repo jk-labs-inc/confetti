@@ -44,8 +44,6 @@ export const CLAIM_USD_AMOUNT = 5;
 
 export const CLAIM_AMOUNT_LABEL = `$${CLAIM_USD_AMOUNT}`;
 
-export const SIWE_STATEMENT = `Prove you own this wallet to claim ${CLAIM_AMOUNT_LABEL} on Confetti.`;
-
 export const POLYGON_NETWORK = "polygon";
 
 export const POLYGON_CURRENCY = "POL";
@@ -58,8 +56,6 @@ export const CLAIM_REQUEST_TIMEOUT_MS = 45_000;
 
 export const PARA_JWT_TIMEOUT_MS = 15_000;
 
-export const VOTE_WAITS_FOR_CLAIM_MS = 5_000;
-
 export const SPOTS_STALE_MS = 15_000;
 
 export const SPOTS_RELEASE_REFETCH_DELAY_MS = 5_000;
@@ -70,18 +66,8 @@ export const PENDING_POLL_WINDOW_MS = 60_000;
 
 export const LANDING_WALLET_WAIT_MS = 15_000;
 
-export const SIGN_IN_ARM_GRACE_MS = 60_000;
-
 export const PARA_TOKEN_REUSE_MARGIN_MS = 60_000;
 
 export const PARA_TOKEN_FALLBACK_LIFETIME_MS = 25 * 60_000;
 
-export const MEMORY_KEY_PREFIX = "x_claim.v1.";
-
-export const FLOW_STARTER_KEY = "x_claim.v1.flow_starter";
-
-export const FLOW_STARTER_TTL_MS = 15 * 60_000;
-
 export const X_AUTHORIZE_HOSTS = ["x.com", "twitter.com"] as const;
-
-export const TIP_DISMISSED_KEY = "x_claim.v1.tip_dismissed";

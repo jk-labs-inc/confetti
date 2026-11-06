@@ -37,6 +37,7 @@ import { checkAndMarkPriceChangeError } from "utils/error";
 import { formatEther, parseUnits } from "viem";
 import { useShallow } from "zustand/shallow";
 import { useCastVotesStore } from "./store";
+import type { CastVotesOptions, CastVotesResult } from "./types";
 import { CombinedAnalyticsParams, performAnalytics } from "./utils/analytics";
 import { createVotingEmailSender } from "./utils/email";
 import { calculateChargeAmount } from "./utils/helpers";
@@ -53,7 +54,7 @@ export function useCastVotes({ charge, votesClose, inlineOverlay }: UseCastVotes
   const queryClient = useQueryClient();
   const { contestConfig } = useContestConfigStore(useShallow(state => state));
   const contestName = useContestStore(state => state.contestName);
-  const { data: rewards } = useRewardsModule();
+  const { data: rewards, isLoading: isRewardsLoading } = useRewardsModule();
   const { updateProposal } = useProposal();
   const { listProposalsData } = useProposalStore(state => state);
   const { castPositiveAmountOfVotes, pickedProposal, setTransactionData, resetStore } = useCastVotesStore(
@@ -84,7 +85,11 @@ export function useCastVotes({ charge, votesClose, inlineOverlay }: UseCastVotes
   const contestLink = `${window.location.origin}/contest/${contestConfig.chainName.toLowerCase()}/${
     contestConfig.address
   }`;
-  const { currentPricePerVote, currentPricePerVoteRaw } = useCurrentPricePerVote({
+  const {
+    currentPricePerVote,
+    currentPricePerVoteRaw,
+    isLoading: isPriceLoading,
+  } = useCurrentPricePerVote({
     address: contestConfig.address,
     abi: contestConfig.abi,
     chainId: contestConfig.chainId,
@@ -104,20 +109,24 @@ export function useCastVotes({ charge, votesClose, inlineOverlay }: UseCastVotes
   );
   const { subscribeUser } = useEmailSignup();
   const { subscribePhoneNumber } = usePhoneNumberSignup();
-  const { data: nativeRates } = useNativeRates();
-  const { creatorSplitEnabled } = useCreatorSplitEnabled({
+  const { data: nativeRates, isLoading: isNativeRatesLoading } = useNativeRates();
+  const { creatorSplitEnabled, isLoading: isCreatorSplitLoading } = useCreatorSplitEnabled({
     address: contestConfig.address,
     abi: contestConfig.abi,
     chainId: contestConfig.chainId,
     version: contestConfig.version,
   });
 
-  async function castVotes(amountOfVotes: number) {
-    const overlayPlacement = resolveOverlayPlacement(inlineOverlay);
+  const isReady = !isPriceLoading && !isRewardsLoading && !isNativeRatesLoading && !isCreatorSplitLoading;
+
+  async function castVotes(amountOfVotes: number, options?: CastVotesOptions): Promise<CastVotesResult> {
+    const isSilent = options?.feedback === "silent";
+    const pricePerVoteRaw = options?.pricePerVoteRaw ?? currentPricePerVoteRaw;
+    const overlayPlacement = isSilent ? null : resolveOverlayPlacement(inlineOverlay);
 
     if (overlayPlacement) {
       txOverlay.start(TransactionOverlayFlow.VOTE, { placement: overlayPlacement });
-    } else {
+    } else if (!isSilent) {
       toastLoading({
         id: VOTE_FLOW_TRACKING_ID,
         message: "votes are deploying...",
@@ -135,7 +144,7 @@ export function useCastVotes({ charge, votesClose, inlineOverlay }: UseCastVotes
     try {
       const castVoteArgs = [pickedProposal, parseUnits(amountOfVotes.toString(), 18)];
 
-      const estimatedCost = calculateChargeAmount(amountOfVotes, currentPricePerVoteRaw);
+      const estimatedCost = calculateChargeAmount(amountOfVotes, pricePerVoteRaw);
 
       const { request } = await simulateContract(getWagmiConfig(), {
         address: contestConfig.address as `0x${string}`,
@@ -148,13 +157,14 @@ export function useCastVotes({ charge, votesClose, inlineOverlay }: UseCastVotes
       });
 
       const hash = await writeContract(getWagmiConfig(), request);
-      txOverlay.setPhase(TransactionOverlayPhase.MINING);
+      options?.onSent(hash);
+      if (!isSilent) txOverlay.setPhase(TransactionOverlayPhase.MINING);
       const receipt = await waitForTransactionReceipt(getWagmiConfig(), {
         chainId: contestConfig.chainId,
         hash,
         confirmations: 2,
       });
-      txOverlay.setPhase(TransactionOverlayPhase.INDEXING);
+      if (!isSilent) txOverlay.setPhase(TransactionOverlayPhase.INDEXING);
 
       const pickedProposalName = resolveEntryTitle(listProposalsData.find(proposal => proposal.id === pickedProposal));
       const analyticsParams: CombinedAnalyticsParams = {
@@ -233,7 +243,7 @@ export function useCastVotes({ charge, votesClose, inlineOverlay }: UseCastVotes
           contestAddress: contestConfig.address,
           chainName: contestConfig.chainName.toLowerCase(),
         });
-      } else {
+      } else if (!isSilent) {
         toastSuccess({
           message: "your votes have been deployed successfully",
           ...successMeta,
@@ -283,14 +293,18 @@ export function useCastVotes({ charge, votesClose, inlineOverlay }: UseCastVotes
         contest_link: contestLink,
         contest_end_date: formattedVotesClose,
       });
+
+      return { hash: receipt.transactionHash, amountOfVotes, successMeta };
     } catch (e) {
       const { initialPrice, currentPrice } = getPrices();
 
       const processedError = checkAndMarkPriceChangeError(e, initialPrice, currentPrice);
 
-      handleError(processedError, "something went wrong while casting your votes", {
-        overlayFlow: TransactionOverlayFlow.VOTE,
-      });
+      if (!isSilent) {
+        handleError(processedError, "something went wrong while casting your votes", {
+          overlayFlow: TransactionOverlayFlow.VOTE,
+        });
+      }
       setError(errorMessage);
       setIsLoading(false);
       throw processedError;
@@ -300,6 +314,7 @@ export function useCastVotes({ charge, votesClose, inlineOverlay }: UseCastVotes
   return {
     setTransactionData,
     castVotes,
+    isReady,
     isLoading,
     isSuccess,
     error,

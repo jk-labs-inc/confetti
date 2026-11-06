@@ -1,4 +1,4 @@
-import { readTipDismissed, rememberTipDismissed } from "lib/xClaim/memory";
+import { readTipDismissed, rememberTipDismissed } from "lib/xClaim/spotsTip";
 import { useCallback, useEffect, useState } from "react";
 
 export const useTipDismissal = () => {

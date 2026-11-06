@@ -1,14 +1,12 @@
-import { CLAIM_TITLE, teaserText } from "@components/XClaim/copy";
 import { X_CLAIM_ART } from "@components/XClaim/constants";
-import SpotsLine from "@components/XClaim/parts/SpotsLine";
-import type { XClaimTeaserOffer } from "lib/xClaim/types";
+import { CLAIM_TITLE, noSpotsText } from "@components/XClaim/copy";
 import { FC } from "react";
 
 interface XClaimSignInHoverCardProps {
-  offer: XClaimTeaserOffer;
+  nextReleaseAt: Date;
 }
 
-const XClaimSignInHoverCard: FC<XClaimSignInHoverCardProps> = ({ offer }) => (
+const XClaimSignInHoverCard: FC<XClaimSignInHoverCardProps> = ({ nextReleaseAt }) => (
   <div
     role="tooltip"
     data-x-claim-hover-card
@@ -23,8 +21,7 @@ const XClaimSignInHoverCard: FC<XClaimSignInHoverCardProps> = ({ offer }) => (
     />
     <div className="flex flex-col gap-1.5">
       <p className="font-sabo-filled text-[18px] leading-[1.15] text-neutral-11">{CLAIM_TITLE}</p>
-      <p className="text-[14px] leading-[1.45] text-neutral-9">{teaserText(offer)}</p>
-      {offer.status === "open" && <SpotsLine spots={offer.spots} placement="card" />}
+      <p className="text-[14px] leading-[1.45] text-neutral-9">{noSpotsText(nextReleaseAt)}</p>
     </div>
   </div>
 );

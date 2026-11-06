@@ -7,7 +7,6 @@ import type {
   XClaimActionStage,
   XClaimCheck,
   XClaimFailureReason,
-  XClaimTeaserOffer,
 } from "lib/xClaim/types";
 
 export const CLAIM_PLUS_LABEL = `+${CLAIM_AMOUNT_LABEL}`;
@@ -18,7 +17,13 @@ export const CLAIM_BUTTON_LABEL = `claim ${CLAIM_AMOUNT_LABEL}`;
 
 export const VERIFY_TWITTER_LABEL = "verify twitter";
 
-export const CLAIM_PITCH = `create an account, verify your twitter, and we'll give you ${CLAIM_AMOUNT_LABEL} to play with.`;
+export const voteAmountLabel = (amount: string) => `vote ${amount}`;
+
+export const skipTwitterLabel = (amount: string) => `skip twitter, vote ${amount}`;
+
+export const withVoteTotal = (label: string, total: string) => `${label}, vote ${total}`;
+
+export const CLAIM_PITCH = `create an account with email or social sign-in, verify your twitter, and we'll put ${CLAIM_AMOUNT_LABEL} into your vote.`;
 
 export const CLAIM_FINE_PRINT = "one claim per twitter account and wallet. we only read your public profile.";
 
@@ -29,9 +34,6 @@ export const noSpotsText = (nextReleaseAt: Date) =>
   isToday(nextReleaseAt)
     ? `all spots have been claimed for now. please try again at ${formatTimeOfDay(nextReleaseAt)}!`
     : "all spots have been claimed for today. please try again tomorrow!";
-
-export const teaserText = (offer: XClaimTeaserOffer) =>
-  offer.status === "open" ? CLAIM_PITCH : noSpotsText(offer.nextReleaseAt);
 
 export const CANCELLED_BODY: Readonly<Record<XCancelledReason, string>> = {
   x_denied: "you cancelled on twitter, or it took too long. nothing was linked, so you can try again.",
@@ -55,9 +57,7 @@ export const FAILURE_LINE: Readonly<Record<XClaimFailureReason, string>> = {
 export const SETTLING_LABEL = "one sec…";
 
 export const BUSY_LABEL: Readonly<Record<Exclude<XClaimActionStage, "idle">, string>> = {
-  awaiting_signature: "check your wallet…",
-  submitting: "opening twitter…",
-  redirecting: "opening twitter…",
+  submitting: "checking…",
 };
 
 const CHECK_LABEL: Readonly<Record<XClaimCheck, string>> = {
@@ -81,8 +81,6 @@ export const checkLabel = ({
   }
   return CHECK_LABEL[check];
 };
-
-export const shortAddress = (address: string) => `${address.slice(0, 6)}…${address.slice(-4)}`;
 
 export const handleText = (handle: string | null, fallback = "your twitter") => (handle ? `@${handle}` : fallback);
 

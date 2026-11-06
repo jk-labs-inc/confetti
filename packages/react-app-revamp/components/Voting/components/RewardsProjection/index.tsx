@@ -1,10 +1,9 @@
 import { VotingWidgetLayout } from "@components/Voting/types";
+import useNativeDisplayPrice from "@hooks/useCurrency/useNativeDisplayPrice";
 import { UseVoteProjectionsReturn } from "@hooks/useVoteProjections";
 import { FC } from "react";
-import VotingWidgetRewardsProjectionContainer from "./components/Container";
-import PushToFirstBlock from "./components/PushToFirstBlock";
-import WinUpToBlock from "./components/WinUpToBlock";
-import WouldWinNowBlock from "./components/WouldWinNowBlock";
+import RewardsProjectionBlocks from "./components/Blocks";
+import { entryPriceInput } from "./display";
 
 interface VotingWidgetRewardsProjectionProps {
   projections: UseVoteProjectionsReturn;
@@ -16,18 +15,20 @@ const VotingWidgetRewardsProjection: FC<VotingWidgetRewardsProjectionProps> = ({
   layout = VotingWidgetLayout.regular,
 }) => {
   const { entryProjection, winUpTo } = projections;
+  const entryInput = entryPriceInput(entryProjection);
+  const entryPrice = useNativeDisplayPrice(entryInput.value, entryInput.options);
+  const winUpToPrice = useNativeDisplayPrice(winUpTo.amount);
 
   if (!winUpTo.shouldShow) return null;
 
   return (
-    <VotingWidgetRewardsProjectionContainer layout={layout}>
-      {entryProjection?.kind === "pushToFirst" ? (
-        <PushToFirstBlock remainingToFirst={entryProjection.remainingToFirst} layout={layout} />
-      ) : entryProjection?.kind === "wouldWinNow" ? (
-        <WouldWinNowBlock amount={entryProjection.amount} isBelowSpend={entryProjection.isBelowSpend} layout={layout} />
-      ) : null}
-      <WinUpToBlock amount={winUpTo.amount} centered={entryProjection === null} layout={layout} />
-    </VotingWidgetRewardsProjectionContainer>
+    <RewardsProjectionBlocks
+      entry={entryProjection}
+      entryFormatted={entryPrice.formatted}
+      winUpToFormatted={winUpToPrice.formatted}
+      isLoading={entryPrice.isLoading || winUpToPrice.isLoading}
+      layout={layout}
+    />
   );
 };
 

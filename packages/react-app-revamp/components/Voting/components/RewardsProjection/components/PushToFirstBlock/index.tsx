@@ -1,18 +1,17 @@
 import CompactAmount from "@components/UI/CompactAmount";
 import GradientText from "@components/UI/GradientText";
 import { VotingWidgetLayout } from "@components/Voting/types";
-import useNativeDisplayPrice from "@hooks/useCurrency/useNativeDisplayPrice";
 import { FC } from "react";
 import Skeleton from "react-loading-skeleton";
 import { PROJECTION_LAYOUT_CLASS_NAMES } from "../../constants";
 
 interface PushToFirstBlockProps {
-  remainingToFirst: string;
+  formatted: string;
+  isLoading: boolean;
   layout?: VotingWidgetLayout;
 }
 
-const PushToFirstBlock: FC<PushToFirstBlockProps> = ({ remainingToFirst, layout = VotingWidgetLayout.regular }) => {
-  const { formatted, isLoading } = useNativeDisplayPrice(remainingToFirst, { ceilingPrecision: true });
+const PushToFirstBlock: FC<PushToFirstBlockProps> = ({ formatted, isLoading, layout = VotingWidgetLayout.regular }) => {
   const classNames = PROJECTION_LAYOUT_CLASS_NAMES[layout];
 
   return (

@@ -1,5 +1,6 @@
 import { ConnectButtonCustom } from "@components/Connect";
 import CurrencyToggle from "@components/Header/CurrencyToggle";
+import HowItWorksTrigger from "@components/HowItWorksExplainer/Trigger";
 import PlayCreateToggle from "@components/Header/PlayCreateToggle";
 import CustomLink from "@components/UI/Link";
 import Logo from "@components/UI/Logo";
@@ -22,6 +23,7 @@ const MainHeaderDesktopLayout: FC<MainHeaderDesktopLayoutProps> = ({ isContestPa
       </CustomLink>
       <PlayCreateToggle />
       <div className="flex items-center gap-3 justify-self-end">
+        {isContestPage && <HowItWorksTrigger />}
         <ConnectButtonCustom />
         <CurrencyToggle />
       </div>

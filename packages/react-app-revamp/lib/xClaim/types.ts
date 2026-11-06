@@ -35,12 +35,6 @@ export interface XClaimSpots {
   network: string;
 }
 
-export interface XClaimNonce {
-  value: string;
-  expiresAt: Date;
-  chainId: number;
-}
-
 export interface XClaimPayout {
   txHash: Hash | null;
   tokenAmount: string | null;
@@ -90,9 +84,7 @@ export type XClaimWallet =
   | { kind: "embedded"; address: Address; signedInWithX: boolean }
   | { kind: "external"; address: Address; walletName: string | null };
 
-export type XClaimSignedInWallet = Exclude<XClaimWallet, { kind: "signed_out" }>;
 export type XClaimEmbeddedWallet = Extract<XClaimWallet, { kind: "embedded" }>;
-export type XClaimExternalWallet = Extract<XClaimWallet, { kind: "external" }>;
 
 export type XClaimFailureReason =
   "signature_rejected" | "wallet_proof" | "signed_out" | "not_linked" | "temporary" | "misconfigured";
@@ -102,8 +94,8 @@ export interface XClaimFailure {
   detail: string;
 }
 
-export type XClaimActionName = "start_x" | "retry_claim" | "check_status";
-export type XClaimActionStage = "idle" | "awaiting_signature" | "submitting" | "redirecting";
+export type XClaimActionName = "check_status";
+export type XClaimActionStage = "idle" | "submitting";
 
 export interface XClaimActionState {
   stage: XClaimActionStage;
@@ -116,7 +108,6 @@ export type XClaimBoardView =
   | { board: "ClaimSignedOut" }
   | { board: "ClaimStart" }
   | { board: "ClaimConfirmX" }
-  | { board: "ClaimExternalWallet"; activeStep: 1 | 2; wallet: XClaimExternalWallet }
   | { board: "ClaimLinked"; handle: string | null }
   | { board: "Checking"; handle: string | null }
   | { board: "Success"; confirming: boolean; onContest: boolean }
@@ -153,25 +144,20 @@ export type XClaimOffer =
 
 export type XClaimOpenOffer = Extract<XClaimOffer, { status: "open" }>;
 
-export type XClaimTeaserOffer = Extract<XClaimOffer, { status: "open" | "waiting" }>;
-
 export interface XClaimActions {
   open: () => void;
   close: () => void;
   signIn: () => void;
+  createAccount: () => void;
   startXClaim: (returnPath?: string) => Promise<void>;
   retryClaim: () => Promise<void>;
   checkStatus: () => Promise<void>;
 }
 
-export type XClaimMemory = "settled" | "retryable";
-
 export interface XClaimFlowResult {
   result: XClaimResult;
-  source: "redirect" | "worker";
   at: number;
   walletWaitOver: boolean;
-  startedBy: string | null;
 }
 
 export interface XClaimFlowAction extends XClaimActionState {
@@ -188,7 +174,6 @@ export interface XClaimInput {
   meUpdatedAt: number;
   meFailedAt: number;
   meLoading: boolean;
-  memory: XClaimMemory | null;
   result: XClaimFlowResult | null;
   action: XClaimFlowAction;
 }

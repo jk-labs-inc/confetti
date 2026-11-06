@@ -1,16 +1,14 @@
-import XClaimAmountSticker from "@components/XClaim/entry/XClaimAmountSticker";
+import ClaimVoteSticker from "@components/ClaimVote/ClaimVoteSticker";
 import XClaimSignInHoverCard from "@components/XClaim/entry/XClaimSignInHoverCard";
-import { signedOutTeaserFor } from "lib/xClaim/view";
-import type { XClaimOffer } from "lib/xClaim/types";
+import { useSpotsTakenUntil } from "@hooks/useXClaim/useSpotsTakenUntil";
 import { FC } from "react";
 
 interface SignInButtonProps {
-  claimOffer: XClaimOffer;
   onSignIn: () => void;
 }
 
-const SignInButton: FC<SignInButtonProps> = ({ claimOffer, onSignIn }) => {
-  const teaser = signedOutTeaserFor(claimOffer);
+const SignInButton: FC<SignInButtonProps> = ({ onSignIn }) => {
+  const takenUntil = useSpotsTakenUntil();
 
   return (
     <div className="group/signin relative">
@@ -21,10 +19,10 @@ const SignInButton: FC<SignInButtonProps> = ({ claimOffer, onSignIn }) => {
       >
         sign in
       </button>
-      {teaser && (
+      {takenUntil && (
         <>
-          <XClaimAmountSticker className="absolute -top-3 -right-1.5 px-2 py-0.5 text-[12px] rotate-8" />
-          <XClaimSignInHoverCard offer={teaser} />
+          <ClaimVoteSticker className="absolute -top-3 -right-1.5 px-2 py-0.5 text-[12px] rotate-8" />
+          <XClaimSignInHoverCard nextReleaseAt={takenUntil} />
         </>
       )}
     </div>

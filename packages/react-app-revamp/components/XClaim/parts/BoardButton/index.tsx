@@ -4,7 +4,7 @@ import { BUSY_LABEL, SETTLING_LABEL } from "@components/XClaim/copy";
 import Link from "next/link";
 import { FC } from "react";
 
-export type BoardButtonTone = "primary" | "text" | "outline" | "link";
+export type BoardButtonTone = "primary" | "choice" | "text" | "outline" | "link";
 
 interface BoardButtonProps {
   spec: XClaimButtonSpec;
@@ -15,6 +15,7 @@ const BLOCK_CLASS = "flex items-center justify-center gap-2";
 
 const TONE_CLASS: Readonly<Record<BoardButtonTone, string>> = {
   primary: `${BLOCK_CLASS} h-[52px] w-full rounded-full bg-secondary-11 text-[17px] font-black text-true-black`,
+  choice: `${BLOCK_CLASS} h-[52px] w-full rounded-full border border-primary-3 bg-neutral-4 text-[17px] font-black text-neutral-11`,
   text: `${BLOCK_CLASS} h-11 w-full text-[16px] font-bold text-neutral-9`,
   outline: `${BLOCK_CLASS} h-[52px] w-full rounded-full border border-primary-3 text-[15px] font-bold text-neutral-11`,
   link: "inline font-bold text-secondary-11 hover:underline",

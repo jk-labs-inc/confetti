@@ -1,6 +1,6 @@
 import { getChainFromId } from "@helpers/getChainFromId";
-import { STANDARD_ANYONE_CAN_VOTE_GAS_LIMIT } from "@hooks/useUserSubmitQualification/utils";
 import { useWallet } from "@hooks/useWallet";
+import { spendableWei } from "lib/voteBalance/spendable";
 import { formatUnits } from "viem";
 import { useBalance, useGasPrice } from "wagmi";
 
@@ -54,9 +54,7 @@ export const useVoteBalance = ({
   const isLoading = isBalanceLoading || isGasPriceLoading;
   const isError = isBalanceError || isGasPriceError;
 
-  const rawBalance = balance?.value || 0n;
-  const totalGasCost = gasPrice ? gasPrice * BigInt(STANDARD_ANYONE_CAN_VOTE_GAS_LIMIT) : 0n;
-  const spendableBalanceWei = rawBalance > totalGasCost ? rawBalance - totalGasCost : 0n;
+  const spendableBalanceWei = spendableWei({ balanceWei: balance?.value || 0n, gasPriceWei: gasPrice ?? 0n });
   const spendableBalance = formatUnits(spendableBalanceWei, chainCurrencyDecimals);
 
   const spendableBalanceNum = parseFloat(spendableBalance);

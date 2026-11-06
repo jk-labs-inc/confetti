@@ -1,12 +1,15 @@
+import ClaimVoteLine from "@components/ClaimVote/ClaimVoteLine";
 import NumericKeypad from "@components/UI/NumericKeypad";
 import { useModal } from "@getpara/react-sdk-lite";
 import { MOBILE_MAX_WIDTH_PX } from "@helpers/isMobileViewport";
+import { useClaimVoteLine } from "@hooks/useClaimVote/useClaimVoteLine";
 import { useCastVotesStore } from "@hooks/useCastVotes/store";
 import useContestConfigStore from "@hooks/useContestConfig/store";
+import useDisplayPrice from "@hooks/useCurrency/useDisplayPrice";
 import { useVoteBalance } from "@hooks/useVoteBalance";
 import { useVoteProjections } from "@hooks/useVoteProjections";
 import { useWallet } from "@hooks/useWallet";
-import { FC, RefObject, useEffect, useRef } from "react";
+import { FC, useEffect, useRef } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useShallow } from "zustand/shallow";
 import VotingWidgetRewardsProjection from "./components/RewardsProjection";
@@ -17,15 +20,14 @@ import VoteButton from "./components/VoteButton";
 import VoteInfoBlocks from "./components/VoteInfoBlocks";
 import VotePercentRow from "./components/VotePercentRow";
 import { useEffectiveCostToVote } from "./hooks/useEffectiveCostToVote";
+import { useDefaultVoteAmount } from "./hooks/useDefaultVoteAmount";
 import useKeypadInput from "./hooks/useKeypadInput";
 import { useVoteExecution } from "./hooks/useVoteExecution";
+import { useVotePresets } from "./hooks/useVotePresets";
 import { useVotingStore } from "./store";
-import { AddFundsEntryReason, VotingWidgetLayout } from "./types";
+import { AddFundsEntryReason, VotingWidgetLayout, VotingWidgetStyle } from "./types";
 
-export enum VotingWidgetStyle {
-  classic = "classic",
-  muted = "muted",
-}
+export { VotingWidgetStyle };
 
 interface VotingWidgetProps {
   costToVote: string;
@@ -41,8 +43,10 @@ interface VotingWidgetProps {
   pinVoteButton?: boolean;
 }
 
+const AMOUNT_KEY = /^([\d.]|Backspace|Delete|Unidentified)$/;
+
 const PINNED_VOTE_BUTTON_CLASS_NAME = "sticky bottom-0 z-10 -mx-3 -mb-3 px-3 pb-3 pt-6 -mt-6 rounded-b-2xl";
-const PINNED_VOTE_BUTTON_BACKDROP = "linear-gradient(to bottom, rgba(20, 20, 20, 0) 0%, #141414 40%)";
+const PINNED_VOTE_BUTTON_BACKDROP = "linear-gradient(to bottom, rgba(20, 20, 20, 0) 0px, #141414 24px)";
 
 const VotingWidget: FC<VotingWidgetProps> = ({
   costToVote,
@@ -64,6 +68,11 @@ const VotingWidget: FC<VotingWidgetProps> = ({
   const inputRef = useRef<HTMLInputElement>(null);
   const inputValue = useVotingStore(state => state.inputValue);
   const effectiveCostToVote = useEffectiveCostToVote(costToVote);
+  useDefaultVoteAmount({
+    contest: contestConfig.address,
+    nativeSymbol: contestConfig.chainNativeCurrencySymbol,
+    pricePerVoteNative: effectiveCostToVote,
+  });
   const {
     balance,
     insufficientBalance,
@@ -84,6 +93,7 @@ const VotingWidget: FC<VotingWidgetProps> = ({
     displayValue,
     displaySymbol,
     isLoading: isDisplayLoading,
+    isPrefilled,
     handleDisplayChange,
     handleDisplayMax,
   } = useVotingInputDisplay({
@@ -91,13 +101,28 @@ const VotingWidget: FC<VotingWidgetProps> = ({
     maxBalance,
     isConnected,
   });
-  const { handleKey } = useKeypadInput({ displayValue, onDisplayChange: handleDisplayChange });
+  const { handleKey } = useKeypadInput({ displayValue, isPrefilled, onDisplayChange: handleDisplayChange });
   const pickedProposal = useCastVotesStore(useShallow(state => state.pickedProposal));
   const projections = useVoteProjections({
     proposalId: pickedProposal,
     spendNative: inputValue,
     pricePerVoteNative: effectiveCostToVote,
     submissionsCount,
+  });
+  const pricePerVote = useDisplayPrice(
+    effectiveCostToVote,
+    contestConfig.chainNativeCurrencySymbol,
+    undefined,
+    undefined,
+    { ceilingPrecision: true },
+  );
+  const claimVote = useClaimVoteLine({ pricePerVoteNative: effectiveCostToVote, isVotingClosed });
+  const presets = useVotePresets({
+    maxBalance,
+    isConnected,
+    pushToFirstFillAmount: projections.pushToFirstFillAmount,
+    allowPercentPresets: !isMobile,
+    onMax: handleDisplayMax,
   });
 
   useEffect(() => {
@@ -111,10 +136,19 @@ const VotingWidget: FC<VotingWidgetProps> = ({
   const totalVotes = projections.votes;
   const isZeroValue = !inputValue || parseFloat(inputValue) === 0;
   const isBelowMinimum = !isZeroValue && totalVotes === 0;
-  const voteDisabled = isZeroValue || isBelowMinimum || isLoading || (isConnected && isBalanceLoading);
+  const creditOffer = claimVote.line.kind === "offer" ? claimVote.line.offer : null;
+  const voteDisabled =
+    isZeroValue ||
+    isBelowMinimum ||
+    isLoading ||
+    (!creditOffer && ((isConnected && isBalanceLoading) || claimVote.isBusy));
 
   const handlePrimaryAction = () => {
     if (voteDisabled) return;
+    if (creditOffer) {
+      claimVote.press();
+      return;
+    }
     if (!isConnected) {
       if (onConnectRequest) {
         onConnectRequest();
@@ -132,8 +166,12 @@ const VotingWidget: FC<VotingWidgetProps> = ({
 
   const handleKeyDownInputWithVote = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
-      handlePrimaryAction();
+      if (!isPrefilled) handlePrimaryAction();
+      return;
     }
+    if (!isPrefilled || e.metaKey || e.ctrlKey) return;
+    if (AMOUNT_KEY.test(e.key)) e.currentTarget.select();
+    else if (e.key.length === 1) e.preventDefault();
   };
 
   if (isContestCanceled) return null;
@@ -142,24 +180,24 @@ const VotingWidget: FC<VotingWidgetProps> = ({
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-2">
         <VoteAmountInput
-          maxBalance={maxBalance}
-          symbol={contestConfig.chainNativeCurrencySymbol}
-          costToVote={effectiveCostToVote}
-          isConnected={isConnected}
           displayValue={displayValue}
           displaySymbol={displaySymbol}
           isDisplayLoading={isDisplayLoading}
           onDisplayChange={handleDisplayChange}
-          onDisplayMax={handleDisplayMax}
+          pricePerVote={pricePerVote}
+          totalVotes={totalVotes}
+          presets={presets}
           isBelowMinimum={isBelowMinimum}
-          pushToFirstAmount={projections.pushToFirstFillAmount}
+          showIdleCaret
           style={style}
           layout={layout}
           autoFocus={!isMobile}
           isReadOnly={isMobile}
-          showPresets={!isMobile}
-          inputRef={inputRef as RefObject<HTMLInputElement>}
+          inputRef={inputRef}
           onKeyDown={handleKeyDownInputWithVote}
+          onPaste={e => {
+            if (isPrefilled) e.currentTarget.select();
+          }}
         />
         <VoteInfoBlocks
           type="my-votes"
@@ -167,6 +205,7 @@ const VotingWidget: FC<VotingWidgetProps> = ({
           symbol={contestConfig.chainNativeCurrencySymbol}
           insufficientBalance={insufficientBalance}
           isConnected={isConnected}
+          isBalancePending={claimVote.isBalancePending}
           onAddFunds={() => onAddFunds?.(AddFundsEntryReason.Manual)}
           layout={layout}
         />
@@ -182,13 +221,15 @@ const VotingWidget: FC<VotingWidgetProps> = ({
           </div>
         )}
         <div
-          className={pinVoteButton ? PINNED_VOTE_BUTTON_CLASS_NAME : ""}
+          className={`flex flex-col gap-4 ${pinVoteButton ? PINNED_VOTE_BUTTON_CLASS_NAME : ""}`}
           style={pinVoteButton ? { background: PINNED_VOTE_BUTTON_BACKDROP } : undefined}
         >
+          <ClaimVoteLine line={claimVote.line} />
           <VoteButton
             isDisabled={voteDisabled}
-            isInvalidBalance={insufficientBalance && isConnected}
+            isInvalidBalance={!creditOffer && insufficientBalance && isConnected}
             isConnected={isConnected}
+            creditOffer={creditOffer}
             onClick={handlePrimaryAction}
           />
         </div>

@@ -1,4 +1,5 @@
 import XClaimAddFunds from "@components/XClaim/XClaimAddFunds";
+import XClaimSheetContent from "@components/XClaim/XClaimSheetContent";
 import XClaimSheetFrame from "@components/XClaim/XClaimSheetFrame";
 import type { XClaimHookReturn } from "@hooks/useXClaim";
 import { FC, useState } from "react";
@@ -15,7 +16,11 @@ const XClaimSheet: FC<XClaimSheetProps> = ({ sheet, actions }) => {
 
   return (
     <>
-      <XClaimSheetFrame isOpen={sheet.isOpen} view={sheet.view} actions={actions} onAddFunds={addFunds} />
+      <XClaimSheetFrame isOpen={sheet.isOpen} value={sheet.view} onClose={actions.close}>
+        {(view, layout) => (
+          <XClaimSheetContent view={view} actions={actions} layout={layout} onAddFunds={addFunds} justVote={null} />
+        )}
+      </XClaimSheetFrame>
       {addFundsRequest > 0 && <XClaimAddFunds request={addFundsRequest} />}
     </>
   );

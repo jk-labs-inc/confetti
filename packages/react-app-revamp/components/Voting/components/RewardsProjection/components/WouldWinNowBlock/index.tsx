@@ -1,20 +1,24 @@
 import CompactAmount from "@components/UI/CompactAmount";
 import GradientText from "@components/UI/GradientText";
 import { VotingWidgetLayout } from "@components/Voting/types";
-import useNativeDisplayPrice from "@hooks/useCurrency/useNativeDisplayPrice";
 import { FC } from "react";
 import Skeleton from "react-loading-skeleton";
 import { PROJECTION_LAYOUT_CLASS_NAMES } from "../../constants";
 import WouldWinNowTooltip from "../WouldWinNowTooltip";
 
 interface WouldWinNowBlockProps {
-  amount: string;
+  formatted: string;
   isBelowSpend: boolean;
+  isLoading: boolean;
   layout?: VotingWidgetLayout;
 }
 
-const WouldWinNowBlock: FC<WouldWinNowBlockProps> = ({ amount, isBelowSpend, layout = VotingWidgetLayout.regular }) => {
-  const { formatted, isLoading } = useNativeDisplayPrice(amount);
+const WouldWinNowBlock: FC<WouldWinNowBlockProps> = ({
+  formatted,
+  isBelowSpend,
+  isLoading,
+  layout = VotingWidgetLayout.regular,
+}) => {
   const classNames = PROJECTION_LAYOUT_CLASS_NAMES[layout];
 
   return (

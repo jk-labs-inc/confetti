@@ -1,5 +1,10 @@
+import ClaimVoteHoverCard from "@components/ClaimVote/ClaimVoteHoverCard";
+import ClaimVoteSticker from "@components/ClaimVote/ClaimVoteSticker";
+import { CLAIM_VOTE_IDS } from "@components/ClaimVote/constants";
+import { withCreditLabel } from "@components/ClaimVote/copy";
 import usePriceCurveChartStore from "@components/PriceCurve/store";
 import ButtonV3, { ButtonSize, ButtonType } from "@components/UI/ButtonV3";
+import type { XClaimOpenOffer } from "lib/xClaim/types";
 import { motion } from "motion/react";
 import { FC, useState, useMemo, memo } from "react";
 
@@ -15,10 +20,11 @@ interface VoteButtonProps {
   isDisabled: boolean;
   isInvalidBalance: boolean;
   isConnected: boolean;
+  creditOffer: XClaimOpenOffer | null;
   onClick?: () => void;
 }
 
-const VoteButton: FC<VoteButtonProps> = ({ isDisabled, isInvalidBalance, isConnected, onClick }) => {
+const VoteButton: FC<VoteButtonProps> = ({ isDisabled, isInvalidBalance, isConnected, creditOffer, onClick }) => {
   const [isHovered, setIsHovered] = useState(false);
   const showPriceUpdateWarning = usePriceCurveChartStore(state => state.showPriceUpdateWarning);
 
@@ -42,7 +48,11 @@ const VoteButton: FC<VoteButtonProps> = ({ isDisabled, isInvalidBalance, isConne
           wait for price update or tx may fail
         </p>
       )}
-    <div className="relative" onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
+    <div
+      className="group/vote relative [anchor-name:--claim-vote-button]"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
       {showConfetti && isHovered &&
         particles.map((p, i) => (
           <motion.img
@@ -62,7 +72,8 @@ const VoteButton: FC<VoteButtonProps> = ({ isDisabled, isInvalidBalance, isConne
           />
         ))}
       <ButtonV3
-        ariaLabel={isInvalidBalance ? "add funds to vote" : undefined}
+        id={creditOffer ? CLAIM_VOTE_IDS.voteWithCredit : undefined}
+        ariaLabel={creditOffer ? withCreditLabel("back this entry") : isInvalidBalance ? "add funds to vote" : undefined}
         type={ButtonType.DEFAULT}
         isDisabled={isDisabled}
         colorClass="px-[20px] text-[24px] font-bold bg-gradient-purple rounded-[40px] w-full"
@@ -71,6 +82,12 @@ const VoteButton: FC<VoteButtonProps> = ({ isDisabled, isInvalidBalance, isConne
       >
         back this entry
       </ButtonV3>
+      {creditOffer && (
+        <>
+          <ClaimVoteSticker className="absolute -top-3 -right-1.5 px-2.5 py-0.5 text-[14px] rotate-8" />
+          <ClaimVoteHoverCard offer={creditOffer} />
+        </>
+      )}
     </div>
     </div>
   );

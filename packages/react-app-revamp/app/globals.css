@@ -2,6 +2,7 @@
 @plugin "@tailwindcss/typography";
 
 @custom-variant short (@media (max-height: 640px));
+@custom-variant anchored (@supports (anchor-name: --a));
 
 @theme {
   /* Breakpoints */

@@ -9,6 +9,7 @@ interface MyVotesProps {
   symbol: string;
   insufficientBalance: boolean;
   isConnected: boolean;
+  isBalancePending: boolean;
   onAddFunds?: () => void;
   layout?: VotingWidgetLayout;
 }
@@ -37,6 +38,7 @@ const MyVotes: FC<MyVotesProps> = ({
   symbol,
   insufficientBalance,
   isConnected,
+  isBalancePending,
   onAddFunds,
   layout = VotingWidgetLayout.regular,
 }) => {
@@ -53,7 +55,7 @@ const MyVotes: FC<MyVotesProps> = ({
         balance:{" "}
         {!isConnected
           ? "N/A"
-          : isLoading
+          : isLoading || isBalancePending
             ? <Skeleton width={80} height={layoutStyle.skeletonHeightPx} baseColor="#706f78" highlightColor="#FFE25B" inline />
             : displaySymbol === "$"
               ? `$${displayValue}`

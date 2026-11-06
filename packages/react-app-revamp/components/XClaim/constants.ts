@@ -3,7 +3,6 @@ export const X_CLAIM_IDS = {
   signInExisting: "x_claim_sign_in_existing",
   connectX: "x_claim_connect_x",
   confirmX: "x_claim_confirm_x",
-  signMessage: "x_claim_sign_message",
   linkedClaim: "x_claim_linked_claim",
   noSpotsClaim: "x_claim_no_spots_claim",
   modalClose: "x_claim_modal_close",
@@ -16,6 +15,7 @@ export const X_CLAIM_IDS = {
   alreadyClaimedBackToContest: "x_claim_already_claimed_back_to_contest",
   checkAgain: "x_claim_check_again",
   addFunds: "x_claim_add_funds",
+  justVote: "x_claim_just_vote",
   alreadyLinkedGotIt: "x_claim_already_linked_got_it",
   noSpotsGotIt: "x_claim_no_spots_got_it",
   connectOtherX: "x_claim_connect_other_x",
@@ -23,8 +23,6 @@ export const X_CLAIM_IDS = {
   payoutRetry: "x_claim_payout_retry",
   tryXAgain: "x_claim_try_x_again",
   contactUs: "x_claim_contact_us",
-  accountMenuRow: "x_claim_account_menu_row",
-  profileDrawerRow: "x_claim_profile_drawer_row",
   tipDismiss: "x_claim_tip_dismiss",
 } as const;
 

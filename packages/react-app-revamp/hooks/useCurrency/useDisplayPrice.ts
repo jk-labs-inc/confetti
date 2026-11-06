@@ -12,6 +12,8 @@ export type DisplayPriceResult = {
   isLoading: boolean;
 };
 
+export type PriceDisplay = Pick<DisplayPriceResult, "displayValue" | "displaySymbol">;
+
 export type DisplayPriceOptions = {
   ceilingPrecision?: boolean;
 };
