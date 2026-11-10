@@ -1,4 +1,6 @@
 import { isSupabaseConfigured } from "@helpers/database";
+import { getJson } from "@helpers/fetchJson";
+import type { VoteEventsQuery } from "lib/supabase/types";
 
 export interface ContestVoteEvent {
   uuid: string;
@@ -17,36 +19,12 @@ export interface ContestVoteEventsPage {
   totalCount: number;
 }
 
-const VOTE_EVENT_COLUMNS = "uuid, user_address, proposal_id, proposal_name, vote_amount, amount_sent, created_at";
 const EMPTY_PAGE: ContestVoteEventsPage = { events: [], rowCount: 0, totalCount: 0 };
 
 interface VoteEventsPageOptions {
   withCount?: boolean;
   ascending?: boolean;
 }
-
-interface ParticipantVoteRow {
-  uuid: string;
-  user_address: string | null;
-  proposal_id: string | null;
-  proposal_name: string | null;
-  vote_amount: number | null;
-  amount_sent: number | null;
-  created_at: number | null;
-}
-
-const toContestVoteEvent = (row: ParticipantVoteRow): ContestVoteEvent | null => {
-  if (!row.user_address || !row.proposal_id || row.vote_amount == null || row.created_at == null) return null;
-  return {
-    uuid: row.uuid,
-    userAddress: row.user_address,
-    proposalId: row.proposal_id,
-    proposalName: row.proposal_name,
-    voteAmount: row.vote_amount,
-    amountSent: row.amount_sent,
-    createdAt: row.created_at,
-  };
-};
 
 export async function getContestVoteEventsPage(
   contestAddress: string,
@@ -57,33 +35,8 @@ export async function getContestVoteEventsPage(
 ): Promise<ContestVoteEventsPage> {
   if (!isSupabaseConfigured || !contestAddress || !chainName) return EMPTY_PAGE;
 
-  const { supabase } = await import("@config/supabase");
-  const normalizedAddress = contestAddress.toLowerCase();
-  const normalizedChainName = chainName.toLowerCase();
-
-  const { data, error, count } = await supabase
-    .from("analytics_contest_participants_v3")
-    .select(VOTE_EVENT_COLUMNS, withCount ? { count: "exact" } : undefined)
-    .eq("contest_address", normalizedAddress)
-    // Same contract address recurs across chains (same deployer + nonce), so a contest is only
-    // unique per (contest_address, network_name) — without this, another chain's votes leak in.
-    .eq("network_name", normalizedChainName)
-    .not("vote_amount", "is", null)
-    .is("comment_id", null)
-    .order("created_at", { ascending })
-    .order("uuid", { ascending })
-    .range(offset, offset + limit - 1);
-
-  if (error) throw new Error(`getContestVoteEventsPage: ${error.message}`);
-
-  const rows = (data ?? []) as ParticipantVoteRow[];
-  const events: ContestVoteEvent[] = [];
-  for (const row of rows) {
-    const event = toContestVoteEvent(row);
-    if (event) events.push(event);
-  }
-
-  return { events, rowCount: rows.length, totalCount: count ?? rows.length };
+  const query: VoteEventsQuery = { contest: contestAddress, chain: chainName, offset, limit, withCount, ascending };
+  return getJson<ContestVoteEventsPage>("/api/participants/vote-events", query);
 }
 
 export async function getContestVoteEvents(

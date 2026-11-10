@@ -1,11 +1,16 @@
 import { isSupabaseConfigured } from "@helpers/database";
-import getPagination from "@helpers/getPagination";
+import { getJson } from "@helpers/fetchJson";
+import type { ContestExistsQuery, ContestListQuery, ContestRowsPage } from "lib/supabase/types";
 import { SearchOptions } from "types/search";
-import { CONTEST_COLUMNS, ITEMS_PER_PAGE } from "./constants";
+import { ITEMS_PER_PAGE } from "./constants";
 import { getContestContractData } from "./contracts";
 import { BaseContestData, ContestsResponse, ProcessedContest } from "./types";
-import { sortContests } from "./utils/sortContests";
-import { streamProcessItems } from "./utils/streamItems";
+import { streamPromiseResults } from "./utils/streamItems";
+
+const CONTESTS_API = "/api/contests";
+const EMPTY_CONTESTS: ContestsResponse = { data: [], count: 0 };
+
+const fetchContestRows = (query: ContestListQuery) => getJson<ContestRowsPage>(CONTESTS_API, query);
 
 /**
  * Process contest data by fetching title and cancellation status from contracts
@@ -27,57 +32,26 @@ async function processContestsData(contests: BaseContestData[]): Promise<Process
   return Promise.all(contests.map(processContestData));
 }
 
-// Search for contests based on the search options provided, table is contests by default and column is title by default
-export async function searchContests(options: SearchOptions = {}, sortBy?: string): Promise<ContestsResponse> {
-  const {
-    searchColumn = "title",
-    searchString = "",
-    pagination = { currentPage: 1, itemsPerPage: ITEMS_PER_PAGE },
-    sorting = { orderBy: "created_at", ascending: false },
-    table = "contests_v3",
-    language = "english",
-  } = options;
+async function loadContests(query: ContestListQuery, { dropCanceled = false } = {}): Promise<ContestsResponse> {
+  if (!isSupabaseConfigured) return EMPTY_CONTESTS;
 
-  const { currentPage = 1, itemsPerPage = ITEMS_PER_PAGE } = pagination;
-  const { orderBy = "created_at", ascending = false } = sorting;
+  try {
+    const { data, count } = await fetchContestRows(query);
+    const processedData = await processContestsData(data);
+    if (!dropCanceled) return { data: processedData, count };
 
-  if (isSupabaseConfigured) {
-    const config = await import("@config/supabase");
-    const supabase = config.supabase;
-    const { from, to } = getPagination(currentPage, itemsPerPage);
-    try {
-      let query = supabase
-        .from(table)
-        .select(CONTEST_COLUMNS, {
-          count: "exact",
-        })
-        .textSearch(searchColumn, `${searchString}`, {
-          type: "websearch",
-          config: language,
-        });
-
-      if (sortBy) {
-        query = sortContests(query, sortBy);
-      }
-
-      query = query.range(from, to).order(orderBy, { ascending });
-
-      const result = await query;
-
-      const { data, count, error } = result;
-      if (error) {
-        throw new Error(error.message);
-      }
-
-      const processedData = await processContestsData(data as BaseContestData[]);
-
-      return { data: processedData, count: count ?? 0 };
-    } catch (e) {
-      console.error(e);
-      return { data: [], count: 0 };
-    }
+    const activeData = processedData.filter(contest => !contest.isCanceled);
+    return { data: activeData, count: count - (processedData.length - activeData.length) };
+  } catch (e) {
+    console.error(e);
+    return EMPTY_CONTESTS;
   }
-  return { data: [], count: 0 };
+}
+
+export async function searchContests(options: SearchOptions = {}, sortBy?: string): Promise<ContestsResponse> {
+  const { searchString = "", pagination = {} } = options;
+  const { currentPage = 1, itemsPerPage = ITEMS_PER_PAGE } = pagination;
+  return loadContests({ view: "search", query: searchString, sortBy, page: currentPage, perPage: itemsPerPage });
 }
 
 export async function getUserContests(
@@ -86,76 +60,34 @@ export async function getUserContests(
   profileAddress: string,
   sortBy?: string,
 ): Promise<ContestsResponse> {
-  if (isSupabaseConfigured && profileAddress) {
-    const config = await import("@config/supabase");
-    const supabase = config.supabase;
-    const { from, to } = getPagination(currentPage, itemsPerPage);
-
-    try {
-      const executeQuery = async (useIlike: boolean) => {
-        let query = supabase.from("contests_v3").select(CONTEST_COLUMNS, {
-          count: "exact",
-        });
-
-        if (useIlike) {
-          query = query.ilike("author_address", profileAddress);
-        } else {
-          query = query.eq("author_address", profileAddress);
-        }
-        query = query.order("created_at", { ascending: false });
-
-        if (sortBy) {
-          query = sortContests(query, sortBy);
-        }
-        return query.range(from, to);
-      };
-
-      // first attempt with eq
-      let result = await executeQuery(false);
-
-      // if no results, it could be that address is lowercase, try with ilike
-      if (result.data?.length === 0) {
-        result = await executeQuery(true);
-      }
-
-      const { data, count, error } = result;
-      if (error) {
-        throw new Error(error.message);
-      }
-
-      const processedData = await processContestsData(data as BaseContestData[]);
-
-      return { data: processedData, count: count ?? 0 };
-    } catch (e) {
-      console.error(e);
-      return { data: [], count: 0 };
-    }
-  }
-  return { data: [], count: 0 };
+  if (!profileAddress) return EMPTY_CONTESTS;
+  return loadContests({ view: "user", author: profileAddress, sortBy, page: currentPage, perPage: itemsPerPage });
 }
 
 export async function* streamFeaturedContests(
   currentPage: number,
   itemsPerPage: number,
 ): AsyncGenerator<ProcessedContest, void, unknown> {
-  const contestStream = streamProcessItems<BaseContestData, ProcessedContest>(
-    "contests_v3",
-    query => query.is("featured", true),
-    async contest => {
+  if (!isSupabaseConfigured) return;
+
+  let contests: BaseContestData[];
+  try {
+    ({ data: contests } = await fetchContestRows({ view: "featured", page: currentPage, perPage: itemsPerPage }));
+  } catch (e) {
+    console.error("Error fetching featured contests:", e);
+    return;
+  }
+
+  yield* streamPromiseResults(
+    contests.map(async contest => {
       try {
         return await processContestData(contest);
       } catch (err) {
         console.error(`Error processing contest ${contest.address}:`, err);
         return null;
       }
-    },
-    { currentPage, itemsPerPage },
-    CONTEST_COLUMNS,
+    }),
   );
-
-  for await (const contest of contestStream) {
-    yield contest;
-  }
 }
 
 export async function getLiveContests(
@@ -163,72 +95,11 @@ export async function getLiveContests(
   itemsPerPage: number,
   sortBy?: string,
 ): Promise<ContestsResponse> {
-  if (isSupabaseConfigured) {
-    const config = await import("@config/supabase");
-    const supabase = config.supabase;
-    const { from, to } = getPagination(currentPage, itemsPerPage);
-    try {
-      let query = supabase
-        .from("contests_v3")
-        .select(CONTEST_COLUMNS, {
-          count: "exact",
-        })
-        .lte("start_at", new Date().toISOString())
-        .gte("end_at", new Date().toISOString());
-
-      if (sortBy) {
-        query = sortContests(query, sortBy);
-      }
-
-      query = query.range(from, to);
-
-      const result = await query;
-
-      const { data, count, error } = result;
-      if (error) {
-        throw new Error(error.message);
-      }
-
-      const processedData = await processContestsData(data as BaseContestData[]);
-      const filteredData = processedData.filter(contest => !contest.isCanceled);
-
-      return { data: filteredData, count: (count ?? 0) - (processedData.length - filteredData.length) };
-    } catch (e) {
-      console.error(e);
-      return { data: [], count: 0 };
-    }
-  }
-  return { data: [], count: 0 };
+  return loadContests({ view: "live", sortBy, page: currentPage, perPage: itemsPerPage }, { dropCanceled: true });
 }
 
 export async function getPastContests(currentPage: number, itemsPerPage: number): Promise<ContestsResponse> {
-  if (isSupabaseConfigured) {
-    const config = await import("@config/supabase");
-    const supabase = config.supabase;
-    const { from, to } = getPagination(currentPage, itemsPerPage);
-    try {
-      const result = await supabase
-        .from("contests_v3")
-        .select(CONTEST_COLUMNS, {
-          count: "exact",
-        })
-        .lt("end_at", new Date().toISOString())
-        .order("end_at", { ascending: false })
-        .range(from, to);
-      const { data, count, error } = result;
-      if (error) {
-        throw new Error(error.message);
-      }
-
-      const processedData = await processContestsData(data as BaseContestData[]);
-
-      return { data: processedData, count: count ?? 0 };
-    } catch (e) {
-      console.error(e);
-    }
-    return { data: [], count: 0 };
-  }
-  return { data: [], count: 0 };
+  return loadContests({ view: "past", page: currentPage, perPage: itemsPerPage });
 }
 
 export async function getUpcomingContests(
@@ -236,81 +107,17 @@ export async function getUpcomingContests(
   itemsPerPage: number,
   sortBy?: string,
 ): Promise<ContestsResponse> {
-  if (isSupabaseConfigured) {
-    const config = await import("@config/supabase");
-    const supabase = config.supabase;
-    const { from, to } = getPagination(currentPage, itemsPerPage);
-
-    try {
-      let query = supabase
-        .from("contests_v3")
-        .select(CONTEST_COLUMNS, {
-          count: "exact",
-        })
-        .gt("start_at", new Date().toISOString());
-
-      if (sortBy) {
-        query = sortContests(query, sortBy);
-      } else {
-        query = query.order("start_at", { ascending: false });
-      }
-
-      query = query.range(from, to);
-
-      const result = await query;
-      const { data, count, error } = result;
-      if (error) {
-        throw new Error(error.message);
-      }
-
-      const processedData = await processContestsData(data as BaseContestData[]);
-      const filteredData = processedData.filter(contest => !contest.isCanceled);
-
-      return { data: filteredData, count: (count ?? 0) - (processedData.length - filteredData.length) };
-    } catch (e) {
-      console.error(e);
-      return { data: [], count: 0 };
-    }
-  }
-  return { data: [], count: 0 };
+  return loadContests({ view: "upcoming", sortBy, page: currentPage, perPage: itemsPerPage }, { dropCanceled: true });
 }
 
 export async function checkIfContestExists(address: string, networkName: string): Promise<boolean> {
-  if (isSupabaseConfigured) {
-    const config = await import("@config/supabase");
-    const supabase = config.supabase;
-    try {
-      let { data, error } = await supabase
-        .from("contests_v3")
-        .select("address")
-        .eq("address", address.toLowerCase())
-        .or("disabled.eq.false,disabled.is.null")
-        .eq("network_name", networkName);
+  if (!isSupabaseConfigured) return false;
 
-      if (error) {
-        throw new Error(error.message);
-      }
-
-      if (data && data.length > 0) {
-        return true;
-      }
-
-      ({ data, error } = await supabase
-        .from("contests_v3")
-        .select("address")
-        .eq("address", address)
-        .or("disabled.eq.false,disabled.is.null")
-        .eq("network_name", networkName));
-
-      if (error) {
-        throw new Error(error.message);
-      }
-
-      return data ? data.length > 0 : false;
-    } catch (e) {
-      console.error(e);
-      return false;
-    }
+  try {
+    const query: ContestExistsQuery = { address, chain: networkName };
+    return await getJson<boolean>(`${CONTESTS_API}/exists`, query);
+  } catch (e) {
+    console.error(e);
+    return false;
   }
-  return false;
 }

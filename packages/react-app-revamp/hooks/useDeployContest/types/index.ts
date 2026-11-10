@@ -22,22 +22,6 @@ export enum PriceCurveType {
   Logarithmic = 1,
 }
 
-export interface ContestValues {
-  anyoneCanSubmit: number;
-  datetimeOpeningSubmissions: Date;
-  datetimeOpeningVoting: Date;
-  datetimeClosingVoting: Date;
-  title: string;
-  prompt: string;
-  contractAddress: string;
-  networkName: string;
-  cost_to_vote: number;
-  percentage_to_rewards: number;
-  creator_split_enabled?: number;
-  authorAddress?: string;
-  featured?: boolean;
-}
-
 export type DeploymentPhase =
   | "idle"
   | "deploying-contest"

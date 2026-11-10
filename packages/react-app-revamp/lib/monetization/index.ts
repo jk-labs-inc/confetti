@@ -1,4 +1,6 @@
 import { isSupabaseConfigured } from "@helpers/database";
+import { getJson } from "@helpers/fetchJson";
+import type { ChainParams, ChainParamsQuery } from "lib/supabase/types";
 
 type ChargeDetails = {
   costToVote: number;
@@ -10,33 +12,21 @@ const defaultChargeDetails: ChargeDetails = {
   isError: false,
 };
 
+export const fetchChainParams = (query: ChainParamsQuery) => getJson<ChainParams | null>("/api/chain-params", query);
+
 export const fetchChargeDetails = async (chainName: string): Promise<ChargeDetails> => {
   if (!isSupabaseConfigured || !chainName) {
     return { ...defaultChargeDetails, isError: true };
   }
 
-  const config = await import("@config/supabase");
-  const supabase = config.supabase;
-
   try {
-    const { data, error } = await supabase
-      .from("chain_params")
-      .select("default_cost_to_vote")
-      .eq("network_name", chainName.toLowerCase())
-      .limit(1)
-      .maybeSingle();
-
-    if (error) {
-      console.error("error fetching entry charge details:", error.message);
-      return { ...defaultChargeDetails, isError: true };
-    }
-
+    const chainParams = await fetchChainParams({ chain: chainName });
     return {
-      costToVote: data?.default_cost_to_vote ?? 0,
+      costToVote: chainParams?.defaultCostToVote ?? 0,
       isError: false,
     };
   } catch (error: any) {
-    console.error("Unexpected error fetching entry charge details:", error.message);
+    console.error("error fetching entry charge details:", error.message);
     return { ...defaultChargeDetails, isError: true };
   }
 };

@@ -14,7 +14,6 @@ import { useEffect, useState } from "react";
 
 type SearchCriteria = {
   searchString: string;
-  searchColumn: string;
 };
 
 function useContests(searchCriteria: SearchCriteria, sortBy?: string) {
@@ -31,7 +30,6 @@ function useContests(searchCriteria: SearchCriteria, sortBy?: string) {
       return searchContests(
         {
           searchString: searchCriteria.searchString,
-          searchColumn: searchCriteria.searchColumn,
           pagination: {
             currentPage: page,
           },
@@ -65,7 +63,6 @@ const SearchContests = () => {
   const query = useSearchParams();
   const [searchCriteria, setSearchCriteria] = useState<SearchCriteria>({
     searchString: "",
-    searchColumn: "title",
   });
   const [sortBy, setSortBy] = useState<string>("newest");
   const sortOptions = useContestSortOptions("liveContests");
@@ -76,7 +73,6 @@ const SearchContests = () => {
     if (query?.has("title") && query?.has("sortBy")) {
       setSearchCriteria({
         searchString: query.get("title") ?? "",
-        searchColumn: "title",
       });
 
       setSortBy(query.get("sortBy") ?? "");
@@ -100,7 +96,6 @@ const SearchContests = () => {
     } else {
       setSearchCriteria({
         searchString: criteria.query,
-        searchColumn: criteria.filterType,
       });
     }
   };

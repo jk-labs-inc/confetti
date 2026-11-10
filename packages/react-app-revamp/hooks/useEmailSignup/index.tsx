@@ -11,8 +11,7 @@ interface CheckIfEmailExistsProps {
 const useEmailSignup = () => {
   const { sendEmail } = useEmailSend();
   const { subscribe, checkIfValueExists, isLoading } = useSignup({
-    tableName: "email_signups",
-    valueColumn: "email_address",
+    kind: "email",
     valueLabel: "email",
     onSubscribeSuccess: async userAddress => {
       await sendEmail(userAddress ?? "", EmailType.SignUpConfirmation);
