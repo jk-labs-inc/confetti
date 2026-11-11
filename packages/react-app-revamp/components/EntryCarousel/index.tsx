@@ -1,5 +1,7 @@
+import { Proposal } from "@components/_pages/ProposalContent";
 import { ContestStatus } from "@hooks/useContestStatus/store";
 import { EntryPreview } from "@hooks/useDeployContest/slices/contestMetadataSlice";
+import useIsomorphicLayoutEffect from "@hooks/useIsomorphicLayoutEffect";
 import { MOBILE_NAV_SLOT_ID } from "@hooks/useMobileNavSlot";
 import { ProposalCore } from "@hooks/useProposal/store";
 import { animate, useMotionValue } from "motion/react";
@@ -13,8 +15,8 @@ import {
   DRAG_THRESHOLD_TOUCH,
   ENTRY_CAROUSEL_FOOTER_ID,
   FILL_BOTTOM_GAP_PX,
-  FLICK_MIN_TRAVEL,
-  FLICK_MIN_VELOCITY,
+  FLICK_MIN_TRAVEL_PX,
+  FLICK_MIN_VELOCITY_PX_S,
   FLICK_PROJECTION_S,
   GLOW_ROOM_PX,
   MAX_FLICK,
@@ -49,9 +51,16 @@ interface DragState {
   moved: number;
   engaged: boolean;
   rejected: boolean;
-  downIndex: number | null;
+  downPos: number | null;
   history: { p: number; t: number }[];
 }
+
+interface Anchor {
+  cards: Proposal[];
+  origin: number;
+}
+
+const mod = (value: number, size: number) => ((value % size) + size) % size;
 
 // iOS scroll-view rubber band: asymptotic resistance that saturates instead of a linear multiplier
 const rubberBand = (overshoot: number) => (RUBBER_BAND_COEF * overshoot) / (1 + RUBBER_BAND_COEF * overshoot);
@@ -68,6 +77,14 @@ const releaseVelocity = (history: { p: number; t: number }[]): number => {
   return dt > 0.005 ? (last.p - first.p) / dt : 0;
 };
 
+const reanchor = (previous: Anchor, cards: Proposal[], center: number): Anchor => {
+  const previousN = previous.cards.length;
+  if (previousN === 0 || cards.length === 0) return { cards, origin: center };
+  const previousIndex = mod(center - previous.origin, previousN);
+  const nextIndex = cards.findIndex(card => card.id === previous.cards[previousIndex].id);
+  return { cards, origin: center - (nextIndex >= 0 ? nextIndex : Math.min(previousIndex, cards.length - 1)) };
+};
+
 const EntryCarousel: FC<EntryCarouselProps> = ({
   proposals,
   enabledPreview,
@@ -76,7 +93,7 @@ const EntryCarousel: FC<EntryCarouselProps> = ({
   isLoadingMore,
   onLoadMore,
 }) => {
-  const wrapRef = useRef<HTMLDivElement>(null);
+  const [wrap, setWrap] = useState<HTMLDivElement | null>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const pos = useMotionValue(0);
   const drag = useRef<DragState>({
@@ -89,52 +106,43 @@ const EntryCarousel: FC<EntryCarouselProps> = ({
     moved: 0,
     engaged: false,
     rejected: false,
-    downIndex: null,
+    downPos: null,
     history: [],
   });
   const activeRef = useRef(0);
   const targetRef = useRef<number | null>(null);
   const [stageWidth, setStageWidth] = useState(0);
-  const [activeIdx, setActiveIdx] = useState(0);
+  const [activePos, setActivePos] = useState(0);
   const [availableH, setAvailableH] = useState(0);
+  const [anchor, setAnchor] = useState<Anchor>({ cards: [], origin: 0 });
+
+  const activeEntry = anchor.cards.length > 0 ? mod(activePos - anchor.origin, anchor.cards.length) : 0;
 
   const { cards, n, pendingTargetIndex, maybeLoadMore } = useEntryFeed({
     proposals,
-    activeIndex: activeIdx,
+    activeIndex: activeEntry,
     hasNextPage,
     isLoadingMore,
     onLoadMore,
   });
 
-  const isPair = n === 2;
-  const ring = useMemo(() => (isPair ? [...cards, ...cards] : cards), [cards, isPair]);
-  const ringSize = ring.length;
+  if (anchor.cards !== cards) setAnchor(reanchor(anchor, cards, activePos));
+
+  const { origin } = anchor;
+  const isBounded = n === 1;
+  const canNavigate = n > 1;
 
   const cardW = Math.max(0, stageWidth - 2 * PAGE_GUTTER_PX);
   const spacing = cardW * (1 - MAX_SCALE_DROP / 2) + PAGE_GUTTER_PX - NEIGHBOR_PEEK_PX;
-  const isBounded = ringSize === 1;
-  const canNavigate = n > 1;
 
   const fillH = availableH - STICKER_ROOM_PX - GLOW_ROOM_PX;
   const cardH = Math.min(cardW * CARD_MAX_ASPECT, Math.max(cardW * CARD_MIN_ASPECT, fillH > 0 ? fillH : cardW));
 
-  const mountedWindow = useMemo(() => {
-    const s = new Set<number>();
-    if (ringSize === 0) return s;
-    for (let d = -WINDOW_RADIUS; d <= WINDOW_RADIUS; d++) s.add((((activeIdx + d) % ringSize) + ringSize) % ringSize);
-    return s;
-  }, [activeIdx, ringSize]);
-
-  const cardDelta = useCallback(
-    (i: number, p: number) => {
-      if (ringSize === 0) return 0;
-      if (isBounded) return i - p;
-      let d = (((i - p) % ringSize) + ringSize) % ringSize;
-      if (d > ringSize / 2) d -= ringSize;
-      return d;
-    },
-    [ringSize, isBounded],
-  );
+  const slotPositions = useMemo(() => {
+    if (n === 0) return [];
+    if (isBounded) return [origin];
+    return Array.from({ length: 2 * WINDOW_RADIUS + 1 }, (_, i) => activePos - WINDOW_RADIUS + i);
+  }, [n, isBounded, origin, activePos]);
 
   const layout = useCallback(
     (p: number) => {
@@ -142,7 +150,7 @@ const EntryCarousel: FC<EntryCarouselProps> = ({
       if (!stage) return;
       for (let i = 0; i < stage.children.length; i++) {
         const el = stage.children[i] as HTMLElement;
-        const delta = cardDelta(i, p);
+        const delta = Number(el.dataset.pos) - p;
         const abs = Math.abs(delta);
         if (abs > MAX_VISIBLE) {
           if (el.style.opacity !== "0") {
@@ -159,21 +167,17 @@ const EntryCarousel: FC<EntryCarouselProps> = ({
         el.style.pointerEvents = "auto";
       }
     },
-    [cardDelta, spacing],
+    [spacing],
   );
 
   // highlight whichever card is currently closest to center — updates live while rotating, not only on settle
-  const updateActive = useCallback(
-    (p: number) => {
-      if (ringSize === 0) return;
-      const norm = isBounded ? 0 : ((Math.round(p) % ringSize) + ringSize) % ringSize;
-      if (norm !== activeRef.current) {
-        activeRef.current = norm;
-        setActiveIdx(norm);
-      }
-    },
-    [ringSize, isBounded],
-  );
+  const updateActive = useCallback((p: number) => {
+    const next = Math.round(p);
+    if (next !== activeRef.current) {
+      activeRef.current = next;
+      setActivePos(next);
+    }
+  }, []);
 
   useEffect(() => {
     const handler = (p: number) => {
@@ -185,22 +189,26 @@ const EntryCarousel: FC<EntryCarouselProps> = ({
     return () => unsub();
   }, [layout, updateActive, pos]);
 
+  useIsomorphicLayoutEffect(() => layout(pos.get()));
+
   useEffect(() => {
-    const wrap = wrapRef.current;
     if (!wrap) return;
     const ro = new ResizeObserver(() => setStageWidth(wrap.clientWidth));
     ro.observe(wrap);
     setStageWidth(wrap.clientWidth);
     return () => ro.disconnect();
-  }, []);
+  }, [wrap]);
 
   useEffect(() => {
-    const wrap = wrapRef.current;
     if (!wrap) return;
+    const viewportH = window.innerHeight;
+    let restingNavReserve = Infinity;
     const measure = () => {
       const slot = document.getElementById(MOBILE_NAV_SLOT_ID);
       const footer = document.getElementById(ENTRY_CAROUSEL_FOOTER_ID);
-      const floor = slot ? slot.getBoundingClientRect().top : window.innerHeight;
+      const navReserve = slot ? window.innerHeight - slot.getBoundingClientRect().top : 0;
+      if (slot && slot.offsetHeight > 0) restingNavReserve = Math.min(restingNavReserve, navReserve);
+      const floor = viewportH - Math.min(restingNavReserve, navReserve);
       const wrapRect = wrap.getBoundingClientRect();
       const footerH = footer ? footer.getBoundingClientRect().bottom - wrapRect.bottom : 0;
       const wrapTopAtScrollTop = wrapRect.top + window.scrollY;
@@ -213,33 +221,12 @@ const EntryCarousel: FC<EntryCarouselProps> = ({
       const el = document.getElementById(id);
       if (el) ro.observe(el);
     }
-    window.addEventListener("resize", measure);
-    return () => {
-      ro.disconnect();
-      window.removeEventListener("resize", measure);
-    };
-  }, [stageWidth, n, contestStatus]);
-
-  // re-layout when sizing or the entry set changes
-  useEffect(() => {
-    layout(pos.get());
-  }, [stageWidth, ring]);
-
-  const ringShapeRef = useRef({ ringSize, n });
-  useEffect(() => {
-    const previous = ringShapeRef.current;
-    ringShapeRef.current = { ringSize, n };
-    if (previous.ringSize === ringSize || previous.ringSize === 0 || n === 0) return;
-    const p = pos.get();
-    const previousIndex = ((Math.round(p) % previous.ringSize) + previous.ringSize) % previous.ringSize;
-    const entryIndex = Math.min(previousIndex % previous.n, n - 1);
-    targetRef.current = null;
-    pos.jump(entryIndex + p - Math.round(p));
-  }, [ringSize, n, pos]);
+    return () => ro.disconnect();
+  }, [wrap, stageWidth, contestStatus]);
 
   const snapTo = useCallback(
     (target: number, velocity?: number) => {
-      const dest = isBounded ? 0 : target;
+      const dest = isBounded ? origin : target;
       targetRef.current = dest;
       animate(pos, dest, {
         type: "spring",
@@ -247,15 +234,21 @@ const EntryCarousel: FC<EntryCarouselProps> = ({
         damping: 34,
         ...(velocity !== undefined ? { velocity } : {}),
         onComplete: () => {
-          const norm = ringSize > 0 && !isBounded ? ((Math.round(dest) % ringSize) + ringSize) % ringSize : 0;
           targetRef.current = null;
-          pos.set(norm);
-          maybeLoadMore(norm);
         },
       });
     },
-    [pos, ringSize, maybeLoadMore, isBounded],
+    [pos, isBounded, origin],
   );
+
+  useEffect(() => {
+    if (!isBounded || drag.current.active || pos.get() === origin) return;
+    snapTo(origin);
+  }, [isBounded, origin, pos, snapTo]);
+
+  useEffect(() => {
+    maybeLoadMore(activeEntry);
+  }, [activeEntry, maybeLoadMore]);
 
   const step = useCallback(
     (direction: number) => snapTo((targetRef.current ?? Math.round(pos.get())) + direction),
@@ -270,24 +263,20 @@ const EntryCarousel: FC<EntryCarouselProps> = ({
       jumpTargetRef.current = null;
       return;
     }
-    if (pendingTargetIndex === jumpTargetRef.current || pendingTargetIndex === activeRef.current % n) return;
+    if (n === 0 || pendingTargetIndex === jumpTargetRef.current || pendingTargetIndex === activeEntry) return;
     jumpTargetRef.current = pendingTargetIndex;
-    const current = pos.get();
-    let nearest = cardDelta(pendingTargetIndex, current);
-    for (let copy = pendingTargetIndex + n; copy < ringSize; copy += n) {
-      const delta = cardDelta(copy, current);
-      if (Math.abs(delta) < Math.abs(nearest)) nearest = delta;
-    }
-    snapTo(current + nearest);
-  }, [pendingTargetIndex, snapTo, cardDelta, pos, n, ringSize]);
+    let delta = mod(pendingTargetIndex - activeEntry, n);
+    if (delta > n / 2) delta -= n;
+    snapTo(activePos + delta);
+  }, [pendingTargetIndex, activeEntry, activePos, n, snapTo]);
 
   const onPointerDown = (e: ReactPointerEvent<HTMLDivElement>) => {
     if (drag.current.active) return; // one gesture at a time — a second finger must not hijack the frame of reference
     if (e.pointerType === "mouse" && e.button !== 0) return;
     pos.jump(pos.get()); // catch a settling spring in place (also zeroes its velocity)
     targetRef.current = null;
-    const card = (e.target as HTMLElement).closest?.("[data-index]") as HTMLElement | null;
-    const downIndex = card ? Number(card.dataset.index) : NaN;
+    const card = (e.target as HTMLElement).closest?.("[data-pos]") as HTMLElement | null;
+    const downPos = card ? Number(card.dataset.pos) : NaN;
     drag.current = {
       active: true,
       pointerId: e.pointerId,
@@ -298,7 +287,7 @@ const EntryCarousel: FC<EntryCarouselProps> = ({
       moved: 0,
       engaged: false,
       rejected: false,
-      downIndex: Number.isInteger(downIndex) ? downIndex : null,
+      downPos: Number.isInteger(downPos) ? downPos : null,
       history: [{ p: pos.get(), t: performance.now() }],
     };
     e.currentTarget.setPointerCapture?.(e.pointerId);
@@ -329,8 +318,8 @@ const EntryCarousel: FC<EntryCarouselProps> = ({
     }
     let next = d.startPos - dx / spacing;
     if (isBounded) {
-      if (next < 0) next = -rubberBand(-next);
-      else if (next > n - 1) next = n - 1 + rubberBand(next - (n - 1));
+      const overshoot = next - origin;
+      next = origin + Math.sign(overshoot) * rubberBand(Math.abs(overshoot));
     }
     pos.set(next);
     const t = performance.now();
@@ -351,8 +340,8 @@ const EntryCarousel: FC<EntryCarouselProps> = ({
       // native pagers advance on a short-but-fast fling even when projection rounds home
       if (
         projected === base &&
-        Math.abs(v) >= FLICK_MIN_VELOCITY &&
-        Math.abs(traveled) >= FLICK_MIN_TRAVEL &&
+        Math.abs(v * spacing) >= FLICK_MIN_VELOCITY_PX_S &&
+        Math.abs(traveled * spacing) >= FLICK_MIN_TRAVEL_PX &&
         Math.sign(v) === Math.sign(traveled)
       ) {
         projected = base + Math.sign(v);
@@ -362,9 +351,8 @@ const EntryCarousel: FC<EntryCarouselProps> = ({
       return;
     }
     const slop = d.pointerType === "mouse" ? DRAG_THRESHOLD : DRAG_THRESHOLD_TOUCH;
-    if (d.moved <= slop && d.downIndex !== null) {
-      const cur = pos.get();
-      snapTo(cur + cardDelta(d.downIndex, cur)); // tap: bring the tapped card to center
+    if (d.moved <= slop && d.downPos !== null) {
+      snapTo(d.downPos); // tap: bring the tapped card to center
       return;
     }
     snapTo(Math.round(pos.get())); // ambiguous release (caught spring, rejected axis): settle nearest
@@ -383,7 +371,7 @@ const EntryCarousel: FC<EntryCarouselProps> = ({
 
   return (
     <div
-      ref={wrapRef}
+      ref={setWrap}
       className="relative select-none touch-pan-y overflow-hidden [-webkit-touch-callout:none]"
       style={{
         marginInline: -PAGE_GUTTER_PX,
@@ -399,34 +387,27 @@ const EntryCarousel: FC<EntryCarouselProps> = ({
         className="absolute inset-x-0"
         style={{ top: STICKER_ROOM_PX, height: cardH ? `${cardH}px` : undefined }}
       >
-        {ring.map((proposal, index) => {
-          const mounted = mountedWindow.has(index);
-          const rawDist = Math.abs(index - activeIdx);
-          const ringDist = Math.min(rawDist, ringSize - rawDist);
-          return (
-            <div
-              key={index < n ? proposal.id : `${proposal.id}:mirror`}
-              data-index={index}
-              className={`absolute left-1/2 top-1/2 ${mounted ? "will-change-transform" : ""}`}
-              style={{
-                width: cardW ? `${cardW}px` : `calc(100% - ${2 * PAGE_GUTTER_PX}px)`,
-                height: cardH ? `${cardH}px` : undefined,
-              }}
-            >
-              {mounted ? (
-                <EntryCard
-                  proposal={proposal}
-                  enabledPreview={enabledPreview}
-                  contestStatus={contestStatus}
-                  centered={index === activeIdx}
-                  imageFetchPriority={ringDist <= 1 ? "high" : "low"}
-                  onPrevious={canNavigate ? showPrevious : undefined}
-                  onNext={canNavigate ? showNext : undefined}
-                />
-              ) : null}
-            </div>
-          );
-        })}
+        {slotPositions.map(position => (
+          <div
+            key={position}
+            data-pos={position}
+            className="absolute left-1/2 top-1/2 will-change-transform"
+            style={{
+              width: cardW ? `${cardW}px` : `calc(100% - ${2 * PAGE_GUTTER_PX}px)`,
+              height: cardH ? `${cardH}px` : undefined,
+            }}
+          >
+            <EntryCard
+              proposal={cards[mod(position - origin, n)]}
+              enabledPreview={enabledPreview}
+              contestStatus={contestStatus}
+              centered={isBounded || position === activePos}
+              imageFetchPriority={Math.abs(position - activePos) <= 1 ? "high" : "low"}
+              onPrevious={canNavigate ? showPrevious : undefined}
+              onNext={canNavigate ? showNext : undefined}
+            />
+          </div>
+        ))}
       </div>
     </div>
   );

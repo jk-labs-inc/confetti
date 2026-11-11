@@ -49,7 +49,7 @@ export function useEntryFeed({
 
   useEffect(() => {
     if (n === 0) return;
-    const centeredId = cards[activeIndex % n]?.id;
+    const centeredId = cards[Math.min(activeIndex, n - 1)]?.id;
     if (centeredId && centeredId !== lastTargetRef.current) {
       lastTargetRef.current = centeredId;
       setPickedProposal(centeredId);

@@ -1,11 +1,11 @@
-import { useParentSize } from "@visx/responsive";
+import useIsomorphicLayoutEffect from "@hooks/useIsomorphicLayoutEffect";
 import {
   buildCloudflareImageUrl,
   CAROUSEL_BACKDROP_IMAGE_PRESET,
   CAROUSEL_ENTRY_IMAGE_PRESET,
 } from "lib/image/cloudflare";
 import { useCloudflareFluidImage } from "lib/image/useCloudflareImage";
-import { CSSProperties, FC, useMemo, useState } from "react";
+import { CSSProperties, FC, useMemo, useRef, useState } from "react";
 import { CARD_IMAGE_MIN_VISIBLE } from "./constants";
 
 interface EntryImageProps {
@@ -17,6 +17,13 @@ const ratioCache = new Map<string, number>();
 
 const LETTERBOX_SCALE_PCT = 100 / CARD_IMAGE_MIN_VISIBLE;
 const LETTERBOX_OFFSET_PCT = (100 - LETTERBOX_SCALE_PCT) / 2;
+
+const LETTERBOX_BOX_STYLE: CSSProperties = {
+  width: `${LETTERBOX_SCALE_PCT}%`,
+  height: `${LETTERBOX_SCALE_PCT}%`,
+  left: `${LETTERBOX_OFFSET_PCT}%`,
+  top: `${LETTERBOX_OFFSET_PCT}%`,
+};
 
 // https://ishadeed.com/article/css-masking/ - feathers the drawn image's edges into the backdrop
 const edgeFadeMask = (imageRatio: number, boxRatio: number): string | undefined => {
@@ -33,9 +40,23 @@ const edgeFadeMask = (imageRatio: number, boxRatio: number): string | undefined 
 };
 
 const EntryImage: FC<EntryImageProps> = ({ src, fetchPriority = "auto" }) => {
+  const boxRef = useRef<HTMLDivElement>(null);
+  const [boxRatio, setBoxRatio] = useState<number | null>(null);
   const [imageRatio, setImageRatio] = useState<number | null>(() => ratioCache.get(src) ?? null);
   const [failed, setFailed] = useState(false);
-  const { parentRef, width: boxWidth, height: boxHeight } = useParentSize({ debounceTime: 0 });
+
+  useIsomorphicLayoutEffect(() => {
+    const box = boxRef.current;
+    if (!box) return;
+    const measureBox = () => {
+      const { clientWidth, clientHeight } = box;
+      setBoxRatio(clientWidth > 0 && clientHeight > 0 ? clientWidth / clientHeight : null);
+    };
+    measureBox();
+    const ro = new ResizeObserver(measureBox);
+    ro.observe(box);
+    return () => ro.disconnect();
+  }, []);
 
   const fluid = useCloudflareFluidImage(src, CAROUSEL_ENTRY_IMAGE_PRESET.widths, CAROUSEL_ENTRY_IMAGE_PRESET.sizes, {
     quality: CAROUSEL_ENTRY_IMAGE_PRESET.quality,
@@ -58,62 +79,40 @@ const EntryImage: FC<EntryImageProps> = ({ src, fetchPriority = "auto" }) => {
     if (!failed && fluid.src !== src) setFailed(true);
   };
 
-  const boxRatio = boxWidth > 0 && boxHeight > 0 ? boxWidth / boxHeight : null;
   const coverVisible = imageRatio && boxRatio ? Math.min(boxRatio / imageRatio, imageRatio / boxRatio) : 0;
+  const isCover = coverVisible >= CARD_IMAGE_MIN_VISIBLE;
   const edgeFade = imageRatio && boxRatio ? edgeFadeMask(imageRatio, boxRatio) : undefined;
-  const maskStyle: CSSProperties | undefined = edgeFade
-    ? { maskImage: edgeFade, WebkitMaskImage: edgeFade }
-    : undefined;
+  const letterboxStyle: CSSProperties = edgeFade
+    ? { ...LETTERBOX_BOX_STYLE, maskImage: edgeFade, WebkitMaskImage: edgeFade }
+    : LETTERBOX_BOX_STYLE;
 
   return (
-    <div ref={parentRef} className="absolute inset-0">
-      {coverVisible >= CARD_IMAGE_MIN_VISIBLE ? (
+    <div ref={boxRef} className="absolute inset-0">
+      {isCover ? null : (
         <img
-          ref={measure}
-          onLoad={event => measure(event.currentTarget)}
+          src={failed ? src : backdropSrc}
           onError={handleError}
-          src={imgSrc}
-          srcSet={imgSrcSet}
-          sizes={CAROUSEL_ENTRY_IMAGE_PRESET.sizes}
-          fetchPriority={fetchPriority}
           decoding="async"
           draggable={false}
-          alt="entry image"
-          className="absolute inset-0 h-full w-full object-cover"
+          alt=""
+          aria-hidden
+          className="absolute inset-0 h-full w-full scale-125 object-cover blur-2xl saturate-150 brightness-75"
         />
-      ) : (
-        <>
-          <img
-            src={failed ? src : backdropSrc}
-            onError={handleError}
-            decoding="async"
-            draggable={false}
-            alt=""
-            aria-hidden
-            className="absolute inset-0 h-full w-full scale-125 object-cover blur-2xl saturate-150 brightness-75"
-          />
-          <img
-            ref={measure}
-            onLoad={event => measure(event.currentTarget)}
-            src={imgSrc}
-            srcSet={imgSrcSet}
-            sizes={CAROUSEL_ENTRY_IMAGE_PRESET.sizes}
-            onError={handleError}
-            fetchPriority={fetchPriority}
-            decoding="async"
-            draggable={false}
-            alt="entry image"
-            className="absolute max-w-none object-contain"
-            style={{
-              width: `${LETTERBOX_SCALE_PCT}%`,
-              height: `${LETTERBOX_SCALE_PCT}%`,
-              left: `${LETTERBOX_OFFSET_PCT}%`,
-              top: `${LETTERBOX_OFFSET_PCT}%`,
-              ...maskStyle,
-            }}
-          />
-        </>
       )}
+      <img
+        ref={measure}
+        onLoad={event => measure(event.currentTarget)}
+        onError={handleError}
+        src={imgSrc}
+        srcSet={imgSrcSet}
+        sizes={CAROUSEL_ENTRY_IMAGE_PRESET.sizes}
+        fetchPriority={fetchPriority}
+        decoding="async"
+        draggable={false}
+        alt="entry image"
+        className={isCover ? "absolute inset-0 h-full w-full object-cover" : "absolute max-w-none object-contain"}
+        style={isCover ? undefined : letterboxStyle}
+      />
     </div>
   );
 };

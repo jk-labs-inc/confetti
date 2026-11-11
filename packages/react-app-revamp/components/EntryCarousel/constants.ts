@@ -25,8 +25,8 @@ export const LOAD_MORE_THRESHOLD = 2; // fetch the next page as the centered ind
 
 export const FLICK_PROJECTION_S = 0.12; // seconds of release velocity to project past the lift point
 export const MAX_FLICK = 4; // cap on cards crossed by a single flick (no runaway spin)
-export const FLICK_MIN_VELOCITY = 2.2; // card-units/s — a fling this fast always advances a card, even if projection rounds home (ViewPager 400dp/s analog)
-export const FLICK_MIN_TRAVEL = 0.14; // min drag (card units) before the velocity gate applies, so tap jitter can't page (25dp analog)
+export const FLICK_MIN_VELOCITY_PX_S = 400;
+export const FLICK_MIN_TRAVEL_PX = 25;
 export const VELOCITY_WINDOW_MS = 100; // release velocity is measured over this trailing window of move samples
 export const VELOCITY_STALE_MS = 170; // no move sample this recent at lift → velocity is 0 (hold-then-release never flicks)
 
