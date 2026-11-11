@@ -1,42 +1,47 @@
 import ContestName from "@components/_pages/Contest/components/ContestName";
+import ContestNotifyButton from "@components/_pages/Contest/components/ContestNotifyButton";
+import ContestShareButton from "@components/_pages/Contest/components/ContestShareButton";
 import ContestRewardsInfo from "@components/_pages/Contest/components/RewardsInfo";
-import { CONTEST_TERMINAL_MIN_WIDTH_PX } from "@hooks/useContestLayoutBand";
+import { useContestStore } from "@hooks/useContest/store";
 import { FC } from "react";
-import { useMediaQuery } from "react-responsive";
+import { useShallow } from "zustand/shallow";
 import { useDescriptionDisclosure } from "../../hooks/useDescriptionDisclosure";
-import ContestTiming from "./components/ContestTiming";
+import ContestTimingTag from "./components/ContestTimingTag";
 
 interface DesktopHeaderProps {
   contestImageUrl: string;
   contestName: string;
+  contestAddress: string;
+  chainName: string;
   contestPrompt: string;
   canEditTitle: boolean;
   contestAuthorEthereumAddress: string;
-  contestVersion: string;
   isWideLayout: boolean;
   showDescriptionToggle?: boolean;
 }
 
 const HEADLINE_ROW_CLASS_NAME = {
   inline: "flex items-baseline gap-3",
-  stacked: "flex flex-col gap-2",
   wrapping: "flex flex-wrap items-baseline gap-x-6 gap-y-2",
 };
-const HEADLINE_STATS_CLASS_NAME = "flex items-baseline gap-5 wide:gap-6 shrink-0 whitespace-nowrap";
+const HEADLINE_STATS_CLASS_NAME = "flex flex-col items-end shrink-0 whitespace-nowrap";
 
 const DesktopHeader: FC<DesktopHeaderProps> = ({
   contestImageUrl,
   contestName,
+  contestAddress,
+  chainName,
   contestPrompt,
   canEditTitle,
   contestAuthorEthereumAddress,
-  contestVersion,
   isWideLayout,
   showDescriptionToggle = false,
 }) => {
+  const { votesOpen, votesClose } = useContestStore(
+    useShallow(state => ({ votesOpen: state.votesOpen, votesClose: state.votesClose })),
+  );
   const description = useDescriptionDisclosure(showDescriptionToggle, contestPrompt);
-  const isTooNarrowForOneLine = useMediaQuery({ maxWidth: CONTEST_TERMINAL_MIN_WIDTH_PX - 1 });
-  const rowLayout = !isWideLayout ? "wrapping" : isTooNarrowForOneLine ? "stacked" : "inline";
+  const rowLayout = isWideLayout ? "inline" : "wrapping";
 
   return (
     <div className="animate-fade-in shrink-0 flex flex-col">
@@ -48,11 +53,29 @@ const DesktopHeader: FC<DesktopHeaderProps> = ({
           contestPrompt={contestPrompt}
           contestImageUrl={contestImageUrl}
           titleLeading={description.toggle}
+          titleTrailing={
+            <>
+              <ContestShareButton
+                contestName={contestName}
+                contestAddress={contestAddress}
+                chainName={chainName}
+                size="sm"
+              />
+              <ContestNotifyButton
+                contestName={contestName}
+                contestAddress={contestAddress}
+                chainName={chainName}
+                votesOpen={votesOpen}
+                votesClose={votesClose}
+                size="sm"
+              />
+            </>
+          }
           actionsPlacement={isWideLayout ? "inline" : "hanging"}
         />
         <div className={rowLayout === "inline" ? `ml-auto ${HEADLINE_STATS_CLASS_NAME}` : HEADLINE_STATS_CLASS_NAME}>
-          <ContestRewardsInfo version={contestVersion} variant="headline" />
-          <ContestTiming variant="headline" />
+          <ContestRewardsInfo variant="headline" />
+          <ContestTimingTag />
         </div>
       </div>
       {description.panel}

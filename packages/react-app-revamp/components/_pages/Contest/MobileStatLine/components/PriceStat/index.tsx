@@ -21,7 +21,7 @@ const PriceStat: FC = () => {
   return (
     <>
       <StatDivider />
-      <span className="shrink-0 tabular-nums">
+      <span className="min-w-0 truncate tabular-nums">
         <b className="font-bold text-neutral-11">
           <CompactAmount value={formatPrice(currentPriceNative, { ceilingPrecision: true })} />
         </b>{" "}

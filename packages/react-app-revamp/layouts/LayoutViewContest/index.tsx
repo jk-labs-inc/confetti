@@ -1,13 +1,10 @@
 "use client";
 import HowItWorksTrigger from "@components/HowItWorksExplainer/Trigger";
 import Loader from "@components/UI/Loader";
-import ContestNotifyButton from "@components/_pages/Contest/components/ContestNotifyButton";
-import ContestShareButton from "@components/_pages/Contest/components/ContestShareButton";
 import ContestTabs, { Tab } from "@components/_pages/Contest/components/Tabs";
 import { populateBugReportLink } from "@helpers/githubIssue";
 import { DESKTOP_HEADER_MIN_WIDTH_PX, MOBILE_MAX_WIDTH_PX } from "@helpers/isMobileViewport";
 import { MediaQuery } from "@helpers/mediaQuery";
-import { useContestStore } from "@hooks/useContest/store";
 import {
   CONTEST_ULTRAWIDE_WIDTH_CLASS_NAME,
   ContestLayoutBand,
@@ -21,7 +18,6 @@ import { useViewportBoundHeight } from "@hooks/useViewportBoundHeight";
 import { useWallet } from "@hooks/useWallet";
 import { useUrl } from "nextjs-current-url";
 import { useMemo, useState } from "react";
-import { useShallow } from "zustand/shallow";
 import ContestHeader from "./components/ContestHeader";
 import ContestTabsContent from "./components/ContestTabsContent";
 import LayoutViewContestError from "./components/Error";
@@ -60,9 +56,6 @@ const LayoutViewContest = () => {
   const contestImageUrl = getContestImageUrl(contestPrompt);
   const contestStatus = useContestStatusStore(state => state.contestStatus);
   const contestState = useContestStateStore(state => state.contestState);
-  const { votesOpen, votesClose } = useContestStore(
-    useShallow(state => ({ votesOpen: state.votesOpen, votesClose: state.votesClose })),
-  );
   const isCanceled = contestState === ContestStateEnum.Canceled;
   const isVotingOpen = contestStatus === ContestStatus.VotingOpen;
   const isVotingClosed = contestStatus === ContestStatus.VotingClosed;
@@ -121,22 +114,10 @@ const LayoutViewContest = () => {
           excludeTabs={excludeTabs}
           onChange={tab => setTab(tab)}
           rightContent={
-            <div className="hidden md:flex items-center gap-3">
+            <div className="hidden md:flex items-center">
               <MediaQuery minWidth={MOBILE_MAX_WIDTH_PX + 1} maxWidth={DESKTOP_HEADER_MIN_WIDTH_PX - 1}>
                 <HowItWorksTrigger />
               </MediaQuery>
-              <ContestShareButton
-                contestName={contestName}
-                contestAddress={contestConfig.address}
-                chainName={contestConfig.chainName}
-              />
-              <ContestNotifyButton
-                contestName={contestName}
-                contestAddress={contestConfig.address}
-                chainName={contestConfig.chainName}
-                votesOpen={votesOpen}
-                votesClose={votesClose}
-              />
             </div>
           }
         />

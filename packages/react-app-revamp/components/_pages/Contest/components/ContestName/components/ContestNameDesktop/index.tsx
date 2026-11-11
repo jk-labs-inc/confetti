@@ -28,6 +28,7 @@ const ContestNameDesktop: FC<ContestNameProps> = ({
   contestPrompt,
   contestImageUrl,
   titleLeading,
+  titleTrailing,
   actionsPlacement = "hanging",
 }) => {
   const isContestCanceled = useContestStateStore(state => state.contestState) === ContestStateEnum.Canceled;
@@ -58,28 +59,30 @@ const ContestNameDesktop: FC<ContestNameProps> = ({
       {titleLeading}
       {actionsPlacement === "inline" && actions}
       {contestImageUrl && <ContestImage imageUrl={contestImageUrl} />}
-      <p
-        ref={titleRef}
-        className={`text-neutral-11 font-sabo-filled min-w-0 truncate ${isContestCanceled ? "line-through" : ""}`}
-        style={{ fontSize: `${titleFontSize}px`, transition: "font-size 200ms ease-out" }}
-      >
-        {contestName}
-      </p>
-      {contestAuthorEthereumAddress && (
-        <p
-          className="truncate shrink-0"
-          style={{ fontSize: `${authorFontPx}px`, maxWidth: `${AUTHOR_MAX_WIDTH_EM}em` }}
-        >
-          <span className="text-neutral-11">by </span>
-          <CustomLink
-            className="text-positive-11 no-underline"
-            href={ROUTE_VIEW_USER.replace("[address]", contestAuthorEthereumAddress)}
-            target="_blank"
+      <div className="flex min-w-0 flex-auto flex-col">
+        <div className="flex min-w-0 items-center gap-3">
+          <p
+            ref={titleRef}
+            className={`text-neutral-11 font-sabo-filled min-w-0 truncate ${isContestCanceled ? "line-through" : ""}`}
+            style={{ fontSize: `${titleFontSize}px`, transition: "font-size 200ms ease-out" }}
           >
-            {contestAuthorProfileName}
-          </CustomLink>
-        </p>
-      )}
+            {contestName}
+          </p>
+          {titleTrailing && <div className="flex shrink-0 items-center gap-2">{titleTrailing}</div>}
+        </div>
+        {contestAuthorEthereumAddress && (
+          <p className="truncate" style={{ fontSize: `${authorFontPx}px`, maxWidth: `${AUTHOR_MAX_WIDTH_EM}em` }}>
+            <span className="text-neutral-11">by </span>
+            <CustomLink
+              className="text-positive-11 no-underline"
+              href={ROUTE_VIEW_USER.replace("[address]", contestAuthorEthereumAddress)}
+              target="_blank"
+            >
+              {contestAuthorProfileName}
+            </CustomLink>
+          </p>
+        )}
+      </div>
     </div>
   );
 };

@@ -40,7 +40,7 @@ const ContestTabsContent: FC<ContestTabsContentProps> = ({
         }
         return (
           <>
-            {isMobile && <ContestStatRow version={version} />}
+            {isMobile && <ContestStatRow />}
             <ContestTab />
           </>
         );

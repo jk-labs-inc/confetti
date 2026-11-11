@@ -9,5 +9,6 @@ export interface ContestNameProps {
   contestPrompt?: string;
   contestImageUrl?: string;
   titleLeading?: ReactNode;
+  titleTrailing?: ReactNode;
   actionsPlacement?: ContestNameActionsPlacement;
 }

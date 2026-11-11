@@ -1,54 +1,35 @@
-import { chains } from "@config/wagmi";
-import { extractPathSegments } from "@helpers/extractPath";
-import { useCancelRewards } from "@hooks/useCancelRewards";
-import useRewardsModule from "@hooks/useRewards";
-import { usePathname } from "next/navigation";
+import RewardsSticker from "@components/UI/RewardsSticker";
+import RewardsStickerSkeleton from "@components/UI/RewardsSticker/components/RewardsStickerSkeleton";
+import { RewardsStickerSize } from "@components/UI/RewardsSticker/types";
+import { useContestPoolDisplay } from "@hooks/useContestPoolDisplay";
 import { FC } from "react";
-import { Abi } from "viem";
-import RewardsDisplay, { RewardsInfoVariant } from "./components/RewardsDisplay";
-import RewardsLoader from "./components/RewardsLoader";
 
 interface ContestRewardsInfoProps {
-  version: string;
-  variant?: RewardsInfoVariant;
+  variant?: Exclude<RewardsStickerSize, "card">;
+  className?: string;
 }
 
-const ContestRewardsInfo: FC<ContestRewardsInfoProps> = ({ version, variant = "stat" }) => {
-  const pathname = usePathname();
-  const { chainName } = extractPathSegments(pathname);
-  const chainId = chains.filter(
-    (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase(),
-  )?.[0]?.id;
-  const { data: rewards, isLoading, isSuccess, isError } = useRewardsModule();
-  const {
-    isCanceled,
-    isLoading: isCancelLoading,
-    isError: isCancelError,
-  } = useCancelRewards({
-    rewardsAddress: rewards?.contractAddress as `0x${string}`,
-    abi: rewards?.abi as Abi,
-    chainId,
-    version,
-  });
+const ContestRewardsInfo: FC<ContestRewardsInfoProps> = ({ variant = "stat", className }) => {
+  const pool = useContestPoolDisplay();
 
-  if (isLoading || isCancelLoading) {
-    return <RewardsLoader />;
-  }
+  if (pool.status === "empty") return null;
 
-  if (isError || !isSuccess || isCanceled || isCancelError || !rewards || rewards.isBytecodeInvalid) return null;
+  const sticker =
+    pool.status === "loading" ? (
+      <RewardsStickerSkeleton size={variant} />
+    ) : variant === "headline" ? (
+      <RewardsSticker
+        size="headline"
+        items={pool.tokenItems}
+        chainName={pool.chainName}
+        phase={pool.phase}
+        audience={pool.audience}
+      />
+    ) : (
+      <RewardsSticker size="stat" items={pool.tokenItems} chainName={pool.chainName} phase={pool.phase} />
+    );
 
-  return (
-    <RewardsDisplay
-      variant={variant}
-      rewardsModuleAddress={rewards.contractAddress as `0x${string}`}
-      rewardsAbi={rewards.abi as Abi}
-      chainId={chainId}
-      chainName={chainName}
-      rewards={rewards}
-      isRewardsModuleLoading={isLoading}
-      isRewardsModuleError={isError}
-    />
-  );
+  return className ? <span className={className}>{sticker}</span> : sticker;
 };
 
 export default ContestRewardsInfo;

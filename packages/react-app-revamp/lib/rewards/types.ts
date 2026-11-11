@@ -55,3 +55,7 @@ export interface RewardModuleInfo {
 }
 
 export const VOTER_REWARDS_VERSION = "5.5";
+
+export type RewardsPhase = "upcoming" | "live" | "ended";
+
+export type RewardsAudience = "voters" | "entrants";
