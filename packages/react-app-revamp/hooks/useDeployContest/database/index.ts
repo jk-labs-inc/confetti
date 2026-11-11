@@ -1,8 +1,9 @@
 import { chains } from "@config/wagmi";
-import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import { isSupabaseConfigured } from "@helpers/database";
-import { getConnection } from "@wagmi/core";
-import { ContestValues } from "../types";
+import { postJson } from "@helpers/fetchJson";
+import { fetchChainParams } from "lib/monetization";
+import type { ContestInsert } from "lib/supabase/types";
+import { ContestData } from "../helpers/contestData";
 
 export async function getJkLabsSplitDestinationAddress(
   chainId: number,
@@ -18,57 +19,34 @@ export async function getJkLabsSplitDestinationAddress(
     throw new Error("Supabase is not configured");
   }
 
-  const config = await import("@config/supabase");
-  const supabase = config.supabase;
+  const chainParams = await fetchChainParams({ chain: chain.name });
 
-  const chainName = chain.name;
-
-  const { data, error } = await supabase
-    .from("chain_params")
-    .select("jk_labs_split_destination")
-    .eq("network_name", chainName.toLowerCase())
-    .single();
-
-  if (error) {
-    throw new Error(`Error fetching data: ${error.message}`);
+  if (!chainParams?.jkLabsSplitDestination) {
+    throw new Error(`No data found for chain ${chain.name}`);
   }
 
-  if (!data) {
-    throw new Error(`No data found for chain ${chainName}`);
-  }
-
-  return data.jk_labs_split_destination;
+  return chainParams.jkLabsSplitDestination;
 }
 
-export async function indexContest(contestData: ContestValues) {
+export async function indexContest(contestData: ContestData) {
   if (!isSupabaseConfigured) {
     throw new Error("Supabase is not configured");
   }
 
-  const { address } = getConnection(getWagmiConfig());
-  const supabaseConfig = await import("@config/supabase");
-  const supabase = supabaseConfig.supabase;
+  const contest: ContestInsert = {
+    start_at: contestData.datetimeOpeningSubmissions.toISOString(),
+    vote_start_at: contestData.datetimeOpeningVoting.toISOString(),
+    end_at: contestData.datetimeClosingVoting.toISOString(),
+    title: contestData.title,
+    prompt: contestData.prompt,
+    address: contestData.contractAddress,
+    anyone_can_submit: contestData.anyoneCanSubmit,
+    author_address: contestData.authorAddress,
+    network_name: contestData.networkName,
+    cost_to_vote: contestData.cost_to_vote,
+    percentage_to_rewards: contestData.percentage_to_rewards,
+    creator_split_enabled: contestData.creator_split_enabled,
+  };
 
-  const { error } = await supabase.from("contests_v3").insert([
-    {
-      created_at: new Date().toISOString(),
-      start_at: contestData.datetimeOpeningSubmissions.toISOString(),
-      vote_start_at: contestData.datetimeOpeningVoting.toISOString(),
-      end_at: contestData.datetimeClosingVoting.toISOString(),
-      title: contestData.title,
-      prompt: contestData.prompt,
-      address: contestData.contractAddress,
-      anyone_can_submit: contestData.anyoneCanSubmit,
-      author_address: contestData?.authorAddress ?? address,
-      network_name: contestData.networkName,
-      featured: contestData.featured ?? false,
-      cost_to_vote: contestData.cost_to_vote,
-      percentage_to_rewards: contestData.percentage_to_rewards,
-      creator_split_enabled: contestData.creator_split_enabled,
-    },
-  ]);
-
-  if (error) {
-    throw new Error(error.message);
-  }
+  await postJson("/api/contests", contest);
 }

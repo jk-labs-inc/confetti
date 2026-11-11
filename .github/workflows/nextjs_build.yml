@@ -66,3 +66,4 @@ jobs:
           NEXT_PUBLIC_BREVO_API_KEY: ${{ github.ref == 'refs/heads/main' && secrets.PROD_NEXT_PUBLIC_BREVO_API_KEY || secrets.DEV_NEXT_PUBLIC_BREVO_API_KEY }}
           NEXT_PUBLIC_ENVIRONMENT: ${{ github.ref == 'refs/heads/main' && secrets.PROD_NEXT_PUBLIC_ENVIRONMENT || secrets.DEV_NEXT_PUBLIC_ENVIRONMENT }}
           NEXT_PUBLIC_FUNKIT_API_KEY: ${{ github.ref == 'refs/heads/main' && secrets.PROD_NEXT_PUBLIC_FUNKIT_API_KEY || secrets.DEV_NEXT_PUBLIC_FUNKIT_API_KEY }}
+          SUPABASE_SECRET_KEY: ${{ github.ref == 'refs/heads/main' && secrets.PROD_SUPABASE_KEY || secrets.DEV_SUPABASE_KEY }}

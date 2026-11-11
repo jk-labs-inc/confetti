@@ -2,6 +2,7 @@
 
 const path = require("path");
 const withPWA = require("next-pwa");
+const defaultRuntimeCaching = require("next-pwa/cache");
 const webpack = require("webpack");
 
 const nextConfig = {
@@ -46,5 +47,12 @@ module.exports = withPWA({
   register: true,
   skipWaiting: true,
   disable: process.env.NODE_ENV === "development",
+  runtimeCaching: [
+    {
+      urlPattern: ({ url }) => self.origin === url.origin && url.pathname.startsWith("/api/"),
+      handler: "NetworkOnly",
+    },
+    ...defaultRuntimeCaching,
+  ],
   maximumFileSizeToCacheInBytes: 10 * 1024 * 1024, // 5mb
 })(nextConfig);

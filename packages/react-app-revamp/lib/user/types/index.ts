@@ -1,8 +1,3 @@
-export interface SubmissionCriteria {
-  user_address: string;
-  [key: string]: any;
-}
-
 export interface Submission {
   contest_address: string;
   created_at: number;

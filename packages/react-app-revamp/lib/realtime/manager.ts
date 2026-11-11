@@ -1,4 +1,4 @@
-import { supabase } from "@config/supabase";
+import { supabaseBrowser } from "lib/supabase/client";
 import { isSupabaseConfigured } from "@helpers/database";
 import type { RealtimeChannel } from "@supabase/supabase-js";
 import { getTableConfig, RealtimeTableKey, TableEvent } from "./registry";
@@ -35,7 +35,7 @@ function buildChannel<TKey extends RealtimeTableKey>(params: SubscribeParams<TKe
   const normalizedValue = config.normalizeFilterValue ? config.normalizeFilterValue(filterValue) : filterValue;
   const filter = `${config.filterColumn}=eq.${normalizedValue}`;
 
-  let channel = supabase.channel(channelKey);
+  let channel = supabaseBrowser.channel(channelKey);
 
   for (const event of config.events) {
     channel = channel.on(
@@ -128,8 +128,7 @@ export function release(channelKey: string, token: symbol): void {
     const current = channels.get(channelKey);
     if (current && current.pendingRemoval && current.subscribers.size === 0) {
       channels.delete(channelKey);
-      void supabase.removeChannel(current.channel);
+      void supabaseBrowser.removeChannel(current.channel);
     }
   });
 }
-

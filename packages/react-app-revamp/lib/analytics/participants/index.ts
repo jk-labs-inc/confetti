@@ -1,42 +1,22 @@
 import { isSupabaseConfigured } from "@helpers/database";
+import { postJson } from "@helpers/fetchJson";
+import type { ParticipantRowsInsert } from "lib/supabase/types";
 
-interface SaveToAnalyticsContestParticipantsOptions {
-  contest_address: string;
-  user_address: `0x${string}` | undefined;
-  network_name: string;
-  created_at?: number;
-  proposal_id?: string;
-  proposal_name?: string;
-  vote_amount?: number;
-  deleted?: boolean;
-  amount_sent?: number | null;
-  percentage_to_rewards?: number | null;
-}
+type SaveToAnalyticsContestParticipantsOptions = ParticipantRowsInsert["rows"][number];
 
-const saveToAnalyticsContestParticipantsV3 = async (options: SaveToAnalyticsContestParticipantsOptions) => {
-  if (isSupabaseConfigured) {
-    try {
-      const config = await import("@config/supabase");
-      const supabase = config.supabase;
-
-      const normalizedOptions = {
-        ...options,
-        contest_address: options.contest_address.toLowerCase(),
-        user_address: options.user_address?.toLowerCase(),
-      };
-
-      const { error } = await supabase.from("analytics_contest_participants_v3").insert(normalizedOptions);
-      if (error) {
-        console.error("Error in saveToAnalyticsContestParticipantsV3:", error.message);
-      }
-    } catch (e) {
-      console.error("Unexpected error in saveToAnalyticsContestParticipantsV3:", e);
-    }
-  }
+const saveParticipantRows = async (rows: ParticipantRowsInsert["rows"]) => {
+  const body: ParticipantRowsInsert = { rows };
+  await postJson("/api/participants", body);
 };
 
 export const addUserActionForAnalytics = async (options: SaveToAnalyticsContestParticipantsOptions) => {
-  await saveToAnalyticsContestParticipantsV3(options);
+  if (!isSupabaseConfigured) return;
+
+  try {
+    await saveParticipantRows([options]);
+  } catch (e) {
+    console.error("Error in addUserActionForAnalytics:", e);
+  }
 };
 
 export interface DeletedProposalAnalytics {
@@ -50,30 +30,22 @@ export const saveUpdatedProposalsStatusToAnalyticsV3 = async (
   chainName: string,
   proposals: DeletedProposalAnalytics[],
 ) => {
-  if (isSupabaseConfigured) {
-    try {
-      const config = await import("@config/supabase");
-      const supabase = config.supabase;
+  if (!isSupabaseConfigured || proposals.length === 0) return;
 
-      for (let proposal of proposals) {
-        const { error } = await supabase.from("analytics_contest_participants_v3").insert([
-          {
-            user_address: userAddress?.toLowerCase(),
-            contest_address: contestAddress.toLowerCase(),
-            network_name: chainName,
-            proposal_id: proposal.proposal_id,
-            proposal_name: proposal.proposal_name,
-            created_at: Math.floor(Date.now() / 1000),
-            deleted: true,
-          },
-        ]);
-
-        if (error) {
-          console.error("Error inserting analytics for proposal:", proposal.proposal_id, "; Error:", error.message);
-        }
-      }
-    } catch (e) {
-      console.error("Unexpected error in saveUpdatedProposalsStatusToAnalyticsV3:", e);
-    }
+  const createdAt = Math.floor(Date.now() / 1000);
+  try {
+    await saveParticipantRows(
+      proposals.map(proposal => ({
+        user_address: userAddress,
+        contest_address: contestAddress,
+        network_name: chainName,
+        proposal_id: proposal.proposal_id,
+        proposal_name: proposal.proposal_name,
+        created_at: createdAt,
+        deleted: true,
+      })),
+    );
+  } catch (e) {
+    console.error("Unexpected error in saveUpdatedProposalsStatusToAnalyticsV3:", e);
   }
 };

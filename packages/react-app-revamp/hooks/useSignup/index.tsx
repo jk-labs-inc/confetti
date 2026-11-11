@@ -1,7 +1,7 @@
 import { toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
-import { supabase } from "@config/supabase";
 import { isSupabaseConfigured } from "@helpers/database";
-import moment from "moment";
+import { postJson } from "@helpers/fetchJson";
+import type { SignupCheck, SignupCheckResult, SignupInsert, SignupKind, SignupResult } from "lib/supabase/types";
 import { useState } from "react";
 
 interface CheckIfValueExistsProps {
@@ -11,20 +11,12 @@ interface CheckIfValueExistsProps {
 }
 
 interface UseSignupConfig {
-  tableName: string;
-  valueColumn: string;
+  kind: SignupKind;
   valueLabel: string;
   onSubscribeSuccess?: (userAddress: string | null) => Promise<void>;
-  upsertConflictColumn?: string;
 }
 
-const useSignup = ({
-  tableName,
-  valueColumn,
-  valueLabel,
-  onSubscribeSuccess,
-  upsertConflictColumn,
-}: UseSignupConfig) => {
+const useSignup = ({ kind, valueLabel, onSubscribeSuccess }: UseSignupConfig) => {
   const [isLoading, setLoading] = useState(false);
 
   const subscribe = async (
@@ -42,38 +34,14 @@ const useSignup = ({
         message: "Subscribing...",
       });
     try {
+      const signup: SignupInsert = { kind, value, userAddress: user_address };
+      const { replacesExisting } = await postJson<SignupResult>("/api/signups", signup);
+
       let successMessage = "You have been subscribed successfully.";
-
-      if (user_address) {
-        const { data: existingUser } = await supabase
-          .from(tableName)
-          .select(valueColumn)
-          .eq("user_address", user_address);
-
-        if (existingUser && existingUser.length > 0) {
-          successMessage = `We'll replace your old ${valueLabel} associated with this address with this new one.`;
-        } else {
-          successMessage = `We'll add notifications for this address to your ${valueLabel}.`;
-        }
-      }
-
-      const row = {
-        [valueColumn]: value,
-        user_address,
-        date: moment().toISOString(),
-      };
-
-      const { error } = upsertConflictColumn
-        ? await supabase.from(tableName).upsert([row], { onConflict: upsertConflictColumn })
-        : await supabase.from(tableName).insert([row]);
-
-      if (error) {
-        setLoading(false);
-        showToasts &&
-          toastError({
-            message: "There was an error while subscribing. Please try again later.",
-          });
-        return false;
+      if (replacesExisting === true) {
+        successMessage = `We'll replace your old ${valueLabel} associated with this address with this new one.`;
+      } else if (replacesExisting === false) {
+        successMessage = `We'll add notifications for this address to your ${valueLabel}.`;
       }
 
       await onSubscribeSuccess?.(user_address);
@@ -105,24 +73,11 @@ const useSignup = ({
 
     setLoading(true);
     try {
-      let query = supabase.from(tableName).select(`${valueColumn}, user_address`).eq(valueColumn, value);
-
-      if (userAddress) {
-        query = query.eq("user_address", userAddress);
-      }
-
-      const { data, error } = await query;
+      const check: SignupCheck = { kind, value, userAddress };
+      const { exists } = await postJson<SignupCheckResult>("/api/signups/check", check);
 
       setLoading(false);
-      if (error) {
-        displayToasts &&
-          toastError({
-            message: "There was an error while checking. Please try again later.",
-            messageToCopy: error.message,
-          });
-        return false;
-      }
-      return !!data?.length;
+      return exists;
     } catch (error: any) {
       setLoading(false);
       displayToasts &&

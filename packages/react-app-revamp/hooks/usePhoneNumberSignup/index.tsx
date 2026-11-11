@@ -8,8 +8,7 @@ interface CheckIfPhoneNumberExistsProps {
 
 const usePhoneNumberSignup = () => {
   const { subscribe, checkIfValueExists, isLoading } = useSignup({
-    tableName: "phone_number_signups",
-    valueColumn: "phone_number",
+    kind: "phone",
     valueLabel: "phone number",
   });
 

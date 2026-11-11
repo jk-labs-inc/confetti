@@ -1,4 +1,6 @@
 import { isSupabaseConfigured } from "@helpers/database";
+import { getJson, postJson } from "@helpers/fetchJson";
+import type { OfficialModuleInsert, RewardTokensQuery } from "lib/supabase/types";
 
 /**
  * Fetches the list of all ERC20 token addresses associated with a specific rewards module address.
@@ -10,31 +12,10 @@ import { isSupabaseConfigured } from "@helpers/database";
  * @returns a Promise that resolves to an array of unique ERC20 token addresses
  */
 export const getTokenAddresses = async (rewardsModuleAddress: string, networkName: string): Promise<string[]> => {
-  if (isSupabaseConfigured) {
-    const config = await import("@config/supabase");
-    const supabase = config.supabase;
+  if (!isSupabaseConfigured) return [];
 
-    const { data: tokens, error } = await supabase
-      .from("analytics_rewards_v3")
-      .select("token_address")
-      .ilike("rewards_module_address", rewardsModuleAddress)
-      .eq("network_name", networkName.toLowerCase())
-      .not("token_address", "is", null);
-
-    if (error) {
-      throw new Error(error.message);
-    }
-
-    const uniqueTokens = new Set(
-      tokens
-        .map((token: { token_address: string }) => token.token_address)
-        .filter((address: string) => address !== "native"),
-    );
-
-    return Array.from(uniqueTokens);
-  }
-
-  return [];
+  const query: RewardTokensQuery = { rewardsModule: rewardsModuleAddress, chain: networkName };
+  return getJson<string[]>("/api/rewards", query);
 };
 
 /**
@@ -44,28 +25,16 @@ export const getTokenAddresses = async (rewardsModuleAddress: string, networkNam
  * @returns true if the contest was inserted successfully, false otherwise
  */
 export const insertContestWithOfficialModule = async (contestAddress: string, chainName: string): Promise<boolean> => {
-  if (isSupabaseConfigured) {
-    try {
-      const config = await import("@config/supabase");
-      const supabase = config.supabase;
+  if (!isSupabaseConfigured) return false;
 
-      const { error } = await supabase
-        .from("contests_with_official_modules")
-        .insert({ network_name: chainName.toLowerCase(), address: contestAddress, type: "voters" });
-
-      if (error) {
-        console.error("Error inserting contest with official module:", error.message);
-        return false;
-      }
-
-      return true;
-    } catch (error) {
-      console.error("Failed to insert contest with official module:", error);
-      return false;
-    }
+  try {
+    const row: OfficialModuleInsert = { address: contestAddress, network_name: chainName };
+    await postJson("/api/contests/official-module", row);
+    return true;
+  } catch (error) {
+    console.error("Failed to insert contest with official module:", error);
+    return false;
   }
-
-  return false;
 };
 
 /**

@@ -12,6 +12,6 @@ if (isSupabaseConfigured) {
 // worker: true runs the realtime heartbeat in a Web Worker so it keeps firing in backgrounded tabs
 // (browsers throttle main-thread timers), preventing silent WebSocket drops + reconnect storms on
 // refocus. The worker is only instantiated when a channel actually connects, so SSR is unaffected.
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+export const supabaseBrowser = createClient(supabaseUrl, supabaseAnonKey, {
   realtime: { worker: true },
 });
