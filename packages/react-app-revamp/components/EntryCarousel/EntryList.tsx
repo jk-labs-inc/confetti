@@ -2,7 +2,7 @@ import { ContestStatus } from "@hooks/useContestStatus/store";
 import { EntryPreview } from "@hooks/useDeployContest/slices/contestMetadataSlice";
 import { ProposalCore } from "@hooks/useProposal/store";
 import { FC, useEffect, useRef, useState } from "react";
-import EntryCard from "./EntryCard";
+import EntryFeedCard from "./EntryFeedCard";
 import { useEntryFeed } from "./useEntryFeed";
 
 const EST_CARD_PX = 360;
@@ -29,7 +29,7 @@ const EntryList: FC<EntryListProps> = ({
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [mounted, setMounted] = useState<Set<number>>(() => new Set([0, 1, 2]));
 
-  const { cards, n, totalVotes } = useEntryFeed({
+  const { cards, n } = useEntryFeed({
     proposals,
     activeIndex: selectedIndex,
     hasNextPage,
@@ -78,13 +78,11 @@ const EntryList: FC<EntryListProps> = ({
           style={mounted.has(index) ? undefined : { height: EST_CARD_PX }}
         >
           {mounted.has(index) ? (
-            <EntryCard
+            <EntryFeedCard
               proposal={proposal}
               enabledPreview={enabledPreview}
               contestStatus={contestStatus}
-              totalVotes={totalVotes}
               active={index === selectedIndex}
-              variant="feed"
             />
           ) : null}
         </div>
