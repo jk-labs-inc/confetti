@@ -1,7 +1,7 @@
 import { Proposal } from "@components/_pages/ProposalContent";
 import { toContentProposal } from "@components/_pages/ProposalContent/toContentProposal";
 import { useCastVotesStore } from "@hooks/useCastVotes/store";
-import { ProposalCore, useProposalStore } from "@hooks/useProposal/store";
+import { ProposalCore } from "@hooks/useProposal/store";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useShallow } from "zustand/shallow";
 import { LOAD_MORE_THRESHOLD } from "./constants";
@@ -17,7 +17,6 @@ interface UseEntryFeedParams {
 interface UseEntryFeedResult {
   cards: Proposal[];
   n: number;
-  totalVotes: number;
   pendingTargetIndex: number | null;
   maybeLoadMore: (index: number) => void;
 }
@@ -42,12 +41,6 @@ export function useEntryFeed({
   }, [proposals]);
   const n = cards.length;
 
-  const initialMappedProposalIds = useProposalStore(state => state.initialMappedProposalIds);
-  const totalVotes = useMemo(
-    () => initialMappedProposalIds.reduce((sum, p) => sum + p.votes, 0),
-    [initialMappedProposalIds],
-  );
-
   const { setPickedProposal, pickedProposal } = useCastVotesStore(
     useShallow(state => ({ setPickedProposal: state.setPickedProposal, pickedProposal: state.pickedProposal })),
   );
@@ -56,7 +49,7 @@ export function useEntryFeed({
 
   useEffect(() => {
     if (n === 0) return;
-    const centeredId = cards[Math.min(activeIndex, n - 1)]?.id;
+    const centeredId = cards[activeIndex % n]?.id;
     if (centeredId && centeredId !== lastTargetRef.current) {
       lastTargetRef.current = centeredId;
       setPickedProposal(centeredId);
@@ -82,5 +75,5 @@ export function useEntryFeed({
     [n, hasNextPage, isLoadingMore, onLoadMore],
   );
 
-  return { cards, n, totalVotes, pendingTargetIndex, maybeLoadMore };
+  return { cards, n, pendingTargetIndex, maybeLoadMore };
 }

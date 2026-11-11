@@ -1,26 +1,23 @@
-// most of the code is used from https://motion.dev/examples/react-carousel-coverflow
+import { ENTRY_ACCENT_COLOR, withAlpha } from "@helpers/entryColors";
 
-export const CARD_WIDTH_PCT = 62; // center card width as a % of the stage width (selected card dominates)
-export const CARD_ASPECT = 5 / 4; // card height / width (image / title entries)
-export const COVER_MIN_VISIBLE = 0.75; // a crop must keep at least this fraction of the image; mismatched images bleed up to this budget, then letterbox over a blurred fill
-export const TWEET_CARD_ASPECT = 8 / 5; // taller cards for tweet entries so the tweet fits without being cut off
-export const NEIGHBOR_SPACING_PCT = 46; // horizontal offset between adjacent cards (% of stage width)
+export const PAGE_GUTTER_PX = 24;
+export const NEIGHBOR_PEEK_PX = 10;
+export const CARD_MIN_ASPECT = 0.8;
+export const CARD_MAX_ASPECT = 1.3;
+export const STICKER_ROOM_PX = 24;
+export const GLOW_ROOM_PX = 12;
+export const CARD_IMAGE_MIN_VISIBLE = 0.97;
 
 export const RUBBER_BAND_COEF = 0.55; // iOS scroll-view rubber band: overshoot maps to c*x/(1+c*x) — asymptotic, saturates at ~1 card
-export const BOUNDED_END_SHIFT = 1; // at an end of the 2-entry track, pull the active card this fraction of the
 
-export const FILL_BOTTOM_GAP_PX = 16; // breathing room kept below a carousel that grows to fill the viewport
-export const MAX_FILL_ASPECT = 1.8; // cap on how tall cards grow when filling the void (height / width)
+export const FILL_BOTTOM_GAP_PX = 16;
 export const ENTRY_CAROUSEL_FOOTER_ID = "entry-carousel-footer";
 
-export const MAX_ROTATE_DEG = 30; // neighbors tilt up to 30 to face the center (gentler curve)
-export const PERSPECTIVE_PX = 1400; // shared 3D perspective depth (higher = flatter / less dramatic)
-export const DEPTH_PX = 90; // translateZ pushback per step away from center
-export const MAX_VISIBLE = 2; // cards kept visible on each side of center
+export const MAX_VISIBLE = 2;
 export const WINDOW_RADIUS = MAX_VISIBLE + 2; // mount heavy card content only within this ring distance of center
 
-export const MAX_SCALE_DROP = 0.24; // one step off-center renders at scale 0.76 (neighbors recede more)
-export const MAX_OPACITY_DROP = 0.5; // one step off-center renders at opacity 0.5 (neighbors a touch more faded)
+export const MAX_SCALE_DROP = 0.08;
+export const MAX_OPACITY_DROP = 0.5;
 
 export const DRAG_THRESHOLD = 6; // px of mouse movement before a pointer gesture counts as a drag (vs a click)
 export const DRAG_THRESHOLD_TOUCH = 8; // finger slop (Android ViewConfiguration = 8dp; finger roll during a tap must not read as a drag)
@@ -32,3 +29,7 @@ export const FLICK_MIN_VELOCITY = 2.2; // card-units/s — a fling this fast alw
 export const FLICK_MIN_TRAVEL = 0.14; // min drag (card units) before the velocity gate applies, so tap jitter can't page (25dp analog)
 export const VELOCITY_WINDOW_MS = 100; // release velocity is measured over this trailing window of move samples
 export const VELOCITY_STALE_MS = 170; // no move sample this recent at lift → velocity is 0 (hold-then-release never flicks)
+
+export const FOIL_PX = 1.5;
+export const ENTRY_ACCENT_GLOW = `0 0 26px -4px ${withAlpha(ENTRY_ACCENT_COLOR, 0.5)}, 0 12px 32px -14px rgba(0,0,0,0.9)`;
+export const GRAIN_URL = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`;

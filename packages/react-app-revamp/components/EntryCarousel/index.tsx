@@ -7,10 +7,8 @@ import { FC, PointerEvent as ReactPointerEvent, useCallback, useEffect, useMemo,
 import EntryCard from "./EntryCard";
 import { useEntryFeed } from "./useEntryFeed";
 import {
-  BOUNDED_END_SHIFT,
-  CARD_ASPECT,
-  CARD_WIDTH_PCT,
-  DEPTH_PX,
+  CARD_MAX_ASPECT,
+  CARD_MIN_ASPECT,
   DRAG_THRESHOLD,
   DRAG_THRESHOLD_TOUCH,
   ENTRY_CAROUSEL_FOOTER_ID,
@@ -18,16 +16,15 @@ import {
   FLICK_MIN_TRAVEL,
   FLICK_MIN_VELOCITY,
   FLICK_PROJECTION_S,
-  MAX_FILL_ASPECT,
+  GLOW_ROOM_PX,
   MAX_FLICK,
   MAX_OPACITY_DROP,
-  MAX_ROTATE_DEG,
   MAX_SCALE_DROP,
   MAX_VISIBLE,
-  NEIGHBOR_SPACING_PCT,
-  PERSPECTIVE_PX,
+  NEIGHBOR_PEEK_PX,
+  PAGE_GUTTER_PX,
   RUBBER_BAND_COEF,
-  TWEET_CARD_ASPECT,
+  STICKER_ROOM_PX,
   VELOCITY_STALE_MS,
   VELOCITY_WINDOW_MS,
   WINDOW_RADIUS,
@@ -96,11 +93,12 @@ const EntryCarousel: FC<EntryCarouselProps> = ({
     history: [],
   });
   const activeRef = useRef(0);
+  const targetRef = useRef<number | null>(null);
   const [stageWidth, setStageWidth] = useState(0);
   const [activeIdx, setActiveIdx] = useState(0);
   const [availableH, setAvailableH] = useState(0);
 
-  const { cards, n, totalVotes, pendingTargetIndex, maybeLoadMore } = useEntryFeed({
+  const { cards, n, pendingTargetIndex, maybeLoadMore } = useEntryFeed({
     proposals,
     activeIndex: activeIdx,
     hasNextPage,
@@ -108,84 +106,73 @@ const EntryCarousel: FC<EntryCarouselProps> = ({
     onLoadMore,
   });
 
-  // tweet entries get a taller card so the embedded tweet fits without being cut off; image/title keep the default
-  const isTweetPreview = enabledPreview === EntryPreview.TWEET || enabledPreview === EntryPreview.TWEET_AND_TITLE;
-  const cardAspect = isTweetPreview ? TWEET_CARD_ASPECT : CARD_ASPECT;
-  const cardW = stageWidth * (CARD_WIDTH_PCT / 100);
-  const naturalCardH = cardW * cardAspect;
-  const spacing = stageWidth * (NEIGHBOR_SPACING_PCT / 100);
-  const isBounded = n === 2 && !hasNextPage;
+  const isPair = n === 2;
+  const ring = useMemo(() => (isPair ? [...cards, ...cards] : cards), [cards, isPair]);
+  const ringSize = ring.length;
 
-  const votingOpen = contestStatus === ContestStatus.VotingOpen;
-  const fillVoidHeight = (natW: number, natH: number) =>
-    !votingOpen && availableH > natH ? Math.min(availableH, natW * MAX_FILL_ASPECT) : natH;
-  const cardH = fillVoidHeight(cardW, naturalCardH);
-  const containerH = cardH;
+  const cardW = Math.max(0, stageWidth - 2 * PAGE_GUTTER_PX);
+  const spacing = cardW * (1 - MAX_SCALE_DROP / 2) + PAGE_GUTTER_PX - NEIGHBOR_PEEK_PX;
+  const isBounded = ringSize === 1;
+  const canNavigate = n > 1;
+
+  const fillH = availableH - STICKER_ROOM_PX - GLOW_ROOM_PX;
+  const cardH = Math.min(cardW * CARD_MAX_ASPECT, Math.max(cardW * CARD_MIN_ASPECT, fillH > 0 ? fillH : cardW));
 
   const mountedWindow = useMemo(() => {
     const s = new Set<number>();
-    if (n === 0) return s;
-    for (let d = -WINDOW_RADIUS; d <= WINDOW_RADIUS; d++) s.add((((activeIdx + d) % n) + n) % n);
+    if (ringSize === 0) return s;
+    for (let d = -WINDOW_RADIUS; d <= WINDOW_RADIUS; d++) s.add((((activeIdx + d) % ringSize) + ringSize) % ringSize);
     return s;
-  }, [activeIdx, n]);
+  }, [activeIdx, ringSize]);
 
   const cardDelta = useCallback(
     (i: number, p: number) => {
-      if (n === 0) return 0;
-      if (isBounded) return i - p; // linear track — no wrap, so nothing peeks past the two ends
-      let d = (((i - p) % n) + n) % n;
-      if (d > n / 2) d -= n;
+      if (ringSize === 0) return 0;
+      if (isBounded) return i - p;
+      let d = (((i - p) % ringSize) + ringSize) % ringSize;
+      if (d > ringSize / 2) d -= ringSize;
       return d;
     },
-    [n, isBounded],
+    [ringSize, isBounded],
   );
 
-  // position every card around the ring for a given fractional position (imperative; runs on the motion value)
   const layout = useCallback(
     (p: number) => {
       const stage = stageRef.current;
       if (!stage) return;
-      const endBias = isBounded && n > 1 ? (2 * p) / (n - 1) - 1 : 0;
-      const trackShift = ((endBias * (stageWidth - cardW)) / 2) * BOUNDED_END_SHIFT;
       for (let i = 0; i < stage.children.length; i++) {
         const el = stage.children[i] as HTMLElement;
         const delta = cardDelta(i, p);
         const abs = Math.abs(delta);
-        if (abs > MAX_VISIBLE + 1) {
+        if (abs > MAX_VISIBLE) {
           if (el.style.opacity !== "0") {
             el.style.opacity = "0";
             el.style.pointerEvents = "none";
           }
           continue;
         }
-        const dir = Math.max(-1, Math.min(1, delta));
-        const x = delta * spacing + trackShift;
-        const z = -Math.min(abs, MAX_VISIBLE) * DEPTH_PX;
-        const rotateY = -dir * MAX_ROTATE_DEG;
-        const scale = 1 - MAX_SCALE_DROP * Math.min(1, abs);
-        const visible = abs <= MAX_VISIBLE + 0.5;
-        el.style.transform = `translate(-50%, -50%) translateX(${x.toFixed(1)}px) translateZ(${z.toFixed(
-          1,
-        )}px) rotateY(${rotateY.toFixed(2)}deg) scale(${scale.toFixed(3)})`;
-        el.style.opacity = visible ? (1 - MAX_OPACITY_DROP * Math.min(1, abs)).toFixed(3) : "0";
+        const near = Math.min(1, abs);
+        const scale = 1 - MAX_SCALE_DROP * near;
+        el.style.transform = `translate(-50%, -50%) translateX(${(delta * spacing).toFixed(1)}px) scale(${scale.toFixed(3)})`;
+        el.style.opacity = (1 - MAX_OPACITY_DROP * near).toFixed(3);
         el.style.zIndex = String(1000 - Math.round(abs * 10));
-        el.style.pointerEvents = visible ? "auto" : "none";
+        el.style.pointerEvents = "auto";
       }
     },
-    [cardDelta, spacing, isBounded, n, stageWidth, cardW],
+    [cardDelta, spacing],
   );
 
   // highlight whichever card is currently closest to center — updates live while rotating, not only on settle
   const updateActive = useCallback(
     (p: number) => {
-      if (n === 0) return;
-      const norm = isBounded ? Math.max(0, Math.min(n - 1, Math.round(p))) : ((Math.round(p) % n) + n) % n;
+      if (ringSize === 0) return;
+      const norm = isBounded ? 0 : ((Math.round(p) % ringSize) + ringSize) % ringSize;
       if (norm !== activeRef.current) {
         activeRef.current = norm;
         setActiveIdx(norm);
       }
     },
-    [n, isBounded],
+    [ringSize, isBounded],
   );
 
   useEffect(() => {
@@ -216,11 +203,16 @@ const EntryCarousel: FC<EntryCarouselProps> = ({
       const floor = slot ? slot.getBoundingClientRect().top : window.innerHeight;
       const wrapRect = wrap.getBoundingClientRect();
       const footerH = footer ? footer.getBoundingClientRect().bottom - wrapRect.bottom : 0;
-      setAvailableH(Math.max(0, floor - wrapRect.top - footerH - FILL_BOTTOM_GAP_PX));
+      const wrapTopAtScrollTop = wrapRect.top + window.scrollY;
+      setAvailableH(Math.max(0, floor - wrapTopAtScrollTop - footerH - FILL_BOTTOM_GAP_PX));
     };
     measure();
     const ro = new ResizeObserver(measure);
     ro.observe(document.body);
+    for (const id of [MOBILE_NAV_SLOT_ID, ENTRY_CAROUSEL_FOOTER_ID]) {
+      const el = document.getElementById(id);
+      if (el) ro.observe(el);
+    }
     window.addEventListener("resize", measure);
     return () => {
       ro.disconnect();
@@ -231,26 +223,46 @@ const EntryCarousel: FC<EntryCarouselProps> = ({
   // re-layout when sizing or the entry set changes
   useEffect(() => {
     layout(pos.get());
-  }, [stageWidth, cards]);
+  }, [stageWidth, ring]);
+
+  const ringShapeRef = useRef({ ringSize, n });
+  useEffect(() => {
+    const previous = ringShapeRef.current;
+    ringShapeRef.current = { ringSize, n };
+    if (previous.ringSize === ringSize || previous.ringSize === 0 || n === 0) return;
+    const p = pos.get();
+    const previousIndex = ((Math.round(p) % previous.ringSize) + previous.ringSize) % previous.ringSize;
+    const entryIndex = Math.min(previousIndex % previous.n, n - 1);
+    targetRef.current = null;
+    pos.jump(entryIndex + p - Math.round(p));
+  }, [ringSize, n, pos]);
 
   const snapTo = useCallback(
     (target: number, velocity?: number) => {
-      const dest = isBounded ? Math.max(0, Math.min(n - 1, target)) : target;
+      const dest = isBounded ? 0 : target;
+      targetRef.current = dest;
       animate(pos, dest, {
         type: "spring",
         stiffness: 320,
         damping: 34,
         ...(velocity !== undefined ? { velocity } : {}),
         onComplete: () => {
-          const norm =
-            n > 0 ? (isBounded ? Math.max(0, Math.min(n - 1, Math.round(dest))) : ((Math.round(dest) % n) + n) % n) : 0;
+          const norm = ringSize > 0 && !isBounded ? ((Math.round(dest) % ringSize) + ringSize) % ringSize : 0;
+          targetRef.current = null;
           pos.set(norm);
           maybeLoadMore(norm);
         },
       });
     },
-    [pos, n, maybeLoadMore, isBounded],
+    [pos, ringSize, maybeLoadMore, isBounded],
   );
+
+  const step = useCallback(
+    (direction: number) => snapTo((targetRef.current ?? Math.round(pos.get())) + direction),
+    [pos, snapTo],
+  );
+  const showPrevious = useCallback(() => step(-1), [step]);
+  const showNext = useCallback(() => step(1), [step]);
 
   const jumpTargetRef = useRef<number | null>(null);
   useEffect(() => {
@@ -258,16 +270,22 @@ const EntryCarousel: FC<EntryCarouselProps> = ({
       jumpTargetRef.current = null;
       return;
     }
-    if (pendingTargetIndex === jumpTargetRef.current || pendingTargetIndex === activeRef.current) return;
+    if (pendingTargetIndex === jumpTargetRef.current || pendingTargetIndex === activeRef.current % n) return;
     jumpTargetRef.current = pendingTargetIndex;
     const current = pos.get();
-    snapTo(current + cardDelta(pendingTargetIndex, current));
-  }, [pendingTargetIndex, snapTo, cardDelta, pos]);
+    let nearest = cardDelta(pendingTargetIndex, current);
+    for (let copy = pendingTargetIndex + n; copy < ringSize; copy += n) {
+      const delta = cardDelta(copy, current);
+      if (Math.abs(delta) < Math.abs(nearest)) nearest = delta;
+    }
+    snapTo(current + nearest);
+  }, [pendingTargetIndex, snapTo, cardDelta, pos, n, ringSize]);
 
   const onPointerDown = (e: ReactPointerEvent<HTMLDivElement>) => {
     if (drag.current.active) return; // one gesture at a time — a second finger must not hijack the frame of reference
     if (e.pointerType === "mouse" && e.button !== 0) return;
     pos.jump(pos.get()); // catch a settling spring in place (also zeroes its velocity)
+    targetRef.current = null;
     const card = (e.target as HTMLElement).closest?.("[data-index]") as HTMLElement | null;
     const downIndex = card ? Number(card.dataset.index) : NaN;
     drag.current = {
@@ -366,8 +384,11 @@ const EntryCarousel: FC<EntryCarouselProps> = ({
   return (
     <div
       ref={wrapRef}
-      className="relative w-full select-none touch-pan-y overflow-hidden [-webkit-touch-callout:none]"
-      style={{ height: containerH ? `${containerH}px` : undefined }}
+      className="relative select-none touch-pan-y overflow-hidden [-webkit-touch-callout:none]"
+      style={{
+        marginInline: -PAGE_GUTTER_PX,
+        height: cardH ? `${STICKER_ROOM_PX + cardH + GLOW_ROOM_PX}px` : undefined,
+      }}
     >
       <div
         ref={stageRef}
@@ -375,32 +396,32 @@ const EntryCarousel: FC<EntryCarouselProps> = ({
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
         onPointerCancel={onPointerCancel}
-        className="absolute inset-0"
-        style={{ perspective: `${PERSPECTIVE_PX}px`, perspectiveOrigin: "50% 50%" }}
+        className="absolute inset-x-0"
+        style={{ top: STICKER_ROOM_PX, height: cardH ? `${cardH}px` : undefined }}
       >
-        {cards.map((proposal, index) => {
-          const isActive = index === activeIdx;
-          const isActiveTarget = votingOpen && isActive;
+        {ring.map((proposal, index) => {
           const mounted = mountedWindow.has(index);
           const rawDist = Math.abs(index - activeIdx);
-          const ringDist = isBounded || n === 0 ? rawDist : Math.min(rawDist, n - rawDist);
+          const ringDist = Math.min(rawDist, ringSize - rawDist);
           return (
             <div
-              key={proposal.id}
+              key={index < n ? proposal.id : `${proposal.id}:mirror`}
               data-index={index}
-              className={`absolute left-1/2 top-1/2 cursor-pointer ${mounted ? "will-change-transform" : ""}`}
-              style={{ width: cardW ? `${cardW}px` : `${CARD_WIDTH_PCT}%`, height: cardH ? `${cardH}px` : undefined }}
+              className={`absolute left-1/2 top-1/2 ${mounted ? "will-change-transform" : ""}`}
+              style={{
+                width: cardW ? `${cardW}px` : `calc(100% - ${2 * PAGE_GUTTER_PX}px)`,
+                height: cardH ? `${cardH}px` : undefined,
+              }}
             >
               {mounted ? (
                 <EntryCard
                   proposal={proposal}
                   enabledPreview={enabledPreview}
                   contestStatus={contestStatus}
-                  totalVotes={totalVotes}
-                  active={isActiveTarget}
-                  elevated={isActive}
-                  boxAspect={cardW > 0 && cardH > 0 ? cardH / cardW : cardAspect}
+                  centered={index === activeIdx}
                   imageFetchPriority={ringDist <= 1 ? "high" : "low"}
+                  onPrevious={canNavigate ? showPrevious : undefined}
+                  onNext={canNavigate ? showNext : undefined}
                 />
               ) : null}
             </div>

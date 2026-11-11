@@ -1,284 +1,84 @@
 import EntryVotersChip from "@components/EntryVoters/Chip";
-import MobileVoterCountLine from "@components/_pages/Contest/MobileVoterCountLine";
 import { Proposal } from "@components/_pages/ProposalContent";
 import ProposalLayoutGalleryRankOrPlaceholder from "@components/_pages/ProposalContent/components/ProposalLayout/Gallery/components/RankOrPlaceholder";
-import { Tweet } from "@components/_pages/ProposalContent/components/ProposalLayout/Tweet/components/CustomTweet";
-import VoteCountPulse from "@components/_pages/ProposalContent/components/VoteFeedback";
 import WinnerBadge from "@components/_pages/ProposalContent/components/WinnerCelebration/WinnerBadge";
 import WinnerConfetti from "@components/_pages/ProposalContent/components/WinnerCelebration/WinnerConfetti";
-import { ENTRY_ACCENT_COLOR, withAlpha } from "@helpers/entryColors";
-import { formatNumberWithCommas } from "@helpers/formatNumber";
-import { isWinningEntry } from "@hooks/useProposal/utils";
+import { ENTRY_ACCENT_COLOR } from "@helpers/entryColors";
 import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
 import { ContestStatus } from "@hooks/useContestStatus/store";
 import { EntryPreview } from "@hooks/useDeployContest/slices/contestMetadataSlice";
-import { CSSProperties, FC, ReactNode, useMemo } from "react";
-import { CARD_ASPECT } from "./constants";
+import { isWinningEntry } from "@hooks/useProposal/utils";
+import { CSSProperties, FC, useMemo } from "react";
+import { ENTRY_ACCENT_GLOW, FOIL_PX, GRAIN_URL } from "./constants";
+import EntryCaption from "./EntryCaption";
 import EntryImage from "./EntryImage";
+import EntryTitleArt from "./EntryTitleArt";
+import { parseEntry } from "./parseEntry";
 import ShadowCrossfade from "./ShadowCrossfade";
-import { useFitTextToBox } from "./useFitTextToBox";
 
-const FOIL_PX = 1.5;
 const WINNER_FOIL_BG = "var(--background-image-gradient-gold)";
-
-const GRAIN_URL = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`;
-
-const overlayTextStyle: CSSProperties = {
-  color: "#E5E5E5",
-  textShadow: "1px 1px 0 #000",
-  WebkitTextStroke: "0.3px #000",
-};
-
-const overlayGradient = "linear-gradient(0deg, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.55) 45%, rgba(0,0,0,0) 100%)";
+const RESTING_SHADOW = "0 0 0 1px rgba(255,255,255,0.22), 0 0 22px -2px rgba(255,255,255,0.26)";
+const TITLE_ART_STYLE: CSSProperties = { background: "linear-gradient(180deg, #1a1a1a 0%, #0c0c0c 54%, #050505 100%)" };
+const GRAIN_STYLE: CSSProperties = { backgroundImage: GRAIN_URL, backgroundSize: "120px 120px", opacity: 0.06 };
 
 interface EntryCardProps {
   proposal: Proposal;
   enabledPreview: EntryPreview | null;
   contestStatus: ContestStatus;
-  totalVotes: number;
-  active?: boolean;
-  elevated?: boolean;
-  variant?: "coverflow" | "feed";
-  compact?: boolean;
-  boxAspect?: number;
-  imageFetchPriority?: "high" | "low" | "auto";
+  centered: boolean;
+  imageFetchPriority: "high" | "low";
+  onPrevious?: () => void;
+  onNext?: () => void;
 }
-
-type ParsedEntry =
-  | { kind: "title"; title: string }
-  | { kind: "image"; imageUrl: string; title: string }
-  | { kind: "tweet"; tweetId: string; title: string };
-
-const extractTweetId = (url: string): string => {
-  const match = url?.match(/\/status\/(\d+)/);
-  return match ? match[1] : "";
-};
-
-const parseEntry = (proposal: Proposal, enabledPreview: EntryPreview | null): ParsedEntry => {
-  const raw = proposal.metadataFields?.stringArray?.[0] ?? "";
-
-  switch (enabledPreview) {
-    case EntryPreview.IMAGE:
-      return { kind: "image", imageUrl: raw, title: "" };
-    case EntryPreview.IMAGE_AND_TITLE: {
-      const params = new URLSearchParams(raw);
-      return {
-        kind: "image",
-        imageUrl: params.get("JOKERACE_IMG") || "",
-        title: params.get("JOKERACE_IMG_TITLE") || "",
-      };
-    }
-    case EntryPreview.TWEET:
-      return { kind: "tweet", tweetId: extractTweetId(raw), title: "" };
-    case EntryPreview.TWEET_AND_TITLE: {
-      const params = new URLSearchParams(raw);
-      return {
-        kind: "tweet",
-        tweetId: extractTweetId(params.get("JOKERACE_TWEET") || ""),
-        title: params.get("JOKERACE_TWEET_TITLE") || "",
-      };
-    }
-    case EntryPreview.TITLE:
-    default:
-      return { kind: "title", title: raw };
-  }
-};
 
 const EntryCard: FC<EntryCardProps> = ({
   proposal,
   enabledPreview,
   contestStatus,
-  totalVotes,
-  active,
-  elevated,
-  variant = "coverflow",
-  compact,
-  boxAspect = CARD_ASPECT,
+  centered,
   imageFetchPriority,
+  onPrevious,
+  onNext,
 }) => {
   const entry = useMemo(() => parseEntry(proposal, enabledPreview), [proposal, enabledPreview]);
-  const showVotes =
-    (contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed) && proposal.votes > 0;
-  const isTitleOnly = entry.kind === "title";
   const isCanceled = useContestStateStore(state => state.contestState) === ContestStateEnum.Canceled;
   const isWinner = isWinningEntry(proposal, contestStatus, isCanceled);
-
-  const titleText = isTitleOnly ? entry.title || "untitled entry" : "";
-  const titleMaxFont = Math.round(Math.max(20, Math.min(32, 32 - (titleText.trim().length - 12) * 0.8)));
-  const { ref: titleFitRef, fontSize: titleFontSize } = useFitTextToBox<HTMLDivElement>(titleText, 14, titleMaxFont);
-
-  const accent = ENTRY_ACCENT_COLOR;
-
-  const votesNumber: ReactNode = (
-    <VoteCountPulse votes={proposal.votes}>{formatNumberWithCommas(proposal.votes)}</VoteCountPulse>
-  );
-
-  const votePercentage = totalVotes > 0 ? Math.round((proposal.votes / totalVotes) * 100) : 0;
-  const isFeed = variant === "feed";
-  const foilBg = isWinner ? WINNER_FOIL_BG : active || elevated ? ENTRY_ACCENT_COLOR : "transparent";
-  const pctSize = compact ? "text-[16px]" : "text-[24px]";
-  const pctLabelSize = compact ? "text-[8px]" : "text-[9px]";
-  const voteCountSize = compact ? "text-[16px]" : "text-[22px]";
-  const overlayVoteCountSize = compact ? "text-[16px]" : "text-[24px]";
-  const voteLabelSize = compact ? "text-[9px]" : "text-[10px]";
-
-  const accentGlow = `0 0 26px -4px ${withAlpha(accent, 0.5)}, 0 12px 32px -14px rgba(0,0,0,0.9)`;
-  const centerShadow = !active && compact ? "var(--shadow-entry-card)" : accentGlow;
-  const restingShadow = "0 0 0 1px rgba(255,255,255,0.22), 0 0 22px -2px rgba(255,255,255,0.26)";
-
-  const innerBg = isTitleOnly ? "linear-gradient(180deg, #1a1a1a 0%, #0c0c0c 54%, #050505 100%)" : "#000";
-  const showVotersLine = elevated || (isFeed && active);
-
-  if (isFeed) {
-    const showHeader = !!proposal.rank || !!entry.title || showVotes;
-    return (
-      <div
-        className="relative w-full rounded-2xl"
-        style={{ background: active ? ENTRY_ACCENT_COLOR : "transparent", padding: FOIL_PX }}
-      >
-        <ShadowCrossfade activeShadow={accentGlow} restingShadow="var(--shadow-entry-card)" active={!!active} />
-        <div className="relative isolate flex w-full flex-col gap-4 overflow-hidden rounded-[14px] bg-true-black p-2">
-          {showHeader ? (
-            <div className="flex w-full items-center pl-2">
-              {proposal.rank ? <ProposalLayoutGalleryRankOrPlaceholder rank={proposal.rank} /> : null}
-              <div className="ml-auto flex items-center gap-2">
-                {active ? <EntryVotersChip proposalId={proposal.id} enabled reserveSpace /> : null}
-                <div className="flex flex-col items-end gap-1">
-                  {entry.title ? <p className="text-[12px] font-bold text-neutral-11">{entry.title}</p> : null}
-                  {showVotes ? <p className="text-[12px] text-neutral-11">{votesNumber} votes</p> : null}
-                  {showVotersLine ? <MobileVoterCountLine proposalId={proposal.id} /> : null}
-                </div>
-              </div>
-            </div>
-          ) : null}
-
-          {entry.kind === "tweet" ? <Tweet id={entry.tweetId} apiUrl={`/api/tweet/${entry.tweetId}`} /> : null}
-
-          <div
-            className="pointer-events-none absolute inset-0"
-            style={{ backgroundImage: GRAIN_URL, backgroundSize: "120px 120px", opacity: 0.06 }}
-          />
-        </div>
-      </div>
-    );
-  }
+  const showVotes = contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed;
+  const foilBg = isWinner ? WINNER_FOIL_BG : centered ? ENTRY_ACCENT_COLOR : "transparent";
+  const imageUrl = entry.kind === "image" ? entry.imageUrl.trim() : "";
 
   return (
     <div className="relative h-full w-full rounded-2xl" style={{ background: foilBg, padding: FOIL_PX }}>
-      <ShadowCrossfade activeShadow={centerShadow} restingShadow={restingShadow} active={!!(active || elevated)} />
-      <div className="relative isolate h-full w-full overflow-hidden rounded-[14px]" style={{ background: innerBg }}>
-        {entry.kind === "image" ? (
-          entry.imageUrl?.trim() ? (
-            <EntryImage
-              key={entry.imageUrl}
-              src={entry.imageUrl}
-              boxAspect={boxAspect}
-              fetchPriority={imageFetchPriority}
-            />
-          ) : null
-        ) : entry.kind === "tweet" ? (
-          <div className="no-scrollbar absolute inset-0 overflow-y-auto">
-            <div className="flex min-h-full w-full items-center justify-center p-2">
-              <Tweet id={entry.tweetId} apiUrl={`/api/tweet/${entry.tweetId}`} />
-            </div>
-          </div>
-        ) : (
-          <div className="relative z-1 flex h-full w-full flex-col">
-            <div
-              ref={titleFitRef}
-              className="flex flex-1 items-center justify-center overflow-hidden px-5 pb-3 pt-14 [contain:layout]"
-              style={{ fontSize: `${titleFontSize}px` }}
-            >
-              <p
-                className="font-sabo-filled text-balance text-center leading-[1.08] text-neutral-11 wrap-anywhere"
-                style={{ textShadow: "0 1px 14px rgba(0,0,0,0.5)" }}
-              >
-                {titleText}
-              </p>
-            </div>
-            {showVotes ? (
-              <div className={`flex flex-col items-center gap-1 ${compact ? "pb-4" : "pb-5"}`}>
-                {isWinner ? <WinnerBadge variant="inline" /> : null}
-                <div className="inline-flex items-center gap-2">
-                  <span className={`${voteCountSize} font-bold leading-none tabular-nums text-neutral-11`}>
-                    {votesNumber}
-                  </span>
-                  <span
-                    className={`${voteLabelSize} font-bold uppercase leading-none tracking-[0.22em] text-neutral-11`}
-                  >
-                    votes
-                  </span>
-                </div>
-                {showVotersLine ? <MobileVoterCountLine proposalId={proposal.id} /> : null}
-              </div>
-            ) : null}
-          </div>
-        )}
-
-        <div
-          className="pointer-events-none absolute inset-0"
-          style={{ backgroundImage: GRAIN_URL, backgroundSize: "120px 120px", opacity: 0.06 }}
+      <ShadowCrossfade activeShadow={ENTRY_ACCENT_GLOW} restingShadow={RESTING_SHADOW} active={centered} />
+      <div className="relative isolate flex h-full w-full flex-col overflow-hidden rounded-[14px] bg-true-black">
+        <div className="relative min-h-0 flex-1 overflow-hidden" style={entry.kind === "title" ? TITLE_ART_STYLE : undefined}>
+          {imageUrl ? <EntryImage key={imageUrl} src={imageUrl} fetchPriority={imageFetchPriority} /> : null}
+          {entry.kind === "title" ? <EntryTitleArt title={entry.title || "untitled entry"} /> : null}
+          <div className="pointer-events-none absolute inset-0" style={GRAIN_STYLE} />
+        </div>
+        <EntryCaption
+          title={entry.kind === "title" ? "" : entry.title}
+          votes={showVotes ? proposal.votes : null}
+          onPrevious={onPrevious}
+          onNext={onNext}
         />
-
-        {proposal.rank ? (
-          <div className="pointer-events-none absolute left-2 top-2 z-10">
-            <ProposalLayoutGalleryRankOrPlaceholder rank={proposal.rank} />
-          </div>
-        ) : null}
-
-        {elevated ? (
-          <div className="absolute right-2 top-2 z-20">
-            <EntryVotersChip proposalId={proposal.id} enabled />
-          </div>
-        ) : null}
-
-        {isTitleOnly && showVotes && totalVotes > 0 && !elevated ? (
-          <div
-            className={`pointer-events-none absolute z-10 flex flex-col items-end leading-none ${
-              compact ? "right-2 top-2" : "right-3 top-3"
-            }`}
-          >
-            <span className={`${pctSize} font-bold tabular-nums text-neutral-11`}>{votePercentage}%</span>
-            <span className={`mt-1 ${pctLabelSize} font-bold uppercase tracking-[0.18em] text-neutral-10`}>
-              of votes
-            </span>
-          </div>
-        ) : null}
-
-        {!isTitleOnly && (entry.title || showVotes) ? (
-          <div
-            className="pointer-events-none absolute inset-x-0 bottom-0 z-10 flex flex-col items-center gap-1.5 px-3 pb-4 pt-12"
-            style={{ background: overlayGradient }}
-          >
-            {isWinner ? <WinnerBadge variant="inline" /> : null}
-            {entry.title ? (
-              <p className="text-center text-[16px] font-bold leading-normal" style={overlayTextStyle}>
-                {entry.title}
-              </p>
-            ) : null}
-            {showVotes ? (
-              <div className="flex items-baseline justify-center gap-2">
-                <span
-                  className={`${overlayVoteCountSize} font-bold leading-none tabular-nums`}
-                  style={overlayTextStyle}
-                >
-                  {votesNumber}
-                </span>
-                <span
-                  className={`${voteLabelSize} font-bold uppercase leading-none tracking-[0.22em]`}
-                  style={{ color: "#E5E5E5", textShadow: "1px 1px 0 #000" }}
-                >
-                  votes
-                </span>
-              </div>
-            ) : null}
-            {showVotersLine ? (
-              <MobileVoterCountLine proposalId={proposal.id} className="[text-shadow:1px_1px_0_#000]" />
-            ) : null}
-          </div>
-        ) : null}
       </div>
-      {isWinner && elevated ? <WinnerConfetti /> : null}
+
+      {proposal.rank ? (
+        <div className="pointer-events-none absolute -top-5 left-3 z-10 -rotate-6 drop-shadow-[0_2px_6px_rgba(0,0,0,0.55)]">
+          <ProposalLayoutGalleryRankOrPlaceholder rank={proposal.rank} />
+        </div>
+      ) : null}
+
+      {isWinner ? <WinnerBadge variant="floating" /> : null}
+
+      {centered ? (
+        <div className="absolute -top-4 right-3 z-20">
+          <EntryVotersChip proposalId={proposal.id} enabled />
+        </div>
+      ) : null}
+
+      {isWinner && centered ? <WinnerConfetti /> : null}
     </div>
   );
 };
