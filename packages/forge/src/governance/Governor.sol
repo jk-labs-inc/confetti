@@ -127,7 +127,7 @@ abstract contract Governor is GovernorSorting, GovernorAnalytics {
     error CannotVoteOnDeletedProposal();
     error NeedAtLeastOneVoteToVote();
     error ProposalDoesNotExist();
-    error CannotVoteLessThanOneVoteInPayPerVote();
+    error CannotVoteNonWholeNumberInPayPerVote();
 
     error OnlyCreatorOrEntrantCanDelete();
     error OnlyCreatorCanSetName();
@@ -342,8 +342,8 @@ abstract contract Governor is GovernorSorting, GovernorAnalytics {
     function _determineCorrectAmountSent(Actions currentAction, uint256 numVotes) internal returns (uint256) {
         uint256 actionCost;
         if (currentAction == Actions.Vote) {
-            if (numVotes < 1 ether) revert CannotVoteLessThanOneVoteInPayPerVote();
-            actionCost = currentPricePerVote() * (numVotes / 1 ether); // we don't allow <1 vote to be cast bc this would underflow
+            if (numVotes % 1 ether != 0) revert CannotVoteNonWholeNumberInPayPerVote();
+            actionCost = currentPricePerVote() * (numVotes / 1 ether); // we don't allow <1 vote to be cast bc this would underflow, and we don't allow non-whole above 1 to keep decimal complexity minimal
         } else {
             actionCost = 0;
         }
