@@ -146,12 +146,11 @@ export const ENTRY_IMAGE_PRESET = {
 
 /** mobile entry-carousel cards. `scale-down` (never crop, never upscale) keeps the natural aspect ratio intact */
 export const CAROUSEL_ENTRY_IMAGE_PRESET = {
-  quality: 82,
+  quality: ENTRY_IMAGE_PRESET.quality,
   fit: "scale-down",
-  widths: [480, 640, 768, 1024],
-  coverSizes: "62vw",
-  letterboxSizes: "83vw",
-} satisfies { quality: number; fit: CloudflareImageFit; widths: number[]; coverSizes: string; letterboxSizes: string };
+  widths: ENTRY_IMAGE_PRESET.widths,
+  sizes: "calc(100vw - 48px)",
+} satisfies { quality: number; fit: CloudflareImageFit; widths: number[]; sizes: string };
 
 /** Tiny source for the carousel's blurred letterbox backdrop — it sits behind a 40px blur, so 64px of detail is plenty. */
 export const CAROUSEL_BACKDROP_IMAGE_PRESET = {
