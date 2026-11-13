@@ -3182,14 +3182,14 @@
     uuid "^11.1.1"
     xstate "^5.24.0"
 
-"@getpara/core-sdk@3.27.0":
-  version "3.27.0"
-  resolved "https://registry.yarnpkg.com/@getpara/core-sdk/-/core-sdk-3.27.0.tgz#572aeb7eb8d7046ca0931e15fad8ea463a5bec80"
-  integrity sha512-ox+Pt5ho44ynl/cfClO2/vy1mD/inm4+exIwv11CHZFvvWd5Y+YrvbEvrU5mRCi8vcw4eokHZI1iURe1Pr/LHg==
+"@getpara/core-sdk@3.28.0":
+  version "3.28.0"
+  resolved "https://registry.yarnpkg.com/@getpara/core-sdk/-/core-sdk-3.28.0.tgz#21c0df535932843337426639203055c6c7877e4a"
+  integrity sha512-Gj5RxQ9oyCeS20ukyFRc0Ma8FAs95mJKg6rrFVW+f5/5rxzQkfn+b+dE7eIlen3oAs859z+qE+c3rtz64PR1IQ==
   dependencies:
     "@celo/utils" "^8.0.2"
     "@getpara/shared" "^1.42.0"
-    "@getpara/user-management-client" "3.27.0"
+    "@getpara/user-management-client" "3.28.0"
     "@noble/curves" "^1.9.7"
     "@noble/hashes" "^1.5.0"
     "@opentelemetry/api" "^1.9.1"
@@ -3211,15 +3211,15 @@
     uuid "^11.1.1"
     xstate "^5.24.0"
 
-"@getpara/evm-wallet-connectors@3.27.0":
-  version "3.27.0"
-  resolved "https://registry.yarnpkg.com/@getpara/evm-wallet-connectors/-/evm-wallet-connectors-3.27.0.tgz#02ec0f588a84d446d20f64bfe037974507ea9c7d"
-  integrity sha512-NSocImkTRgBPPsIHLyW2GGBSpbJnbJGcUp0QRvCvNrfKtaCrbeG76xYav9w8bQ3RcN33Lw1t88GYkjL6uEXAuQ==
+"@getpara/evm-wallet-connectors@3.28.0":
+  version "3.28.0"
+  resolved "https://registry.yarnpkg.com/@getpara/evm-wallet-connectors/-/evm-wallet-connectors-3.28.0.tgz#6eb7551cb019cb6f1df80562291be120976ed23a"
+  integrity sha512-/5aDruePwsx3gPgUYgWLavF0elcLvF/VxkrgURVlnlVfdgFqG8JHHRe5+hg34IUlqGUG6CAx7GH51CY/PIL6Pg==
   dependencies:
     "@coinbase/wallet-sdk" "4.3.0"
-    "@getpara/react-common" "3.27.0"
-    "@getpara/wagmi-v2-connector" "3.27.0"
-    "@getpara/web-sdk" "3.27.0"
+    "@getpara/react-common" "3.28.0"
+    "@getpara/wagmi-v2-connector" "3.28.0"
+    "@getpara/web-sdk" "3.28.0"
     "@safe-global/safe-apps-provider" "0.18.6"
     "@safe-global/safe-apps-sdk" "9.1.0"
     "@walletconnect/ethereum-provider" "2.23.0"
@@ -3234,13 +3234,13 @@
     "@getpara/user-management-client" "3.26.0"
     "@getpara/web-sdk" "3.26.0"
 
-"@getpara/react-common@3.27.0":
-  version "3.27.0"
-  resolved "https://registry.yarnpkg.com/@getpara/react-common/-/react-common-3.27.0.tgz#fd39c21b8edf1d40c0661682c9344943d74e5499"
-  integrity sha512-Gzypod+YzHjfz5EdTtYWuYGKco81/untG1lQ9/I8gcxECfb2dSU3iTPAuQEAhHVZMcmxbe8LduvVXQjDebJbbQ==
+"@getpara/react-common@3.28.0":
+  version "3.28.0"
+  resolved "https://registry.yarnpkg.com/@getpara/react-common/-/react-common-3.28.0.tgz#b516a89c6da37911c87d006fb2d626c4d5e4368d"
+  integrity sha512-VgheLtsIK5fA/9JlLQ1Hh0cwQUA1e42Ji28GJ3qcAgYuXKF6eq7XgYF30Gpb5vJj3Hb/cDMsiqNpM+axr/ZW3g==
   dependencies:
-    "@getpara/user-management-client" "3.27.0"
-    "@getpara/web-sdk" "3.27.0"
+    "@getpara/user-management-client" "3.28.0"
+    "@getpara/web-sdk" "3.28.0"
 
 "@getpara/react-component-library@3.26.0":
   version "3.26.0"
@@ -3330,10 +3330,10 @@
     axios-retry "^4.5.0"
     libphonenumber-js "^1.11.7"
 
-"@getpara/user-management-client@3.27.0":
-  version "3.27.0"
-  resolved "https://registry.yarnpkg.com/@getpara/user-management-client/-/user-management-client-3.27.0.tgz#a37d76dfcabcbca38fdb1b4d7943a5bb8e715a6e"
-  integrity sha512-E3cdpX4ECtMU8WofqRAmZjE02MhoKanGW5S4Ot1kziUkGD+AhsfAnuz7V47iZKWZTH8hyBAJdT/fCtTWcW8ITQ==
+"@getpara/user-management-client@3.28.0":
+  version "3.28.0"
+  resolved "https://registry.yarnpkg.com/@getpara/user-management-client/-/user-management-client-3.28.0.tgz#ce86ca9e31051450a6cb2eca6687306b03158360"
+  integrity sha512-NdjH7b0pizn0CAWyzE1V6Yj6HFqdOxfXFftCEpDP/wLkg9FWS/YcCA+bn7ACSlvYXMszbkt+gfRp83JOEJPTTA==
   dependencies:
     "@getpara/shared" "^1.42.0"
     "@opentelemetry/api" "^1.9.1"
@@ -3341,20 +3341,20 @@
     axios-retry "^4.5.0"
     libphonenumber-js "^1.11.7"
 
-"@getpara/viem-v2-integration@3.27.0":
-  version "3.27.0"
-  resolved "https://registry.yarnpkg.com/@getpara/viem-v2-integration/-/viem-v2-integration-3.27.0.tgz#268a0d6f82eedb37064cee95da3775192f6b5c76"
-  integrity sha512-tV7dhiy4oibiRZjTs4h+1IErCPj2PDfIvTUN2zZnEBeVc4UT2aWtSNhOrhTYaiADCjIyCRbC8E6j1vQ1GwBz9w==
+"@getpara/viem-v2-integration@3.28.0":
+  version "3.28.0"
+  resolved "https://registry.yarnpkg.com/@getpara/viem-v2-integration/-/viem-v2-integration-3.28.0.tgz#86761be36a0e0958f0971ca143fb88ae3758b030"
+  integrity sha512-AniXqhyb5tGYjb1V0E5z/OZgOd/Rei1Sj0QFqNyUOnIx2DU6ojxl0gBm1hzx4dEqH0Gz3wGcFWkpa996lo1djw==
   dependencies:
-    "@getpara/core-sdk" "3.27.0"
+    "@getpara/core-sdk" "3.28.0"
 
-"@getpara/wagmi-v2-connector@3.27.0":
-  version "3.27.0"
-  resolved "https://registry.yarnpkg.com/@getpara/wagmi-v2-connector/-/wagmi-v2-connector-3.27.0.tgz#3b3edbb4dda51d733fc6e6f131d59c447b7092a4"
-  integrity sha512-r0j6kPQPpMwU0gonNoPQGmKHf+5rUw48hF7F1z5FpmpvdPyOZaF4CuOazUySyxq9gZYXmwLmjo9OwlXtIiJoOA==
+"@getpara/wagmi-v2-connector@3.28.0":
+  version "3.28.0"
+  resolved "https://registry.yarnpkg.com/@getpara/wagmi-v2-connector/-/wagmi-v2-connector-3.28.0.tgz#55aab2d9b56751a707dcc072eaf1350f3ca49bb9"
+  integrity sha512-LDeLsq0ZlAH6znX0VsgFqXt2GmlM6eDx4bvO5h1F++lMlsLluJZRJpKhLVJhU4jRyoNZiXmdQgDAfiNNt44jfg==
   dependencies:
-    "@getpara/viem-v2-integration" "3.27.0"
-    "@getpara/web-sdk" "3.27.0"
+    "@getpara/viem-v2-integration" "3.28.0"
+    "@getpara/web-sdk" "3.28.0"
     eventemitter3 "^5.0.1"
 
 "@getpara/web-sdk@3.26.0":
@@ -3372,13 +3372,13 @@
     ua-parser-js "^2.0.2"
     uuid "^11.1.1"
 
-"@getpara/web-sdk@3.27.0":
-  version "3.27.0"
-  resolved "https://registry.yarnpkg.com/@getpara/web-sdk/-/web-sdk-3.27.0.tgz#6d1f557bf78ee13d92826159a7b80998820120c6"
-  integrity sha512-BT8J85NuxjeCdjbh1Gc1hCBuaKw+XmTjzW23eHKU2rV64exkieQ54fPhJoKv2/4r8JL1FWpflo0B365Hzmz4ew==
+"@getpara/web-sdk@3.28.0":
+  version "3.28.0"
+  resolved "https://registry.yarnpkg.com/@getpara/web-sdk/-/web-sdk-3.28.0.tgz#a232c46d94cba2fb7dd9973ee221c1262afc7db4"
+  integrity sha512-gAK7q/MELF+fujkxtIg4/o8ajOnty5D03ArauO9ARnuWsEcvxWn5SW0VF7DFYrs8uoil/5r8BVnOB8y/L3OhMQ==
   dependencies:
-    "@getpara/core-sdk" "3.27.0"
-    "@getpara/user-management-client" "3.27.0"
+    "@getpara/core-sdk" "3.28.0"
+    "@getpara/user-management-client" "3.28.0"
     "@opentelemetry/api" "^1.9.1"
     "@scure/base" "^1.2.6"
     buffer "6.0.3"
