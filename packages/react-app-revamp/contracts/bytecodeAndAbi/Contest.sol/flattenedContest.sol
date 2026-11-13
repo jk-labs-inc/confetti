@@ -4975,7 +4975,7 @@ abstract contract Governor is GovernorSorting, GovernorAnalytics {
     address public constant JK_LABS_ADDRESS = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738; // Our hot wallet that we collect revenue to.
     uint256 public constant PRICE_CURVE_UPDATE_INTERVAL = 60; // How often the price curve updates if applicable.
     uint256 public constant COST_ROUNDING_VALUE = 1e12; // Used for rounding costs, means cost to propose or vote can't be less than 1e18/this.
-    string private constant VERSION = "6.22"; // Private as to not clutter the ABI.
+    string private constant VERSION = "6.23"; // Private as to not clutter the ABI.
 
     string public name; // The title of the contest
     string public prompt;
@@ -5020,7 +5020,7 @@ abstract contract Governor is GovernorSorting, GovernorAnalytics {
     error CannotVoteOnDeletedProposal();
     error NeedAtLeastOneVoteToVote();
     error ProposalDoesNotExist();
-    error CannotVoteLessThanOneVoteInPayPerVote();
+    error CannotVoteNonWholeNumberInPayPerVote();
 
     error OnlyCreatorOrEntrantCanDelete();
     error OnlyCreatorCanSetName();
@@ -5235,8 +5235,8 @@ abstract contract Governor is GovernorSorting, GovernorAnalytics {
     function _determineCorrectAmountSent(Actions currentAction, uint256 numVotes) internal returns (uint256) {
         uint256 actionCost;
         if (currentAction == Actions.Vote) {
-            if (numVotes < 1 ether) revert CannotVoteLessThanOneVoteInPayPerVote();
-            actionCost = currentPricePerVote() * (numVotes / 1 ether); // we don't allow <1 vote to be cast bc this would underflow
+            if (numVotes % 1 ether != 0) revert CannotVoteNonWholeNumberInPayPerVote();
+            actionCost = currentPricePerVote() * (numVotes / 1 ether); // we don't allow <1 vote to be cast bc this would underflow, and we don't allow non-whole above 1 to keep decimal complexity minimal
         } else {
             actionCost = 0;
         }
@@ -5759,7 +5759,7 @@ contract VoterRewardsModule {
     string public constant MODULE_TYPE = "VOTER_REWARDS";
     address public constant JK_LABS_ADDRESS = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738; // Our hot wallet that we collect revenue to.
     uint256 public constant JK_LABS_CANCEL_DELAY = 604800; // One week
-    string private constant VERSION = "6.22"; // Private as to not clutter the ABI
+    string private constant VERSION = "6.23"; // Private as to not clutter the ABI
 
     GovernorCountingSimple public underlyingContest;
     address public creator;
