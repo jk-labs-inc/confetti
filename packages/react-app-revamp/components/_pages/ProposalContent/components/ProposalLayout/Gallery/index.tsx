@@ -50,7 +50,7 @@ const ProposalLayoutGallery: FC<ProposalLayoutGalleryProps> = ({
 }) => {
   const [imgUrl, setImgUrl] = useState<string>("");
   const [imgTitle, setImgTitle] = useState<string>("");
-  const { onImageLoad, cropHeightRatio } = useGalleryTileShape();
+  const { onImageLoad, cropHeightRatio } = useGalleryTileShape(imgUrl);
   const isVotingNotOpenYet = contestStatus !== ContestStatus.VotingOpen && contestStatus !== ContestStatus.VotingClosed;
 
   const updateImgUrl = () => {

@@ -12,6 +12,7 @@ export const RUBBER_BAND_COEF = 0.55; // iOS scroll-view rubber band: overshoot 
 
 export const FILL_BOTTOM_GAP_PX = 16;
 export const ENTRY_CAROUSEL_FOOTER_ID = "entry-carousel-footer";
+export const ENTRY_CAROUSEL_STAGE_ID = "entry-carousel-stage";
 
 export const MAX_VISIBLE = 2;
 export const WINDOW_RADIUS = MAX_VISIBLE + 2; // mount heavy card content only within this ring distance of center

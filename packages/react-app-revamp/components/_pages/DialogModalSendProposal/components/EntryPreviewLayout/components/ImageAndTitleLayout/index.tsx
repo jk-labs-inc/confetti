@@ -1,7 +1,11 @@
 import ImageUpload from "@components/UI/ImageUpload";
 import CreateGradientTitle from "@components/_pages/Create/components/GradientTitle";
+import { buildImageAndTitleValue } from "@components/_pages/DialogModalSendProposal/utils";
+import { EntryPreview } from "@hooks/useDeployContest/slices/contestMetadataSlice";
 import { FC, useState } from "react";
 import { MAX_TITLE_LENGTH } from "../../constants";
+import EntryImagePreview from "../EntryImagePreview";
+import { viewerDevice } from "../EntryImagePreview/sizing";
 
 interface DialogModalSendProposalImageAndTitleLayoutProps {
   onChange?: (value: string) => void;
@@ -12,6 +16,7 @@ const DialogModalSendProposalEntryPreviewImageAndTitleLayout: FC<DialogModalSend
 }) => {
   const [inputValue, setInputValue] = useState("");
   const [imageUrl, setImageUrl] = useState<string>("");
+  const [previewDevice, setPreviewDevice] = useState(viewerDevice);
 
   const updateCombinedValue = (newImageUrl: string = imageUrl, newInputValue: string = inputValue) => {
     // if both values are empty, return empty string
@@ -20,12 +25,7 @@ const DialogModalSendProposalEntryPreviewImageAndTitleLayout: FC<DialogModalSend
       return;
     }
 
-    // sanitize values - empty strings if undefined/null
-    const sanitizedImageUrl = newImageUrl?.trim() || "";
-    const sanitizedTitle = newInputValue?.trim() || "";
-
-    const combinedValue = `JOKERACE_IMG=${encodeURIComponent(sanitizedImageUrl)}&JOKERACE_IMG_TITLE=${encodeURIComponent(sanitizedTitle)}`;
-    onChange?.(combinedValue);
+    onChange?.(buildImageAndTitleValue(newImageUrl, newInputValue));
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -57,7 +57,18 @@ const DialogModalSendProposalEntryPreviewImageAndTitleLayout: FC<DialogModalSend
       </div>
       <div className="flex flex-col gap-4">
         <CreateGradientTitle textSize="small">image upload</CreateGradientTitle>
-        <ImageUpload onImageLoad={onImageLoadHandler} initialImageUrl={imageUrl} />
+        <ImageUpload
+          onImageLoad={onImageLoadHandler}
+          initialImageUrl={imageUrl}
+          renderPreview={previewImageUrl => (
+            <EntryImagePreview
+              enabledPreview={EntryPreview.IMAGE_AND_TITLE}
+              metadataValue={buildImageAndTitleValue(previewImageUrl, inputValue)}
+              device={previewDevice}
+              onDeviceChange={setPreviewDevice}
+            />
+          )}
+        />
       </div>
     </div>
   );
