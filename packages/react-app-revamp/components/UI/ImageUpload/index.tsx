@@ -1,6 +1,6 @@
 import { useUploadImageStore } from "@hooks/useUploadImage";
 import { validateImageUpload } from "lib/image/uploadValidation";
-import React, { FC, useEffect, useRef, useState } from "react";
+import React, { FC, ReactNode, useEffect, useRef, useState } from "react";
 import NetworkErrorRetry from "./components/NetworkErrorRetry";
 import SelectedImagePreview from "./components/SelectedImagePreview";
 import UploadArea from "./components/UploadArea";
@@ -10,9 +10,10 @@ interface ImageUploadProps {
   initialImageUrl?: string;
   initialFileName?: string;
   onImageLoad?: (imageUrl: string, fileName?: string) => void;
+  renderPreview?: (imageUrl: string) => ReactNode;
 }
 
-const ImageUpload: FC<ImageUploadProps> = ({ initialImageUrl, initialFileName, onImageLoad }) => {
+const ImageUpload: FC<ImageUploadProps> = ({ initialImageUrl, initialFileName, onImageLoad, renderPreview }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedImage, setSelectedImage] = useState<string | null>(initialImageUrl || null);
   const [fileName, setFileName] = useState<string | null>(initialFileName || null);
@@ -187,7 +188,12 @@ const ImageUpload: FC<ImageUploadProps> = ({ initialImageUrl, initialFileName, o
   return (
     <div className="flex flex-col gap-4">
       {selectedImage && !isLoading ? (
-        <SelectedImagePreview imageUrl={selectedImage} fileName={fileName || "image"} onRemove={handleRemoveImage} />
+        <SelectedImagePreview
+          imageUrl={selectedImage}
+          fileName={fileName || "image"}
+          onRemove={handleRemoveImage}
+          renderPreview={renderPreview}
+        />
       ) : isNetworkError ? (
         <NetworkErrorRetry
           inputMethod={inputMethod}
