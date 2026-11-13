@@ -1,6 +1,7 @@
 "use client";
 import HowItWorksTrigger from "@components/HowItWorksExplainer/Trigger";
 import Loader from "@components/UI/Loader";
+import ContestClock from "@components/_pages/Contest/components/ContestClock";
 import ContestTabs, { Tab } from "@components/_pages/Contest/components/Tabs";
 import { populateBugReportLink } from "@helpers/githubIssue";
 import { DESKTOP_HEADER_MIN_WIDTH_PX, MOBILE_MAX_WIDTH_PX } from "@helpers/isMobileViewport";
@@ -114,11 +115,18 @@ const LayoutViewContest = () => {
           excludeTabs={excludeTabs}
           onChange={tab => setTab(tab)}
           rightContent={
-            <div className="hidden md:flex items-center">
-              <MediaQuery minWidth={MOBILE_MAX_WIDTH_PX + 1} maxWidth={DESKTOP_HEADER_MIN_WIDTH_PX - 1}>
-                <HowItWorksTrigger />
-              </MediaQuery>
-            </div>
+            <>
+              <div className="hidden md:flex items-center">
+                <MediaQuery minWidth={MOBILE_MAX_WIDTH_PX + 1} maxWidth={DESKTOP_HEADER_MIN_WIDTH_PX - 1}>
+                  <HowItWorksTrigger />
+                </MediaQuery>
+              </div>
+              {showMarketRail && (
+                <MediaQuery maxWidth={MOBILE_MAX_WIDTH_PX}>
+                  <ContestClock size="sm" />
+                </MediaQuery>
+              )}
+            </>
           }
         />
       </div>

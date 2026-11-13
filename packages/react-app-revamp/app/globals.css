@@ -164,6 +164,7 @@
   --animate-flicker-number: flicker-number 0.5s infinite;
   --animate-caret-blink: caret-blink 1.06s linear infinite;
   --animate-coin-glint: coin-glint 4s ease-in-out infinite;
+  --animate-confetti-spark: confetti-spark 5s ease-in-out infinite;
 
   /* Scale */
   --scale-120: 1.1;
@@ -397,6 +398,23 @@
     100% {
       scale: 0;
       rotate: 90deg;
+    }
+  }
+
+  @keyframes confetti-spark {
+    0%,
+    78%,
+    100% {
+      scale: 1;
+      opacity: 0.8;
+    }
+    86% {
+      scale: 1.8;
+      opacity: 1;
+    }
+    93% {
+      scale: 0.8;
+      opacity: 1;
     }
   }
 }

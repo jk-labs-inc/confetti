@@ -1,12 +1,11 @@
 import ContestName from "@components/_pages/Contest/components/ContestName";
 import ContestNotifyButton from "@components/_pages/Contest/components/ContestNotifyButton";
 import ContestShareButton from "@components/_pages/Contest/components/ContestShareButton";
-import ContestRewardsInfo from "@components/_pages/Contest/components/RewardsInfo";
 import { useContestStore } from "@hooks/useContest/store";
 import { FC } from "react";
 import { useShallow } from "zustand/shallow";
 import { useDescriptionDisclosure } from "../../hooks/useDescriptionDisclosure";
-import ContestTimingTag from "./components/ContestTimingTag";
+import HeadlinePill from "./components/HeadlinePill";
 
 interface DesktopHeaderProps {
   contestImageUrl: string;
@@ -24,7 +23,6 @@ const HEADLINE_ROW_CLASS_NAME = {
   inline: "flex items-baseline gap-3",
   wrapping: "flex flex-wrap items-baseline gap-x-6 gap-y-2",
 };
-const HEADLINE_STATS_CLASS_NAME = "flex flex-col items-end shrink-0 whitespace-nowrap";
 
 const DesktopHeader: FC<DesktopHeaderProps> = ({
   contestImageUrl,
@@ -73,10 +71,7 @@ const DesktopHeader: FC<DesktopHeaderProps> = ({
           }
           actionsPlacement={isWideLayout ? "inline" : "hanging"}
         />
-        <div className={rowLayout === "inline" ? `ml-auto ${HEADLINE_STATS_CLASS_NAME}` : HEADLINE_STATS_CLASS_NAME}>
-          <ContestRewardsInfo variant="headline" />
-          <ContestTimingTag />
-        </div>
+        <HeadlinePill className={rowLayout === "inline" ? "ml-auto self-center" : "self-center"} />
       </div>
       {description.panel}
     </div>

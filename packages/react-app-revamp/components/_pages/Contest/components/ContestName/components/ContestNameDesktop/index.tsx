@@ -59,8 +59,8 @@ const ContestNameDesktop: FC<ContestNameProps> = ({
       {titleLeading}
       {actionsPlacement === "inline" && actions}
       {contestImageUrl && <ContestImage imageUrl={contestImageUrl} />}
-      <div className="flex min-w-0 flex-auto flex-col">
-        <div className="flex min-w-0 items-center gap-3">
+      <div className="grid min-w-0 flex-auto grid-cols-[minmax(0,auto)_1fr]">
+        <div className="col-span-2 grid min-w-0 grid-cols-subgrid items-center">
           <p
             ref={titleRef}
             className={`text-neutral-11 font-sabo-filled min-w-0 truncate ${isContestCanceled ? "line-through" : ""}`}
@@ -68,19 +68,26 @@ const ContestNameDesktop: FC<ContestNameProps> = ({
           >
             {contestName}
           </p>
-          {titleTrailing && <div className="flex shrink-0 items-center gap-2">{titleTrailing}</div>}
+          {titleTrailing && (
+            <div className="flex shrink-0 items-center gap-2 justify-self-start pl-3">{titleTrailing}</div>
+          )}
         </div>
         {contestAuthorEthereumAddress && (
-          <p className="truncate" style={{ fontSize: `${authorFontPx}px`, maxWidth: `${AUTHOR_MAX_WIDTH_EM}em` }}>
-            <span className="text-neutral-11">by </span>
-            <CustomLink
-              className="text-positive-11 no-underline"
-              href={ROUTE_VIEW_USER.replace("[address]", contestAuthorEthereumAddress)}
-              target="_blank"
+          <div className="flex w-0 min-w-full">
+            <p
+              className="ml-auto shrink-0 truncate"
+              style={{ fontSize: `${authorFontPx}px`, maxWidth: `${AUTHOR_MAX_WIDTH_EM}em` }}
             >
-              {contestAuthorProfileName}
-            </CustomLink>
-          </p>
+              <span className="text-neutral-11">by </span>
+              <CustomLink
+                className="text-positive-11 no-underline"
+                href={ROUTE_VIEW_USER.replace("[address]", contestAuthorEthereumAddress)}
+                target="_blank"
+              >
+                {contestAuthorProfileName}
+              </CustomLink>
+            </p>
+          </div>
         )}
       </div>
     </div>
