@@ -17,6 +17,7 @@ interface DesktopHeaderProps {
   contestAuthorEthereumAddress: string;
   isWideLayout: boolean;
   showDescriptionToggle?: boolean;
+  showHeadlineStats?: boolean;
 }
 
 const HEADLINE_ROW_CLASS_NAME = {
@@ -34,6 +35,7 @@ const DesktopHeader: FC<DesktopHeaderProps> = ({
   contestAuthorEthereumAddress,
   isWideLayout,
   showDescriptionToggle = false,
+  showHeadlineStats = true,
 }) => {
   const { votesOpen, votesClose } = useContestStore(
     useShallow(state => ({ votesOpen: state.votesOpen, votesClose: state.votesClose })),
@@ -42,7 +44,7 @@ const DesktopHeader: FC<DesktopHeaderProps> = ({
   const rowLayout = isWideLayout ? "inline" : "wrapping";
 
   return (
-    <div className="animate-fade-in shrink-0 flex flex-col">
+    <div className="animate-fade-in relative z-20 shrink-0 flex flex-col">
       <div className={HEADLINE_ROW_CLASS_NAME[rowLayout]}>
         <ContestName
           contestName={contestName}
@@ -50,28 +52,31 @@ const DesktopHeader: FC<DesktopHeaderProps> = ({
           contestAuthorEthereumAddress={contestAuthorEthereumAddress}
           contestPrompt={contestPrompt}
           contestImageUrl={contestImageUrl}
-          titleLeading={description.toggle}
-          titleTrailing={
+          titleTrailing={description.toggle}
+          metaActions={
             <>
               <ContestShareButton
                 contestName={contestName}
                 contestAddress={contestAddress}
                 chainName={chainName}
-                size="sm"
+                variant="link"
               />
-              <ContestNotifyButton
-                contestName={contestName}
-                contestAddress={contestAddress}
-                chainName={chainName}
-                votesOpen={votesOpen}
-                votesClose={votesClose}
-                size="sm"
-              />
+              {showHeadlineStats && (
+                <ContestNotifyButton
+                  contestName={contestName}
+                  contestAddress={contestAddress}
+                  chainName={chainName}
+                  votesOpen={votesOpen}
+                  votesClose={votesClose}
+                  variant="link"
+                />
+              )}
             </>
           }
-          actionsPlacement={isWideLayout ? "inline" : "hanging"}
         />
-        <HeadlinePill className={rowLayout === "inline" ? "ml-auto self-center" : "self-center"} />
+        {showHeadlineStats && (
+          <HeadlinePill className={rowLayout === "inline" ? "ml-auto self-center" : "self-center"} />
+        )}
       </div>
       {description.panel}
     </div>

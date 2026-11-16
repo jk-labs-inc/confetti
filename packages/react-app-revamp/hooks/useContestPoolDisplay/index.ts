@@ -1,5 +1,6 @@
 import { useCancelRewards } from "@hooks/useCancelRewards";
 import useContestConfigStore from "@hooks/useContestConfig/store";
+import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import { toRewardTokenItems } from "@hooks/useCurrency/useTotalRewardsUsd";
 import useRewardsModule from "@hooks/useRewards";
@@ -26,6 +27,7 @@ export const useContestPoolDisplay = (): ContestPoolDisplay => {
     })),
   );
   const contestStatus = useContestStatusStore(state => state.contestStatus);
+  const isContestCanceled = useContestStateStore(state => state.contestState === ContestStateEnum.Canceled);
   const { data: rewards, isLoading: isRewardsLoading, isSuccess: isRewardsSuccess, isError } = useRewardsModule();
   const {
     isCanceled,
@@ -48,11 +50,12 @@ export const useContestPoolDisplay = (): ContestPoolDisplay => {
     rewardsModuleAddress: rewards?.contractAddress as `0x${string}`,
     rewardsModuleAbi: rewards?.abi as Abi,
     chainId,
-    enabled: hasValidModule,
+    enabled: hasValidModule && !isContestCanceled,
   });
 
   const tokenItems = useMemo(() => toRewardTokenItems(totalRewards), [totalRewards]);
 
+  if (isContestCanceled) return { status: "empty" };
   if (isRewardsLoading || isCancelLoading || (hasValidModule && isTotalRewardsLoading)) return { status: "loading" };
   if (!hasValidModule || !rewards || isTotalRewardsError || tokenItems.length === 0) return { status: "empty" };
 

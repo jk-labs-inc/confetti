@@ -86,9 +86,11 @@ const ContestClock: FC<ContestClockProps> = ({ size = "md" }) => {
         <circle cx="12" cy="15" r="9" />
         <path d="M12 15V10" />
       </svg>
-      {lead && <span className={CAPTION_CLASS_NAME}>{lead}</span>}
-      <span className={`font-bold ${sizeClassNames.value}`}>{value}</span>
-      {trail && <span className={CAPTION_CLASS_NAME}>{trail}</span>}
+      <span className={`flex items-baseline ${sizeClassNames.root}`}>
+        {lead && <span className={CAPTION_CLASS_NAME}>{lead}</span>}
+        <span className={`font-bold ${sizeClassNames.value}`}>{value}</span>
+        {trail && <span className={CAPTION_CLASS_NAME}>{trail}</span>}
+      </span>
     </span>
   );
 };

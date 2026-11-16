@@ -1,5 +1,6 @@
 import CancelContest from "@components/_pages/Contest/components/CancelContest";
 import ContestImage from "@components/_pages/Contest/components/ContestImage";
+import { Avatar } from "@components/UI/Avatar";
 import CustomLink from "@components/UI/Link";
 import { ROUTE_VIEW_USER } from "@config/routes";
 import { CONTEST_TERMINAL_MIN_WIDTH_PX, CONTEST_WIDE_MIN_WIDTH_PX } from "@hooks/useContestLayoutBand";
@@ -8,17 +9,13 @@ import { useFitText } from "@hooks/useFitText";
 import useProfileData from "@hooks/useProfileData";
 import { FC, useRef } from "react";
 import { useMediaQuery } from "react-responsive";
-import type { ContestNameActionsPlacement, ContestNameProps } from "../../types";
+import type { ContestNameProps } from "../../types";
 import EditContestName from "../EditContestName";
-
-const ACTIONS_CLASS_NAME: Record<ContestNameActionsPlacement, string> = {
-  hanging: "absolute left-0 top-1/2 -translate-x-full -translate-y-1/2 -ml-4 flex items-center gap-2",
-  inline: "flex shrink-0 items-center gap-2 self-center empty:hidden",
-};
 
 const TITLE_MIN_PX = 14;
 const TITLE_MAX_PX = { desktop: 28, terminal: 30, wide: 36 };
-const AUTHOR_FONT_PX = { desktop: 14, wide: 16 };
+const META_FONT_PX = { desktop: 14, wide: 15 };
+const AUTHOR_AVATAR_PX = 20;
 const AUTHOR_MAX_WIDTH_EM = 16;
 
 const ContestNameDesktop: FC<ContestNameProps> = ({
@@ -27,40 +24,27 @@ const ContestNameDesktop: FC<ContestNameProps> = ({
   contestAuthorEthereumAddress,
   contestPrompt,
   contestImageUrl,
-  titleLeading,
   titleTrailing,
-  actionsPlacement = "hanging",
+  metaActions,
 }) => {
   const isContestCanceled = useContestStateStore(state => state.contestState) === ContestStateEnum.Canceled;
-  const { profileName: contestAuthorProfileName } = useProfileData(contestAuthorEthereumAddress ?? "", true);
+  const { profileName: contestAuthorProfileName, profileAvatar: contestAuthorProfileAvatar } = useProfileData(
+    contestAuthorEthereumAddress ?? "",
+    true,
+  );
   const isTerminal = useMediaQuery({ minWidth: CONTEST_TERMINAL_MIN_WIDTH_PX });
   const isWide = useMediaQuery({ minWidth: CONTEST_WIDE_MIN_WIDTH_PX });
   const titleMaxPx = isWide ? TITLE_MAX_PX.wide : isTerminal ? TITLE_MAX_PX.terminal : TITLE_MAX_PX.desktop;
-  const authorFontPx = isWide ? AUTHOR_FONT_PX.wide : AUTHOR_FONT_PX.desktop;
+  const metaFontPx = isWide ? META_FONT_PX.wide : META_FONT_PX.desktop;
 
   const titleRef = useRef<HTMLParagraphElement>(null);
   const titleFontSize = useFitText(titleRef, contestName, { min: TITLE_MIN_PX, max: titleMaxPx });
 
-  const actions = (
-    <div className={ACTIONS_CLASS_NAME[actionsPlacement]}>
-      <CancelContest />
-      <EditContestName
-        contestName={contestName}
-        canEditTitle={canEditTitle}
-        contestPrompt={contestPrompt}
-        contestImageUrl={contestImageUrl}
-      />
-    </div>
-  );
-
   return (
-    <div className="relative flex items-baseline gap-3 flex-auto min-w-0">
-      {actionsPlacement === "hanging" && actions}
-      {titleLeading}
-      {actionsPlacement === "inline" && actions}
-      {contestImageUrl && <ContestImage imageUrl={contestImageUrl} />}
-      <div className="grid min-w-0 flex-auto grid-cols-[minmax(0,auto)_1fr]">
-        <div className="col-span-2 grid min-w-0 grid-cols-subgrid items-center">
+    <div className="flex min-w-0 flex-auto flex-col gap-2">
+      <div className="flex min-w-0 items-center gap-2">
+        {contestImageUrl && <ContestImage imageUrl={contestImageUrl} />}
+        <div className="flex min-w-0 flex-auto items-center gap-2">
           <p
             ref={titleRef}
             className={`text-neutral-11 font-sabo-filled min-w-0 truncate ${isContestCanceled ? "line-through" : ""}`}
@@ -68,27 +52,45 @@ const ContestNameDesktop: FC<ContestNameProps> = ({
           >
             {contestName}
           </p>
-          {titleTrailing && (
-            <div className="flex shrink-0 items-center gap-2 justify-self-start pl-3">{titleTrailing}</div>
-          )}
+          {titleTrailing}
         </div>
+      </div>
+      <div
+        className="flex min-w-0 flex-wrap items-center gap-x-4 gap-y-1 whitespace-nowrap"
+        style={{ fontSize: `${metaFontPx}px` }}
+      >
         {contestAuthorEthereumAddress && (
-          <div className="flex w-0 min-w-full">
-            <p
-              className="ml-auto shrink-0 truncate"
-              style={{ fontSize: `${authorFontPx}px`, maxWidth: `${AUTHOR_MAX_WIDTH_EM}em` }}
-            >
-              <span className="text-neutral-11">by </span>
-              <CustomLink
-                className="text-positive-11 no-underline"
-                href={ROUTE_VIEW_USER.replace("[address]", contestAuthorEthereumAddress)}
-                target="_blank"
-              >
-                {contestAuthorProfileName}
-              </CustomLink>
-            </p>
-          </div>
+          <>
+            <div className="flex min-w-0 items-center gap-2">
+              <Avatar
+                src={contestAuthorProfileAvatar}
+                address={contestAuthorEthereumAddress}
+                sizePx={AUTHOR_AVATAR_PX}
+                className="shrink-0"
+              />
+              <p className="min-w-0 truncate" style={{ maxWidth: `${AUTHOR_MAX_WIDTH_EM}em` }}>
+                <span className="text-neutral-12">by </span>
+                <CustomLink
+                  className="text-positive-11 no-underline"
+                  href={ROUTE_VIEW_USER.replace("[address]", contestAuthorEthereumAddress)}
+                  target="_blank"
+                >
+                  {contestAuthorProfileName}
+                </CustomLink>
+              </p>
+            </div>
+            <span aria-hidden="true" className="h-3.5 w-px shrink-0 bg-neutral-10" />
+          </>
         )}
+        {metaActions}
+        <EditContestName
+          contestName={contestName}
+          canEditTitle={canEditTitle}
+          contestPrompt={contestPrompt}
+          contestImageUrl={contestImageUrl}
+          variant="link"
+        />
+        <CancelContest variant="link" />
       </div>
     </div>
   );
