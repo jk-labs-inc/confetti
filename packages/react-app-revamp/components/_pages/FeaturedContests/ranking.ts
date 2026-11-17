@@ -26,7 +26,11 @@ const COMPARE_TIMING: Record<Phase, (a: ProcessedContest, b: ProcessedContest) =
   past: (a, b) => moment(b.end_at).diff(a.end_at),
 };
 
-export const featuredContestKey = (contest: ProcessedContest): string => `${contest.network_name}:${contest.address}`;
+export const featuredContestKey = (contest: Pick<ProcessedContest, "network_name" | "address">): string =>
+  `${contest.network_name}:${contest.address}`;
+
+export const featuredContestRewardsQueryKey = (contest: Pick<ProcessedContest, "network_name" | "address">) =>
+  ["totalRewards", "contest", contest.network_name, contest.address] as const;
 
 interface RankFeaturedContestsArgs {
   contests: ProcessedContest[];

@@ -42,23 +42,3 @@ export const getTokenBalance = async ({
     decimals,
   };
 };
-
-/**
- * Gets just the raw balance value of an ERC20 token (without decimals)
- * Useful when you already have the decimals from another call
- */
-export const getTokenBalanceValue = async ({
-  tokenAddress,
-  userAddress,
-  chainId,
-}: GetTokenBalanceParams): Promise<bigint> => {
-  const value = await readContract(getWagmiConfig(), {
-    address: tokenAddress,
-    abi: erc20Abi,
-    functionName: "balanceOf",
-    args: [userAddress],
-    chainId,
-  });
-
-  return value;
-};

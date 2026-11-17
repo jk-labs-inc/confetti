@@ -1,9 +1,9 @@
 import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import getVoterRewardsModuleContractVersion from "@helpers/getVoterRewardsModuleContractVersion";
 import { verifyContractBytecode } from "@helpers/verifyContractBytecode";
+import { safeCompareVersions } from "@helpers/versions";
 import { ContractConfig } from "@hooks/useContest";
 import { readContract } from "@wagmi/core";
-import { compareVersions } from "compare-versions";
 import { Abi } from "viem";
 import { ModuleType, RewardsModuleInfo, VOTER_REWARDS_VERSION } from "../types";
 
@@ -27,14 +27,20 @@ export async function getRewardsModuleInfo(rewardsModuleAddress: string, chainId
 
     if (!abi || !deployedBytecode) return EMPTY_REWARDS_MODULE_INFO;
 
-    const isBytecodeValid = await verifyContractBytecode(rewardsModuleAddress, chainId, deployedBytecode);
+    const versionOrder = safeCompareVersions(version, VOTER_REWARDS_VERSION);
+    const hasModuleTypeGetter = versionOrder !== null && versionOrder >= 0;
+
+    const [isBytecodeValid, moduleType] = await Promise.all([
+      verifyContractBytecode(rewardsModuleAddress, chainId, deployedBytecode),
+      hasModuleTypeGetter ? getModuleType(rewardsModuleAddress, abi as Abi, chainId) : ModuleType.AUTHOR_REWARDS,
+    ]);
 
     if (!isBytecodeValid) return { abi: null, moduleType: null, isBytecodeInvalid: true };
 
-    const isLegacyVersion = compareVersions(version, VOTER_REWARDS_VERSION) < 0;
-    const moduleType = isLegacyVersion
-      ? ModuleType.AUTHOR_REWARDS
-      : await getModuleType(rewardsModuleAddress, abi as Abi, chainId);
+    if (versionOrder === null) {
+      console.error(`Error in getRewardsModuleInfo: unreadable rewards module version "${version}"`);
+      return EMPTY_REWARDS_MODULE_INFO;
+    }
 
     return {
       abi: abi as Abi,

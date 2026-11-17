@@ -2,12 +2,11 @@ import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import { chains } from "@config/wagmi";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import { ContestStateEnum } from "@hooks/useContestState/store";
-import { readContract, readContracts } from "@wagmi/core";
-import { getRewardsModuleInfo } from "lib/rewards/contracts";
-import { fetchTotalRewards } from "lib/rewards/contracts/rewards-module";
+import { readContracts } from "@wagmi/core";
+import { fetchVerifiedTotalRewards, getRewardsModuleAddress } from "lib/rewards/contracts";
+import { Address } from "viem";
 import { ContestWithTotalRewards, ProcessedContest } from "./types";
 
-export const EMPTY_HASH = "0x0000000000000000000000000000000000000000000000000000000000000000";
 export const EMPTY_ADDRESS = "0x0000000000000000000000000000000000000000";
 
 /**
@@ -83,117 +82,53 @@ export async function getContestContractData(
   }
 }
 
+const withoutRewards = (contest: ProcessedContest): ContestWithTotalRewards => ({
+  contestAddress: contest.address || "unknown",
+  chain: contest.network_name || "unknown",
+  hasRewards: false,
+  rewardsData: null,
+});
+
+const normalizeChainName = (chainName: string) => chainName.replace(/\s+/g, "").toLowerCase();
+
+export async function fetchTotalRewardsForContest(contest: ProcessedContest): Promise<ContestWithTotalRewards> {
+  try {
+    if (!contest.address || !contest.network_name) return withoutRewards(contest);
+
+    const contestChainName = normalizeChainName(contest.network_name);
+    const chain = chains.find(c => normalizeChainName(c.name) === contestChainName);
+
+    if (!chain) {
+      console.warn(`Chain not found for ${contest.network_name}`);
+      return withoutRewards(contest);
+    }
+
+    const contractConfig = await getContractConfig(contest.address, chain.id);
+    if (!contractConfig) return withoutRewards(contest);
+
+    const rewardsModuleAddress = await getRewardsModuleAddress(contractConfig);
+    if (!rewardsModuleAddress) return withoutRewards(contest);
+
+    const rewardsData = await fetchVerifiedTotalRewards(rewardsModuleAddress as Address, chain.id);
+    if (!rewardsData) return withoutRewards(contest);
+
+    return {
+      contestAddress: contest.address,
+      chain: contest.network_name,
+      hasRewards: true,
+      rewardsData,
+    };
+  } catch (error) {
+    console.error(`Error fetching rewards for contest ${contest.address}:`, error);
+    return withoutRewards(contest);
+  }
+}
+
 /**
- * Fetches total rewards for multiple contests using the fetchTotalRewards function
+ * Fetches total rewards for multiple contests
  * @param contests Array of contests with address and network_name
  * @returns Array of contests with their total rewards data
  */
-export async function fetchTotalRewardsForContests(contests: ProcessedContest[]): Promise<ContestWithTotalRewards[]> {
-  const results = await Promise.allSettled(
-    contests.map(async (contest): Promise<ContestWithTotalRewards> => {
-      try {
-        if (!contest.address || !contest.network_name) {
-          return {
-            contestAddress: contest.address || "unknown",
-            chain: contest.network_name || "unknown",
-            hasRewards: false,
-            rewardsData: null,
-          };
-        }
-
-        const contestAddress = contest.address;
-        const contestChainName = contest.network_name;
-
-        const chain = chains.find(
-          c => c.name.replace(/\s+/g, "").toLowerCase() === contestChainName.replace(/\s+/g, "").toLowerCase(),
-        );
-
-        if (!chain) {
-          console.warn(`Chain not found for ${contestChainName}`);
-          return {
-            contestAddress,
-            chain: contestChainName,
-            hasRewards: false,
-            rewardsData: null,
-          };
-        }
-
-        // Get contract config and check if it has rewards module
-        const contractConfig = await getContractConfig(contestAddress, chain.id);
-        if (
-          !contractConfig ||
-          !contractConfig.abi?.some((el: { name: string }) => el.name === "officialRewardsModule")
-        ) {
-          return {
-            contestAddress,
-            chain: contestChainName,
-            hasRewards: false,
-            rewardsData: null,
-          };
-        }
-
-        const rewardsModuleAddress = (await readContract(getWagmiConfig(), {
-          ...contractConfig,
-          functionName: "officialRewardsModule",
-          args: [],
-        })) as string;
-
-        if (!rewardsModuleAddress || rewardsModuleAddress === EMPTY_ADDRESS || rewardsModuleAddress === EMPTY_HASH) {
-          return {
-            contestAddress,
-            chain: contestChainName,
-            hasRewards: false,
-            rewardsData: null,
-          };
-        }
-
-        const { abi: rewardsModuleAbi } = await getRewardsModuleInfo(rewardsModuleAddress, chain.id);
-        if (!rewardsModuleAbi) {
-          return {
-            contestAddress,
-            chain: contestChainName,
-            hasRewards: false,
-            rewardsData: null,
-          };
-        }
-
-        // Fetch total rewards using the existing function
-        const rewardsData = await fetchTotalRewards({
-          rewardsModuleAddress: rewardsModuleAddress as `0x${string}`,
-          rewardsModuleAbi,
-          chainId: chain.id,
-        });
-
-        return {
-          contestAddress,
-          chain: contestChainName,
-          hasRewards: true,
-          rewardsData,
-        };
-      } catch (error) {
-        console.error(`Error fetching rewards for contest ${contest.address}:`, error);
-        return {
-          contestAddress: contest.address || "unknown",
-          chain: contest.network_name || "unknown",
-          hasRewards: false,
-          rewardsData: null,
-        };
-      }
-    }),
-  );
-
-  // Extract the values from Promise.allSettled results
-  return results.map(result => {
-    if (result.status === "fulfilled") {
-      return result.value;
-    } else {
-      console.error("Failed to process contest:", result.reason);
-      return {
-        contestAddress: "unknown",
-        chain: "unknown",
-        hasRewards: false,
-        rewardsData: null,
-      };
-    }
-  });
+export function fetchTotalRewardsForContests(contests: ProcessedContest[]): Promise<ContestWithTotalRewards[]> {
+  return Promise.all(contests.map(fetchTotalRewardsForContest));
 }

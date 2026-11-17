@@ -1,17 +1,36 @@
 "use client";
 
 import FeaturedContests from "@components/_pages/FeaturedContests";
-import { featuredContestKey, rankFeaturedContests } from "@components/_pages/FeaturedContests/ranking";
+import {
+  featuredContestKey,
+  featuredContestRewardsQueryKey,
+  rankFeaturedContests,
+} from "@components/_pages/FeaturedContests/ranking";
 import CustomLink from "@components/UI/Link";
 import { ROUTE_VIEW_LIVE_CONTESTS } from "@config/routes";
 import { isSupabaseConfigured } from "@helpers/database";
 import { useRewardPoolsUsd } from "@hooks/useCurrency/useTotalRewardsUsd";
-import { experimental_streamedQuery as streamedQuery, useQuery } from "@tanstack/react-query";
+import {
+  experimental_streamedQuery as streamedQuery,
+  useQueries,
+  useQuery,
+  UseQueryResult,
+} from "@tanstack/react-query";
 import { streamFeaturedContests } from "lib/contests";
 import { CONTESTS_FEATURE_COUNT } from "lib/contests/constants";
-import { fetchTotalRewardsForContests } from "lib/contests/contracts";
+import { fetchTotalRewardsForContest } from "lib/contests/contracts";
+import { ContestWithTotalRewards } from "lib/contests/types";
 import { useMemo, useState } from "react";
 import LandingPageHowItWorks from "./HowItWorks";
+
+const combineContestRewards = (results: UseQueryResult<ContestWithTotalRewards>[]) => ({
+  rewardsByKey: Object.fromEntries(
+    results.flatMap(({ data }) =>
+      data ? [[featuredContestKey({ network_name: data.chain, address: data.contestAddress }), data] as const] : [],
+    ),
+  ),
+  isAnyRewardsFetching: results.some(result => result.isFetching),
+});
 
 function useFeaturedContests() {
   const [page] = useState(0);
@@ -31,19 +50,21 @@ function useFeaturedContests() {
     refetchOnWindowFocus: false,
   });
 
-  const isStreamingComplete = status === "success" && !isContestDataFetching;
-
-  const { data: rewardsByKey, isFetching: isRewardsFetching } = useQuery({
-    queryKey: ["totalRewards", isStreamingComplete ? contestData.length : "pending"],
-    queryFn: async () => {
-      const rewards = await fetchTotalRewardsForContests(contestData);
-      return Object.fromEntries(contestData.map((contest, index) => [featuredContestKey(contest), rewards[index]]));
-    },
-    enabled: isStreamingComplete && contestData.length > 0,
-    refetchOnWindowFocus: false,
+  const { rewardsByKey, isAnyRewardsFetching } = useQueries({
+    queries: contestData.map(contest => ({
+      queryKey: featuredContestRewardsQueryKey(contest),
+      queryFn: () => fetchTotalRewardsForContest(contest),
+      refetchOnWindowFocus: false,
+    })),
+    combine: combineContestRewards,
   });
 
-  const poolUsdByKey = useRewardPoolsUsd(rewardsByKey);
+  const isRewardsFetching = isContestDataFetching || isAnyRewardsFetching;
+
+  const [settledRewardsByKey, setSettledRewardsByKey] = useState<Record<string, ContestWithTotalRewards>>();
+  if (!isRewardsFetching && settledRewardsByKey !== rewardsByKey) setSettledRewardsByKey(rewardsByKey);
+
+  const poolUsdByKey = useRewardPoolsUsd(settledRewardsByKey);
 
   const contests = useMemo(
     () => rankFeaturedContests({ contests: contestData, rewardsByKey, poolUsdByKey }),
