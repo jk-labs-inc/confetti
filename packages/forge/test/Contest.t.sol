@@ -30,6 +30,7 @@ contract ContestTest is Test {
     uint256 public constant LOGARITHMIC_PRICE_CURVE_TYPE = 1;
     uint256 public constant STANDARD_LOGARITHMIC_MULTIPLE = 20744750000000; // for a terminal value 10x from min
     address public constant JK_LABS_SPLIT_DESTINATION = JK_LABS_ADDRESS;
+    address public constant NATIVE_VOTE_CURRENCY = address(0);
 
     // SORTING INT PARAMS
     uint256 public constant RANK_LIMIT_250 = 250;
@@ -72,7 +73,8 @@ contract ContestTest is Test {
         CONTEST_PROMPT,
         payPerVoteExpCurveIntConstructorArgs,
         JK_LABS_SPLIT_DESTINATION,
-        CONTEST_ENTRY_TYPE
+        CONTEST_ENTRY_TYPE,
+        NATIVE_VOTE_CURRENCY
     );
 
     Governor.ConstructorArgs public payPerVoteLogCurveParams = Governor.ConstructorArgs(
@@ -80,7 +82,8 @@ contract ContestTest is Test {
         CONTEST_PROMPT,
         payPerVoteLogCurveIntConstructorArgs,
         JK_LABS_SPLIT_DESTINATION,
-        CONTEST_ENTRY_TYPE
+        CONTEST_ENTRY_TYPE,
+        NATIVE_VOTE_CURRENCY
     );
 
     address public constant JK_LABS_ADDRESS = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738;
