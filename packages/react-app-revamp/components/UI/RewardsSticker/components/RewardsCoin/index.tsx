@@ -1,7 +1,7 @@
 import { useAnimate, useReducedMotion } from "motion/react";
 import { FC, useCallback, useEffect } from "react";
 import { COIN_FRAME_CLASS_NAMES } from "../../constants";
-import { RewardsStickerInlineSize, RewardsStickerSize } from "../../types";
+import { RewardsStickerLabeledSize, RewardsStickerSize } from "../../types";
 import RewardsCoinConfetti from "../RewardsCoinConfetti";
 
 interface RewardsCoinProps {
@@ -31,14 +31,14 @@ const COIN_SIZE_CLASS_NAMES: Record<RewardsStickerSize, { coin: string; rim: str
     rim: "inset-[6px] border-2",
     symbol: "-mt-1 text-[26px]",
   },
-  bar: {
-    coin: "shadow-[inset_0_-4px_0_var(--coin-edge),0_0_0_3px_#000]",
-    rim: "inset-[5px] border-2",
-    symbol: "-mt-[3px] text-[21px]",
+  hero: {
+    coin: "shadow-[inset_0_-6px_0_var(--coin-edge),0_0_0_3px_#000]",
+    rim: "inset-[7px] border-2",
+    symbol: "-mt-1 text-[32px]",
   },
 };
 
-const GLINT_CLASS_NAMES: Record<Exclude<RewardsStickerSize, RewardsStickerInlineSize>, string> = {
+const GLINT_CLASS_NAMES: Record<Exclude<RewardsStickerSize, RewardsStickerLabeledSize>, string> = {
   card: "-right-1 -top-1.5 size-3",
   stat: "-right-1 -top-1.5 size-3",
 };
@@ -90,8 +90,8 @@ const RewardsCoin: FC<RewardsCoinProps> = ({ size, isMuted, spinId }) => {
         <span className={`font-sabo-filled leading-none ${sizeClassNames.symbol}`}>$</span>
       </span>
       {!isMuted &&
-        (size === "headline" || size === "bar" ? (
-          <RewardsCoinConfetti placement={size === "bar" ? "left" : "above"} />
+        (size === "headline" || size === "hero" ? (
+          <RewardsCoinConfetti />
         ) : (
           <svg
             viewBox="0 0 24 24"

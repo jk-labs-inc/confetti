@@ -1,9 +1,9 @@
 import { TokenItem } from "@hooks/useCurrency/useTotalRewardsUsd";
 import { RewardsAudience, RewardsPhase } from "lib/rewards/types";
 
-export type RewardsStickerSize = "card" | "stat" | "headline" | "bar";
+export type RewardsStickerSize = "card" | "stat" | "headline" | "hero";
 
-export type RewardsStickerInlineSize = Extract<RewardsStickerSize, "headline" | "bar">;
+export type RewardsStickerLabeledSize = Extract<RewardsStickerSize, "headline" | "hero">;
 
 interface RewardsStickerBaseProps {
   items: TokenItem[];
@@ -13,6 +13,6 @@ interface RewardsStickerBaseProps {
 
 export type RewardsStickerProps = RewardsStickerBaseProps &
   (
-    | { size: Exclude<RewardsStickerSize, RewardsStickerInlineSize> }
-    | { size: RewardsStickerInlineSize; audience: RewardsAudience }
+    | { size: Exclude<RewardsStickerSize, RewardsStickerLabeledSize> }
+    | { size: RewardsStickerLabeledSize; audience: RewardsAudience }
   );

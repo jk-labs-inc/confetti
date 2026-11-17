@@ -11,35 +11,26 @@ interface MobileStatLineProps {
 
 const MobileStatLine: FC<MobileStatLineProps> = ({ onOpenPriceSheet }) => {
   const pool = useContestPoolDisplay();
-  const hasPot = pool.status !== "empty";
-
-  const priceButton = (
-    <button
-      type="button"
-      onClick={onOpenPriceSheet}
-      className={`flex h-full min-w-0 flex-1 items-center justify-between gap-1.5 pr-2.5 text-left normal-case ${hasPot ? "pl-2.5" : "pl-3.5"}`}
-    >
-      <PriceStat />
-      <ChevronRightIcon className="ml-auto h-3.5 w-3.5 shrink-0 text-neutral-11" strokeWidth={2.5} aria-hidden />
-    </button>
-  );
 
   return (
-    <div className={hasPot ? "pl-2" : undefined}>
-      <div className="flex h-9 w-full min-w-0 items-center whitespace-nowrap rounded-full border border-neutral-10 bg-true-black text-[13px] text-neutral-9">
-        {pool.status === "loading" && <RewardsStickerSkeleton size="bar" />}
-        {pool.status === "ready" && (
-          <RewardsSticker
-            size="bar"
-            items={pool.tokenItems}
-            chainName={pool.chainName}
-            phase={pool.phase}
-            audience={pool.audience}
-          />
-        )}
-        {hasPot && <span aria-hidden="true" className="ml-2.5 w-px self-stretch bg-primary-3" />}
-        {priceButton}
-      </div>
+    <div className="flex min-h-9 items-center justify-between gap-3">
+      {pool.status !== "empty" && (
+        <span className="flex shrink-0 pl-1.5">
+          {pool.status === "loading" ? (
+            <RewardsStickerSkeleton size="stat" />
+          ) : (
+            <RewardsSticker size="stat" items={pool.tokenItems} chainName={pool.chainName} phase={pool.phase} />
+          )}
+        </span>
+      )}
+      <button
+        type="button"
+        onClick={onOpenPriceSheet}
+        className="ml-auto flex h-9 min-w-0 items-center gap-1 whitespace-nowrap text-left text-[13px] normal-case text-neutral-9"
+      >
+        <PriceStat />
+        <ChevronRightIcon className="h-3.5 w-3.5 shrink-0 text-neutral-11" strokeWidth={2.5} aria-hidden />
+      </button>
     </div>
   );
 };

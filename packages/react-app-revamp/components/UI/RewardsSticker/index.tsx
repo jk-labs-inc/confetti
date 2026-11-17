@@ -16,39 +16,33 @@ const SIZE_CLASS_NAMES: Record<RewardsStickerSize, { body: string; amount: strin
   card: {
     body: "gap-1 pl-4 pr-2.5 py-[5px] rounded-[10px]",
     amount: "text-[17px]",
-    label: "text-[11px] font-black",
+    label: "text-[11px]",
     pop: "-left-12 -top-1.5",
   },
   stat: {
     body: "gap-1.5 pl-3.5 pr-2.5 py-1 rounded-xl",
     amount: "text-[18px]",
-    label: "text-[11px] font-black",
+    label: "text-[11px]",
     pop: "-right-3 -top-5",
   },
   headline: {
-    body: "gap-2.5 pl-2.5",
-    amount: "text-[22px]",
-    label: "text-[13px] font-bold",
+    body: "gap-2.5 pl-6 pr-4 py-2 rounded-2xl",
+    amount: "text-[26px]",
+    label: "text-[13px]",
     pop: "-right-5 -top-6",
   },
-  bar: {
-    body: "gap-[7px] pl-2",
-    amount: "text-[19px]",
-    label: "text-[13px] font-bold",
-    pop: "-right-3 -top-5",
+  hero: {
+    body: "gap-3 pl-7 pr-5 py-2.5 rounded-[20px]",
+    amount: "text-[32px]",
+    label: "text-[15px]",
+    pop: "-right-5 -top-7",
   },
 };
 
-const STICKER_TONE_CLASS_NAMES: Record<RewardsPhase, string> = {
-  upcoming: `bg-primary-10 text-true-black ${STICKER_RING_CLASS_NAME}`,
-  live: `bg-primary-10 text-true-black ${STICKER_RING_CLASS_NAME}`,
-  ended: `bg-neutral-5 text-neutral-9 ${STICKER_RING_CLASS_NAME}`,
-};
-
-const INLINE_TONE_CLASS_NAMES: Record<RewardsPhase, { body: string; label: string }> = {
-  upcoming: { body: "text-primary-10", label: "text-neutral-12" },
-  live: { body: "text-primary-10", label: "text-neutral-12" },
-  ended: { body: "text-neutral-9", label: "" },
+const TONE_CLASS_NAMES: Record<RewardsPhase, string> = {
+  upcoming: "bg-primary-10 text-true-black",
+  live: "bg-primary-10 text-true-black",
+  ended: "bg-neutral-5 text-neutral-9",
 };
 
 const SHORT_LABELS: Record<RewardsPhase, string> = {
@@ -57,10 +51,15 @@ const SHORT_LABELS: Record<RewardsPhase, string> = {
   ended: "paid out",
 };
 
-const LONG_LABELS: Record<RewardsPhase, (audience: RewardsAudience) => string> = {
-  upcoming: audience => `for ${audience} to win`,
-  live: audience => `for ${audience} to win`,
-  ended: audience => `paid to ${audience}`,
+const WIN_LABEL_LINES: Record<RewardsAudience, [string, string]> = {
+  voters: ["for voting", "on the winner"],
+  entrants: ["for entrants", "to win"],
+};
+
+const LONG_LABEL_LINES: Record<RewardsPhase, (audience: RewardsAudience) => [string, string]> = {
+  upcoming: audience => WIN_LABEL_LINES[audience],
+  live: audience => WIN_LABEL_LINES[audience],
+  ended: audience => ["paid to", audience],
 };
 
 const RewardsSticker: FC<RewardsStickerProps> = props => {
@@ -99,8 +98,6 @@ const RewardsSticker: FC<RewardsStickerProps> = props => {
   if (!token) return null;
 
   const sizeClassNames = SIZE_CLASS_NAMES[size];
-  const bodyToneClassName =
-    size === "headline" || size === "bar" ? INLINE_TONE_CLASS_NAMES[phase].body : STICKER_TONE_CLASS_NAMES[phase];
   const plusSuffix = phase === "upcoming" ? "+" : "";
   const amountText =
     usdAmount !== null
@@ -111,7 +108,10 @@ const RewardsSticker: FC<RewardsStickerProps> = props => {
     <span className="relative inline-flex shrink-0">
       <span className={`flex items-center ${STICKER_TILT_CLASS_NAMES[size]}`}>
         <RewardsCoin size={size} isMuted={phase === "ended"} spinId={pop?.id ?? null} />
-        <span ref={scope} className={`flex items-center whitespace-nowrap ${sizeClassNames.body} ${bodyToneClassName}`}>
+        <span
+          ref={scope}
+          className={`flex items-center whitespace-nowrap ${sizeClassNames.body} ${TONE_CLASS_NAMES[phase]} ${STICKER_RING_CLASS_NAME}`}
+        >
           <AnimatePresence mode="wait" initial={false}>
             <motion.span
               key={usdAmount !== null ? "usd" : `token-${tokenIndex}`}
@@ -124,15 +124,14 @@ const RewardsSticker: FC<RewardsStickerProps> = props => {
               {amountText}
             </motion.span>
           </AnimatePresence>
-          {props.size === "headline" || props.size === "bar" ? (
-            <span className={`${sizeClassNames.label} ${INLINE_TONE_CLASS_NAMES[phase].label}`}>
-              {props.size === "bar" && <span className="min-[414px]:hidden">{SHORT_LABELS[phase]}</span>}
-              <span className={props.size === "bar" ? "max-[413px]:hidden" : undefined}>
-                {LONG_LABELS[phase](props.audience)}
-              </span>
+          {props.size === "headline" || props.size === "hero" ? (
+            <span className={`flex flex-col font-black leading-[1.1] ${sizeClassNames.label}`}>
+              {LONG_LABEL_LINES[phase](props.audience).map(line => (
+                <span key={line}>{line}</span>
+              ))}
             </span>
           ) : (
-            <span className={sizeClassNames.label}>{SHORT_LABELS[phase]}</span>
+            <span className={`font-black ${sizeClassNames.label}`}>{SHORT_LABELS[phase]}</span>
           )}
         </span>
       </span>

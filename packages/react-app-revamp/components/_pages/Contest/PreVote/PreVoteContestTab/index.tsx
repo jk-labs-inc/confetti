@@ -1,12 +1,10 @@
 import ListProposals from "@components/_pages/ListProposals";
-import PriceCurveWrapper from "@components/PriceCurve/wrapper";
 import { useEntriesReady } from "@layouts/LayoutViewContest/hooks/useEntriesReady";
 import { FC, useId, useState } from "react";
 import PreVoteDescription from "./components/PreVoteDescription";
 import PreVoteEntriesHeader from "./components/PreVoteEntriesHeader";
-import PreVoteFacts from "./components/PreVoteFacts";
-
-const PRICE_CURVE_HEIGHT_PX = 240;
+import PreVoteFacts from "../components/PreVoteFacts";
+import PreVotePriceCurve from "../components/PreVotePriceCurve";
 
 const PreVoteContestTab: FC = () => {
   const [isPriceCurveOpen, setIsPriceCurveOpen] = useState(false);
@@ -20,11 +18,7 @@ const PreVoteContestTab: FC = () => {
         priceCurvePanelId={priceCurvePanelId}
         onTogglePriceCurve={() => setIsPriceCurveOpen(prev => !prev)}
       />
-      {isPriceCurveOpen && (
-        <div id={priceCurvePanelId} className="rounded-2xl border border-neutral-3 bg-[#0C0C0C] px-[18px] pb-3.5 pt-4">
-          <PriceCurveWrapper height={PRICE_CURVE_HEIGHT_PX} noPadding showAxisLabels />
-        </div>
-      )}
+      {isPriceCurveOpen && <PreVotePriceCurve id={priceCurvePanelId} />}
       <PreVoteDescription />
       {areEntriesReady && (
         <div className="animate-fade-in flex flex-col gap-3.5">

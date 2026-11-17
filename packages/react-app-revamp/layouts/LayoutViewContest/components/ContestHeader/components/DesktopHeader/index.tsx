@@ -2,10 +2,11 @@ import ContestName from "@components/_pages/Contest/components/ContestName";
 import ContestNotifyButton from "@components/_pages/Contest/components/ContestNotifyButton";
 import ContestShareButton from "@components/_pages/Contest/components/ContestShareButton";
 import { useContestStore } from "@hooks/useContest/store";
+import { ContestLayoutBand, useContestLayoutBand } from "@hooks/useContestLayoutBand";
 import { FC } from "react";
 import { useShallow } from "zustand/shallow";
 import { useDescriptionDisclosure } from "../../hooks/useDescriptionDisclosure";
-import HeadlinePill from "./components/HeadlinePill";
+import HeadlineStickers from "./components/HeadlineStickers";
 
 interface DesktopHeaderProps {
   contestImageUrl: string;
@@ -42,6 +43,7 @@ const DesktopHeader: FC<DesktopHeaderProps> = ({
   );
   const description = useDescriptionDisclosure(showDescriptionToggle, contestPrompt);
   const rowLayout = isWideLayout ? "inline" : "wrapping";
+  const isTerminalBand = useContestLayoutBand() === ContestLayoutBand.Terminal;
 
   return (
     <div className="animate-fade-in relative z-20 shrink-0 flex flex-col">
@@ -75,7 +77,10 @@ const DesktopHeader: FC<DesktopHeaderProps> = ({
           }
         />
         {showHeadlineStats && (
-          <HeadlinePill className={rowLayout === "inline" ? "ml-auto self-center" : "self-center"} />
+          <HeadlineStickers
+            stickerSize={isWideLayout && isTerminalBand ? "hero" : "headline"}
+            className={rowLayout === "inline" ? "ml-auto self-center" : "self-center"}
+          />
         )}
       </div>
       {description.panel}

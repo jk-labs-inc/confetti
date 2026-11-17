@@ -4,6 +4,7 @@ import ContestParameters from "@components/_pages/Contest/Parameters";
 import ContestRewards from "@components/_pages/Contest/Rewards";
 import { Tab } from "@components/_pages/Contest/components/Tabs";
 import PreVoteContestTab from "@components/_pages/Contest/PreVote/PreVoteContestTab";
+import PreVotePhoneTab from "@components/_pages/Contest/PreVote/PreVotePhoneTab";
 import { MOBILE_MAX_WIDTH_PX } from "@helpers/isMobileViewport";
 import { FC, ReactNode } from "react";
 import { useMediaQuery } from "react-responsive";
@@ -15,6 +16,7 @@ interface ContestTabsContentProps {
   showVoteRail: boolean;
   showMarketRail: boolean;
   isPreVoteSplit: boolean;
+  isPreVotePhone: boolean;
   needsRewardsDeploy: boolean;
 }
 
@@ -23,6 +25,7 @@ const ContestTabsContent: FC<ContestTabsContentProps> = ({
   showVoteRail,
   showMarketRail,
   isPreVoteSplit,
+  isPreVotePhone,
   needsRewardsDeploy,
 }) => {
   const isMobile = useMediaQuery({ maxWidth: MOBILE_MAX_WIDTH_PX });
@@ -38,6 +41,9 @@ const ContestTabsContent: FC<ContestTabsContentProps> = ({
         }
         if (isPreVoteSplit) {
           return <PreVoteContestTab />;
+        }
+        if (isPreVotePhone) {
+          return <PreVotePhoneTab />;
         }
         return (
           <>

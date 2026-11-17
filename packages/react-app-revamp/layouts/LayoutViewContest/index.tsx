@@ -28,6 +28,7 @@ import LayoutViewContestError from "./components/Error";
 import ReadOnlyBanner from "./components/ReadOnlyBanner";
 import { getContestImageUrl } from "./helpers/getContestImageUrl";
 import { useHasNoEntries } from "./hooks/useEntriesReady";
+import { useIsPreVotePhone } from "./hooks/useIsPreVotePhone";
 import { useIsPreVoteSplit } from "./hooks/useIsPreVoteSplit";
 import { useLayoutViewContest } from "./hooks/useLayoutViewContest";
 
@@ -91,6 +92,7 @@ const LayoutViewContest = () => {
   const needsRewardsDeploy =
     !rewardsModule && (safeCompareVersions(contestConfig.version, SELF_FUND_VERSION) ?? -1) >= 0;
   const isPreVoteSplit = useIsPreVoteSplit() && !showMarketRail && !needsRewardsDeploy;
+  const isPreVotePhone = useIsPreVotePhone() && !showMarketRail && !needsRewardsDeploy;
   const rootClassName = showMarketRail
     ? BAND_ROOT_CLASS_NAME
     : isPreVoteSplit
@@ -116,7 +118,7 @@ const LayoutViewContest = () => {
       contestAuthorEthereumAddress={contestAuthorEthereumAddress}
       contestVersion={contestConfig.version}
       isWideLayout={showMarketRail}
-      showDescriptionToggle={showMarketRail}
+      showDescriptionToggle={showMarketRail || isPreVotePhone}
       showHeadlineStats={!isPreVoteSplit}
     />
   );
@@ -135,7 +137,7 @@ const LayoutViewContest = () => {
             </div>
             {showMarketRail && (
               <MediaQuery maxWidth={MOBILE_MAX_WIDTH_PX}>
-                <ContestClock size="sm" />
+                <ContestClock />
               </MediaQuery>
             )}
           </>
@@ -149,6 +151,7 @@ const LayoutViewContest = () => {
       showVoteRail={showVoteRail}
       showMarketRail={showMarketRail}
       isPreVoteSplit={isPreVoteSplit}
+      isPreVotePhone={isPreVotePhone}
       needsRewardsDeploy={needsRewardsDeploy}
     />
   );
