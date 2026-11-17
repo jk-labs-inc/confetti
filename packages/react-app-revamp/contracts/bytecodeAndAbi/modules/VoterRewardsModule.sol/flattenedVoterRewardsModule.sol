@@ -4946,6 +4946,7 @@ abstract contract Governor is GovernorSorting, GovernorAnalytics {
         IntConstructorArgs intConstructorArgs;
         address jkLabsSplitDestination;
         string contestEntryType;
+        address voteCurrency;
     }
 
     struct ProposalCore {
@@ -4963,6 +4964,7 @@ abstract contract Governor is GovernorSorting, GovernorAnalytics {
         uint256 votingDelay,
         uint256 votingPeriod
     );
+
     event ProposalCreated(uint256 proposalId, address proposer, string proposalDescription);
     event ProposalsDeleted(uint256[] proposalIds);
     event ContestCanceled();
@@ -4975,7 +4977,7 @@ abstract contract Governor is GovernorSorting, GovernorAnalytics {
     address public constant JK_LABS_ADDRESS = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738; // Our hot wallet that we collect revenue to.
     uint256 public constant PRICE_CURVE_UPDATE_INTERVAL = 60; // How often the price curve updates if applicable.
     uint256 public constant COST_ROUNDING_VALUE = 1e12; // Used for rounding costs, means cost to propose or vote can't be less than 1e18/this.
-    string private constant VERSION = "6.23"; // Private as to not clutter the ABI.
+    string private constant VERSION = "6.24"; // Private as to not clutter the ABI.
 
     string public name; // The title of the contest
     string public prompt;
@@ -4993,6 +4995,7 @@ abstract contract Governor is GovernorSorting, GovernorAnalytics {
     uint256 public creatorSplitEnabled; // If 1, half of the jk labs split is sent to the creator; if 0, none of it is.
     address public jkLabsSplitDestination; // Where the jk labs split of revenue goes.
     string public contestEntryType; // What type of entries the contest has (tweet, text, or image).
+    address public voteCurrency; // Address of TIP20 currency being used for voting, zero address if native currency.
 
     uint256[] public proposalIds;
     uint256[] public deletedProposalIds;
@@ -5054,6 +5057,7 @@ abstract contract Governor is GovernorSorting, GovernorAnalytics {
         creatorSplitEnabled = constructorArgs_.intConstructorArgs.creatorSplitEnabled;
         jkLabsSplitDestination = constructorArgs_.jkLabsSplitDestination;
         contestEntryType = constructorArgs_.contestEntryType;
+        voteCurrency = constructorArgs_.voteCurrency;
 
         emit JokeraceCreated(VERSION, name, prompt, creator, contestStart, votingDelay, votingPeriod); // emit upon creation to be able to easily find jokeraces on a chain
     }
@@ -5241,7 +5245,12 @@ abstract contract Governor is GovernorSorting, GovernorAnalytics {
             actionCost = 0;
         }
 
-        if (msg.value != actionCost) revert IncorrectCostSent(msg.value, actionCost);
+        if (voteCurrency == address(0)) {
+            if (msg.value != actionCost) revert IncorrectCostSent(msg.value, actionCost);
+        } else {
+            actionCost = actionCost / (1e12); // TIP-20 tokens always have 6 decimals
+        }
+
         return actionCost;
     }
 
@@ -5251,21 +5260,37 @@ abstract contract Governor is GovernorSorting, GovernorAnalytics {
     function _distributeCost(uint256 actionCost) internal {
         if (actionCost > 0) {
             // Send cost to rewards pool and jk labs split destinations, as well as creator if applicable
-            uint256 sendingToJkLabs = (msg.value * (100 - percentageToRewards)) / 100;
+            uint256 sendingToJkLabs = (actionCost * (100 - percentageToRewards)) / 100;
             if (sendingToJkLabs > 0) {
                 uint256 sendingToCreator = (creatorSplitEnabled == 1) ? (sendingToJkLabs / 2) : 0;
                 if (sendingToCreator > 0) {
-                    Address.sendValue(payable(creator), sendingToCreator);
+                    if (voteCurrency == address(0)) {
+                        Address.sendValue(payable(creator), sendingToCreator);
+                    } else {
+                        IERC20(voteCurrency).transferFrom(msg.sender, creator, sendingToCreator);
+                    }
+
                     emit CreatorPaymentReleased(creator, sendingToCreator);
                 }
 
-                Address.sendValue(payable(jkLabsSplitDestination), sendingToJkLabs - sendingToCreator);
+                if (voteCurrency == address(0)) {
+                    Address.sendValue(payable(jkLabsSplitDestination), sendingToJkLabs - sendingToCreator);
+                } else {
+                    IERC20(voteCurrency)
+                        .transferFrom(msg.sender, jkLabsSplitDestination, sendingToJkLabs - sendingToCreator);
+                }
+
                 emit JkLabsPaymentReleased(jkLabsSplitDestination, sendingToJkLabs - sendingToCreator);
             }
 
-            uint256 sendingToRewards = msg.value - sendingToJkLabs;
+            uint256 sendingToRewards = actionCost - sendingToJkLabs; // rewards pool gets the extra wei in the case of rounding
             if (sendingToRewards > 0) {
-                Address.sendValue(payable(_getOfficialRewardsModule()), sendingToRewards); // rewards pool gets the extra wei in the case of rounding
+                if (voteCurrency == address(0)) {
+                    Address.sendValue(payable(_getOfficialRewardsModule()), sendingToRewards);
+                } else {
+                    IERC20(voteCurrency).transferFrom(msg.sender, _getOfficialRewardsModule(), sendingToRewards);
+                }
+
                 emit RewardsPaymentReleased(_getOfficialRewardsModule(), sendingToRewards);
             }
         }
@@ -5645,7 +5670,7 @@ contract VoterRewardsModule {
     string public constant MODULE_TYPE = "VOTER_REWARDS";
     address public constant JK_LABS_ADDRESS = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738; // Our hot wallet that we collect revenue to.
     uint256 public constant JK_LABS_CANCEL_DELAY = 604800; // One week
-    string private constant VERSION = "6.23"; // Private as to not clutter the ABI
+    string private constant VERSION = "6.24"; // Private as to not clutter the ABI
 
     GovernorCountingSimple public underlyingContest;
     address public creator;
