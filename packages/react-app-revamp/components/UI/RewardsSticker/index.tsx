@@ -46,8 +46,8 @@ const TONE_CLASS_NAMES: Record<RewardsPhase, string> = {
 };
 
 const SHORT_LABELS: Record<RewardsPhase, string> = {
-  upcoming: "to win",
-  live: "to win",
+  upcoming: "in rewards",
+  live: "in rewards",
   ended: "paid out",
 };
 
