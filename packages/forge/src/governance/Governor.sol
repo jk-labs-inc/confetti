@@ -8,7 +8,6 @@ import "@openzeppelin/token/ERC20/IERC20.sol";
 import {UD60x18, ud} from "@prb/math/src/UD60x18.sol";
 import "./utils/GovernorSorting.sol";
 import "./utils/GovernorAnalytics.sol";
-import {console} from "forge-std/console.sol";
 
 /**
  * @dev Core of the governance system, designed to be extended though various modules.
