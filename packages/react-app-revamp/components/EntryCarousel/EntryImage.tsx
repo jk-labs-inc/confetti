@@ -1,4 +1,5 @@
 import useIsomorphicLayoutEffect from "@hooks/useIsomorphicLayoutEffect";
+import { recallImageAspectRatio, rememberImageAspectRatio } from "lib/image/aspectRatioRegistry";
 import {
   buildCloudflareImageUrl,
   CAROUSEL_BACKDROP_IMAGE_PRESET,
@@ -12,8 +13,6 @@ interface EntryImageProps {
   src: string;
   fetchPriority?: "high" | "low" | "auto";
 }
-
-const ratioCache = new Map<string, number>();
 
 const LETTERBOX_SCALE_PCT = 100 / CARD_IMAGE_MIN_VISIBLE;
 const LETTERBOX_OFFSET_PCT = (100 - LETTERBOX_SCALE_PCT) / 2;
@@ -42,7 +41,7 @@ const edgeFadeMask = (imageRatio: number, boxRatio: number): string | undefined 
 const EntryImage: FC<EntryImageProps> = ({ src, fetchPriority = "auto" }) => {
   const boxRef = useRef<HTMLDivElement>(null);
   const [boxRatio, setBoxRatio] = useState<number | null>(null);
-  const [imageRatio, setImageRatio] = useState<number | null>(() => ratioCache.get(src) ?? null);
+  const [imageRatio, setImageRatio] = useState<number | null>(() => recallImageAspectRatio(src) ?? null);
   const [failed, setFailed] = useState(false);
 
   useIsomorphicLayoutEffect(() => {
@@ -70,7 +69,7 @@ const EntryImage: FC<EntryImageProps> = ({ src, fetchPriority = "auto" }) => {
   const measure = (img: HTMLImageElement | null) => {
     if (img?.complete && img.naturalWidth && img.naturalHeight) {
       const ratio = img.naturalWidth / img.naturalHeight;
-      ratioCache.set(src, ratio);
+      rememberImageAspectRatio(src, ratio);
       setImageRatio(ratio);
     }
   };

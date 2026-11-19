@@ -15,6 +15,7 @@ interface ContestHeaderProps {
   contestVersion: string;
   isWideLayout: boolean;
   showDescriptionToggle: boolean;
+  showHeadlineStats: boolean;
 }
 
 const ContestHeader: FC<ContestHeaderProps> = props => {

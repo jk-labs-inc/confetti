@@ -7,11 +7,16 @@ import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/s
 import useTotalVotesCastOnContest from "@hooks/useTotalVotesCastOnContest";
 import { useWallet } from "@hooks/useWallet";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { FC, useState } from "react";
 import { useShallow } from "zustand/shallow";
+import { META_LINK_ICON_CLASS_NAME } from "../ContestName/constants";
 import CancelContestModal from "./components/Modal";
 
-const CancelContest = () => {
+interface CancelContestProps {
+  variant?: "icon" | "link";
+}
+
+const CancelContest: FC<CancelContestProps> = ({ variant = "icon" }) => {
   const pathname = usePathname();
   const { address: contestAddress, chainName } = extractPathSegments(pathname);
   const contestChainId = getChainId(chainName);
@@ -53,9 +58,20 @@ const CancelContest = () => {
 
   return (
     <>
-      <button disabled={isLoading} onClick={handleOpenModal}>
-        <TrashIcon className="w-6 h-6 text-negative-11 hover:text-negative-10 transition-colors duration-300 ease-in-out" />
-      </button>
+      {variant === "link" ? (
+        <button
+          disabled={isLoading}
+          onClick={handleOpenModal}
+          className="flex shrink-0 items-center gap-1.5 text-negative-11 hover:text-negative-10 transition-colors duration-150"
+        >
+          <TrashIcon className={META_LINK_ICON_CLASS_NAME} strokeWidth={2} />
+          cancel
+        </button>
+      ) : (
+        <button disabled={isLoading} onClick={handleOpenModal}>
+          <TrashIcon className="w-6 h-6 text-negative-11 hover:text-negative-10 transition-colors duration-300 ease-in-out" />
+        </button>
+      )}
 
       <CancelContestModal
         isCloseContestModalOpen={isCloseContestModalOpen}

@@ -20,3 +20,6 @@ export const isAnyMetadataFieldEmpty = (fields: MetadataFieldWithInput[]): boole
   if (fields.length === 0) return false;
   return fields.some(field => field.inputValue === "");
 };
+
+export const buildImageAndTitleValue = (imageUrl: string, title: string): string =>
+  `JOKERACE_IMG=${encodeURIComponent(imageUrl.trim())}&JOKERACE_IMG_TITLE=${encodeURIComponent(title.trim())}`;
