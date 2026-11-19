@@ -7,6 +7,7 @@ import useEditContestPrompt from "@hooks/useEditContestPrompt";
 import { parsePrompt } from "../../../Prompt/utils";
 import { switchChain } from "@wagmi/core";
 import { FC, useState } from "react";
+import { META_LINK_CLASS_NAME, META_LINK_ICON_CLASS_NAME } from "../../constants";
 import { useWallet } from "@hooks/useWallet";
 import { useShallow } from "zustand/shallow";
 import EditContestNameModal from "./components/Modal";
@@ -18,9 +19,16 @@ interface EditContestNameProps {
   canEditTitle: boolean;
   contestPrompt?: string;
   contestImageUrl?: string;
+  variant?: "icon" | "link";
 }
 
-const EditContestName: FC<EditContestNameProps> = ({ contestName, canEditTitle, contestPrompt, contestImageUrl }) => {
+const EditContestName: FC<EditContestNameProps> = ({
+  contestName,
+  canEditTitle,
+  contestPrompt,
+  contestImageUrl,
+  variant = "icon",
+}) => {
   const {
     userAddress,
     chain: { name: accountChain },
@@ -96,9 +104,16 @@ const EditContestName: FC<EditContestNameProps> = ({ contestName, canEditTitle, 
 
   return (
     <>
-      <button onClick={handleOpenModal}>
-        <PencilSquareIcon className="w-6 h-6 text-neutral-11 hover:text-neutral-10 transition-colors duration-300 ease-in-out" />
-      </button>
+      {variant === "link" ? (
+        <button onClick={handleOpenModal} className={META_LINK_CLASS_NAME}>
+          <PencilSquareIcon className={META_LINK_ICON_CLASS_NAME} strokeWidth={2} />
+          edit
+        </button>
+      ) : (
+        <button onClick={handleOpenModal}>
+          <PencilSquareIcon className="w-6 h-6 text-neutral-11 hover:text-neutral-10 transition-colors duration-300 ease-in-out" />
+        </button>
+      )}
 
       <EditContestNameModal
         contestName={contestName}

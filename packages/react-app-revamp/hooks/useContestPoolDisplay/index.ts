@@ -1,23 +1,22 @@
-import { formatBalance } from "@helpers/formatBalance";
 import { useCancelRewards } from "@hooks/useCancelRewards";
 import useContestConfigStore from "@hooks/useContestConfig/store";
-import { useCurrencyStore } from "@hooks/useCurrency/store";
-import useTotalRewardsUsd, { toRewardTokenItems } from "@hooks/useCurrency/useTotalRewardsUsd";
+import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
+import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
+import { toRewardTokenItems } from "@hooks/useCurrency/useTotalRewardsUsd";
 import useRewardsModule from "@hooks/useRewards";
 import { useTotalRewards } from "@hooks/useTotalRewards";
-import { ModuleType } from "lib/rewards/types";
+import { ModuleType, RewardsPhase } from "lib/rewards/types";
 import { useMemo } from "react";
 import { Abi } from "viem";
 import { useShallow } from "zustand/shallow";
+import { ContestPoolDisplay } from "./types";
 
-export type PoolRecipientsLabel = "voters" | "entrants";
-
-export interface ContestPoolDisplay {
-  amountLabel: string | null;
-  recipientsLabel: PoolRecipientsLabel;
-  hasRewards: boolean;
-  isLoading: boolean;
-}
+const PHASE_BY_CONTEST_STATUS: Record<ContestStatus, RewardsPhase> = {
+  [ContestStatus.ContestOpen]: "upcoming",
+  [ContestStatus.SubmissionOpen]: "upcoming",
+  [ContestStatus.VotingOpen]: "live",
+  [ContestStatus.VotingClosed]: "ended",
+};
 
 export const useContestPoolDisplay = (): ContestPoolDisplay => {
   const { chainId, chainName, version } = useContestConfigStore(
@@ -27,7 +26,8 @@ export const useContestPoolDisplay = (): ContestPoolDisplay => {
       version: state.contestConfig.version,
     })),
   );
-  const displayCurrency = useCurrencyStore(state => state.displayCurrency);
+  const contestStatus = useContestStatusStore(state => state.contestStatus);
+  const isContestCanceled = useContestStateStore(state => state.contestState === ContestStateEnum.Canceled);
   const { data: rewards, isLoading: isRewardsLoading, isSuccess: isRewardsSuccess, isError } = useRewardsModule();
   const {
     isCanceled,
@@ -50,25 +50,21 @@ export const useContestPoolDisplay = (): ContestPoolDisplay => {
     rewardsModuleAddress: rewards?.contractAddress as `0x${string}`,
     rewardsModuleAbi: rewards?.abi as Abi,
     chainId,
-    enabled: hasValidModule,
+    enabled: hasValidModule && !isContestCanceled,
   });
 
   const tokenItems = useMemo(() => toRewardTokenItems(totalRewards), [totalRewards]);
 
-  const totalUsd = useTotalRewardsUsd(tokenItems, chainName);
-  const hasRewards = hasValidModule && !isTotalRewardsError && tokenItems.length > 0;
-  const firstToken = tokenItems[0];
-  const amountLabel = !hasRewards
-    ? null
-    : displayCurrency === "usd" && totalUsd !== null
-      ? `$${totalUsd}`
-      : `${formatBalance(firstToken.value)} $${firstToken.symbol.toUpperCase()}`;
+  if (isContestCanceled) return { status: "empty" };
+  if (isRewardsLoading || isCancelLoading || (hasValidModule && isTotalRewardsLoading)) return { status: "loading" };
+  if (!hasValidModule || !rewards || isTotalRewardsError || tokenItems.length === 0) return { status: "empty" };
 
   return {
-    amountLabel,
-    recipientsLabel: rewards?.moduleType === ModuleType.VOTER_REWARDS ? "voters" : "entrants",
-    hasRewards,
-    isLoading: isRewardsLoading || isCancelLoading || (hasValidModule && isTotalRewardsLoading),
+    status: "ready",
+    tokenItems,
+    chainName,
+    phase: PHASE_BY_CONTEST_STATUS[contestStatus],
+    audience: rewards.moduleType === ModuleType.VOTER_REWARDS ? "voters" : "entrants",
   };
 };
 
