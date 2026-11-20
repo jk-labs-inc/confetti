@@ -9,7 +9,11 @@ export const tempoTestnet: ChainWithIcon = {
   nativeCurrency: TEMPO_WALLET_CURRENCY,
   rpcUrls: {
     public: { http: ["https://rpc.moderato.tempo.xyz"] },
-    default: { http: ["https://rpc.moderato.tempo.xyz"] },
+    default: {
+      http: [
+        `https://${process.env.NEXT_PUBLIC_QUICKNODE_SLUG}.tempo-testnet.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}`,
+      ],
+    },
   },
   blockExplorers: {
     etherscan: { name: "Tempo Testnet Explorer", url: "https://explore.testnet.tempo.xyz/" },
@@ -18,5 +22,6 @@ export const tempoTestnet: ChainWithIcon = {
   contracts: { ...tempoModerato.contracts, multicall3: TEMPO_MULTICALL3 },
   voteToken: OUSD,
   transactionGasCap: TEMPO_TRANSACTION_GAS_CAP,
+  isContestDescriptionOptional: true,
   testnet: true,
 };

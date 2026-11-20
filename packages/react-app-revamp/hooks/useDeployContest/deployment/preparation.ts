@@ -28,12 +28,16 @@ export const preparePromptData = (prompt: {
   contactDetails?: string;
   imageUrl?: string;
 }) => {
-  return new URLSearchParams({
+  const fields = {
     summarize: prompt.summarize,
     evaluateVoters: prompt.evaluateVoters,
     contactDetails: prompt.contactDetails ?? "",
     imageUrl: prompt.imageUrl ?? "",
-  }).toString();
+  };
+
+  if (Object.values(fields).every(field => !field)) return "";
+
+  return new URLSearchParams(fields).toString();
 };
 
 export const fetchJkLabsSplitDestination = async (chainId: number, chargeType: { costToVote: number }) => {

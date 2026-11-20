@@ -20,7 +20,11 @@ export const tempo: ChainWithIcon = {
   nativeCurrency: TEMPO_WALLET_CURRENCY,
   rpcUrls: {
     public: { http: ["https://rpc.tempo.xyz"] },
-    default: { http: ["https://rpc.tempo.xyz"] },
+    default: {
+      http: [
+        `https://${process.env.NEXT_PUBLIC_QUICKNODE_SLUG}.tempo-mainnet.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_KEY}`,
+      ],
+    },
   },
   blockExplorers: {
     etherscan: { name: "Tempo Explorer", url: "https://explore.tempo.xyz/" },
@@ -29,4 +33,5 @@ export const tempo: ChainWithIcon = {
   contracts: { ...viemTempo.contracts, multicall3: TEMPO_MULTICALL3 },
   voteToken: OUSD,
   transactionGasCap: TEMPO_TRANSACTION_GAS_CAP,
+  isContestDescriptionOptional: true,
 };

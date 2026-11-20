@@ -1,4 +1,5 @@
 import { getTimeZoneAbbreviation } from "@helpers/dates";
+import { Guidance, Prompt } from "@hooks/useDeployContest/slices/contestInfoSlice";
 import { PriceCurveType } from "@hooks/useDeployContest/types";
 import moment from "moment";
 
@@ -41,4 +42,29 @@ export const generateDynamicSummary = (priceCurveType: PriceCurveType, votingOpe
   }
 
   return result;
+};
+
+interface GuidanceSeeding {
+  prompt: Prompt;
+  seededGuidance: Guidance;
+}
+
+export const reseedUntouchedGuidance = (
+  { prompt, seededGuidance }: GuidanceSeeding,
+  guidance: Guidance,
+): GuidanceSeeding => {
+  const isEvaluateVotersUntouched = prompt.evaluateVoters === seededGuidance.evaluateVoters;
+  const isContactDetailsUntouched = (prompt.contactDetails ?? "") === seededGuidance.contactDetails;
+
+  return {
+    prompt: {
+      ...prompt,
+      evaluateVoters: isEvaluateVotersUntouched ? guidance.evaluateVoters : prompt.evaluateVoters,
+      contactDetails: isContactDetailsUntouched ? guidance.contactDetails : prompt.contactDetails,
+    },
+    seededGuidance: {
+      evaluateVoters: isEvaluateVotersUntouched ? guidance.evaluateVoters : seededGuidance.evaluateVoters,
+      contactDetails: isContactDetailsUntouched ? guidance.contactDetails : seededGuidance.contactDetails,
+    },
+  };
 };

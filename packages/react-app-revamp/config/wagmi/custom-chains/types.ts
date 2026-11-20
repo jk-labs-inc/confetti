@@ -12,5 +12,6 @@ export type ChainWithIcon = Chain & {
   iconUrl?: string;
   voteToken?: ChainVoteToken;
   transactionGasCap?: bigint;
+  isContestDescriptionOptional?: boolean;
   feeToken?: never;
 };
