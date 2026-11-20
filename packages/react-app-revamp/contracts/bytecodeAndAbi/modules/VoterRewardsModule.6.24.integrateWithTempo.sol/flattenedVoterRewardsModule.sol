@@ -5220,17 +5220,25 @@ abstract contract Governor is GovernorSorting, GovernorAnalytics {
                 * ud(100 * 1e18); // percentage as whole number so curve is 0 to 100
         UD60x18 xTimesMultiple = percentThroughVotingPeriod * (ud(multiple) / ud(1e18));
 
+        uint256 currentPrice;
+
         if (PriceCurveTypes(priceCurveType) == PriceCurveTypes.Exponential) {
             UD60x18 curvePosition = xTimesMultiple.exp2_2();
             uint256 result = ((ud(costToVote) / ud(1e18)) * curvePosition).intoUint256_3(); // c * 2^bx where b is multiple and c is starting price
-            return (result / COST_ROUNDING_VALUE) * COST_ROUNDING_VALUE; // round to keep things clean on frontend
+            currentPrice = (result / COST_ROUNDING_VALUE) * COST_ROUNDING_VALUE; // round to keep things clean on frontend
         } else if (PriceCurveTypes(priceCurveType) == PriceCurveTypes.Logarithmic) {
             UD60x18 curvePosition = (xTimesMultiple + ud(1 * 1e18)).log10_1();
             uint256 result = (curvePosition + (ud(costToVote) / ud(1e18))).intoUint256_3(); // log(bx + 1) + c where b is multiple and c is starting price
-            return (result / COST_ROUNDING_VALUE) * COST_ROUNDING_VALUE; // round to keep things clean on frontend
+            currentPrice = (result / COST_ROUNDING_VALUE) * COST_ROUNDING_VALUE; // round to keep things clean on frontend
         } else {
-            return costToVote;
+            currentPrice = costToVote;
         }
+
+        if (voteCurrency != address(0)) {
+            currentPrice = currentPrice / (1e12); // TIP-20 tokens always have 6 decimals
+        }
+
+        return currentPrice;
     }
 
     /**
@@ -5247,8 +5255,6 @@ abstract contract Governor is GovernorSorting, GovernorAnalytics {
 
         if (voteCurrency == address(0)) {
             if (msg.value != actionCost) revert IncorrectCostSent(msg.value, actionCost);
-        } else {
-            actionCost = actionCost / (1e12); // TIP-20 tokens always have 6 decimals
         }
 
         return actionCost;

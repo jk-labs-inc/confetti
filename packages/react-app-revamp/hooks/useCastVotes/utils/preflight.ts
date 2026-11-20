@@ -1,4 +1,5 @@
 import { Config, readContract } from "@wagmi/core";
+import { toPriceUnits, VoteCurrency } from "lib/voteCurrency";
 import { VoteQuoteOutdatedError } from "utils/error/voteQuote";
 import { Abi } from "viem";
 
@@ -11,9 +12,12 @@ interface QuotedContest {
 export async function assertVoteQuoteStillHolds(
   config: Config,
   contest: QuotedContest,
+  voteCurrency: VoteCurrency,
   quotedPricePerVote: bigint,
 ): Promise<void> {
   const currentPricePerVote = await readContract(config, { ...contest, functionName: "currentPricePerVote" });
 
-  if (currentPricePerVote !== quotedPricePerVote) throw new VoteQuoteOutdatedError();
+  if (toPriceUnits(voteCurrency, currentPricePerVote as bigint) !== quotedPricePerVote) {
+    throw new VoteQuoteOutdatedError();
+  }
 }

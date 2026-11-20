@@ -158,7 +158,7 @@ export function useCastVotes({ charge, votesClose, inlineOverlay }: UseCastVotes
         voter: getAccount(getWagmiConfig()).address ?? (userAddress as `0x${string}`),
         cost: estimatedCost,
         onApprovalNeeded: async () => {
-          await assertVoteQuoteStillHolds(getWagmiConfig(), contestContract, pricePerVoteRaw);
+          await assertVoteQuoteStillHolds(getWagmiConfig(), contestContract, voteCurrency, pricePerVoteRaw);
           if (!isSilent) showApprovalStep(overlayPlacement, voteCurrency.symbol);
         },
       });
