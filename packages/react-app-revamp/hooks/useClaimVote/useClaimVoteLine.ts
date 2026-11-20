@@ -2,7 +2,7 @@ import { usePickedEntryPreview } from "@components/Voting/hooks/usePickedEntryPr
 import { useVotingStore } from "@components/Voting/store";
 import { useCastVotesStore } from "@hooks/useCastVotes/store";
 import useContestConfigStore from "@hooks/useContestConfig/store";
-import useNativeRates from "@hooks/useCurrency/useNativeRates";
+import useVoteCurrencyUsdRate from "@hooks/useCurrency/useVoteCurrencyUsdRate";
 import { creditGate } from "lib/claimVote/sizing";
 import type { ClaimVoteLine } from "lib/claimVote/types";
 import { claimVoteLine } from "lib/claimVote/view";
@@ -27,14 +27,14 @@ export const useClaimVoteLine = ({
   const facts = useClaimVoteFacts({ enabled: hasRun, pollUntil: null });
   const address = walletAddressOf(facts.wallet)?.toLowerCase();
   const isOfferHidden = useHiddenOfferStore(state => !!address && state.wallets.includes(address));
-  const nativeSymbol = useContestConfigStore(state => state.contestConfig.chainNativeCurrencySymbol);
-  const { data: nativeRates } = useNativeRates();
+  const voteCurrency = useContestConfigStore(state => state.contestConfig.voteCurrency);
+  const { rate: voteCurrencyUsdRate } = useVoteCurrencyUsdRate(voteCurrency);
   const pickedProposal = useCastVotesStore(state => state.pickedProposal);
   const { title } = usePickedEntryPreview();
 
   const gate = creditGate({
     creditUsd: facts.spots?.usdAmount ?? null,
-    nativeUsdRate: nativeSymbol ? nativeRates?.[nativeSymbol.toLowerCase()] : undefined,
+    nativeUsdRate: voteCurrencyUsdRate,
     pricePerVoteNative,
   });
   const derived = hasRun ? claimVoteLine({ run, facts, gate }) : HIDDEN_LINE;

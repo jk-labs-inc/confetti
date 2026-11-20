@@ -1,11 +1,13 @@
 import { useTotalRewards } from "@hooks/useTotalRewards";
 import useContestConfigStore from "@hooks/useContestConfig/store";
-import useDisplayPrice from "@hooks/useCurrency/useDisplayPrice";
+import useRewardDisplayPrice from "@hooks/useRewards/useRewardDisplayPrice";
 import { FC } from "react";
 import { formatUnits } from "viem";
 import Skeleton from "react-loading-skeleton";
 import RewardsError from "@components/_pages/Contest/Rewards/modules/shared/Error";
+import { isPotUnfunded } from "lib/rewards/pot";
 import { RewardModuleInfo } from "lib/rewards/types";
+import { chainHasNativeCoin } from "lib/voteCurrency";
 
 const RewardAmount: FC<{ value: bigint; decimals: number; symbol: string; tokenAddress?: string }> = ({
   value,
@@ -15,11 +17,20 @@ const RewardAmount: FC<{ value: bigint; decimals: number; symbol: string; tokenA
 }) => {
   const { contestConfig } = useContestConfigStore(state => state);
   const nativeRaw = formatUnits(value, decimals);
-  const { displayValue, displaySymbol, isLoading } = useDisplayPrice(nativeRaw, symbol, tokenAddress, contestConfig.chainName);
+  const { displayValue, displaySymbol, isLoading } = useRewardDisplayPrice(
+    nativeRaw,
+    symbol,
+    tokenAddress,
+    contestConfig.chainName,
+  );
 
   if (isLoading) return <Skeleton width={60} height={16} baseColor="#706f78" highlightColor="#FFE25B" inline />;
   if (displaySymbol === "$") return <>${displayValue}</>;
-  return <span className="uppercase">{displayValue} {displaySymbol}</span>;
+  return (
+    <span className="uppercase">
+      {displayValue} {displaySymbol}
+    </span>
+  );
 };
 
 interface RewardsParametersTokensProps {
@@ -51,21 +62,27 @@ const RewardsParametersTokens: FC<RewardsParametersTokensProps> = ({ rewardsStor
     return <RewardsError onRetry={refetch} />;
   }
 
-  if (totalRewards && !totalRewards.native.value && Object.keys(totalRewards.tokens).length === 0) {
+  if (totalRewards && isPotUnfunded(chainId, totalRewards)) {
     return null;
   }
 
   const renderRewardsList = () => {
     if (!totalRewards) return null;
 
+    const nativeRewards = chainHasNativeCoin(chainId)
+      ? [
+          {
+            key: "native",
+            value: totalRewards.native.value,
+            decimals: totalRewards.native.decimals,
+            symbol: totalRewards.native.symbol,
+            tokenAddress: undefined,
+          },
+        ]
+      : [];
+
     const allRewards = [
-      {
-        key: "native",
-        value: totalRewards.native.value,
-        decimals: totalRewards.native.decimals,
-        symbol: totalRewards.native.symbol,
-        tokenAddress: undefined,
-      },
+      ...nativeRewards,
       ...Object.entries(totalRewards.tokens).map(([address, token]) => ({
         key: address,
         value: token.value,

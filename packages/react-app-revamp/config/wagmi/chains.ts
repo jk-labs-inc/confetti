@@ -9,6 +9,8 @@ import { mainnet } from "./custom-chains/mainnet";
 import { monad } from "./custom-chains/monad";
 import { polygon } from "./custom-chains/polygon";
 import { sepolia } from "./custom-chains/sepolia";
+import { tempo } from "./custom-chains/tempo";
+import { tempoTestnet } from "./custom-chains/tempoTestnet";
 import { world } from "./custom-chains/world";
 
 export type { ChainWithIcon };
@@ -29,6 +31,8 @@ export const chains: readonly [ChainWithIcon, ...ChainWithIcon[]] = [
   monad,
   sepolia,
   baseTestnet,
+  tempo,
+  tempoTestnet,
 ];
 
 // Transport creation

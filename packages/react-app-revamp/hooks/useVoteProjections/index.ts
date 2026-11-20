@@ -16,6 +16,7 @@ import {
   validateWinUpToData,
   votesFromSpend,
 } from "lib/voteProjections";
+import { votePotAmount } from "lib/voteCurrency";
 import { Abi, Address } from "viem";
 import { useShallow } from "zustand/shallow";
 
@@ -123,7 +124,7 @@ export const useVoteProjections = ({
         entryVotes: standing.entryVotes,
         newVotes: projectedVotes,
         pricePerVote: price,
-        currentPoolNative: Number(totalRewards?.native.formatted ?? "0"),
+        currentPoolNative: votePotAmount(contestConfig.voteCurrency, totalRewards),
         percentageToRewards: pricing.percentageToRewards,
         firstPlaceSharePercentage: firstShare,
       });

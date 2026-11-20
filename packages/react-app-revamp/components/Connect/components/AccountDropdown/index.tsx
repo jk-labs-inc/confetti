@@ -8,11 +8,13 @@ import { useAddFundsChain } from "@hooks/useAddFundsChain";
 import { useHiddenOfferRestore } from "@hooks/useClaimVote/useHiddenOfferRestore";
 import { useWalletCreditHint } from "@hooks/useClaimVote/useWalletCreditHint";
 import { useSwitchAccount } from "@hooks/useSwitchAccount";
+import { useVoteCurrencyBalance } from "@hooks/useVoteCurrencyBalance";
 import { useWallet } from "@hooks/useWallet";
 import { chains } from "@config/wagmi";
+import { findChainVoteCurrency } from "lib/voteCurrency";
 import { FC, useState } from "react";
 import { mainnet } from "viem/chains";
-import { useEnsAvatar, useEnsName, useBalance } from "wagmi";
+import { useEnsAvatar, useEnsName } from "wagmi";
 import AccountButton from "./components/AccountButton";
 import ProfileSection from "./components/ProfileSection";
 import NavigationLinks from "./components/NavigationLinks";
@@ -33,7 +35,12 @@ const AccountDropdown: FC<AccountDropdownProps> = ({ address, displayName, onDis
   const { chain: currentChain, changeNetworks } = useWallet();
   const { data: ensName } = useEnsName({ address: address as `0x${string}`, chainId: mainnet.id });
   const { data: ensAvatar } = useEnsAvatar({ name: ensName as string, chainId: mainnet.id });
-  const { data: balance } = useBalance({ address: address as `0x${string}` });
+  const walletCurrency = findChainVoteCurrency(currentChain?.id);
+  const { balance } = useVoteCurrencyBalance({
+    voteCurrency: walletCurrency,
+    chainId: currentChain?.id,
+    owner: address as `0x${string}`,
+  });
   const { openAddFunds } = useAddFunds({ chain: chainName });
   const creditSpots = useWalletCreditHint();
   const restoreOffer = useHiddenOfferRestore();

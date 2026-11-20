@@ -4,7 +4,10 @@ import VoterStatistics from "@components/_pages/Contest/Rewards/modules/Voters/P
 import { Reward } from "@components/_pages/Contest/Rewards/types";
 import GradientText from "@components/UI/GradientText";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
+import useContestConfigStore from "@hooks/useContestConfig/store";
+import { peggedRewardTokenAddress } from "lib/rewards/valuation";
 import { FC, useState } from "react";
+import { useShallow } from "zustand/shallow";
 
 interface RewardItemProps {
   reward: Reward;
@@ -14,7 +17,7 @@ interface RewardItemProps {
   isRankClaimed: (rank: number) => boolean;
   isClaimSuccess?: (rank: number, tokenAddress: string) => boolean;
   isAdditionalStatisticsSupported?: boolean;
-  onClaim: (rank: number, value: bigint, tokenAddress: string) => void;
+  onClaim: (rank: number, reward: Reward) => void;
 }
 
 const RewardItem: FC<RewardItemProps> = ({
@@ -28,6 +31,7 @@ const RewardItem: FC<RewardItemProps> = ({
   onClaim,
 }) => {
   const [showAdditionalStatistics, setShowAdditionalStatistics] = useState(false);
+  const chainName = useContestConfigStore(useShallow(state => state.contestConfig.chainName));
 
   const renderClaimStatus = () => {
     if (isActive) {
@@ -49,13 +53,20 @@ const RewardItem: FC<RewardItemProps> = ({
       );
     }
 
-    return <RewardsClaimButton onClick={() => onClaim(rank, reward.value, reward.address)} isLoading={isLoading} />;
+    return <RewardsClaimButton onClick={() => onClaim(rank, reward)} isLoading={isLoading} />;
   };
 
   return (
     <div className="flex flex-col gap-4">
       <div className="flex justify-between items-center">
-        <RewardsNumberDisplay value={reward.value} symbol={reward.symbol} decimals={reward.decimals} index={0} />
+        <RewardsNumberDisplay
+          value={reward.value}
+          symbol={reward.symbol}
+          decimals={reward.decimals}
+          index={0}
+          tokenAddress={peggedRewardTokenAddress(chainName, reward.address)}
+          chainName={chainName}
+        />
         {isAdditionalStatisticsSupported ? (
           <button onClick={() => setShowAdditionalStatistics(!showAdditionalStatistics)}>
             <ChevronDownIcon
@@ -70,7 +81,12 @@ const RewardItem: FC<RewardItemProps> = ({
         {showAdditionalStatistics ? (
           <VoterStatistics
             ranking={rank}
-            myReward={{ value: reward.value, symbol: reward.symbol, decimals: reward.decimals }}
+            myReward={{
+              value: reward.value,
+              symbol: reward.symbol,
+              decimals: reward.decimals,
+              address: reward.address,
+            }}
             isActive={isActive}
           />
         ) : null}

@@ -2,30 +2,27 @@ import { chains } from "@config/wagmi";
 import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import { getTokenBalanceValue } from "@helpers/getTokenBalance";
 import { getBalance, readContract, readContracts } from "@wagmi/core";
+import { chainHasNativeCoin, findChainVoteCurrency } from "lib/voteCurrency";
 import { Abi, Address, erc20Abi, formatUnits } from "viem";
 import { getTokenAddresses } from "../database";
-import { ContractQuery, TokenData, TotalRewardsData } from "../types";
+import { assertPotIncludesVoteToken } from "../pot";
+import { ContractQuery, TokenData, TotalRewardsData, TotalRewardsLookup } from "../types";
 
-/**
- * Fetches total rewards for a rewards module
- * @param rewardsModuleAddress address of the rewards module
- * @param rewardsModuleAbi ABI of the rewards module
- * @param chainId chain ID
- * @returns total rewards data (native and erc20 tokens)
- */
-export async function fetchTotalRewards({
-  rewardsModuleAddress,
-  rewardsModuleAbi,
-  chainId,
-}: {
-  rewardsModuleAddress: Address;
-  rewardsModuleAbi: Abi;
-  chainId: number;
-}): Promise<TotalRewardsData> {
-  const nativeBalance = await getBalance(getWagmiConfig(), {
+const readNativePotBalance = async (rewardsModuleAddress: Address, chainId: number) => {
+  if (!chainHasNativeCoin(chainId)) return { value: 0n, symbol: findChainVoteCurrency(chainId)?.symbol };
+
+  return getBalance(getWagmiConfig(), {
     address: rewardsModuleAddress,
     chainId,
   });
+};
+
+async function readTotalRewards({
+  rewardsModuleAddress,
+  rewardsModuleAbi,
+  chainId,
+}: TotalRewardsLookup): Promise<TotalRewardsData> {
+  const nativeBalance = await readNativePotBalance(rewardsModuleAddress, chainId);
 
   let nativeTotalReleased = 0n;
   const tokensData: Record<string, TokenData> = {};
@@ -38,15 +35,18 @@ export async function fetchTotalRewards({
       const networkName = chain.name.toLowerCase();
       const tokenAddresses = (await getTokenAddresses(rewardsModuleAddress, networkName)) as Address[];
 
-      const contractCalls: ContractQuery[] = [
-        {
-          address: rewardsModuleAddress,
-          abi: rewardsModuleAbi,
-          functionName: "totalReleased",
-          chainId,
-          args: [],
-        },
-      ];
+      const nativeCalls: ContractQuery[] = chainHasNativeCoin(chainId)
+        ? [
+            {
+              address: rewardsModuleAddress,
+              abi: rewardsModuleAbi,
+              functionName: "totalReleased",
+              chainId,
+              args: [],
+            },
+          ]
+        : [];
+      const contractCalls: ContractQuery[] = [...nativeCalls];
 
       // add ERC20 token calls if we have token addresses
       if (tokenAddresses && tokenAddresses.length > 0) {
@@ -81,7 +81,7 @@ export async function fetchTotalRewards({
         contracts: contractCalls,
       });
 
-      nativeTotalReleased = (contractResults[0].result as bigint) || 0n;
+      nativeTotalReleased = nativeCalls.length > 0 ? (contractResults[0].result as bigint) || 0n : 0n;
       const nativeTotal = nativeBalance.value + nativeTotalReleased;
 
       if (tokenAddresses && tokenAddresses.length > 0) {
@@ -97,7 +97,7 @@ export async function fetchTotalRewards({
 
         for (let i = 0; i < tokenAddresses.length; i++) {
           const tokenAddress = tokenAddresses[i];
-          const resultBaseIndex = 1 + i * 3;
+          const resultBaseIndex = nativeCalls.length + i * 3;
 
           const tokenTotalReleasedResult = contractResults[resultBaseIndex];
           const symbolResult = contractResults[resultBaseIndex + 1];
@@ -155,6 +155,20 @@ export async function fetchTotalRewards({
     },
     tokens: tokensData,
   };
+}
+
+/**
+ * Fetches total rewards for a rewards module
+ * @param rewardsModuleAddress address of the rewards module
+ * @param rewardsModuleAbi ABI of the rewards module
+ * @param chainId chain ID
+ * @returns total rewards data (native and erc20 tokens)
+ */
+export async function fetchTotalRewards(lookup: TotalRewardsLookup): Promise<TotalRewardsData> {
+  const totalRewards = await readTotalRewards(lookup);
+  assertPotIncludesVoteToken(lookup.chainId, totalRewards);
+
+  return totalRewards;
 }
 
 /**
@@ -240,6 +254,8 @@ export async function fetchTotalRewardsForRank({
     };
   } catch (error) {
     console.error("Error fetching rewards for ranking:", error);
+
+    if (!chainHasNativeCoin(chainId)) throw error;
 
     return {
       native: {

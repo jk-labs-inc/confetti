@@ -1,7 +1,7 @@
 import AnimatedBlinkText from "@components/UI/AnimatedBlinkText";
 import { useContestStore } from "@hooks/useContest/store";
 import useContestConfigStore from "@hooks/useContestConfig/store";
-import useDisplayPrice from "@hooks/useCurrency/useDisplayPrice";
+import useVoteCurrencyDisplayPrice from "@hooks/useCurrency/useVoteCurrencyDisplayPrice";
 import useCurrentPricePerVote from "@hooks/useCurrentPricePerVote";
 import Skeleton from "react-loading-skeleton";
 import { useMediaQuery } from "react-responsive";
@@ -18,9 +18,9 @@ const VotingQualifierAnyoneCanVoteExponentialLivePrice = () => {
     votingClose,
   });
 
-  const { displayValue, displaySymbol, isLoading } = useDisplayPrice(
+  const { displayValue, displaySymbol, isLoading } = useVoteCurrencyDisplayPrice(
     currentPricePerVote,
-    contestConfig.chainNativeCurrencySymbol,
+    contestConfig.voteCurrency,
   );
 
   if (isError) {

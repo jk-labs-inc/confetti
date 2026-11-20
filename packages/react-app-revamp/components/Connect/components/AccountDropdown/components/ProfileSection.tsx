@@ -7,7 +7,8 @@ import {
   PaperAirplaneIcon,
   PlusCircleIcon,
 } from "@heroicons/react/24/outline";
-import useDisplayPrice from "@hooks/useCurrency/useDisplayPrice";
+import useVoteCurrencyDisplayPrice from "@hooks/useCurrency/useVoteCurrencyDisplayPrice";
+import { findChainVoteCurrency, PRICE_UNIT_DECIMALS } from "lib/voteCurrency";
 import Image from "next/image";
 import { FC, useState } from "react";
 import Skeleton from "react-loading-skeleton";
@@ -18,13 +19,7 @@ interface ProfileSectionProps {
   ensAvatar: string | null | undefined;
   ensName: string | null | undefined;
   displayName: string;
-  balance:
-    | {
-        decimals: number;
-        symbol: string;
-        value: bigint;
-      }
-    | undefined;
+  balance: bigint | undefined;
   onAddFundsClick?: () => void;
   onSendFundsClick?: () => void;
   currentChain?: ChainWithIcon;
@@ -45,12 +40,12 @@ const ProfileSection: FC<ProfileSectionProps> = ({
   isAdvancedOpen,
 }) => {
   const [isAddressCopied, setIsAddressCopied] = useState(false);
-  const nativeRaw = formatUnits(balance?.value ?? 0n, balance?.decimals ?? 18);
+  const balanceAmount = formatUnits(balance ?? 0n, PRICE_UNIT_DECIMALS);
   const {
     displayValue,
     displaySymbol,
     isLoading: isPriceLoading,
-  } = useDisplayPrice(nativeRaw, balance?.symbol ?? "ETH");
+  } = useVoteCurrencyDisplayPrice(balanceAmount, findChainVoteCurrency(currentChain?.id));
 
   const handleCopyAddress = () => {
     navigator.clipboard.writeText(address);

@@ -4,10 +4,11 @@ import { formatNumberWithCommas } from "@helpers/formatNumber";
 import { useAddFunds } from "@hooks/useAddFunds";
 import { useContestStore } from "@hooks/useContest/store";
 import useContestConfigStore from "@hooks/useContestConfig/store";
-import useDisplayPrice from "@hooks/useCurrency/useDisplayPrice";
+import useVoteCurrencyDisplayPrice from "@hooks/useCurrency/useVoteCurrencyDisplayPrice";
 import useCurrentPricePerVote from "@hooks/useCurrentPricePerVote";
 import { useCurrentUserVotes } from "@hooks/useCurrentUserVotes";
 import { useVoteBalance } from "@hooks/useVoteBalance";
+import { VoteCurrency } from "lib/voteCurrency";
 import { FC, useState } from "react";
 import Skeleton from "react-loading-skeleton";
 import { useShallow } from "zustand/shallow";
@@ -15,17 +16,17 @@ import { useShallow } from "zustand/shallow";
 const BalanceOrSkeleton = ({
   isUserBalanceLoading,
   userBalance,
-  nativeCurrencySymbol,
+  voteCurrency,
 }: {
   isUserBalanceLoading: boolean;
   userBalance: string;
-  nativeCurrencySymbol?: string;
+  voteCurrency: VoteCurrency;
 }) => {
   const {
     displayValue,
     displaySymbol,
     isLoading: isPriceLoading,
-  } = useDisplayPrice(userBalance, nativeCurrencySymbol ?? "");
+  } = useVoteCurrencyDisplayPrice(userBalance, voteCurrency);
 
   if (isUserBalanceLoading || isPriceLoading) {
     return (
@@ -98,7 +99,7 @@ const VotingQualifierAnyoneCanVoteBalance: FC<VotingQualifierAnyoneCanVoteBalanc
       <>
         <AddFundsModal
           chain={contestConfig.chainName}
-          asset={contestConfig.chainNativeCurrencySymbol}
+          asset={contestConfig.voteCurrency.symbol}
           isOpen={isAddFundsOpen}
           onClose={() => setIsAddFundsOpen(false)}
         />
@@ -119,7 +120,7 @@ const VotingQualifierAnyoneCanVoteBalance: FC<VotingQualifierAnyoneCanVoteBalanc
       <BalanceOrSkeleton
         isUserBalanceLoading={isLoadingSpendableBalance}
         userBalance={spendableBalance}
-        nativeCurrencySymbol={contestConfig.chainNativeCurrencySymbol}
+        voteCurrency={contestConfig.voteCurrency}
       />
       <span className="text-neutral-11 ml-1">
         {formatNumberWithCommas(currentUserAvailableVotesAmount)} vote

@@ -1,5 +1,16 @@
-import { Chain } from "viem";
+import { Address, Chain } from "viem";
+
+export interface ChainVoteToken {
+  address: Address;
+  symbol: string;
+  decimals: 6;
+  usdPegged: true;
+  approveAndVoteGasLimit: number;
+}
 
 export type ChainWithIcon = Chain & {
   iconUrl?: string;
+  voteToken?: ChainVoteToken;
+  transactionGasCap?: bigint;
+  feeToken?: never;
 };

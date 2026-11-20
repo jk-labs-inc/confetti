@@ -1,6 +1,5 @@
 import { Charge } from "@hooks/useDeployContest/types";
 import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
-import { type GetBalanceReturnType } from "@wagmi/core";
 import { FC, useState } from "react";
 import SendProposalMobileLayoutConfirmInitialContent from "./components/InitialContent";
 
@@ -8,7 +7,7 @@ interface DialogModalSendProposalMobileLayoutConfirmProps {
   chainName: string;
   isOpen?: boolean;
   charge: Charge;
-  accountData: GetBalanceReturnType | undefined;
+  entryFundsBalance: bigint | undefined;
   onConfirm?: () => void;
   onClose?: () => void;
   onAddFunds?: () => Promise<boolean>;
@@ -18,7 +17,7 @@ const DialogModalSendProposalMobileLayoutConfirm: FC<DialogModalSendProposalMobi
   chainName,
   isOpen,
   charge,
-  accountData,
+  entryFundsBalance,
   onConfirm,
   onClose,
   onAddFunds,
@@ -36,7 +35,7 @@ const DialogModalSendProposalMobileLayoutConfirm: FC<DialogModalSendProposalMobi
       <SendProposalMobileLayoutConfirmInitialContent
         onConfirm={onConfirm}
         charge={charge}
-        accountData={accountData}
+        entryFundsBalance={entryFundsBalance}
         chainName={chainName}
         onShowAddFunds={setShowAddFunds}
         onAddFunds={onAddFunds}

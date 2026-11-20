@@ -110,7 +110,7 @@ const VotingSidebar: FC<VotingSidebarProps> = ({ layout = VotingWidgetLayout.reg
           <div className="animate-appear">
             <AddFunds
               chain={contestConfig.chainName}
-              asset={contestConfig.chainNativeCurrencySymbol ?? ""}
+              asset={contestConfig.voteCurrency.symbol}
               onGoBack={goToVote}
               onBridgeSuccess={handleBridgeSuccess}
             />
@@ -119,7 +119,7 @@ const VotingSidebar: FC<VotingSidebarProps> = ({ layout = VotingWidgetLayout.reg
           <div className="animate-appear">
             <ConfirmVote
               entryPreview={entryPreview}
-              chainNativeCurrencySymbol={contestConfig.chainNativeCurrencySymbol ?? ""}
+              voteCurrency={contestConfig.voteCurrency}
               costToVote={effectiveCostToVote}
               isVotingClosed={false}
               isVoteLoading={isLoading}

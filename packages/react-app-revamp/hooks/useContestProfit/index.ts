@@ -8,6 +8,7 @@ import { RewardModuleInfo } from "lib/rewards/types";
 import { useMemo, useCallback } from "react";
 import { useShallow } from "zustand/shallow";
 import { calculateProfitPercentage } from "@helpers/percentages";
+import { sumVoteCurrencyRewards } from "./rewards";
 import { ContestProfitData } from "./types";
 
 interface UseContestProfitParams {
@@ -28,7 +29,12 @@ const EMPTY_PROFIT_DATA: ContestProfitData = {
 const useContestProfit = ({ contestAddress, chainId, rewards }: UseContestProfitParams): ContestProfitData => {
   const { userAddress } = useWallet();
   const contestAuthorEthereumAddress = useContestStore(useShallow(state => state.contestAuthorEthereumAddress));
-  const version = useContestConfigStore(useShallow(state => state.contestConfig.version));
+  const { version, voteCurrency } = useContestConfigStore(
+    useShallow(state => ({
+      version: state.contestConfig.version,
+      voteCurrency: state.contestConfig.voteCurrency,
+    })),
+  );
   const contestStatus = useContestStatusStore(useShallow(state => state.contestStatus));
 
   const {
@@ -59,20 +65,13 @@ const useContestProfit = ({ contestAddress, chainId, rewards }: UseContestProfit
     version,
   });
 
-  const nativeTokenRewards = useMemo(() => {
-    let nativeTotal = 0n;
+  const voteCurrencyRewards = useMemo(
+    () => sumVoteCurrencyRewards(voteCurrency, totalRewards),
+    [voteCurrency, totalRewards],
+  );
 
-    for (const reward of totalRewards) {
-      if (reward.address === "native") {
-        nativeTotal += reward.value;
-      }
-    }
-
-    return nativeTotal;
-  }, [totalRewards]);
-
-  const profitPercentage = calculateProfitPercentage(nativeTokenRewards, totalSpent);
-  const isInProfit = nativeTokenRewards > totalSpent;
+  const profitPercentage = calculateProfitPercentage(voteCurrencyRewards, totalSpent);
+  const isInProfit = voteCurrencyRewards > totalSpent;
 
   const refetch = useCallback(() => {
     refetchSpent();

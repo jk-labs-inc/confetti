@@ -14,10 +14,11 @@ interface PhaseStatusProps {
   phase: TransactionOverlayPendingPhase;
   placement: TransactionOverlayPlacement;
   textSize: TransactionOverlayTextSize;
+  stepCount: number;
 }
 
-const PhaseStatus: FC<PhaseStatusProps> = ({ flow, phase, placement, textSize }) => {
-  const copy = getPendingPhaseCopy(flow, phase, placement);
+const PhaseStatus: FC<PhaseStatusProps> = ({ flow, phase, placement, textSize, stepCount }) => {
+  const copy = getPendingPhaseCopy(flow, phase, placement, stepCount);
   const typeScale = OVERLAY_TYPE_SCALE[textSize];
 
   return (

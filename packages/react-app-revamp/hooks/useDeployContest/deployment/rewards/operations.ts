@@ -12,6 +12,7 @@ import {
   writeContract,
 } from "@wagmi/core";
 import { updateRewardAnalytics } from "lib/analytics/rewards";
+import { assertPotAcceptsNativeCoin } from "lib/rewards/pot";
 import { didUserReject } from "utils/error";
 import { erc20Abi, parseUnits } from "viem";
 import { RewardPoolData } from "../../slices/contestCreateRewards";
@@ -168,6 +169,7 @@ export const fundPoolTokens = async (params: FundPoolTokensParams): Promise<void
       };
 
       if (token.address === "native") {
+        assertPotAcceptsNativeCoin(chainId);
         const amountBigInt = parseUnits(token.amount, token.decimals);
 
         await estimateGas(getWagmiConfig(), {

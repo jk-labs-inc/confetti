@@ -3,7 +3,7 @@ import VotingQualifierSkeleton from "@components/_pages/Contest/components/Stick
 import { useContestStore } from "@hooks/useContest/store";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import { PriceCurveType } from "@hooks/useDeployContest/types";
-import useDisplayPrice from "@hooks/useCurrency/useDisplayPrice";
+import useVoteCurrencyDisplayPrice from "@hooks/useCurrency/useVoteCurrencyDisplayPrice";
 import usePriceCurveMultiple from "@hooks/usePriceCurveMultiple";
 import { calculateEndPriceForType } from "lib/priceCurve";
 import { FC } from "react";
@@ -34,11 +34,12 @@ const VotingQualifierAnyoneCanVoteExponentialEndPrice: FC<VotingQualifierAnyoneC
     calculateEndPriceForType(priceCurveType, costToVote ?? 0, Number(priceCurveMultiple)),
   );
 
-  const { displayValue: startDisplay, displaySymbol, isLoading: isPriceLoading } = useDisplayPrice(
-    startPriceRaw,
-    contestConfig.chainNativeCurrencySymbol,
-  );
-  const { displayValue: endDisplay } = useDisplayPrice(endPriceRaw, contestConfig.chainNativeCurrencySymbol);
+  const {
+    displayValue: startDisplay,
+    displaySymbol,
+    isLoading: isPriceLoading,
+  } = useVoteCurrencyDisplayPrice(startPriceRaw, contestConfig.voteCurrency);
+  const { displayValue: endDisplay } = useVoteCurrencyDisplayPrice(endPriceRaw, contestConfig.voteCurrency);
 
   if (isLoading || isPriceLoading) return <VotingQualifierSkeleton />;
   if (isError) return <VotingQualifierError onClick={() => refetch()} />;

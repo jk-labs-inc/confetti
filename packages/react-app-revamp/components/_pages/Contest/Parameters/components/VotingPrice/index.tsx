@@ -2,7 +2,7 @@ import VotingQualifierError from "@components/_pages/Contest/components/StickyCa
 import VotingQualifierSkeleton from "@components/_pages/Contest/components/StickyCards/components/VotingQualifier/shared/Skeleton";
 import { useContestStore } from "@hooks/useContest/store";
 import useContestConfigStore from "@hooks/useContestConfig/store";
-import useDisplayPrice from "@hooks/useCurrency/useDisplayPrice";
+import useVoteCurrencyDisplayPrice from "@hooks/useCurrency/useVoteCurrencyDisplayPrice";
 import usePriceCurveMultiple from "@hooks/usePriceCurveMultiple";
 import usePriceCurveType from "@hooks/usePriceCurveType";
 import { compareVersions } from "compare-versions";
@@ -48,8 +48,8 @@ const ContestParametersVotingPrice = () => {
     displayValue: startDisplay,
     displaySymbol,
     isLoading: isPriceLoading,
-  } = useDisplayPrice(startPriceRaw, contestConfig.chainNativeCurrencySymbol);
-  const { displayValue: endDisplay } = useDisplayPrice(endPriceRaw, contestConfig.chainNativeCurrencySymbol);
+  } = useVoteCurrencyDisplayPrice(startPriceRaw, contestConfig.voteCurrency);
+  const { displayValue: endDisplay } = useVoteCurrencyDisplayPrice(endPriceRaw, contestConfig.voteCurrency);
 
   if (isPriceCurveMultipleLoading || isPriceLoading) return <VotingQualifierSkeleton />;
   if (isPriceCurveMultipleError) return <VotingQualifierError onClick={() => refetchPriceCurveMultiple()} />;

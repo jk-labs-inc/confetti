@@ -1,3 +1,4 @@
+import { chainHasNativeCoin } from "lib/voteCurrency";
 import { erc20Abi, formatUnits } from "viem";
 import { useBalance, useReadContracts } from "wagmi";
 
@@ -21,7 +22,7 @@ export function useTokenOrNativeBalance({
           decimals: data.decimals,
         };
       },
-      enabled: !token,
+      enabled: !token && chainHasNativeCoin(chainId),
     },
   });
 

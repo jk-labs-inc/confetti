@@ -40,6 +40,12 @@ const setIfOpen = (update: TransactionOverlayUpdate) => {
   }
 };
 
+const toInitialSteps = (labels: string[]): TransactionOverlayStep[] =>
+  labels.map((label, index) => ({
+    label,
+    status: index === 0 ? "active" : "pending",
+  }));
+
 export const isInlineOverlayShowing = (state: TransactionOverlayState): boolean =>
   state.isOpen && state.placement === TransactionOverlayPlacement.INLINE;
 
@@ -63,11 +69,12 @@ export const txOverlay = {
       errorMessage: "",
       successMeta: null,
       voteShare: null,
-      steps: (options?.steps ?? []).map((label, index) => ({
-        label,
-        status: index === 0 ? "active" : "pending",
-      })),
+      steps: toInitialSteps(options?.steps ?? []),
     });
+  },
+
+  setSteps: (labels: string[]) => {
+    setIfOpen({ steps: toInitialSteps(labels) });
   },
 
   setPhase: (phase: TransactionOverlayPhase) => {

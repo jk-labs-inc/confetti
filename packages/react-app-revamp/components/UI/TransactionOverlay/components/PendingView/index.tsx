@@ -38,7 +38,7 @@ const PendingView: FC<PendingViewProps> = ({ flow, phase, steps, placement, text
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.12, duration: 0.3, ease: "easeOut" }}
       >
-        <PhaseStatus flow={flow} phase={phase} placement={placement} textSize={textSize} />
+        <PhaseStatus flow={flow} phase={phase} placement={placement} textSize={textSize} stepCount={steps.length} />
         {steps.length > 0 && <StepList steps={steps} />}
       </motion.div>
       <motion.div

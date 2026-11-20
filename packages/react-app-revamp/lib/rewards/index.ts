@@ -6,7 +6,8 @@ import {
   fetchReleasableRewards,
   prepareRewardsFetching,
 } from "./contracts";
-import { addRewardToDistribution, processERC20TokenRewards, processNativeTokenRewards } from "./utils";
+import { nativePotRankings } from "./pot";
+import { addRewardToDistribution, processReleasableRewards } from "./utils";
 
 /**
  * Fetches claimed (released) rewards
@@ -41,17 +42,18 @@ export async function fetchClaimedRewards({
 
   // Process valid rankings
   if (validRankings.length > 0) {
+    const nativeRankings = nativePotRankings(chainId, validRankings);
     const nativeReleasedResults = await createNativeTokenReadBatch(
       contractAddress,
       chainId,
       abi,
-      validRankings,
+      nativeRankings,
       userAddress,
       "releasedToVoter",
     );
 
-    for (let i = 0; i < validRankings.length; i++) {
-      const ranking = validRankings[i];
+    for (let i = 0; i < nativeRankings.length; i++) {
+      const ranking = nativeRankings[i];
       const nativeAmount = nativeReleasedResults[i]?.result as bigint | undefined;
 
       addRewardToDistribution(
@@ -96,18 +98,19 @@ export async function fetchClaimedRewards({
   // Process tied rankings if user is the creator
   if (isCreator && tiedRankings.length > 0) {
     // For tied rankings, we use "released" instead of "releasedToVoter" for the creator
+    const nativeTiedRankings = nativePotRankings(chainId, tiedRankings);
     const nativeReleasedResults = await createNativeTokenReadBatch(
       contractAddress,
       chainId,
       abi,
-      tiedRankings,
+      nativeTiedRankings,
       userAddress,
       "released", // Use released for creator
       true,
     );
 
-    for (let i = 0; i < tiedRankings.length; i++) {
-      const ranking = tiedRankings[i];
+    for (let i = 0; i < nativeTiedRankings.length; i++) {
+      const ranking = nativeTiedRankings[i];
       const nativeAmount = nativeReleasedResults[i]?.result as bigint | undefined;
 
       addRewardToDistribution(
@@ -193,11 +196,9 @@ export async function fetchClaimableRewards({
       userAddress,
     );
 
-    processNativeTokenRewards(validRankings, rewardResults, nativeTokenInfo, distributionsMap);
-    processERC20TokenRewards(
-      validRankings,
-      tokenAddresses,
+    processReleasableRewards(
       rewardResults,
+      nativeTokenInfo,
       tokenInfo.symbols || {},
       tokenInfo.decimals || {},
       distributionsMap,
@@ -217,11 +218,9 @@ export async function fetchClaimableRewards({
       true,
     );
 
-    processNativeTokenRewards(tiedRankings, tiedRewardResults, nativeTokenInfo, distributionsMap);
-    processERC20TokenRewards(
-      tiedRankings,
-      tokenAddresses,
+    processReleasableRewards(
       tiedRewardResults,
+      nativeTokenInfo,
       tokenInfo.symbols || {},
       tokenInfo.decimals || {},
       distributionsMap,

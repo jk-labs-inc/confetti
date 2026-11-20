@@ -1,9 +1,8 @@
 import { ChainWithIcon } from "@config/wagmi";
 import { FC, useEffect } from "react";
-import { v4 as uuidV4 } from "uuid";
 import { useShallow } from "zustand/shallow";
 import { useFundPoolStore } from "../../store";
-import { generateNativeToken } from "../../utils";
+import { createDefaultFundWidget, withFundableTokens } from "../../utils";
 import TokenWidget from "./components";
 import { InputMode } from "./components/useTokenWidget";
 
@@ -21,26 +20,12 @@ const TokenWidgets: FC<TokenWidgetsProps> = ({ chain, preferredInputMode }) => {
   );
 
   useEffect(() => {
-    if (tokenWidgets.length === 0) {
-      setTokenWidgets([
-        {
-          ...generateNativeToken(chain?.nativeCurrency, chain?.nativeCurrency?.symbol),
-          amount: "0",
-          id: uuidV4(),
-        },
-      ]);
-    }
-  }, [chain, tokenWidgets.length, setTokenWidgets]);
+    const fundableWidgets = withFundableTokens(chain, tokenWidgets);
+    if (fundableWidgets !== tokenWidgets) setTokenWidgets(fundableWidgets);
+  }, [chain, tokenWidgets, setTokenWidgets]);
 
   const handleAddMoreTokens = () => {
-    setTokenWidgets([
-      ...tokenWidgets,
-      {
-        ...generateNativeToken(chain?.nativeCurrency, chain?.nativeCurrency?.symbol),
-        amount: "0",
-        id: uuidV4(),
-      },
-    ]);
+    setTokenWidgets([...tokenWidgets, createDefaultFundWidget(chain)]);
   };
 
   return (
@@ -48,7 +33,7 @@ const TokenWidgets: FC<TokenWidgetsProps> = ({ chain, preferredInputMode }) => {
       <div className="flex flex-col gap-8">
         {tokenWidgets.map((widget, index) => (
           <TokenWidget
-            key={index}
+            key={widget.id}
             tokenWidget={widget}
             index={index}
             chain={chain}

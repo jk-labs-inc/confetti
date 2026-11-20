@@ -1,5 +1,12 @@
 import { chains } from "@config/wagmi/chains";
 
+const chainIdByLowercasedName = new Map(chains.map(chain => [chain.name.toLowerCase(), chain.id]));
+
+export function findChainIdByName(chainName: string | undefined): number | undefined {
+  if (!chainName) return undefined;
+  return chainIdByLowercasedName.get(chainName.toLowerCase());
+}
+
 export function getChainId(chainName: string) {
-  return chains.find(chain => chain.name.toLowerCase() === chainName.toLowerCase())?.id || 1;
+  return findChainIdByName(chainName) || 1;
 }

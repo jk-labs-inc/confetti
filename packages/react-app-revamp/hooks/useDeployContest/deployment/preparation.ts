@@ -1,4 +1,5 @@
 import { toastError } from "@components/UI/Toast";
+import { chainVoteCurrency } from "lib/voteCurrency";
 import { getJkLabsSplitDestinationAddress } from "../database";
 import { prepareConstructorArgs } from "../helpers/constructorArgs";
 import { AdvancedOptions } from "../slices/contestAdvancedOptionsSlice";
@@ -65,6 +66,7 @@ export const prepareDeploymentData = async (params: PrepareDeploymentDataParams)
     entryPreviewConfig: contestData.entryPreviewConfig,
     clientAccountAddress: address,
     jkLabsSplitDestination,
+    voteCurrency: chainVoteCurrency(chain.id),
   });
 
   return {

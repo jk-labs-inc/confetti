@@ -1,7 +1,8 @@
 import { formatBalance } from "@helpers/formatBalance";
-import { useCurrencyStore } from "@hooks/useCurrency/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
-import useTotalRewardsUsd, { toRewardTokenItems } from "@hooks/useCurrency/useTotalRewardsUsd";
+import usePotDisplayCurrency from "@hooks/useCurrency/usePotDisplayCurrency";
+import useTotalRewardsUsd from "@hooks/useCurrency/useTotalRewardsUsd";
+import { toRewardTokenItems } from "lib/rewards/valuation";
 import { useTotalRewards } from "@hooks/useTotalRewards";
 import { ModuleType, RewardsModuleInfo } from "lib/rewards/types";
 import { AnimatePresence, motion } from "motion/react";
@@ -44,7 +45,6 @@ const RewardsDisplay: FC<RewardsDisplayProps> = ({
   isRewardsModuleLoading,
   isRewardsModuleError,
 }) => {
-  const displayCurrency = useCurrencyStore(state => state.displayCurrency);
   const isVotingClosed = useContestStatusStore(state => state.contestStatus) === ContestStatus.VotingClosed;
   const classNames = VARIANT_CLASS_NAMES[variant];
 
@@ -61,6 +61,7 @@ const RewardsDisplay: FC<RewardsDisplayProps> = ({
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const tokenItems = useMemo(() => toRewardTokenItems(totalRewards), [totalRewards]);
+  const displayCurrency = usePotDisplayCurrency(chainName, tokenItems);
 
   const totalUsd = useTotalRewardsUsd(tokenItems, chainName);
   const hasRewards = tokenItems.length > 0;

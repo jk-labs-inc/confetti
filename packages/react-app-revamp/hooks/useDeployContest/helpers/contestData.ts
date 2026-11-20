@@ -1,3 +1,4 @@
+import { isAddressEqual, zeroAddress } from "viem";
 import { Charge } from "../types";
 
 export interface ContestDataParams {
@@ -11,6 +12,7 @@ export interface ContestDataParams {
   chainName?: string;
   charge: Charge;
   isAnyoneCanSubmit: boolean;
+  voteCurrencyAddress: `0x${string}`;
 }
 
 export interface ContestData {
@@ -26,6 +28,7 @@ export interface ContestData {
   cost_to_vote: number;
   percentage_to_rewards: number;
   creator_split_enabled?: number;
+  vote_currency?: string;
 }
 
 export const prepareContestData = (params: ContestDataParams): ContestData => {
@@ -40,6 +43,7 @@ export const prepareContestData = (params: ContestDataParams): ContestData => {
     address,
     chainName,
     charge,
+    voteCurrencyAddress,
   } = params;
 
   return {
@@ -55,5 +59,6 @@ export const prepareContestData = (params: ContestDataParams): ContestData => {
     cost_to_vote: charge.costToVote,
     percentage_to_rewards: charge.percentageToRewards,
     creator_split_enabled: charge.creatorSplitEnabled,
+    vote_currency: isAddressEqual(voteCurrencyAddress, zeroAddress) ? undefined : voteCurrencyAddress.toLowerCase(),
   };
 };

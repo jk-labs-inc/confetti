@@ -65,6 +65,10 @@ const PHASE_COPY: Record<TransactionOverlayFlow, Record<TransactionOverlayPendin
   },
 };
 
+const MULTI_TRANSACTION_SIGNING_SUB: Partial<Record<TransactionOverlayFlow, string>> = {
+  [TransactionOverlayFlow.VOTE]: "approve the cost, then confirm your votes",
+};
+
 const SUCCESS_COPY: Record<TransactionOverlayFlow, string> = {
   [TransactionOverlayFlow.ENTRY]: "you're in",
   [TransactionOverlayFlow.VOTE]: "votes are in",
@@ -75,11 +79,21 @@ export const getPendingPhaseCopy = (
   flow: TransactionOverlayFlow,
   phase: TransactionOverlayPendingPhase,
   placement: TransactionOverlayPlacement,
+  stepCount: number,
 ): TransactionOverlayPhaseCopy => {
   const { title, sub } = PHASE_COPY[flow][phase];
+  const multiTransactionSub =
+    phase === TransactionOverlayPhase.SIGNING && stepCount > 0 ? MULTI_TRANSACTION_SIGNING_SUB[flow] : undefined;
 
-  return { title, sub: typeof sub === "string" ? sub : sub[placement] };
+  return { title, sub: multiTransactionSub ?? (typeof sub === "string" ? sub : sub[placement]) };
 };
+
+export const getVoteApprovalSteps = (voteCurrencySymbol: string): string[] => [
+  `approve ${voteCurrencySymbol}`,
+  "buy votes",
+];
+
+export const VOTE_STEP_AFTER_APPROVAL = 1;
 
 export const VOTE_SHARE_COPY = {
   heading: "votes added!",
