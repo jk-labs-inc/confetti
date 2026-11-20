@@ -2,8 +2,11 @@ import { getChainFromId } from "@helpers/getChainFromId";
 import { getChainId } from "@helpers/getChainId";
 import { getChainLogo } from "@helpers/getChainLogo";
 import { FilteredToken, TOKENLISTOOOR_SUPPORTED_CHAIN_IDS } from "@hooks/useTokenList";
+import { useVoteCurrencyBalance } from "@hooks/useVoteCurrencyBalance";
 import { useWallet } from "@hooks/useWallet";
 import { EMPTY_ADDRESS } from "lib/contests/contracts";
+import { voteTokenListItem } from "lib/rewards/pot";
+import { chainHasNativeCoin, findChainVoteCurrency, PRICE_UNIT_DECIMALS } from "lib/voteCurrency";
 import { FC, useState } from "react";
 import { formatUnits } from "viem";
 import { useBalance } from "wagmi";
@@ -44,8 +47,23 @@ const TokenSearchModalERC20: FC<TokenSearchModalERC20Props> = ({
   const { data: nativeBalance } = useBalance({
     address: userAddress as `0x${string}`,
     chainId: resolvedChainId,
-    query: { enabled: !isChainSupportedBySearch && !!userAddress },
+    query: { enabled: !isChainSupportedBySearch && !!userAddress && chainHasNativeCoin(resolvedChainId) },
   });
+  const chainVoteCurrency = findChainVoteCurrency(resolvedChainId);
+  const voteToken = chainVoteCurrency?.kind === "token" ? chainVoteCurrency : undefined;
+  const { balance: voteTokenBalance } = useVoteCurrencyBalance({
+    voteCurrency: voteToken,
+    chainId: resolvedChainId,
+    owner: isChainSupportedBySearch ? undefined : userAddress,
+  });
+
+  const voteTokenOption: FilteredToken | null =
+    voteToken && voteTokenBalance !== undefined
+      ? {
+          ...voteTokenListItem(voteToken, chain?.iconUrl),
+          balance: parseFloat(formatUnits(voteTokenBalance, PRICE_UNIT_DECIMALS)),
+        }
+      : null;
 
   const nativeToken: FilteredToken | null =
     !isChainSupportedBySearch && chain && nativeBalance
@@ -89,6 +107,8 @@ const TokenSearchModalERC20: FC<TokenSearchModalERC20Props> = ({
         </>
       ) : nativeToken ? (
         <TokenSearchListToken token={nativeToken} onSelectToken={onSelectToken} />
+      ) : voteTokenOption ? (
+        <TokenSearchListToken token={voteTokenOption} onSelectToken={onSelectToken} />
       ) : null}
     </div>
   );

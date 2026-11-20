@@ -1,6 +1,4 @@
-import { toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
-import { LoadingToastMessageType } from "@components/UI/Toast/components/Loading";
-import { VOTE_FLOW_TRACKING_ID } from "@components/UI/TransactionOverlay/constants";
+import { toastError, toastSuccess } from "@components/UI/Toast";
 import { resolveOverlayPlacement } from "@components/UI/TransactionOverlay/placement";
 import { txOverlay } from "@components/UI/TransactionOverlay/store";
 import { TransactionOverlayFlow, TransactionOverlayPhase } from "@components/UI/TransactionOverlay/types";
@@ -10,7 +8,7 @@ import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import { useContestStore } from "@hooks/useContest/store";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import useCreatorSplitEnabled from "@hooks/useCreatorSplitEnabled";
-import useNativeRates from "@hooks/useCurrency/useNativeRates";
+import useVoteCurrencyUsdRate from "@hooks/useCurrency/useVoteCurrencyUsdRate";
 import useCurrentPricePerVote from "@hooks/useCurrentPricePerVote";
 import { Charge } from "@hooks/useDeployContest/types";
 import { useEmailSend } from "@hooks/useEmailSend";
@@ -30,15 +28,18 @@ import useTotalVotesCastOnContest from "@hooks/useTotalVotesCastOnContest";
 import { useVoteBalance } from "@hooks/useVoteBalance";
 import { useWallet } from "@hooks/useWallet";
 import { useQueryClient } from "@tanstack/react-query";
-import { readContract, simulateContract, waitForTransactionReceipt, writeContract } from "@wagmi/core";
+import { getAccount, readContract, simulateContract, waitForTransactionReceipt, writeContract } from "@wagmi/core";
+import { authorizeVoteCost } from "lib/voteCurrency";
 import moment from "moment";
 import { useState } from "react";
 import { checkAndMarkPriceChangeError } from "utils/error";
-import { formatEther, parseUnits } from "viem";
+import { Abi, formatEther, parseUnits } from "viem";
 import { useShallow } from "zustand/shallow";
 import { useCastVotesStore } from "./store";
 import type { CastVotesOptions, CastVotesResult } from "./types";
 import { CombinedAnalyticsParams, performAnalytics } from "./utils/analytics";
+import { assertVoteQuoteStillHolds } from "./utils/preflight";
+import { showApprovalStep, showVoteStepAfterApproval, showVotesDeployingToast } from "./utils/approvalFeedback";
 import { createVotingEmailSender } from "./utils/email";
 import { calculateChargeAmount } from "./utils/helpers";
 import { computeJkLabsRevenueUsd } from "./utils/jkLabsRevenue";
@@ -109,7 +110,9 @@ export function useCastVotes({ charge, votesClose, inlineOverlay }: UseCastVotes
   );
   const { subscribeUser } = useEmailSignup();
   const { subscribePhoneNumber } = usePhoneNumberSignup();
-  const { data: nativeRates, isLoading: isNativeRatesLoading } = useNativeRates();
+  const { rate: voteCurrencyUsdRate, isLoading: isVoteCurrencyUsdRateLoading } = useVoteCurrencyUsdRate(
+    contestConfig.voteCurrency,
+  );
   const { creatorSplitEnabled, isLoading: isCreatorSplitLoading } = useCreatorSplitEnabled({
     address: contestConfig.address,
     abi: contestConfig.abi,
@@ -117,21 +120,18 @@ export function useCastVotes({ charge, votesClose, inlineOverlay }: UseCastVotes
     version: contestConfig.version,
   });
 
-  const isReady = !isPriceLoading && !isRewardsLoading && !isNativeRatesLoading && !isCreatorSplitLoading;
+  const isReady = !isPriceLoading && !isRewardsLoading && !isVoteCurrencyUsdRateLoading && !isCreatorSplitLoading;
 
   async function castVotes(amountOfVotes: number, options?: CastVotesOptions): Promise<CastVotesResult> {
     const isSilent = options?.feedback === "silent";
     const pricePerVoteRaw = options?.pricePerVoteRaw ?? currentPricePerVoteRaw;
     const overlayPlacement = isSilent ? null : resolveOverlayPlacement(inlineOverlay);
+    const voteCurrency = contestConfig.voteCurrency;
 
     if (overlayPlacement) {
       txOverlay.start(TransactionOverlayFlow.VOTE, { placement: overlayPlacement });
     } else if (!isSilent) {
-      toastLoading({
-        id: VOTE_FLOW_TRACKING_ID,
-        message: "votes are deploying...",
-        additionalMessageType: LoadingToastMessageType.KEEP_BROWSER_OPEN,
-      });
+      showVotesDeployingToast();
     }
     setIsLoading(true);
     setIsSuccess(false);
@@ -146,14 +146,31 @@ export function useCastVotes({ charge, votesClose, inlineOverlay }: UseCastVotes
 
       const estimatedCost = calculateChargeAmount(amountOfVotes, pricePerVoteRaw);
 
-      const { request } = await simulateContract(getWagmiConfig(), {
+      const contestContract = {
         address: contestConfig.address as `0x${string}`,
-        abi: contestConfig.abi ? contestConfig.abi : DeployedContestContract.abi,
+        abi: (contestConfig.abi ? contestConfig.abi : DeployedContestContract.abi) as Abi,
         chainId: contestConfig.chainId,
+      };
+      const payment = await authorizeVoteCost(getWagmiConfig(), {
+        voteCurrency,
+        contest: contestContract.address,
+        chainId: contestContract.chainId,
+        voter: getAccount(getWagmiConfig()).address ?? (userAddress as `0x${string}`),
+        cost: estimatedCost,
+        onApprovalNeeded: async () => {
+          await assertVoteQuoteStillHolds(getWagmiConfig(), contestContract, voteCurrency, pricePerVoteRaw);
+          if (!isSilent) showApprovalStep(overlayPlacement, voteCurrency.symbol);
+        },
+      });
+
+      if (payment.wasApproved && !isSilent) showVoteStepAfterApproval(overlayPlacement);
+
+      const { request } = await simulateContract(getWagmiConfig(), {
+        ...contestContract,
         functionName: "castVote",
         args: castVoteArgs,
         //@ts-ignore
-        value: estimatedCost,
+        value: payment.value,
       });
 
       const hash = await writeContract(getWagmiConfig(), request);
@@ -179,7 +196,7 @@ export function useCastVotes({ charge, votesClose, inlineOverlay }: UseCastVotes
         address: contestConfig.address,
         rewardsModuleAddress: rewards?.contractAddress ?? "",
         operation: "deposit",
-        token_address: null,
+        token_address: voteCurrency.kind === "token" ? voteCurrency.address : null,
       };
       const voteCountPromise = readContract(getWagmiConfig(), {
         address: contestConfig.address as `0x${string}`,
@@ -221,8 +238,7 @@ export function useCastVotes({ charge, votesClose, inlineOverlay }: UseCastVotes
       const jkLabsRevenueUsd = computeJkLabsRevenueUsd({
         totalChargeWei: estimatedCost,
         chainId: contestConfig.chainId,
-        chainNativeCurrencySymbol: contestConfig.chainNativeCurrencySymbol,
-        nativeRates,
+        voteCurrencyUsdRate,
         charge,
         isRewardsPoolSelfFunded: rewards?.isSelfFunded === true,
         isCreatorSplitEnabled: creatorSplitEnabled === 1,

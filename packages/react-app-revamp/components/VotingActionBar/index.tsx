@@ -32,7 +32,7 @@ import { useCastVotesStore } from "@hooks/useCastVotes/store";
 import { useContestStore } from "@hooks/useContest/store";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
-import useDisplayPrice from "@hooks/useCurrency/useDisplayPrice";
+import useVoteCurrencyDisplayPrice from "@hooks/useCurrency/useVoteCurrencyDisplayPrice";
 import useCurrentPricePerVote from "@hooks/useCurrentPricePerVote";
 import { useMobileNavSlot } from "@hooks/useMobileNavSlot";
 import usePriceCurveData from "@hooks/usePriceCurveData";
@@ -109,11 +109,11 @@ const VotingActionBar: FC<VotingActionBarProps> = ({ entryPreview, isVotingClose
 
   useDefaultVoteAmount({
     contest: contestConfig.address,
-    nativeSymbol: contestConfig.chainNativeCurrencySymbol,
+    voteCurrency: contestConfig.voteCurrency,
     pricePerVoteNative: effectiveCost,
   });
   const { displayValue, displaySymbol, isPrefilled, handleDisplayChange } = useVotingInputDisplay({
-    nativeCurrencySymbol: contestConfig.chainNativeCurrencySymbol,
+    voteCurrency: contestConfig.voteCurrency,
     maxBalance,
     isConnected,
   });
@@ -121,13 +121,9 @@ const VotingActionBar: FC<VotingActionBarProps> = ({ entryPreview, isVotingClose
 
   const hasPrice = parseFloat(effectiveCost) > 0;
   const isGhost = !displayValue && hasPrice;
-  const { displayValue: pricePerVoteDisplay } = useDisplayPrice(
-    effectiveCost,
-    contestConfig.chainNativeCurrencySymbol,
-    undefined,
-    undefined,
-    { ceilingPrecision: true },
-  );
+  const { displayValue: pricePerVoteDisplay } = useVoteCurrencyDisplayPrice(effectiveCost, contestConfig.voteCurrency, {
+    ceilingPrecision: true,
+  });
   // Strip digit grouping so the placeholder is always typeable as shown.
   const placeholder = (pricePerVoteDisplay || "0").replace(/,/g, "");
 
@@ -361,7 +357,7 @@ const VotingActionBar: FC<VotingActionBarProps> = ({ entryPreview, isVotingClose
         <div className="p-6">
           <AddFunds
             chain={contestConfig.chainName}
-            asset={contestConfig.chainNativeCurrencySymbol ?? ""}
+            asset={contestConfig.voteCurrency.symbol}
             onGoBack={handleAddFundsClose}
           />
         </div>

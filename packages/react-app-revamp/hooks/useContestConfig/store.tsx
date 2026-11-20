@@ -1,5 +1,6 @@
 import { createContext, useContext, useState } from "react";
 import { createStore, useStore } from "zustand";
+import { VoteCurrency } from "lib/voteCurrency";
 import { Abi } from "viem";
 
 export interface ContestConfig {
@@ -7,7 +8,7 @@ export interface ContestConfig {
   abi: Abi;
   chainName: string;
   chainId: number;
-  chainNativeCurrencySymbol: string;
+  voteCurrency: VoteCurrency;
   version: string;
 }
 

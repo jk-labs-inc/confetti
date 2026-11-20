@@ -16,6 +16,7 @@ import {
   type WaitForTransactionReceiptReturnType,
 } from "@wagmi/core";
 import { updateRewardAnalytics } from "lib/analytics/rewards";
+import { assertPotAcceptsNativeCoin } from "lib/rewards/pot";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 import { erc20Abi, parseUnits } from "viem";
@@ -90,6 +91,7 @@ export function useFundRewardsModule() {
     let receipt: WaitForTransactionReceiptReturnType;
 
     if (tokenAddress === "native") {
+      assertPotAcceptsNativeCoin(chainId);
       const amountBigInt = parseUnits(tokenAmount, tokenDecimals);
 
       await estimateGas(getWagmiConfig(), {

@@ -3,7 +3,6 @@ import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import DialogModalV3 from "@components/UI/DialogModalV3";
 import UpdatesSignup from "@components/UI/UpdatesSignup";
 import ContestPrompt from "@components/_pages/Contest/components/Prompt";
-import { chains } from "@config/wagmi";
 import { emailRegex } from "@helpers/regex";
 import { useContestStore } from "@hooks/useContest/store";
 import useContestConfigStore from "@hooks/useContestConfig/store";
@@ -16,7 +15,6 @@ import { useModal } from "@getpara/react-sdk-lite";
 import { isPhoneNumberEmpty, isValidPhoneNumber } from "lib/phone";
 import { PhoneNumberValue } from "lib/phone/types";
 import { Editor } from "@tiptap/react";
-import { type GetBalanceReturnType } from "@wagmi/core";
 import { FC, ReactNode, useEffect, useState } from "react";
 import { useShallow } from "zustand/shallow";
 import DialogModalSendProposalEditor from "../components/Editor";
@@ -33,7 +31,7 @@ interface DialogModalSendProposalDesktopLayoutProps {
   isCorrectNetwork: boolean;
   isDragging: boolean;
   charge: Charge;
-  accountData: GetBalanceReturnType | undefined;
+  entryFundsBalance: bigint | undefined;
   setIsOpen: (isOpen: boolean) => void;
   handleDrop?: (event: React.DragEvent<HTMLDivElement>) => void;
   handleDragOver?: (event: React.DragEvent<HTMLDivElement>) => void;
@@ -57,7 +55,7 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
   isConnected,
   isCorrectNetwork,
   charge,
-  accountData,
+  entryFundsBalance,
   isDragging,
   setIsOpen,
   handleDrop,
@@ -92,10 +90,9 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
   });
   const { fields: metadataFields } = useMetadataStore(state => state);
   const [error, setError] = useState<ReactNode | null>(null);
-  const chainCurrencySymbol = chains.find(chain => chain.name.toLowerCase() === chainName)?.nativeCurrency?.symbol;
   const hasEntryPreview = metadataFields.length > 0 && isEntryPreviewPrompt(metadataFields[0].prompt);
   const [showAddFundsModal, setShowAddFundsModal] = useState(false);
-  const insufficientBalance = accountData && accountData.value === BigInt(0);
+  const insufficientBalance = entryFundsBalance === 0n;
   const [buttonText, setButtonText] = useState(ButtonText.SUBMIT);
 
   useEffect(() => {
@@ -172,7 +169,7 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
           <AddFunds
             className="md:w-[400px]"
             chain={chainName}
-            asset={chainCurrencySymbol ?? ""}
+            asset={contestConfig.voteCurrency.symbol}
             onGoBack={() => setShowAddFundsModal(false)}
           />
         ) : (

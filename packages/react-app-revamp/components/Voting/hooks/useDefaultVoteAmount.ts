@@ -1,19 +1,20 @@
 import { useVotingStore } from "@components/Voting/store";
 import { defaultVoteAmount } from "@components/Voting/utils/defaultVoteAmount";
-import useNativeRates from "@hooks/useCurrency/useNativeRates";
+import useVoteCurrencyUsdRate from "@hooks/useCurrency/useVoteCurrencyUsdRate";
+import { VoteCurrency } from "lib/voteCurrency";
 import { useEffect } from "react";
 import { useShallow } from "zustand/shallow";
 
 export const useDefaultVoteAmount = ({
   contest,
-  nativeSymbol,
+  voteCurrency,
   pricePerVoteNative,
 }: {
   contest: string;
-  nativeSymbol: string;
+  voteCurrency: VoteCurrency;
   pricePerVoteNative: string;
 }) => {
-  const { data: nativeRates } = useNativeRates();
+  const { rate: voteCurrencyUsdRate, isResolved: isRateResolved } = useVoteCurrencyUsdRate(voteCurrency);
   const { isAmountEdited, prefilledFor, prefillAmount } = useVotingStore(
     useShallow(state => ({
       isAmountEdited: state.isAmountEdited,
@@ -21,9 +22,7 @@ export const useDefaultVoteAmount = ({
       prefillAmount: state.prefillAmount,
     })),
   );
-  const amount = nativeRates
-    ? defaultVoteAmount({ nativeUsdRate: nativeRates[nativeSymbol.toLowerCase()], pricePerVoteNative })
-    : null;
+  const amount = isRateResolved ? defaultVoteAmount({ voteCurrencyUsdRate, pricePerVoteNative }) : null;
 
   useEffect(() => {
     if (prefilledFor !== null && prefilledFor !== contest) {

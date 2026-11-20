@@ -1,6 +1,7 @@
 import { ANALYTICS_VERSION } from "constants/versions";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import { compareVersions } from "compare-versions";
+import { toPriceUnits } from "lib/voteCurrency";
 import { useReadContract } from "wagmi";
 import { useShallow } from "zustand/shallow";
 
@@ -11,7 +12,7 @@ interface UseTotalSpentByAddressParams {
 }
 
 const useTotalSpentByAddress = ({ contestAddress, chainId, userAddress }: UseTotalSpentByAddressParams) => {
-  const { abi, version } = useContestConfigStore(useShallow(state => state.contestConfig));
+  const { abi, version, voteCurrency } = useContestConfigStore(useShallow(state => state.contestConfig));
   const isAnalyticsSupported = !!version && compareVersions(version, ANALYTICS_VERSION) >= 0;
 
   const result = useReadContract({
@@ -21,7 +22,7 @@ const useTotalSpentByAddress = ({ contestAddress, chainId, userAddress }: UseTot
     functionName: "getTotalSpentByAddress",
     args: [userAddress],
     query: {
-      select: (data: unknown) => (data as bigint) ?? 0n,
+      select: (data: unknown) => toPriceUnits(voteCurrency, (data as bigint) ?? 0n),
       enabled: isAnalyticsSupported && !!abi && !!contestAddress && !!userAddress && !!chainId,
     },
   });

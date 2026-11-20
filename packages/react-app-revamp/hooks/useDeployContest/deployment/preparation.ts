@@ -1,4 +1,5 @@
 import { toastError } from "@components/UI/Toast";
+import { chainVoteCurrency } from "lib/voteCurrency";
 import { getJkLabsSplitDestinationAddress } from "../database";
 import { prepareConstructorArgs } from "../helpers/constructorArgs";
 import { AdvancedOptions } from "../slices/contestAdvancedOptionsSlice";
@@ -27,12 +28,16 @@ export const preparePromptData = (prompt: {
   contactDetails?: string;
   imageUrl?: string;
 }) => {
-  return new URLSearchParams({
+  const fields = {
     summarize: prompt.summarize,
     evaluateVoters: prompt.evaluateVoters,
     contactDetails: prompt.contactDetails ?? "",
     imageUrl: prompt.imageUrl ?? "",
-  }).toString();
+  };
+
+  if (Object.values(fields).every(field => !field)) return "";
+
+  return new URLSearchParams(fields).toString();
 };
 
 export const fetchJkLabsSplitDestination = async (chainId: number, chargeType: { costToVote: number }) => {
@@ -65,6 +70,7 @@ export const prepareDeploymentData = async (params: PrepareDeploymentDataParams)
     entryPreviewConfig: contestData.entryPreviewConfig,
     clientAccountAddress: address,
     jkLabsSplitDestination,
+    voteCurrency: chainVoteCurrency(chain.id),
   });
 
   return {

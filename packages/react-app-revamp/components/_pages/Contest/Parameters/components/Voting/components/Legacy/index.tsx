@@ -1,7 +1,7 @@
 import { EMPTY_MERKLE_ROOT } from "@components/_pages/Contest/Parameters/constants";
 import { useContestStore } from "@hooks/useContest/store";
 import useContestConfigStore from "@hooks/useContestConfig/store";
-import useDisplayPrice from "@hooks/useCurrency/useDisplayPrice";
+import useVoteCurrencyDisplayPrice from "@hooks/useCurrency/useVoteCurrencyDisplayPrice";
 import Skeleton from "react-loading-skeleton";
 import { formatEther } from "viem";
 import { useReadContract } from "wagmi";
@@ -23,7 +23,11 @@ const ContestParametersVotingLegacy = () => {
   });
 
   const costFormatted = formatEther(BigInt(charge.costToVote));
-  const { displayValue, displaySymbol, isLoading: isPriceLoading } = useDisplayPrice(costFormatted, contestConfig.chainNativeCurrencySymbol);
+  const {
+    displayValue,
+    displaySymbol,
+    isLoading: isPriceLoading,
+  } = useVoteCurrencyDisplayPrice(costFormatted, contestConfig.voteCurrency);
 
   if (isLoadingVotingMerkleRoot || isPriceLoading) {
     return <Skeleton width={100} height={24} baseColor="#6A6A6A" highlightColor="#BB65FF" />;

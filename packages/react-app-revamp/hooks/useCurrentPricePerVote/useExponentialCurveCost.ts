@@ -1,4 +1,5 @@
 import usePriceCurveUpdateInterval from "@hooks/usePriceCurveUpdateInterval";
+import { chainVoteCurrency, toPriceUnits } from "lib/voteCurrency";
 import { useEffect, useRef } from "react";
 import { Abi, formatEther, parseEther } from "viem";
 import { useReadContract } from "wagmi";
@@ -54,7 +55,7 @@ export const useExponentialCurveCost = ({
     query: {
       enabled: !!address && !!chainId && !!abi && enabled && !isIntervalLoading,
       staleTime: 0,
-      select: data => formatEther(data as bigint),
+      select: data => formatEther(toPriceUnits(chainVoteCurrency(chainId), data as bigint)),
       //TODO: think if we need this actually
       refetchOnWindowFocus: true,
     },

@@ -1,8 +1,7 @@
 import { chains } from "@config/wagmi";
 import { WidgetConfig } from "@lifi/widget";
 import { EthereumProvider } from "@lifi/widget-provider-ethereum";
-
-const NATIVE_TOKEN_ADDRESS = "0x0000000000000000000000000000000000000000";
+import { resolveBridgeTarget } from "../../utils";
 
 /**
  * Extracts RPC URLs from wagmi chains config and formats them for Jumper widget
@@ -30,9 +29,9 @@ const createRpcUrlsConfig = () => {
  * Creates filters for chains and tokens based on the target chain
  * - Only allows app-supported chains in the "from" chain selector
  * - Only allows the target chain in the "to" chain selector
- * - Only allows native tokens for the target chain
+ * - Only allows the bridge target token for the target chain
  */
-const createFilters = (chainId: number) => {
+const createFilters = (chainId: number, targetTokenAddress: string) => {
   return {
     chains: {
       from: {
@@ -47,7 +46,7 @@ const createFilters = (chainId: number) => {
         allow: [
           {
             chainId: chainId,
-            address: NATIVE_TOKEN_ADDRESS,
+            address: targetTokenAddress,
           },
         ],
       },
@@ -56,13 +55,14 @@ const createFilters = (chainId: number) => {
 };
 
 export const createJumperWidgetConfig = (chainId: number, asset: string, onConnect?: () => void): WidgetConfig => {
-  const filters = createFilters(chainId);
+  const bridgeTarget = resolveBridgeTarget(chainId, asset);
+  const filters = createFilters(chainId, bridgeTarget.tokenAddress);
 
   return {
     integrator: "Confetti",
     providers: [EthereumProvider()],
     toChain: chainId,
-    toToken: asset,
+    toToken: bridgeTarget.toToken,
     variant: "compact",
     appearance: "dark",
     sdkConfig: {

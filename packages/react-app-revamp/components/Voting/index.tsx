@@ -5,7 +5,7 @@ import { MOBILE_MAX_WIDTH_PX } from "@helpers/isMobileViewport";
 import { useClaimVoteLine } from "@hooks/useClaimVote/useClaimVoteLine";
 import { useCastVotesStore } from "@hooks/useCastVotes/store";
 import useContestConfigStore from "@hooks/useContestConfig/store";
-import useDisplayPrice from "@hooks/useCurrency/useDisplayPrice";
+import useVoteCurrencyDisplayPrice from "@hooks/useCurrency/useVoteCurrencyDisplayPrice";
 import { useVoteBalance } from "@hooks/useVoteBalance";
 import { useVoteProjections } from "@hooks/useVoteProjections";
 import { useWallet } from "@hooks/useWallet";
@@ -70,7 +70,7 @@ const VotingWidget: FC<VotingWidgetProps> = ({
   const effectiveCostToVote = useEffectiveCostToVote(costToVote);
   useDefaultVoteAmount({
     contest: contestConfig.address,
-    nativeSymbol: contestConfig.chainNativeCurrencySymbol,
+    voteCurrency: contestConfig.voteCurrency,
     pricePerVoteNative: effectiveCostToVote,
   });
   const {
@@ -97,7 +97,7 @@ const VotingWidget: FC<VotingWidgetProps> = ({
     handleDisplayChange,
     handleDisplayMax,
   } = useVotingInputDisplay({
-    nativeCurrencySymbol: contestConfig.chainNativeCurrencySymbol,
+    voteCurrency: contestConfig.voteCurrency,
     maxBalance,
     isConnected,
   });
@@ -109,13 +109,9 @@ const VotingWidget: FC<VotingWidgetProps> = ({
     pricePerVoteNative: effectiveCostToVote,
     submissionsCount,
   });
-  const pricePerVote = useDisplayPrice(
-    effectiveCostToVote,
-    contestConfig.chainNativeCurrencySymbol,
-    undefined,
-    undefined,
-    { ceilingPrecision: true },
-  );
+  const pricePerVote = useVoteCurrencyDisplayPrice(effectiveCostToVote, contestConfig.voteCurrency, {
+    ceilingPrecision: true,
+  });
   const claimVote = useClaimVoteLine({ pricePerVoteNative: effectiveCostToVote, isVotingClosed });
   const presets = useVotePresets({
     maxBalance,
@@ -202,7 +198,7 @@ const VotingWidget: FC<VotingWidgetProps> = ({
         <VoteInfoBlocks
           type="my-votes"
           balance={isBalanceError ? "Error loading balance" : balance?.formatted || "0"}
-          symbol={contestConfig.chainNativeCurrencySymbol}
+          voteCurrency={contestConfig.voteCurrency}
           insufficientBalance={insufficientBalance}
           isConnected={isConnected}
           isBalancePending={claimVote.isBalancePending}

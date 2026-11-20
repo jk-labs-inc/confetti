@@ -1,5 +1,5 @@
 import DualPriceDisplay from "@components/UI/DualPriceDisplay";
-import useDisplayPrice from "@hooks/useCurrency/useDisplayPrice";
+import useRewardDisplayPrice from "@hooks/useRewards/useRewardDisplayPrice";
 import { FC } from "react";
 
 interface TokenRewardCellProps {
@@ -11,7 +11,7 @@ interface TokenRewardCellProps {
 }
 
 const TokenRewardCell: FC<TokenRewardCellProps> = ({ amount, symbol, address, chainName, isLast }) => {
-  const { displayValue, displaySymbol, isLoading } = useDisplayPrice(amount, symbol, address, chainName);
+  const { displayValue, displaySymbol, isLoading } = useRewardDisplayPrice(amount, symbol, address, chainName);
 
   return (
     <div key={address} className="text-[14px] font-bold">

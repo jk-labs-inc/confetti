@@ -1,14 +1,15 @@
 import CreateFlowMonetizationInput from "@components/_pages/Create/components/MonetizationInput";
+import { VoteCurrency } from "lib/voteCurrency";
 import { FC } from "react";
 import PriceCurveRangeDisplay from "./components/PriceCurveRangeDisplay";
 import { useMultiplierCalculations } from "./hooks/useMultiplierCalculations";
 
 interface PriceCurveMultiplierPreviewProps {
-  chainUnitLabel?: string;
+  voteCurrency: VoteCurrency;
   onError?: (hasError: boolean) => void;
 }
 
-const PriceCurveMultiplierPreview: FC<PriceCurveMultiplierPreviewProps> = ({ chainUnitLabel = "USD", onError }) => {
+const PriceCurveMultiplierPreview: FC<PriceCurveMultiplierPreviewProps> = ({ voteCurrency, onError }) => {
   const { multipler, errorMessage, handleMultiplierChange } = useMultiplierCalculations(onError);
 
   return (
@@ -16,7 +17,7 @@ const PriceCurveMultiplierPreview: FC<PriceCurveMultiplierPreviewProps> = ({ cha
       <p className="text-[20px] text-neutral-11">what multiple would you like for your price curve?</p>
       <div className="flex flex-col gap-6">
         <CreateFlowMonetizationInput value={multipler} errorMessage={errorMessage} onChange={handleMultiplierChange} />
-        <PriceCurveRangeDisplay chainUnitLabel={chainUnitLabel} />
+        <PriceCurveRangeDisplay voteCurrency={voteCurrency} />
       </div>
     </div>
   );

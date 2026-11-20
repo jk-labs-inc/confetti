@@ -2,12 +2,15 @@ import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import { getBalance, getBlockNumber, getGasPrice, getPublicClient, readContract } from "@wagmi/core";
 import { compareVersions } from "compare-versions";
 import { spendableWei } from "lib/voteBalance/spendable";
+import { assertChainHasNativeCoin } from "lib/voteCurrency";
 import { type Address, formatEther, type Hash, TransactionNotFoundError, TransactionReceiptNotFoundError } from "viem";
 import { BLOCK_CATCH_UP_POLL_MS, BLOCK_CATCH_UP_TIMEOUT_MS } from "./constants";
 import { chosenWei, buysOneVote, coversOwnVote } from "./sizing";
 import type { ContestTarget, OwnFunds, ReceiptStatus } from "./types";
 
 const DOWNVOTES_REMOVED_IN = "5.1";
+
+const assertVotesPayInNativeCoin = (chainId: number) => assertChainHasNativeCoin(chainId, "the vote claim");
 
 export const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -56,6 +59,7 @@ export const readSpendableAfter = async ({
   chainId: number;
   minBlock: bigint;
 }): Promise<bigint> => {
+  assertVotesPayInNativeCoin(chainId);
   const config = getWagmiConfig();
   const deadline = Date.now() + BLOCK_CATCH_UP_TIMEOUT_MS;
   for (;;) {
@@ -81,6 +85,7 @@ export const readOwnFunds = async ({
   wallet: Address;
   amountNative: string;
 }): Promise<OwnFunds> => {
+  assertVotesPayInNativeCoin(contest.chainId);
   const chosen = chosenWei(amountNative);
   if (chosen === 0n) return NO_OWN_FUNDS;
   const config = getWagmiConfig();

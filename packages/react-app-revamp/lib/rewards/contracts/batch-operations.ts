@@ -14,6 +14,8 @@ export const createNativeTokenReadBatch = async (
   functionName: string,
   isCreator?: boolean,
 ) => {
+  if (validRankings.length === 0) return [];
+
   try {
     return await readContracts(getWagmiConfig(), {
       contracts: validRankings.map(ranking => ({

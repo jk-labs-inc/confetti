@@ -3,7 +3,6 @@ import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import { extractPathSegments } from "@helpers/extractPath";
 import { getChainId } from "@helpers/getChainId";
 import getContestContractVersion from "@helpers/getContestContractVersion";
-import { getNativeTokenSymbol } from "@helpers/nativeToken";
 import { verifyContractBytecode } from "@helpers/verifyContractBytecode";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import { ContestStateEnum, useContestStateStore } from "@hooks/useContestState/store";
@@ -13,6 +12,7 @@ import { useProposalStore } from "@hooks/useProposal/store";
 import { readContracts } from "@wagmi/core";
 import { compareVersions } from "compare-versions";
 import { checkIfContestExists } from "lib/contests";
+import { readContestVoteCurrency, VoteCurrency } from "lib/voteCurrency";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Abi } from "viem";
@@ -28,6 +28,7 @@ interface ContractConfigResult {
   };
   version: string;
   deployedBytecode?: string;
+  voteCurrency: VoteCurrency;
 }
 
 export interface ContractConfig {
@@ -91,7 +92,14 @@ export function useContest() {
         chainId: chainId,
       };
 
-      return { contractConfig, version, deployedBytecode };
+      const voteCurrency = await readContestVoteCurrency(getWagmiConfig(), {
+        address: contractConfig.address,
+        abi: abi as Abi,
+        chainId,
+        version,
+      });
+
+      return { contractConfig, version, deployedBytecode, voteCurrency };
     } catch (e) {
       setError(ErrorType.CONTRACT);
       setIsSuccess(false);
@@ -193,7 +201,7 @@ export function useContest() {
         return;
       }
 
-      const { contractConfig, version, deployedBytecode } = abiResult;
+      const { contractConfig, version, deployedBytecode, voteCurrency } = abiResult;
 
       const isBytecodeValid = deployedBytecode
         ? await verifyContractBytecode(addressFromUrl, chainId, deployedBytecode)
@@ -215,7 +223,7 @@ export function useContest() {
       }
 
       // only set contest config after all validation passes, so useRewardsModule doesn't start prematurely
-      setContestConfigData(addressFromUrl, chainFromUrl, contractConfig.abi as Abi, version);
+      setContestConfigData(addressFromUrl, chainFromUrl, contractConfig.abi as Abi, version, voteCurrency);
 
       // Fetch contest info for v4 and above
       await fetchV3ContestInfo(contractConfig, version);
@@ -225,15 +233,20 @@ export function useContest() {
     }
   }
 
-  function setContestConfigData(contestAddress: string, contestChainName: string, abi: Abi, version: string) {
-    const contestChainNativeCurrencySymbol = getNativeTokenSymbol(contestChainName);
+  function setContestConfigData(
+    contestAddress: string,
+    contestChainName: string,
+    abi: Abi,
+    version: string,
+    voteCurrency: VoteCurrency,
+  ) {
     const chainId = getChainId(contestChainName);
 
     setContestConfig({
       address: contestAddress as `0x${string}`,
       chainName: contestChainName,
       chainId,
-      chainNativeCurrencySymbol: contestChainNativeCurrencySymbol ?? "",
+      voteCurrency,
       abi: abi as Abi,
       version,
     });

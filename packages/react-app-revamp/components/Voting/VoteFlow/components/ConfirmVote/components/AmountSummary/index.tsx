@@ -1,19 +1,20 @@
 import DualPriceDisplay from "@components/UI/DualPriceDisplay";
 import { formatVoteCount } from "@helpers/formatNumber";
-import useDisplayPrice from "@hooks/useCurrency/useDisplayPrice";
+import useVoteCurrencyDisplayPrice from "@hooks/useCurrency/useVoteCurrencyDisplayPrice";
 import { useVotesFromInput } from "@hooks/useVotesFromInput";
+import { VoteCurrency } from "lib/voteCurrency";
 import { FC } from "react";
 
 interface AmountSummaryProps {
   spendAmount: string;
-  symbol: string;
+  voteCurrency: VoteCurrency;
   costToVote: string;
 }
 
-const AmountSummary: FC<AmountSummaryProps> = ({ spendAmount, symbol, costToVote }) => {
-  const { displayValue, displaySymbol, secondaryValue, secondarySymbol, isLoading } = useDisplayPrice(
+const AmountSummary: FC<AmountSummaryProps> = ({ spendAmount, voteCurrency, costToVote }) => {
+  const { displayValue, displaySymbol, secondaryValue, secondarySymbol, isLoading } = useVoteCurrencyDisplayPrice(
     spendAmount,
-    symbol,
+    voteCurrency,
   );
   const totalVotes = useVotesFromInput({ inputValue: spendAmount, costToVote });
 

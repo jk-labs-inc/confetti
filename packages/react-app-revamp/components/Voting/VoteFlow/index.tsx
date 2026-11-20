@@ -95,7 +95,7 @@ const VoteFlow: FC<VoteFlowProps> = ({
         <div className="animate-appear">
           <AddFunds
             chain={contestConfig.chainName}
-            asset={contestConfig.chainNativeCurrencySymbol ?? ""}
+            asset={contestConfig.voteCurrency.symbol}
             onGoBack={goToVote}
             onBridgeSuccess={handleBridgeSuccess}
           />
@@ -104,7 +104,7 @@ const VoteFlow: FC<VoteFlowProps> = ({
         <div className="animate-appear">
           <ConfirmVote
             entryPreview={resolvedEntryPreview}
-            chainNativeCurrencySymbol={contestConfig.chainNativeCurrencySymbol ?? ""}
+            voteCurrency={contestConfig.voteCurrency}
             costToVote={effectiveCostToVote}
             isVotingClosed={isVotingClosed}
             isVoteLoading={isLoading}

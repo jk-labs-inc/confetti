@@ -1,4 +1,5 @@
 import { VotingWidgetLayout } from "@components/Voting/types";
+import { VoteCurrency } from "lib/voteCurrency";
 
 export type VoteInfoBlockType = "my-votes" | "total-votes";
 
@@ -9,7 +10,7 @@ interface BaseVoteInfoBlocksProps {
 export interface MyVotesProps extends BaseVoteInfoBlocksProps {
   type: "my-votes";
   balance: string;
-  symbol: string;
+  voteCurrency: VoteCurrency;
   insufficientBalance: boolean;
   isConnected: boolean;
   isBalancePending: boolean;
