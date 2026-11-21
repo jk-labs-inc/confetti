@@ -3692,15 +3692,22 @@
   resolved "https://registry.yarnpkg.com/@lifeomic/attempt/-/attempt-3.1.0.tgz#7fc703559177b81a008b9d263e3d9a001d11d08a"
   integrity sha512-QZqem4QuAnAyzfz+Gj5/+SLxqwCAw2qmt7732ZXodr6VDWGeYLG6w1i/vYLa55JQM9wRuBKLmXmiZ2P0LtE5rw==
 
-"@lifi/sdk-provider-ethereum@^4.2.11":
-  version "4.2.11"
-  resolved "https://registry.yarnpkg.com/@lifi/sdk-provider-ethereum/-/sdk-provider-ethereum-4.2.11.tgz#f65cef149dfaff5e51751dac71a66a84ba42f634"
-  integrity sha512-zOr02kwhs+E9TVB2/uwhZwl/7/7CKdBzAPrfBMrGnAB8NJkZ3uW+qEK8EEQHLSt/iTCgAgMaidh5/IKfp9aI/w==
+"@lifi/sdk-provider-ethereum@^4.3.1":
+  version "4.3.1"
+  resolved "https://registry.yarnpkg.com/@lifi/sdk-provider-ethereum/-/sdk-provider-ethereum-4.3.1.tgz#48c190442cfa4caf2751a59dbd5d2abc24243895"
+  integrity sha512-YU4zEZlZdyhjZZrUAwBzj8ZFRtkf1NofoPTgjsv4zkppIoiEjuKSK/DMqkVh1uyzV4Ji2yKpDMP4QR3TO3Zqaw==
   dependencies:
-    "@lifi/sdk" "4.12.1"
-    viem "^2.57.7"
+    "@lifi/sdk" "4.13.0"
+    viem "^2.58.0"
 
-"@lifi/sdk@4.12.1", "@lifi/sdk@^4.12.1":
+"@lifi/sdk@4.13.0", "@lifi/sdk@^4.13.0":
+  version "4.13.0"
+  resolved "https://registry.yarnpkg.com/@lifi/sdk/-/sdk-4.13.0.tgz#02ece61890358d1db34df17bd2c0093b9ee0422a"
+  integrity sha512-6XaLQCrdJZw4x2Qo40r3czC/+CsGpL3SxR6q1HtuoeWTBs0i9GoZnAij6KkRTW0HFSjyH8s/9lsAz8FzMcEy/g==
+  dependencies:
+    "@lifi/types" "^19.1.0"
+
+"@lifi/sdk@^4.12.1":
   version "4.12.1"
   resolved "https://registry.yarnpkg.com/@lifi/sdk/-/sdk-4.12.1.tgz#81c04724950f8ae03f65f8700e0064db44cb10f3"
   integrity sha512-y3Ay06NU9h5siR41EIXJecoMu+A/rA8cXI2bE1QQ1akuDDa6qIVFy0/TDpYDGfEveDTJScfU8x0r5jzRR/aUxg==
@@ -3711,6 +3718,11 @@
   version "18.13.0"
   resolved "https://registry.yarnpkg.com/@lifi/types/-/types-18.13.0.tgz#e8f4ec2e3fd0d4735de0ffae510f546e5a089aef"
   integrity sha512-WHZTVeN6/ijMnducCNcEeW6uirVtNW86CrB6JKZki7hBgI0rg106nSuD+yf1599q4i7igezppS02Z+M6W6BPAA==
+
+"@lifi/types@^19.1.0":
+  version "19.1.0"
+  resolved "https://registry.yarnpkg.com/@lifi/types/-/types-19.1.0.tgz#2fba1ad2919d71b081c3af72a1a2dd7be359af36"
+  integrity sha512-umGZRKYkMlwKcAjfK1AywXinrMJuqW5IhUdWwg5Pff4Cdi4ZB53/HT3RTlpkaZ9BwGnBQKP7islQTC5yKX4JwA==
 
 "@lifi/wallet-management@4.3.5":
   version "4.3.5"
@@ -3729,14 +3741,14 @@
     react-i18next "^17.1.0"
     zustand "^5.0.15"
 
-"@lifi/widget-provider-ethereum@4.1.10":
-  version "4.1.10"
-  resolved "https://registry.yarnpkg.com/@lifi/widget-provider-ethereum/-/widget-provider-ethereum-4.1.10.tgz#89d59dac7d0a9bf6e1d6c922f48a830425882fcb"
-  integrity sha512-9bqg6o4ZcX7/Ow0mcyyM1mk2ZkhGiofMCkv88xaWovkrKahS43vtSXApViN1uaIKWo7I1MwGztcRAySqeZ0u4Q==
+"@lifi/widget-provider-ethereum@4.2.0":
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/@lifi/widget-provider-ethereum/-/widget-provider-ethereum-4.2.0.tgz#3ff2f628a9f64c74542387698cc379bcf9f9f6f1"
+  integrity sha512-2Af6cwvJlWB7tqA9g74M1GzqratGnZbWNhu0UKKtXICa7iLh23ttJ7IeKjOfi2UZAZHufiRRhp166xzlbCZ5VA==
   dependencies:
-    "@lifi/sdk" "^4.12.1"
-    "@lifi/sdk-provider-ethereum" "^4.2.11"
-    "@lifi/widget-provider" "4.6.2"
+    "@lifi/sdk" "^4.13.0"
+    "@lifi/sdk-provider-ethereum" "^4.3.1"
+    "@lifi/widget-provider" "4.7.0"
     viem ">=2.52.0"
 
 "@lifi/widget-provider@4.6.2":
@@ -3746,6 +3758,14 @@
   dependencies:
     "@lifi/sdk" "^4.12.1"
     zustand "^5.0.15"
+
+"@lifi/widget-provider@4.7.0":
+  version "4.7.0"
+  resolved "https://registry.yarnpkg.com/@lifi/widget-provider/-/widget-provider-4.7.0.tgz#92fe82c4df9986b30d8599f9e190dc9aba989599"
+  integrity sha512-hztN+ZxI3MQPOAa7wO1WxjOjFu8Z6og+rnPkttM2GJkmBGp+y/sQSUZ4Pndu6lV2avCv3ETwqc2DmpMsHYYqIA==
+  dependencies:
+    "@lifi/sdk" "^4.13.0"
+    zustand "^5.1.0"
 
 "@lifi/widget@4.10.3":
   version "4.10.3"
@@ -12290,20 +12310,6 @@ ox@0.14.45:
     abitype "^1.2.3"
     eventemitter3 "5.0.1"
 
-ox@0.14.56:
-  version "0.14.56"
-  resolved "https://registry.yarnpkg.com/ox/-/ox-0.14.56.tgz#f3020dde5b7e34af9a8cf85883044853ec87b3f0"
-  integrity sha512-Feinlj+deWEam6RIwurRE+eHZ2N3hoUb3AAjQ10BmxRCYIymfqNkv0eZ+4ln4GkgDmSGLD2rGtTMqsFYSVDC6w==
-  dependencies:
-    "@adraffy/ens-normalize" "^1.11.0"
-    "@noble/ciphers" "^1.3.0"
-    "@noble/curves" "1.9.1"
-    "@noble/hashes" "^1.8.0"
-    "@scure/bip32" "^1.7.0"
-    "@scure/bip39" "^1.6.0"
-    abitype "^1.2.3"
-    eventemitter3 "5.0.1"
-
 ox@0.14.67:
   version "0.14.67"
   resolved "https://registry.yarnpkg.com/ox/-/ox-0.14.67.tgz#c113fc3aa87194f7a45c68bbb8e58cae639d0476"
@@ -14798,10 +14804,10 @@ viem@^2.1.1:
     ox "0.14.45"
     ws "8.21.0"
 
-viem@^2.57.7:
-  version "2.57.7"
-  resolved "https://registry.yarnpkg.com/viem/-/viem-2.57.7.tgz#31c62217c90b937f7f8aa39cc3459d21811e5d8f"
-  integrity sha512-x3UqqrcQuESaRVK6a0BvNmoNP0SVhu913uxEAxYLJx1lNYnj6ylTntfUdakCUKjk1+T+63gkdwFGJQ2O5C/nRw==
+viem@^2.58.0:
+  version "2.58.4"
+  resolved "https://registry.yarnpkg.com/viem/-/viem-2.58.4.tgz#7194d68d1bb67c11998998aabd6b03aabce93524"
+  integrity sha512-zeYi2PliKbmJVbIvudHZrYJLh1XMXci6GBJznQLjhhGPGl9L7Hp/LmelpXhOM9VvlXwnvfW7/2PCgpjnc2j8MQ==
   dependencies:
     "@noble/curves" "1.9.1"
     "@noble/hashes" "1.8.0"
@@ -14809,7 +14815,7 @@ viem@^2.57.7:
     "@scure/bip39" "1.6.0"
     abitype "1.2.3"
     isows "1.0.7"
-    ox "0.14.56"
+    ox "0.14.67"
     ws "8.21.0"
 
 void-elements@3.1.0:
@@ -15383,7 +15389,7 @@ zustand@5.0.0:
   resolved "https://registry.yarnpkg.com/zustand/-/zustand-5.0.0.tgz#71f8aaecf185592a3ba2743d7516607361899da9"
   integrity sha512-LE+VcmbartOPM+auOjCCLQOsQ05zUTp8RkgwRzefUk+2jISdMMFnxvyTjA4YNWr5ZGXYbVsEMZosttuxUBkojQ==
 
-zustand@5.1.0:
+zustand@5.1.0, zustand@^5.1.0:
   version "5.1.0"
   resolved "https://registry.yarnpkg.com/zustand/-/zustand-5.1.0.tgz#739f981fa5427f3d3704705726e9c821671b307f"
   integrity sha512-ciJZlP48M1PTQbVQq81CGVFxHTLpZNrFjKqwjtCU34AWuXTZT/jrF3p9+fI84Cf1eSCMLapxqBy/SNTfwOBuqA==
