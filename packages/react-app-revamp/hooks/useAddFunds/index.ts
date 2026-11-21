@@ -1,7 +1,8 @@
+import { geoblockedModal } from "@components/AddFunds/components/GeoblockedModal/store";
 import { scheduleBodyLockCleanup } from "@components/UI/Drawer";
 import { toastError } from "@components/UI/Toast";
 import { buildFunkitCheckoutConfig, getFunkitChain } from "@config/funkit";
-import { useFunkitCheckout } from "@funkit/connect";
+import { useFunkitCheckout, useSoftHiddenCheckout } from "@funkit/connect";
 import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import { useWallet } from "@hooks/useWallet";
 import { useQueryClient } from "@tanstack/react-query";
@@ -28,6 +29,8 @@ export const useAddFunds = ({ chain }: UseAddFundsParams) => {
   const funkitChain = getFunkitChain(chain);
   const [depositWatch, setDepositWatch] = useState<DepositWatch | null>(null);
   const hasConfirmedDepositRef = useRef(false);
+  const hasUnclosedCheckoutRef = useRef(false);
+  const { softHide, discard } = useSoftHiddenCheckout();
 
   const { data: balance } = useBalance({
     address: userAddress as `0x${string}` | undefined,
@@ -61,7 +64,9 @@ export const useAddFunds = ({ chain }: UseAddFundsParams) => {
     },
     onClose: ({ isNewDeposit, isSoftHidden }) => {
       scheduleBodyLockCleanup();
-      if (isNewDeposit || isSoftHidden) return;
+      if (isNewDeposit) return;
+      hasUnclosedCheckoutRef.current = false;
+      if (isSoftHidden) return;
       hideAddFundsMarker();
       if (!hasConfirmedDepositRef.current || !funkitChain) return;
       const wagmiConfig = getWagmiConfig();
@@ -69,6 +74,16 @@ export const useAddFunds = ({ chain }: UseAddFundsParams) => {
       if (chainId && chainId !== funkitChain.id) {
         switchChain(wagmiConfig, { chainId: funkitChain.id }).catch(() => {});
       }
+    },
+    onCheckoutBlocked: ({ blockedReason }) => {
+      if (blockedReason !== "fullGeoblock") return;
+      if (!hasUnclosedCheckoutRef.current || hasConfirmedDepositRef.current) return;
+      hasUnclosedCheckoutRef.current = false;
+      softHide();
+      discard();
+      scheduleBodyLockCleanup();
+      hideAddFundsMarker();
+      geoblockedModal.show();
     },
     onError: result => toastError({ message: result.message }),
   });
@@ -94,9 +109,14 @@ export const useAddFunds = ({ chain }: UseAddFundsParams) => {
     const checkoutConfig = buildFunkitCheckoutConfig(chain);
     if (!isConnected || !checkoutConfig) return false;
     hasConfirmedDepositRef.current = false;
+    hasUnclosedCheckoutRef.current = true;
     const { isActivated } = await beginCheckout(checkoutConfig);
-    if (isActivated) showAddFundsMarker();
-    return isActivated;
+    if (!isActivated) {
+      hasUnclosedCheckoutRef.current = false;
+      return false;
+    }
+    if (hasUnclosedCheckoutRef.current) showAddFundsMarker();
+    return true;
   }, [chain, isConnected, beginCheckout]);
 
   return { openAddFunds, depositPending: depositWatch !== null };

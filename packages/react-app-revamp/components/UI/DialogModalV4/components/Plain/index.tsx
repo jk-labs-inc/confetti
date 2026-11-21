@@ -2,7 +2,12 @@ import { Transition, TransitionChild } from "@headlessui/react";
 import { isParaModalShown } from "@helpers/paraModal";
 import { FC, MouseEvent, PointerEvent, ReactNode, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { dialogModalV4BackdropClassName, getDialogModalV4PanelClassName, type DialogModalV4Panel } from "../../styles";
+import {
+  dialogModalV4BackdropClassName,
+  dialogModalV4LayerClassName,
+  getDialogModalV4PanelClassName,
+} from "../../styles";
+import type { DialogModalV4Layer, DialogModalV4Panel } from "../../types";
 
 interface DialogModalV4PlainProps {
   isOpen: boolean;
@@ -10,13 +15,23 @@ interface DialogModalV4PlainProps {
   width: string;
   lgWidth: string;
   panel: DialogModalV4Panel;
+  layer: DialogModalV4Layer;
   onClose: () => void;
 }
 
-const DialogModalV4Plain: FC<DialogModalV4PlainProps> = ({ isOpen, children, width, lgWidth, panel, onClose }) => {
+const DialogModalV4Plain: FC<DialogModalV4PlainProps> = ({
+  isOpen,
+  children,
+  width,
+  lgWidth,
+  panel,
+  layer,
+  onClose,
+}) => {
   const panelRef = useRef<HTMLDivElement>(null);
   const isPointerDownOutside = useRef(false);
   const [isMounted, setIsMounted] = useState(false);
+  const isTopLayer = layer === "top";
 
   useEffect(() => setIsMounted(true), []);
 
@@ -24,17 +39,23 @@ const DialogModalV4Plain: FC<DialogModalV4PlainProps> = ({ isOpen, children, wid
     if (!isOpen) return;
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape" && !isParaModalShown()) onClose();
+      if (event.key !== "Escape" || isParaModalShown()) return;
+      if (isTopLayer) event.stopPropagation();
+      onClose();
     };
 
-    document.addEventListener("keydown", handleKeyDown);
+    const isBodyScrollLockedBelow = isTopLayer && document.body.style.overflow === "hidden";
+
+    if (isTopLayer) window.addEventListener("keydown", handleKeyDown, { capture: true });
+    else document.addEventListener("keydown", handleKeyDown);
     document.body.style.overflow = "hidden";
 
     return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-      document.body.style.overflow = "";
+      if (isTopLayer) window.removeEventListener("keydown", handleKeyDown, { capture: true });
+      else document.removeEventListener("keydown", handleKeyDown);
+      if (!isBodyScrollLockedBelow) document.body.style.overflow = "";
     };
-  }, [isOpen, onClose]);
+  }, [isOpen, onClose, isTopLayer]);
 
   if (!isMounted) return null;
 
@@ -49,7 +70,7 @@ const DialogModalV4Plain: FC<DialogModalV4PlainProps> = ({ isOpen, children, wid
   };
 
   return createPortal(
-    <Transition as="div" show={isOpen} className="relative z-50">
+    <Transition as="div" show={isOpen} appear={isTopLayer} className={`relative ${dialogModalV4LayerClassName[layer]}`}>
       <TransitionChild as="div" transition aria-hidden="true" className={dialogModalV4BackdropClassName} />
 
       <div

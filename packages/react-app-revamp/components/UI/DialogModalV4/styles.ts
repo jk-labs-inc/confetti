@@ -1,7 +1,12 @@
+import type { DialogModalV4Layer, DialogModalV4Panel } from "./types";
+
 export const dialogModalV4BackdropClassName =
   "fixed inset-0 bg-neutral-8/40 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-leave:duration-200 data-enter:ease-out data-leave:ease-in";
 
-export type DialogModalV4Panel = "default" | "bare";
+export const dialogModalV4LayerClassName: Record<DialogModalV4Layer, string> = {
+  dialog: "z-50",
+  top: "z-9000 pointer-events-auto",
+};
 
 const dialogModalV4BarePanelClassName =
   "relative my-8 max-w-[calc(100vw-32px)] transition data-closed:scale-95 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in";
