@@ -14,6 +14,7 @@ import {
   DRAG_THRESHOLD,
   DRAG_THRESHOLD_TOUCH,
   ENTRY_CAROUSEL_FOOTER_ID,
+  ENTRY_CAROUSEL_STAGE_ID,
   FILL_BOTTOM_GAP_PX,
   FLICK_MIN_TRAVEL_PX,
   FLICK_MIN_VELOCITY_PX_S,
@@ -379,6 +380,7 @@ const EntryCarousel: FC<EntryCarouselProps> = ({
       }}
     >
       <div
+        id={ENTRY_CAROUSEL_STAGE_ID}
         ref={stageRef}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}

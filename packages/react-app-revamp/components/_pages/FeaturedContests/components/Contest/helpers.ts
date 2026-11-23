@@ -101,26 +101,3 @@ export const getTimingUpdateInterval = (contest: ProcessedContest): number => {
   // Voting not open - using fixed dates, update every minute
   return 60000;
 };
-
-export const isContestInEntryPeriod = (contest: ProcessedContest): boolean => {
-  if (contest.isCanceled) return false;
-
-  const now = moment();
-  return now.isSameOrAfter(moment(contest.start_at)) && now.isBefore(moment(contest.vote_start_at));
-};
-
-export const isContestInVotingPeriod = (contest: ProcessedContest): boolean => {
-  if (contest.isCanceled) return false;
-
-  const now = moment();
-  return now.isSameOrAfter(moment(contest.vote_start_at)) && now.isBefore(moment(contest.end_at));
-};
-
-export const isContestActive = (contest: ProcessedContest): boolean => {
-  if (contest.isCanceled) return false;
-
-  const now = moment();
-  const end = moment(contest.end_at);
-
-  return now.isBefore(end);
-};

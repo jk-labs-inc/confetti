@@ -7,11 +7,20 @@ interface HeightRatioRange {
 }
 
 interface GalleryImageShapeProviderProps {
+  initialHeightRatios?: number[];
   children: ReactNode;
 }
 
-const GalleryImageShapeProvider: FC<GalleryImageShapeProviderProps> = ({ children }) => {
-  const [range, setRange] = useState<HeightRatioRange | null>(null);
+const NO_HEIGHT_RATIOS: number[] = [];
+
+const rangeOf = (heightRatios: number[]): HeightRatioRange | null =>
+  heightRatios.length ? { min: Math.min(...heightRatios), max: Math.max(...heightRatios) } : null;
+
+const GalleryImageShapeProvider: FC<GalleryImageShapeProviderProps> = ({
+  initialHeightRatios = NO_HEIGHT_RATIOS,
+  children,
+}) => {
+  const [range, setRange] = useState<HeightRatioRange | null>(() => rangeOf(initialHeightRatios));
 
   const reportHeightRatio = useCallback((heightRatio: number) => {
     setRange(prev => {
