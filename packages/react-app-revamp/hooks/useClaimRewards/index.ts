@@ -16,7 +16,6 @@ interface UseClaimRewardsProps {
   contractRewardsModuleAddress: `0x${string}`;
   abiRewardsModule: Abi;
   chainId: number;
-  tokenDecimals: number;
   userAddress?: `0x${string}`;
 }
 
@@ -27,7 +26,6 @@ export const useClaimRewards = ({
   contractRewardsModuleAddress,
   abiRewardsModule,
   chainId,
-  tokenDecimals,
   userAddress,
 }: UseClaimRewardsProps) => {
   const { chain: userChain } = useWallet();
@@ -52,6 +50,7 @@ export const useClaimRewards = ({
     payee: number,
     tokenBalance: bigint,
     tokenAddress: string,
+    tokenDecimals: number,
     voterAddress?: `0x${string}`,
   ) => {
     setLoading(payee, tokenAddress, true);

@@ -9,6 +9,7 @@ import { parseMetadataFieldsSchema } from "@hooks/useMetadataFields/helpers";
 import { useQuery } from "@tanstack/react-query";
 import { readContract } from "@wagmi/core";
 import { CONTEST_ENTRY_TYPE_VERSION, METADATA_FIELDS_VERSION } from "constants/versions";
+import { readContestVoteCurrency, VoteCurrency } from "lib/voteCurrency";
 import { Abi } from "viem";
 
 export interface ContestCardConfig {
@@ -20,12 +21,55 @@ export interface ContestCardConfig {
   isLegacy: boolean;
   hasDownvotes: boolean;
   enabledPreview: EntryPreview | null;
+  voteCurrency: VoteCurrency;
 }
 
 interface UseContestCardConfigParams {
   address: string;
   chainName: string;
   enabled?: boolean;
+}
+
+async function readEnabledPreview(
+  address: `0x${string}`,
+  abi: Abi,
+  chainId: number,
+  version: string,
+): Promise<EntryPreview | null> {
+  if ((safeCompareVersions(version, CONTEST_ENTRY_TYPE_VERSION) ?? -1) >= 0) {
+    try {
+      const entryType = await readContract(getWagmiConfig(), {
+        address,
+        abi,
+        chainId,
+        functionName: "contestEntryType",
+        args: [],
+      });
+      return ENTRY_TYPE_TOKEN_TO_PREVIEW[entryType as string] ?? EntryPreview.TITLE;
+    } catch {
+      return EntryPreview.TITLE;
+    }
+  }
+
+  if ((safeCompareVersions(version, METADATA_FIELDS_VERSION) ?? -1) >= 0) {
+    try {
+      const schema = await readContract(getWagmiConfig(), {
+        address,
+        abi,
+        chainId,
+        functionName: "metadataFieldsSchema",
+        args: [],
+      });
+      if (typeof schema === "string") {
+        const fields = parseMetadataFieldsSchema(schema);
+        return fields.length > 0 ? verifyEntryPreviewPrompt(fields[0].prompt).enabledPreview : null;
+      }
+    } catch {
+      // no readable schema — getEntryPreview falls back to the entry description as title.
+    }
+  }
+
+  return null;
 }
 
 async function fetchContestCardConfig(
@@ -41,39 +85,12 @@ async function fetchContestCardConfig(
   const isLegacy = !(abi as Abi).some(entry => entry.type === "function" && entry.name === "allProposalTotalVotes");
   const hasDownvotes = (safeCompareVersions(version, "5.1") ?? 0) < 0;
 
-  let enabledPreview: EntryPreview | null = null;
-  if ((safeCompareVersions(version, CONTEST_ENTRY_TYPE_VERSION) ?? -1) >= 0) {
-    try {
-      const entryType = await readContract(getWagmiConfig(), {
-        address,
-        abi,
-        chainId,
-        functionName: "contestEntryType",
-        args: [],
-      });
-      enabledPreview = ENTRY_TYPE_TOKEN_TO_PREVIEW[entryType as string] ?? EntryPreview.TITLE;
-    } catch {
-      enabledPreview = EntryPreview.TITLE;
-    }
-  } else if ((safeCompareVersions(version, METADATA_FIELDS_VERSION) ?? -1) >= 0) {
-    try {
-      const schema = await readContract(getWagmiConfig(), {
-        address,
-        abi,
-        chainId,
-        functionName: "metadataFieldsSchema",
-        args: [],
-      });
-      if (typeof schema === "string") {
-        const fields = parseMetadataFieldsSchema(schema);
-        enabledPreview = fields.length > 0 ? verifyEntryPreviewPrompt(fields[0].prompt).enabledPreview : null;
-      }
-    } catch {
-      // no readable schema — getEntryPreview falls back to the entry description as title.
-    }
-  }
+  const [enabledPreview, voteCurrency] = await Promise.all([
+    readEnabledPreview(address, abi as Abi, chainId, version),
+    readContestVoteCurrency(getWagmiConfig(), { address, abi: abi as Abi, chainId, version }),
+  ]);
 
-  return { address, abi, version, chainId, chainName, isLegacy, hasDownvotes, enabledPreview };
+  return { address, abi, version, chainId, chainName, isLegacy, hasDownvotes, enabledPreview, voteCurrency };
 }
 
 /**

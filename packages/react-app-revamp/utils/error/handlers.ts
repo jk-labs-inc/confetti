@@ -1,4 +1,5 @@
-import { chains } from "@config/wagmi";
+import { findChainIdByName } from "@helpers/getChainId";
+import { findChainVoteCurrency } from "lib/voteCurrency";
 import { ContractFunctionExecutionError, EstimateGasExecutionError } from "viem";
 import { ErrorCodes, errorDefinitions, dynamicMessageCodes, numericCodeMap, getErrorMessage } from "./codes";
 import { ErrorResult } from "./types";
@@ -35,12 +36,10 @@ const createDynamicMessage = (code: ErrorCodes, chainName?: string): string => {
     return getErrorMessage(code);
   }
 
-  const chainNativeCurrency = chains.find(
-    chain => chain.name.toLowerCase() === chainName.toLowerCase(),
-  )?.nativeCurrency;
+  const voteCurrencySymbol = findChainVoteCurrency(findChainIdByName(chainName))?.symbol;
 
-  if (chainNativeCurrency) {
-    return `please make sure you have enough ${chainNativeCurrency.symbol} on ${chainName}`;
+  if (voteCurrencySymbol) {
+    return `please make sure you have enough ${voteCurrencySymbol} on ${chainName}`;
   }
 
   return getErrorMessage(code);

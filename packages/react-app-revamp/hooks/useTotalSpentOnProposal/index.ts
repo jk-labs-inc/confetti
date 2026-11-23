@@ -1,6 +1,7 @@
 import { ANALYTICS_VERSION } from "constants/versions";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import { compareVersions } from "compare-versions";
+import { toPriceUnits } from "lib/voteCurrency";
 import { useMemo } from "react";
 import { Abi } from "viem";
 import { useReadContracts } from "wagmi";
@@ -54,7 +55,7 @@ const useTotalSpentOnProposal = ({
   userAddress,
   proposalIds,
 }: UseTotalSpentOnProposalParams): SpentOnProposalResult => {
-  const { abi, version } = useContestConfigStore(useShallow(state => state.contestConfig));
+  const { abi, version, voteCurrency } = useContestConfigStore(useShallow(state => state.contestConfig));
   const isAnalyticsSupported = !!version && compareVersions(version, ANALYTICS_VERSION) >= 0;
 
   const contracts = useMemo(() => {
@@ -78,13 +79,13 @@ const useTotalSpentOnProposal = ({
     let totalSpentOnProposals = 0n;
 
     for (let i = 0; i < proposalIds.length; i++) {
-      const amount = (data[i]?.result as bigint) ?? 0n;
+      const amount = toPriceUnits(voteCurrency, (data[i]?.result as bigint) ?? 0n);
       spentByProposal[proposalIds[i]] = amount;
       totalSpentOnProposals += amount;
     }
 
     return { spentByProposal, totalSpentOnProposals };
-  }, [data, proposalIds]);
+  }, [data, proposalIds, voteCurrency]);
 
   if (!isAnalyticsSupported) return EMPTY_RESULT;
 

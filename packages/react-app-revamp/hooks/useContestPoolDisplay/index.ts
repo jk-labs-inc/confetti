@@ -1,8 +1,9 @@
 import { formatBalance } from "@helpers/formatBalance";
 import { useCancelRewards } from "@hooks/useCancelRewards";
 import useContestConfigStore from "@hooks/useContestConfig/store";
-import { useCurrencyStore } from "@hooks/useCurrency/store";
-import useTotalRewardsUsd, { toRewardTokenItems } from "@hooks/useCurrency/useTotalRewardsUsd";
+import usePotDisplayCurrency from "@hooks/useCurrency/usePotDisplayCurrency";
+import useTotalRewardsUsd from "@hooks/useCurrency/useTotalRewardsUsd";
+import { toRewardTokenItems } from "lib/rewards/valuation";
 import useRewardsModule from "@hooks/useRewards";
 import { useTotalRewards } from "@hooks/useTotalRewards";
 import { ModuleType } from "lib/rewards/types";
@@ -27,7 +28,6 @@ export const useContestPoolDisplay = (): ContestPoolDisplay => {
       version: state.contestConfig.version,
     })),
   );
-  const displayCurrency = useCurrencyStore(state => state.displayCurrency);
   const { data: rewards, isLoading: isRewardsLoading, isSuccess: isRewardsSuccess, isError } = useRewardsModule();
   const {
     isCanceled,
@@ -54,6 +54,7 @@ export const useContestPoolDisplay = (): ContestPoolDisplay => {
   });
 
   const tokenItems = useMemo(() => toRewardTokenItems(totalRewards), [totalRewards]);
+  const displayCurrency = usePotDisplayCurrency(chainName, tokenItems);
 
   const totalUsd = useTotalRewardsUsd(tokenItems, chainName);
   const hasRewards = hasValidModule && !isTotalRewardsError && tokenItems.length > 0;

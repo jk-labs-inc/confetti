@@ -1,4 +1,5 @@
 /* eslint-disable react/no-unescaped-entities */
+import { useContestStore } from "@hooks/useContest/store";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import { useSubmitQualification } from "@hooks/useUserSubmitQualification";
@@ -8,6 +9,7 @@ import Skeleton from "react-loading-skeleton";
 import { useShallow } from "zustand/shallow";
 import ContestPromptModal from "./components/Modal";
 import ContestPromptPage from "./components/Page";
+import { hasDescription } from "./utils";
 
 interface ContestPromptProps {
   prompt: string;
@@ -18,6 +20,7 @@ interface ContestPromptProps {
 const ContestPrompt: FC<ContestPromptProps> = ({ prompt, type, hidePrompt = false }) => {
   const { isConnected, userAddress } = useWallet();
   const { contestConfig } = useContestConfigStore(state => state);
+  const isV3 = useContestStore(useShallow(state => state.isV3));
   const contestStatus = useContestStatusStore(useShallow(state => state.contestStatus));
   const isVotingOpenOrClosed =
     contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed;
@@ -44,10 +47,15 @@ const ContestPrompt: FC<ContestPromptProps> = ({ prompt, type, hidePrompt = fals
   };
 
   if (type === "page") {
+    const showsDescription = !isV3 || hasDescription(prompt);
+    const qualifierMessage = isConnected ? renderQualifierMessage() : null;
+
+    if (!showsDescription && !qualifierMessage) return null;
+
     return (
       <div className="flex flex-col gap-8">
-        <ContestPromptPage prompt={prompt} />
-        {isConnected && renderQualifierMessage()}
+        {showsDescription && <ContestPromptPage prompt={prompt} />}
+        {qualifierMessage}
       </div>
     );
   } else {

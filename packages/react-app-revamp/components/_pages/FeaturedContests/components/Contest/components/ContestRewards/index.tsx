@@ -1,5 +1,6 @@
 import { formatBalance } from "@helpers/formatBalance";
-import useTotalRewardsUsd, { TokenItem } from "@hooks/useCurrency/useTotalRewardsUsd";
+import useTotalRewardsUsd from "@hooks/useCurrency/useTotalRewardsUsd";
+import { RewardTokenItem } from "lib/rewards/types";
 import { ContestWithTotalRewards, ProcessedContest } from "lib/contests/types";
 import { FC, useMemo } from "react";
 import { isContestActive, isContestInEntryPeriod, isContestInVotingPeriod } from "../../helpers";
@@ -11,10 +12,10 @@ interface ContestRewardsProps {
 }
 
 const ContestRewards: FC<ContestRewardsProps> = ({ contestData, rewardsData, isRewardsFetching }) => {
-  const tokenItems: TokenItem[] = useMemo(() => {
+  const tokenItems: RewardTokenItem[] = useMemo(() => {
     if (!rewardsData?.hasRewards || !rewardsData.rewardsData) return [];
 
-    const items: TokenItem[] = [];
+    const items: RewardTokenItem[] = [];
     const { native, tokens } = rewardsData.rewardsData;
 
     if (native && native.value > 0n) {

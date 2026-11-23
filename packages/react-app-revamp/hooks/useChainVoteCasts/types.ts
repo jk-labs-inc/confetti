@@ -1,3 +1,13 @@
+import { VoteCurrency } from "lib/voteCurrency";
+import { Abi } from "viem";
+
+export interface ScannedContest {
+  address: `0x${string}`;
+  abi: Abi;
+  chainId: number;
+  voteCurrency: VoteCurrency;
+}
+
 export interface ChainVoteLog {
   voter: string;
   proposalId: string;

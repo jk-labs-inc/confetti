@@ -1,5 +1,6 @@
 import { ALCHEMY_PRICES_BASE_URL, CHAIN_TO_ALCHEMY_NETWORK } from "@config/alchemy";
 import { queryOptions, useQuery } from "@tanstack/react-query";
+import { peggedTokenUsdRates } from "lib/rewards/valuation";
 
 const ALCHEMY_KEY = process.env.NEXT_PUBLIC_ALCHEMY_KEY ?? "";
 
@@ -71,14 +72,19 @@ export const fetchErc20Prices = async (addresses: string[], chain: string): Prom
 
 export const erc20RatesQueryOptions = (tokenAddresses: string[], chainName: string) => {
   const sorted = [...tokenAddresses].map(a => a.toLowerCase()).sort();
+  const peggedRates = peggedTokenUsdRates(chainName, sorted);
+  const marketPriced = sorted.filter(address => !(address in peggedRates));
+  const hasMarketRatesToFetch = marketPriced.length > 0 && !!CHAIN_TO_ALCHEMY_NETWORK[chainName];
+  const hasPeggedRates = marketPriced.length < sorted.length;
 
   return queryOptions({
     queryKey: ["erc20-rates-fetch", chainName, sorted.join(",")],
-    queryFn: () => fetchErc20Prices(sorted, chainName),
+    queryFn: async () => ({ ...(await fetchErc20Prices(marketPriced, chainName)), ...peggedRates }),
+    initialData: hasPeggedRates && !hasMarketRatesToFetch ? peggedRates : undefined,
     staleTime: Infinity,
     refetchOnWindowFocus: false,
     retry: 2,
-    enabled: sorted.length > 0 && !!CHAIN_TO_ALCHEMY_NETWORK[chainName],
+    enabled: hasMarketRatesToFetch,
   });
 };
 

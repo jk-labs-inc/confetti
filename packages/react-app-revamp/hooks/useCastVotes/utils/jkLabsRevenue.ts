@@ -5,8 +5,7 @@ import { formatEther } from "viem";
 interface ComputeJkLabsRevenueUsdParams {
   totalChargeWei: bigint;
   chainId: number;
-  chainNativeCurrencySymbol: string;
-  nativeRates: Record<string, number> | undefined;
+  voteCurrencyUsdRate: number | undefined;
   charge: Charge;
   isRewardsPoolSelfFunded: boolean;
   isCreatorSplitEnabled: boolean;
@@ -15,8 +14,7 @@ interface ComputeJkLabsRevenueUsdParams {
 export const computeJkLabsRevenueUsd = ({
   totalChargeWei,
   chainId,
-  chainNativeCurrencySymbol,
-  nativeRates,
+  voteCurrencyUsdRate,
   charge,
   isRewardsPoolSelfFunded,
   isCreatorSplitEnabled,
@@ -25,12 +23,10 @@ export const computeJkLabsRevenueUsd = ({
 
   if (chain?.testnet) return 0;
 
-  const rate = nativeRates?.[chainNativeCurrencySymbol.toLowerCase()];
-
-  if (!rate) return 0;
+  if (!voteCurrencyUsdRate) return 0;
 
   const totalChargeNative = Number(formatEther(totalChargeWei));
-  const totalChargeUsd = totalChargeNative * rate;
+  const totalChargeUsd = totalChargeNative * voteCurrencyUsdRate;
 
   let percentageToJkLabs: number;
   if (isRewardsPoolSelfFunded) {

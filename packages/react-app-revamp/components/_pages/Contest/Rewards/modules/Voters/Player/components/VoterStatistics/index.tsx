@@ -4,8 +4,11 @@ import { extractPathSegments } from "@helpers/extractPath";
 import { getChainId } from "@helpers/getChainId";
 import useDisplayPrice from "@hooks/useCurrency/useDisplayPrice";
 import useRewardsModule from "@hooks/useRewards";
+import useRewardDisplayPrice from "@hooks/useRewards/useRewardDisplayPrice";
 import { useTotalRewardsForRank } from "@hooks/useTotalRewardsForRank";
 import { useVoterRewardsStatistics } from "@hooks/useVoterRewardsStatistics";
+import { peggedRewardTokenAddress } from "lib/rewards/valuation";
+import { chainHasNativeCoin } from "lib/voteCurrency";
 import { usePathname } from "next/navigation";
 import { FC } from "react";
 import { formatUnits } from "viem";
@@ -23,7 +26,7 @@ interface TokenRewardDisplayProps {
 }
 
 const TokenRewardDisplay: FC<TokenRewardDisplayProps> = ({ formatted, symbol, address, chainName }) => {
-  const { displayValue, displaySymbol, isLoading } = useDisplayPrice(formatted, symbol, address, chainName);
+  const { displayValue, displaySymbol, isLoading } = useRewardDisplayPrice(formatted, symbol, address, chainName);
 
   return (
     <span>
@@ -44,6 +47,7 @@ interface VoterStatisticsProps {
     value: bigint;
     symbol: string;
     decimals: number;
+    address: string;
   };
   isActive: boolean;
 }
@@ -76,7 +80,13 @@ const VoterStatistics: FC<VoterStatisticsProps> = ({ ranking, myReward, isActive
   const nativeRewardDisplay = useDisplayPrice(nativeRewardRaw, totalRewardsForRank?.native.symbol ?? "ETH");
 
   const myRewardRaw = formatUnits(myReward.value, myReward.decimals);
-  const myRewardDisplay = useDisplayPrice(myRewardRaw, myReward.symbol);
+  const myRewardDisplay = useRewardDisplayPrice(
+    myRewardRaw,
+    myReward.symbol,
+    peggedRewardTokenAddress(chainName, myReward.address),
+    chainName,
+  );
+  const hasNativeBalance = chainHasNativeCoin(chainId);
 
   if (isLoading || isTotalRewardsForRankLoading) return <StatisticsSkeleton />;
 
@@ -85,15 +95,17 @@ const VoterStatistics: FC<VoterStatisticsProps> = ({ ranking, myReward, isActive
 
   const renderTotalRewards = () => (
     <div className="flex flex-col items-end font-bold">
-      <span>
-        <DualPriceDisplay
-          displayValue={nativeRewardDisplay.displayValue}
-          displaySymbol={nativeRewardDisplay.displaySymbol}
-          secondaryValue={null}
-          secondarySymbol={null}
-          isLoading={nativeRewardDisplay.isLoading}
-        />
-      </span>
+      {hasNativeBalance ? (
+        <span>
+          <DualPriceDisplay
+            displayValue={nativeRewardDisplay.displayValue}
+            displaySymbol={nativeRewardDisplay.displaySymbol}
+            secondaryValue={null}
+            secondarySymbol={null}
+            isLoading={nativeRewardDisplay.isLoading}
+          />
+        </span>
+      ) : null}
       {Object.entries(totalRewardsForRank?.tokens ?? {}).map(([address, token]) => (
         <TokenRewardDisplay
           key={address}

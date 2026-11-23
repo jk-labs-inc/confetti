@@ -1,5 +1,6 @@
 import { formatTokenAmountSmart, formatUsd, formatUsdCeil } from "@helpers/formatBalance";
 import BigNumber from "bignumber.js";
+import { isUsdPegged, VoteCurrency } from "lib/voteCurrency";
 import { DisplayCurrency, useCurrencyStore } from "./store";
 import useErc20Rates from "./useErc20Rates";
 import useNativeRates from "./useNativeRates";
@@ -16,6 +17,7 @@ export type PriceDisplay = Pick<DisplayPriceResult, "displayValue" | "displaySym
 
 export type DisplayPriceOptions = {
   ceilingPrecision?: boolean;
+  dollarDenominated?: boolean;
 };
 
 /**
@@ -36,30 +38,33 @@ const resolveRate = (
   return nativeRates[nativeCurrencySymbol.toLowerCase()];
 };
 
-/**
- * Pure function that converts a native crypto value to a display format
- * based on the provided currency preference and rates.
- * Returns both a primary display (based on toggle) and a secondary display
- * (the "other" format) so components can show both simultaneously.
- */
-export const convertToDisplayPrice = (
-  nativeValue: string,
-  nativeCurrencySymbol: string,
-  displayCurrency: DisplayCurrency,
-  nativeRates: Record<string, number>,
-  erc20Rates: Record<string, number> = {},
-  tokenAddress?: string,
-  options: DisplayPriceOptions = {},
-): DisplayPriceResult => {
-  const rate = resolveRate(nativeCurrencySymbol, nativeRates, erc20Rates, tokenAddress);
-  const numericValue = parseFloat(nativeValue);
+interface DisplayPriceInput {
+  value: string;
+  symbol: string;
+  rate: number | undefined;
+  displayCurrency: DisplayCurrency;
+  options?: DisplayPriceOptions;
+}
+
+interface VoteCurrencyPriceInput extends Omit<DisplayPriceInput, "symbol"> {
+  voteCurrency: VoteCurrency | undefined;
+}
+
+const formatDisplayPrice = ({
+  value,
+  symbol,
+  rate,
+  displayCurrency,
+  options = {},
+}: DisplayPriceInput): DisplayPriceResult => {
+  const numericValue = parseFloat(value);
   const hasValidRate = rate !== undefined && !isNaN(numericValue);
   const nativeRounding = options.ceilingPrecision ? BigNumber.ROUND_CEIL : BigNumber.ROUND_HALF_UP;
   const formatUsdValue = options.ceilingPrecision ? formatUsdCeil : formatUsd;
-  const formattedNative = formatTokenAmountSmart(nativeValue, rate, nativeRounding);
-  const tickerSymbol = "$" + nativeCurrencySymbol.toUpperCase();
+  const formattedNative = formatTokenAmountSmart(value, rate, nativeRounding);
+  const tickerSymbol = "$" + symbol.toUpperCase();
 
-  if (displayCurrency === "native") {
+  if (displayCurrency === "native" && !options.dollarDenominated) {
     const secondaryUsd = hasValidRate ? formatUsdValue(numericValue * rate) : null;
 
     return {
@@ -87,11 +92,43 @@ export const convertToDisplayPrice = (
   return {
     displayValue: formattedUsd,
     displaySymbol: "$",
-    secondaryValue: formattedNative,
-    secondarySymbol: tickerSymbol,
+    secondaryValue: options.dollarDenominated ? null : formattedNative,
+    secondarySymbol: options.dollarDenominated ? null : tickerSymbol,
     isLoading: false,
   };
 };
+
+export const formatVoteCurrencyPrice = ({
+  value,
+  voteCurrency,
+  rate,
+  displayCurrency,
+  options,
+}: VoteCurrencyPriceInput): DisplayPriceResult =>
+  formatDisplayPrice({
+    value,
+    symbol: voteCurrency?.symbol ?? "",
+    rate,
+    displayCurrency,
+    options: { ...options, dollarDenominated: isUsdPegged(voteCurrency) },
+  });
+
+export const convertToDisplayPrice = (
+  nativeValue: string,
+  nativeCurrencySymbol: string,
+  displayCurrency: DisplayCurrency,
+  nativeRates: Record<string, number>,
+  erc20Rates: Record<string, number> = {},
+  tokenAddress?: string,
+  options: DisplayPriceOptions = {},
+): DisplayPriceResult =>
+  formatDisplayPrice({
+    value: nativeValue,
+    symbol: nativeCurrencySymbol,
+    rate: resolveRate(nativeCurrencySymbol, nativeRates, erc20Rates, tokenAddress),
+    displayCurrency,
+    options,
+  });
 
 /**
  * React hook that returns the display value and symbol for a given native crypto amount,

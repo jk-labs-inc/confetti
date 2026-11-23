@@ -4,6 +4,7 @@ import { useProposalStore } from "@hooks/useProposal/store";
 import useRewardsModule from "@hooks/useRewards";
 import { useTotalRewards } from "@hooks/useTotalRewards";
 import { useWallet } from "@hooks/useWallet";
+import { votePotAmount } from "lib/voteCurrency";
 import { useMemo } from "react";
 import { Address } from "viem";
 import { useShallow } from "zustand/shallow";
@@ -58,7 +59,7 @@ export function useContestLeaderboard({
     chainId: contestConfig.chainId,
     enabled: earningsReady,
   });
-  const poolNative = Number(totalRewards?.native.formatted ?? "0");
+  const poolNative = votePotAmount(contestConfig.voteCurrency, totalRewards);
 
   const hasEntryRanking = initialMappedProposalIds.length > 0;
   const isEarningsAvailable = earningsReady && !isPoolLoading && !!totalRewards && hasEntryRanking;

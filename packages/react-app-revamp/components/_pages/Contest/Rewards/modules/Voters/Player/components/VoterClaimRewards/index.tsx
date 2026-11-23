@@ -1,3 +1,4 @@
+import { Reward } from "@components/_pages/Contest/Rewards/types";
 import Loader from "@components/UI/Loader";
 import { useClaimRewards } from "@hooks/useClaimRewards";
 import { useContestStore } from "@hooks/useContest/store";
@@ -73,12 +74,11 @@ const VoterClaimRewards: FC<VoterClaimRewardsProps> = ({
     contractRewardsModuleAddress: rewards.contractAddress as `0x${string}`,
     abiRewardsModule: rewards.abi,
     chainId,
-    tokenDecimals: 18,
     userAddress: userAddress as `0x${string}`,
   });
 
-  const handleClaim = async (rank: number, value: bigint, tokenAddress: string) => {
-    await claimRewards(rank, value, tokenAddress, userAddress);
+  const handleClaim = async (rank: number, reward: Reward) => {
+    await claimRewards(rank, reward.value, reward.address, reward.decimals, userAddress);
   };
 
   if (isUserRewardsLoading || isTiedRankingsLoading) {

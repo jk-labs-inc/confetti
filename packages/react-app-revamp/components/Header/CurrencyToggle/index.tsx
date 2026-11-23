@@ -1,7 +1,8 @@
 import { ROUTE_CREATE_CONTEST } from "@config/routes";
-import { getNativeTokenSymbol } from "@helpers/nativeToken";
+import { findChainIdByName } from "@helpers/getChainId";
 import { useCurrencyStore } from "@hooks/useCurrency/store";
 import { useWallet } from "@hooks/useWallet";
+import { findChainVoteCurrency, isUsdPegged } from "lib/voteCurrency";
 import { useParams, usePathname } from "next/navigation";
 import { FC } from "react";
 import { useShallow } from "zustand/shallow";
@@ -19,14 +20,18 @@ const CurrencyToggle: FC = () => {
   const contestChain = typeof params?.chain === "string" ? params.chain : undefined;
   const isCreateFlow = pathname === ROUTE_CREATE_CONTEST;
 
-  let nativeSymbol = DEFAULT_NATIVE_SYMBOL;
+  let pricedChainId: number | undefined;
   if (contestChain) {
-    nativeSymbol = getNativeTokenSymbol(contestChain) ?? DEFAULT_NATIVE_SYMBOL;
+    pricedChainId = findChainIdByName(contestChain);
   } else if (isCreateFlow) {
-    nativeSymbol = walletChain?.nativeCurrency?.symbol ?? DEFAULT_NATIVE_SYMBOL;
+    pricedChainId = walletChain?.id;
   }
 
+  const voteCurrency = findChainVoteCurrency(pricedChainId);
+  const nativeSymbol = voteCurrency?.symbol ?? DEFAULT_NATIVE_SYMBOL;
   const isUsd = displayCurrency === "usd";
+
+  if (isUsdPegged(voteCurrency)) return null;
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" || e.key === " ") {

@@ -61,7 +61,7 @@ export const updateRewardAnalyticsIfNeeded = async (
         formatChargeAmount(parseFloat(params.costToVote?.toString() ?? "0")) *
         (params.charge.percentageToRewards / 100),
       operation: "deposit",
-      token_address: null,
+      token_address: params.token_address,
       created_at: Math.floor(Date.now() / 1000),
     });
   } catch (error) {

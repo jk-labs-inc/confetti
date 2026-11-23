@@ -1,14 +1,21 @@
+import { isSameAddress } from "@helpers/isSameAddress";
 import { ContestVoteEvent } from "@hooks/useContestVoteLedger/types";
-import { formatEther, PublicClient } from "viem";
+import { toPriceUnits, VoteCurrency } from "lib/voteCurrency";
+import { Abi, formatEther, Log, parseEventLogs, PublicClient } from "viem";
 import {
   CAST_DETAILS_CONCURRENCY,
   CAST_MATCH_MIN_VOTES,
   CAST_MATCH_RELATIVE_TOLERANCE,
   CHAIN_CAST_UUID_PREFIX,
+  VOTE_PAYMENT_EVENT_NAMES,
 } from "./constants";
-import { ChainCastDetails, ChainVoteCastsData, ChainVoteLog } from "./types";
+import { ChainCastDetails, ChainVoteCastsData, ChainVoteLog, ScannedContest } from "./types";
 
 type ReadBlockTimestamp = (blockNumber: bigint) => Promise<number>;
+
+interface PaymentReleasedArgs {
+  amount?: bigint;
+}
 
 const detailsCache = new Map<string, ChainCastDetails>();
 
@@ -56,29 +63,61 @@ const createBlockTimestampReader = (client: PublicClient): ReadBlockTimestamp =>
   };
 };
 
+function sumVotePayments(abi: Abi, contestAddress: string, logs: Log[]): bigint {
+  const payments = parseEventLogs({
+    abi,
+    eventName: VOTE_PAYMENT_EVENT_NAMES,
+    logs: logs.filter(log => isSameAddress(log.address, contestAddress)),
+  });
+
+  let total = 0n;
+  for (const payment of payments) total += (payment.args as PaymentReleasedArgs).amount ?? 0n;
+  return total;
+}
+
+const readValueSent = async (
+  client: PublicClient,
+  txHash: `0x${string}`,
+  contestAddress: string,
+): Promise<bigint | null> => {
+  const transaction = await client.getTransaction({ hash: txHash }).catch(() => null);
+  return transaction && isSameAddress(transaction.to ?? undefined, contestAddress) ? transaction.value : null;
+};
+
+const readTokensCharged = async (
+  client: PublicClient,
+  txHash: `0x${string}`,
+  contest: ScannedContest,
+): Promise<bigint | null> => {
+  const receipt = await client.getTransactionReceipt({ hash: txHash }).catch(() => null);
+  return receipt && isSameAddress(receipt.to ?? undefined, contest.address)
+    ? sumVotePayments(contest.abi, contest.address, receipt.logs)
+    : null;
+};
+
+const toAmountSent = (voteCurrency: VoteCurrency, paidUnits: bigint | null, isSoleCastInTx: boolean): number | null =>
+  paidUnits !== null && isSoleCastInTx ? Number(formatEther(toPriceUnits(voteCurrency, paidUnits))) : null;
+
 const readCastDetails = async (
   client: PublicClient,
   log: ChainVoteLog,
-  contestAddress: string,
+  contest: ScannedContest,
   isSoleCastInTx: boolean,
   readBlockTimestamp: ReadBlockTimestamp,
 ): Promise<ChainCastDetails> => {
-  const [createdAt, transaction] = await Promise.all([
+  const [createdAt, paidUnits] = await Promise.all([
     log.blockTimestamp ?? readBlockTimestamp(log.blockNumber),
-    client.getTransaction({ hash: log.txHash }).catch(() => null),
+    contest.voteCurrency.kind === "token"
+      ? readTokensCharged(client, log.txHash, contest)
+      : readValueSent(client, log.txHash, contest.address),
   ]);
-  const paidContestDirectly = transaction?.to?.toLowerCase() === contestAddress.toLowerCase();
-  return {
-    createdAt,
-    amountSent: transaction && paidContestDirectly && isSoleCastInTx ? Number(formatEther(transaction.value)) : null,
-  };
+  return { createdAt, amountSent: toAmountSent(contest.voteCurrency, paidUnits, isSoleCastInTx) };
 };
 
 export async function fetchCastDetails(
   client: PublicClient,
   logs: ChainVoteLog[],
-  contestAddress: string,
-  chainId: number,
+  contest: ScannedContest,
 ): Promise<Map<string, ChainCastDetails>> {
   const castsPerTx = new Map<string, number>();
   for (const log of logs) castsPerTx.set(log.txHash, (castsPerTx.get(log.txHash) ?? 0) + 1);
@@ -88,7 +127,7 @@ export async function fetchCastDetails(
   const pendingTxHashes = new Set<string>();
   for (const log of logs) {
     if (detailsByTx.has(log.txHash) || pendingTxHashes.has(log.txHash)) continue;
-    const cached = detailsCache.get(`${chainId}:${log.txHash}`);
+    const cached = detailsCache.get(`${contest.chainId}:${log.txHash}`);
     if (cached) {
       detailsByTx.set(log.txHash, cached);
     } else {
@@ -102,14 +141,12 @@ export async function fetchCastDetails(
   for (let start = 0; start < pending.length; start += CAST_DETAILS_CONCURRENCY) {
     const batch = pending.slice(start, start + CAST_DETAILS_CONCURRENCY);
     const results = await Promise.allSettled(
-      batch.map(log =>
-        readCastDetails(client, log, contestAddress, castsPerTx.get(log.txHash) === 1, readBlockTimestamp),
-      ),
+      batch.map(log => readCastDetails(client, log, contest, castsPerTx.get(log.txHash) === 1, readBlockTimestamp)),
     );
     results.forEach((result, index) => {
       if (result.status !== "fulfilled") return;
       const txHash = batch[index].txHash;
-      detailsCache.set(`${chainId}:${txHash}`, result.value);
+      detailsCache.set(`${contest.chainId}:${txHash}`, result.value);
       detailsByTx.set(txHash, result.value);
     });
   }
