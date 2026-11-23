@@ -7231,10 +7231,10 @@
     picomatch "^4.0.2"
     resolve-from "^5.0.0"
 
-"@vercel/node@31.0.2":
-  version "31.0.2"
-  resolved "https://registry.yarnpkg.com/@vercel/node/-/node-31.0.2.tgz#a4603ee1200e99dfdf191bb64bd046b1765a8208"
-  integrity sha512-FdPIy1H/yNpHUNmRaFiGHAM/8uiD4B3Y2hiWZFOl/8tuqeWD8YE1iKn5evPfwj1KJ6DyvYqmiUzZKZXswPyOTA==
+"@vercel/node@32.0.0":
+  version "32.0.0"
+  resolved "https://registry.yarnpkg.com/@vercel/node/-/node-32.0.0.tgz#4513ec1dfa3d91986d1f0dfdd45cc43d42e62f28"
+  integrity sha512-IHnWSpzGWQOkF75GBTtNei3kp6/I28KHQy3j2pWvFwN/5oI4c4hDEh9tyfa4Xc0EGRECdFIRSPwlZTEb/BDdzw==
   dependencies:
     "@edge-runtime/node-utils" "2.3.0"
     "@edge-runtime/primitives" "4.1.0"
