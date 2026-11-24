@@ -87,6 +87,7 @@ interface UseRewardsUsdArgs {
 interface RewardsUsd {
   totalUsd: string | null;
   increase: RewardsIncrease | null;
+  isRatesLoading: boolean;
 }
 
 export const useRewardsUsd = ({ items, chainName }: UseRewardsUsdArgs): RewardsUsd => {
@@ -113,7 +114,11 @@ export const useRewardsUsd = ({ items, chainName }: UseRewardsUsdArgs): RewardsU
     setIncrease(current => ({ amountUsd, id: (current?.id ?? 0) + 1 }));
   }, [items, nativeRates, erc20Rates, isLoading]);
 
-  return { totalUsd: toFormattedUsd(sumRewardsUsd({ items, nativeRates, erc20Rates })), increase };
+  return {
+    totalUsd: toFormattedUsd(sumRewardsUsd({ items, nativeRates, erc20Rates })),
+    increase,
+    isRatesLoading: isLoading,
+  };
 };
 
 export const useRewardPoolsUsd = (

@@ -4,6 +4,7 @@ import { useRewardsUsd } from "@hooks/useCurrency/useTotalRewardsUsd";
 import { AnimatePresence, motion, useAnimate, useReducedMotion } from "motion/react";
 import { FC, useEffect, useRef, useState } from "react";
 import RewardsCoin from "./components/RewardsCoin";
+import RewardsStickerSkeleton from "./components/RewardsStickerSkeleton";
 import { STICKER_RING_CLASS_NAME, STICKER_TILT_CLASS_NAMES } from "./constants";
 import { RewardsAudience, RewardsPhase } from "lib/rewards/types";
 import { RewardsStickerProps, RewardsStickerSize } from "./types";
@@ -65,7 +66,7 @@ const LONG_LABEL_LINES: Record<RewardsPhase, (audience: RewardsAudience) => [str
 const RewardsSticker: FC<RewardsStickerProps> = props => {
   const { items, chainName, phase, size } = props;
   const displayCurrency = useCurrencyStore(state => state.displayCurrency);
-  const { totalUsd, increase } = useRewardsUsd({ items, chainName });
+  const { totalUsd, increase, isRatesLoading } = useRewardsUsd({ items, chainName });
   const prefersReducedMotion = useReducedMotion();
   const [scope, animate] = useAnimate<HTMLSpanElement>();
   const [tokenIndex, setTokenIndex] = useState(0);
@@ -96,6 +97,7 @@ const RewardsSticker: FC<RewardsStickerProps> = props => {
 
   const token = items[tokenIndex] ?? items[0];
   if (!token) return null;
+  if (displayCurrency === "usd" && isRatesLoading) return <RewardsStickerSkeleton size={size} />;
 
   const sizeClassNames = SIZE_CLASS_NAMES[size];
   const plusSuffix = phase === "upcoming" ? "+" : "";
