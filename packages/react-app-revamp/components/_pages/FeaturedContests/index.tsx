@@ -32,7 +32,7 @@ const FeaturedContests: FC<FeaturedContestsProps> = ({
       ) : isEmpty ? (
         <FeaturedContestsEmptyState />
       ) : (
-        <div className="flex flex-col md:grid md:grid-cols-(--grid-featured-contests) gap-6 pb-4">
+        <div className="flex flex-col md:grid md:grid-cols-(--grid-featured-contests) gap-6 pt-6 pb-4">
           {contests.map(({ key, contest, rewards }, index) => (
             <PeekCard key={key} isPeek={index === 0}>
               <FeaturedContestCard contestData={contest} rewardsData={rewards} isRewardsFetching={isRewardsFetching} />

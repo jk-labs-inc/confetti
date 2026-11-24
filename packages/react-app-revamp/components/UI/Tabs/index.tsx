@@ -54,14 +54,14 @@ const Tabs: FC<TabsProps> = ({ tabs, activeTab, onChange, optionalInfo, indicato
 
   return (
     <div className="relative flex flex-col gap-2">
-      <div className="flex items-center gap-6 md:gap-8 mb-4" role="tablist">
+      <div className="flex items-center gap-[18px] md:gap-8 mb-2.5 md:mb-4" role="tablist">
         {tabs.map((tab, index) => (
           <motion.div
             key={tab}
             ref={(el: HTMLDivElement | null) => {
               tabRefs.current[index] = el;
             }}
-            className="text-[16px] md:text-[24px] cursor-pointer relative"
+            className="text-[15px] md:text-[24px] cursor-pointer relative"
             style={{ willChange: "transform" }}
             whileTap={{ scale: 0.97 }}
             onClick={() => handleTabChange(tab)}

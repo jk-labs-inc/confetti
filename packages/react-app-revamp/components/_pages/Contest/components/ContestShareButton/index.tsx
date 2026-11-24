@@ -3,15 +3,23 @@ import { generateTwitterShareUrlForContest, generateUrlToCopy } from "@helpers/s
 import { CheckIcon, DocumentDuplicateIcon } from "@heroicons/react/24/outline";
 import { ShareIcon } from "@heroicons/react/24/solid";
 import { FC, Fragment, useEffect, useState } from "react";
+import { META_LINK_CLASS_NAME, META_LINK_ICON_CLASS_NAME } from "../ContestName/constants";
 
 interface ContestShareButtonProps {
   contestName: string;
   contestAddress: string;
   chainName: string;
   size?: "sm" | "md";
+  variant?: "pill" | "link";
 }
 
-const ContestShareButton: FC<ContestShareButtonProps> = ({ contestName, contestAddress, chainName, size = "md" }) => {
+const ContestShareButton: FC<ContestShareButtonProps> = ({
+  contestName,
+  contestAddress,
+  chainName,
+  size = "md",
+  variant = "pill",
+}) => {
   const [isCopied, setIsCopied] = useState(false);
 
   useEffect(() => {
@@ -31,12 +39,19 @@ const ContestShareButton: FC<ContestShareButtonProps> = ({ contestName, contestA
 
   return (
     <Menu as="div" className="relative">
-      <MenuButton
-        className={`flex items-center justify-center ${containerSize} bg-true-black border border-neutral-10 rounded-[40px] focus:outline-none`}
-        aria-label="Share contest"
-      >
-        <ShareIcon className={`${iconSize} text-neutral-11`} />
-      </MenuButton>
+      {variant === "link" ? (
+        <MenuButton className={META_LINK_CLASS_NAME}>
+          <ShareIcon className={META_LINK_ICON_CLASS_NAME} />
+          share
+        </MenuButton>
+      ) : (
+        <MenuButton
+          className={`flex items-center justify-center ${containerSize} bg-true-black border border-neutral-10 rounded-[40px] focus:outline-none`}
+          aria-label="Share contest"
+        >
+          <ShareIcon className={`${iconSize} text-neutral-11`} />
+        </MenuButton>
+      )}
 
       <Transition
         as={Fragment}
@@ -47,7 +62,9 @@ const ContestShareButton: FC<ContestShareButtonProps> = ({ contestName, contestA
         leaveFrom="transform opacity-100 scale-100"
         leaveTo="transform opacity-0 scale-95"
       >
-        <MenuItems className="absolute right-0 z-50 mt-2 w-52 origin-top-right rounded-md bg-true-black shadow-sort-proposal-dropdown focus:outline-none">
+        <MenuItems
+          className={`absolute z-50 mt-2 w-52 rounded-md ${variant === "link" ? "left-0 origin-top-left" : "right-0 origin-top-right"} bg-true-black shadow-sort-proposal-dropdown focus:outline-none`}
+        >
           <MenuItem>
             {({ focus, close }) => (
               <a
@@ -57,7 +74,13 @@ const ContestShareButton: FC<ContestShareButtonProps> = ({ contestName, contestA
                 onClick={close}
                 className={`flex text-neutral-11 items-center text-[16px] gap-1 px-4 py-2 hover:bg-gray-700 border-b border-neutral-3 ${focus ? "bg-neutral-3" : ""}`}
               >
-                <img src="/socials/twitter.svg" alt="Twitter" width={32} height={32} className="object-fit-cover mr-2" />
+                <img
+                  src="/socials/twitter.svg"
+                  alt="Twitter"
+                  width={32}
+                  height={32}
+                  className="object-fit-cover mr-2"
+                />
                 <span>share on Twitter</span>
               </a>
             )}

@@ -6,6 +6,7 @@ import { featuredContestRewardsQueryKey } from "../ranking";
 import CalendarButton from "./Contest/components/CalendarButton";
 import CardFooter from "./Contest/components/CardFooter";
 import CardHeader from "./Contest/components/CardHeader";
+import ContestRewards from "./Contest/components/ContestRewards";
 import EntriesList from "./Contest/components/EntriesList";
 import { getCardState, getTimingUpdateInterval } from "./Contest/helpers";
 import useContestCardEntries from "./Contest/hooks/useContestCardEntries";
@@ -58,11 +59,23 @@ const FeaturedContestCard: FC<FeaturedContestCardProps> = ({ contestData, reward
 
   return (
     <div className="relative flex flex-col gap-4 p-4 w-full md:w-80 rounded-2xl border border-neutral-7 bg-[#0C0C0C] hover:border-neutral-10 transition-colors duration-200 animate-appear">
-      <CardHeader
-        prompt={contestData.prompt}
-        title={contestData.title}
+      <div className="absolute -top-[19px] right-3.5">
+        <ContestRewards cardState={cardState} rewardsData={rewardsData} isRewardsFetching={isRewardsFetching} />
+      </div>
+      <CardHeader prompt={contestData.prompt} title={contestData.title} contestUrl={contestUrl} isEnded={isEnded} />
+      <EntriesList
         contestUrl={contestUrl}
-        isEnded={isEnded}
+        entries={entries}
+        totalEntries={totalEntries}
+        cardState={cardState}
+        hasEntryImages={hasEntryImages}
+        isLoading={isLoading}
+        isExpanded={isExpanded}
+        onLoadAll={loadAll}
+        onVoteClick={handleVoteClick}
+      />
+      <CardFooter
+        contest={contestData}
         action={
           cardState === "upcoming" ? (
             <CalendarButton
@@ -75,18 +88,6 @@ const FeaturedContestCard: FC<FeaturedContestCardProps> = ({ contestData, reward
           ) : null
         }
       />
-      <EntriesList
-        contestUrl={contestUrl}
-        entries={entries}
-        totalEntries={totalEntries}
-        cardState={cardState}
-        hasEntryImages={hasEntryImages}
-        isLoading={isLoading}
-        isExpanded={isExpanded}
-        onLoadAll={loadAll}
-        onVoteClick={handleVoteClick}
-      />
-      <CardFooter contest={contestData} rewardsData={rewardsData} isRewardsFetching={isRewardsFetching} />
       {voteEntry && config && (
         <FeaturedContestVoteOnEntry
           contest={contestData}

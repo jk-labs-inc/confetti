@@ -2,17 +2,16 @@ import CustomLink from "@components/UI/Link";
 import { getContestImageUrl } from "@layouts/LayoutViewContest/helpers/getContestImageUrl";
 import { CONTEST_IMAGE_PRESETS } from "lib/image/cloudflare";
 import { useCloudflareImage } from "lib/image/useCloudflareImage";
-import { FC, ReactNode, useState } from "react";
+import { FC, useState } from "react";
 
 interface CardHeaderProps {
   prompt: string | null;
   title: string;
   contestUrl: string;
   isEnded: boolean;
-  action?: ReactNode;
 }
 
-const CardHeader: FC<CardHeaderProps> = ({ prompt, title, contestUrl, isEnded, action }) => {
+const CardHeader: FC<CardHeaderProps> = ({ prompt, title, contestUrl, isEnded }) => {
   const imageUrl = getContestImageUrl(prompt);
   const [imageFailed, setImageFailed] = useState(false);
   const { src, srcSet } = useCloudflareImage(imageUrl, CONTEST_IMAGE_PRESETS.landingCardThumb);
@@ -38,7 +37,6 @@ const CardHeader: FC<CardHeaderProps> = ({ prompt, title, contestUrl, isEnded, a
           {title}
         </p>
       </CustomLink>
-      {action}
     </div>
   );
 };
