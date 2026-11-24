@@ -3,7 +3,7 @@ import { chains } from "@config/wagmi";
 import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import { extractPathSegments } from "@helpers/extractPath";
 import { transform } from "@helpers/transform";
-import useDisplayPrice from "@hooks/useCurrency/useDisplayPrice";
+import useRewardDisplayPrice from "@hooks/useRewards/useRewardDisplayPrice";
 import { TokenInfo } from "@hooks/useReleasableRewards";
 import { useWithdrawReward } from "@hooks/useWithdrawRewards";
 import { switchChain } from "@wagmi/core";
@@ -51,7 +51,11 @@ export const ButtonWithdraw = (props: ButtonWithdrawErc20RewardProps) => {
 
   const rawAmount = transform(token.amount ?? 0n, token.address, token.decimals ?? 18).toString();
   const tokenAddress = token.address !== "native" ? token.address : undefined;
-  const { displayValue, displaySymbol, isLoading: isPriceLoading } = useDisplayPrice(rawAmount, token.symbol, tokenAddress, chainName);
+  const {
+    displayValue,
+    displaySymbol,
+    isLoading: isPriceLoading,
+  } = useRewardDisplayPrice(rawAmount, token.symbol, tokenAddress, chainName);
 
   const onHandleWithdraw = async () => {
     if (!chainId) return;

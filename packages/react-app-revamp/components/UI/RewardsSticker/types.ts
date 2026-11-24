@@ -1,12 +1,11 @@
-import { TokenItem } from "@hooks/useCurrency/useTotalRewardsUsd";
-import { RewardsAudience, RewardsPhase } from "lib/rewards/types";
+import { RewardsAudience, RewardsPhase, RewardTokenItem } from "lib/rewards/types";
 
 export type RewardsStickerSize = "card" | "stat" | "headline" | "hero";
 
 export type RewardsStickerLabeledSize = Extract<RewardsStickerSize, "headline" | "hero">;
 
 interface RewardsStickerBaseProps {
-  items: TokenItem[];
+  items: RewardTokenItem[];
   chainName: string;
   phase: RewardsPhase;
 }

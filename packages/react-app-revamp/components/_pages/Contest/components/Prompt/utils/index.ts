@@ -63,3 +63,9 @@ export const parsePrompt = (prompt: string): ParsedPrompt => {
     return defaultPrompt;
   }
 };
+
+export const hasDescription = (prompt: string): boolean => {
+  const { contestSummary, contestEvaluate, contestContactDetails } = parsePrompt(prompt);
+
+  return [contestSummary, contestEvaluate, contestContactDetails].some(Boolean);
+};

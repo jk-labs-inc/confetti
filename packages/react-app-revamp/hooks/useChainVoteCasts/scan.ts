@@ -3,14 +3,10 @@ import { Abi, AbiEvent } from "viem";
 import { resolveScanRange } from "./blocks";
 import { fetchCastDetails, findUnrecordedLogs } from "./casts";
 import { getLogsInChunks, getPrimaryRpcClient, toChainVoteLog } from "./logs";
-import { ChainVoteCastsData, ChainVoteLog } from "./types";
+import { ChainVoteCastsData, ChainVoteLog, ScannedContest } from "./types";
 
 interface FetchChainVoteCastsParams {
-  contest: {
-    address: `0x${string}`;
-    abi: Abi;
-    chainId: number;
-  };
+  contest: ScannedContest;
   scanFromSec: bigint;
   voteEndSec: bigint;
   recordedCasts: ContestVoteEvent[];
@@ -63,6 +59,6 @@ export async function fetchChainVoteCasts({
   }
 
   const unrecorded = findUnrecordedLogs(scanned.logs, recordedCasts, scanned.recordedCutoffSec);
-  const detailsByTx = await fetchCastDetails(client, unrecorded, contest.address, contest.chainId);
+  const detailsByTx = await fetchCastDetails(client, unrecorded, contest);
   return { ...scanned, detailsByTx };
 }

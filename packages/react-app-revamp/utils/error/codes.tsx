@@ -1,3 +1,4 @@
+import { isInsufficientTokenBalanceRevert } from "./tokenReverts";
 import { ErrorDefinition } from "./types";
 
 export enum ErrorCodes {
@@ -27,7 +28,8 @@ export const errorDefinitions: Record<ErrorCodes, ErrorDefinition> = {
     match: error =>
       error.message?.includes("insufficient funds for gas * price + value") ||
       error.code === -32603 ||
-      error.data?.code === -32000,
+      error.data?.code === -32000 ||
+      isInsufficientTokenBalanceRevert(error),
   },
   [ErrorCodes.MISSING_NEW]: {
     code: ErrorCodes.MISSING_NEW,

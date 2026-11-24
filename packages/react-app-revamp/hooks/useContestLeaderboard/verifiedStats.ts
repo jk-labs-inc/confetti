@@ -5,15 +5,17 @@ import { compareVersions } from "compare-versions";
 import { ANALYTICS_VERSION, DOWNVOTES_REMOVED_VERSION } from "constants/versions";
 import { validateRankings } from "lib/rewards/contracts";
 import { ContractQuery, VOTER_REWARDS_VERSION } from "lib/rewards/types";
-import { createNativeTokenQuery } from "lib/rewards/utils";
+import { toPriceUnits, VoteCurrency } from "lib/voteCurrency";
 import { Abi, BaseError, ContractFunctionRevertedError, formatEther, toFunctionSelector } from "viem";
 import { VerifiedVoterStats, VerifiedVoterStatsMap } from "./types";
+import { voterEarningQueries } from "./voterReads";
 
 interface ContestTarget {
   address: `0x${string}`;
   abi: Abi;
   chainId: number;
   version: string;
+  voteCurrency: VoteCurrency;
 }
 
 interface RewardsModuleTarget {
@@ -166,14 +168,15 @@ export async function fetchVerifiedVoterStats({
   for (const address of addresses) {
     const offset = contracts.length;
     const voter = address as `0x${string}`;
-    for (const ranking of validRankings) {
-      contracts.push(createNativeTokenQuery(rewardsModule.address, contest.chainId, rewardsModule.abi, ranking, voter));
-    }
-    if (includeReleased) {
-      for (const ranking of validRankings) {
-        contracts.push({ ...moduleTarget, functionName: "releasedToVoter", args: [voter, BigInt(ranking)] });
-      }
-    }
+    contracts.push(
+      ...voterEarningQueries({
+        voteCurrency: contest.voteCurrency,
+        rewardsModule: moduleTarget,
+        rankings: validRankings,
+        voter,
+        includeReleased,
+      }),
+    );
     if (includeSpent) {
       contracts.push({ ...contestTarget, functionName: "getTotalSpentByAddress", args: [voter] });
     }
@@ -191,11 +194,12 @@ export async function fetchVerifiedVoterStats({
     const reads = results.slice(plan.offset, plan.offset + plan.count);
     const isVerified = reads.length === plan.count && reads.every(read => read.status === "success");
     let cursor = 0;
-    let earningWei = 0n;
+    let earningUnits = 0n;
 
     const earningReadCount = validRankings.length * (includeReleased ? 2 : 1);
-    while (cursor < earningReadCount) earningWei += asBigint(reads[cursor++]);
-    const spentWei = includeSpent ? asBigint(reads[cursor++]) : null;
+    while (cursor < earningReadCount) earningUnits += asBigint(reads[cursor++]);
+    const earningWei = toPriceUnits(contest.voteCurrency, earningUnits);
+    const spentWei = includeSpent ? toPriceUnits(contest.voteCurrency, asBigint(reads[cursor++])) : null;
     const votesRead = plan.mainEntryId ? reads[cursor++] : undefined;
     const votesOnMainEntry =
       votesRead?.status === "success" && votesRead.result !== undefined

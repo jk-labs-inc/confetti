@@ -7,12 +7,14 @@ import { extractPathSegments } from "@helpers/extractPath";
 import { emailRegex } from "@helpers/regex";
 import { useAddFunds } from "@hooks/useAddFunds";
 import { useContestStore } from "@hooks/useContest/store";
+import useContestConfigStore from "@hooks/useContestConfig/store";
 import { useEditorStore } from "@hooks/useEditor/store";
 import useEmailSignup from "@hooks/useEmailSignup";
 import usePhoneNumberSignup from "@hooks/usePhoneNumberSignup";
 import useSubmitProposal from "@hooks/useSubmitProposal";
 import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
 import { useUploadImageStore } from "@hooks/useUploadImage";
+import { useVoteCurrencyBalance } from "@hooks/useVoteCurrencyBalance";
 import { useWallet } from "@hooks/useWallet";
 import { EMPTY_PHONE_NUMBER, isPhoneNumberEmpty, isValidPhoneNumber, phoneNumberToE164 } from "lib/phone";
 import { validateImageUpload } from "lib/image/uploadValidation";
@@ -29,7 +31,7 @@ import { switchChain } from "@wagmi/core";
 import { usePathname } from "next/navigation";
 import { FC, useState } from "react";
 import { useMediaQuery } from "react-responsive";
-import { useBalance } from "wagmi";
+import { useShallow } from "zustand/shallow";
 import DialogModalSendProposalDesktopLayout from "./Desktop";
 import DialogModalSendProposalMobileLayout from "./Mobile";
 
@@ -61,10 +63,8 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
   const chainId = chains.filter(
     (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName,
   )?.[0]?.id;
-  const { data: accountData } = useBalance({
-    address: userAddress as `0x${string}`,
-    chainId,
-  });
+  const voteCurrency = useContestConfigStore(useShallow(state => state.contestConfig.voteCurrency));
+  const { balance: entryFundsBalance } = useVoteCurrencyBalance({ voteCurrency, chainId, owner: userAddress });
   const { setRevertTextOption } = useEditorStore(state => state);
   const [proposal, setProposal] = useState("");
   const isCorrectNetwork = chainId === chain?.id;
@@ -224,7 +224,7 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
           proposal={proposal}
           editorProposal={editorProposal}
           charge={charge}
-          accountData={accountData}
+          entryFundsBalance={entryFundsBalance}
           isOpen={isOpen}
           isConnected={isConnected}
           isCorrectNetwork={isCorrectNetwork}
@@ -240,7 +240,7 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
           contestId={contestId}
           editorProposal={editorProposal}
           charge={charge}
-          accountData={accountData}
+          entryFundsBalance={entryFundsBalance}
           isOpen={isOpen}
           isConnected={isConnected}
           isCorrectNetwork={isCorrectNetwork}

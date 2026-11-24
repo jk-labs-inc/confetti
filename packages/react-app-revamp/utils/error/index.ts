@@ -4,7 +4,9 @@ export { handleGenericError, handleContractFunctionExecutionError } from "./hand
 
 import { errorDefinitions, ErrorCodes } from "./codes";
 import { handleGenericError } from "./handlers";
+import { isInsufficientAllowanceRevert } from "./tokenReverts";
 import { ErrorResult } from "./types";
+import { VoteQuoteOutdatedError } from "./voteQuote";
 
 /**
  * Main error handler - processes any error and returns a user-friendly message
@@ -30,7 +32,13 @@ export const isKnownErrorCodeMessage = (message: string): boolean => {
 };
 
 export const checkAndMarkPriceChangeError = (error: any, initialPrice: string | null, currentPrice: string): any => {
-  if (initialPrice !== currentPrice) {
+  if (didUserReject(error)) return error;
+
+  if (
+    initialPrice !== currentPrice ||
+    isInsufficientAllowanceRevert(error) ||
+    error instanceof VoteQuoteOutdatedError
+  ) {
     return {
       ...error,
       code: ErrorCodes.PRICE_CHANGED,

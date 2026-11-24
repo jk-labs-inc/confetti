@@ -4,9 +4,11 @@ import TipTapEditorControls from "@components/UI/TipTapEditorControls";
 import { createEditorConfig } from "@helpers/createEditorConfig";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { Editor, useEditor } from "@tiptap/react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useShallow } from "zustand/shallow";
+import { useIsDescriptionOptional } from "../../../../hooks/useIsDescriptionOptional";
+import { useSyncEditorContent } from "./useSyncEditorContent";
 
 const CreateContestPromptEditors = () => {
   const { prompt, setPrompt } = useDeployContestStore(
@@ -17,6 +19,7 @@ const CreateContestPromptEditors = () => {
   );
   const [activeEditor, setActiveEditor] = useState<Editor | null>(null);
   const isMobile = useMediaQuery({ maxWidth: 768 });
+  const answerRequirement = useIsDescriptionOptional() ? "recommended" : "required";
 
   const editorSummarize = useEditor({
     ...createEditorConfig({
@@ -77,11 +80,9 @@ const CreateContestPromptEditors = () => {
         ? "i'm on telegram: @me"
         : "we have a telegram group for everyone to coordinate at tgexample.com",
       onUpdate: ({ editor }: { editor: Editor }) => {
-        const content = editor.getHTML();
-
         setPrompt({
           ...prompt,
-          contactDetails: content,
+          contactDetails: editor.isEmpty ? "" : editor.getHTML(),
         });
       },
     }),
@@ -89,12 +90,9 @@ const CreateContestPromptEditors = () => {
     immediatelyRender: false,
   });
 
-  useEffect(() => {
-    if (!editorSummarize || editorSummarize.isFocused) return;
-    if (editorSummarize.getHTML() === prompt.summarize) return;
-
-    editorSummarize.commands.setContent(prompt.summarize || "", { emitUpdate: false });
-  }, [prompt.summarize, editorSummarize]);
+  useSyncEditorContent(editorSummarize, prompt.summarize);
+  useSyncEditorContent(editorEvaluateVoters, prompt.evaluateVoters);
+  useSyncEditorContent(editorContactDetails, prompt.contactDetails ?? "");
 
   return (
     <div className="flex flex-col gap-4">
@@ -104,7 +102,7 @@ const CreateContestPromptEditors = () => {
       <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-4">
-            <CreateGradientTitle additionalInfo="required">
+            <CreateGradientTitle additionalInfo={answerRequirement}>
               summarize the contest, rewards, and voters
             </CreateGradientTitle>
             <div className="flex flex-col gap-2 w-full md:w-[640px]">
@@ -112,7 +110,7 @@ const CreateContestPromptEditors = () => {
             </div>
           </div>
           <div className="flex flex-col gap-4">
-            <CreateGradientTitle additionalInfo="required">
+            <CreateGradientTitle additionalInfo={answerRequirement}>
               how should voters evaluate if an entry is <i>good</i> ?
             </CreateGradientTitle>
             <div className="w-full md:w-[640px]">

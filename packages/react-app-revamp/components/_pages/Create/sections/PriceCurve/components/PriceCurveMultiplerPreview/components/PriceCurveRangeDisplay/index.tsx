@@ -1,14 +1,15 @@
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
+import { VoteCurrency } from "lib/voteCurrency";
 import { FC } from "react";
 import { useShallow } from "zustand/shallow";
 import PriceDisplay from "./components/PriceDisplay";
 import { useMediaQuery } from "react-responsive";
 
 interface PriceCurveRangeDisplayProps {
-  chainUnitLabel: string;
+  voteCurrency: VoteCurrency;
 }
 
-const PriceCurveRangeDisplay: FC<PriceCurveRangeDisplayProps> = ({ chainUnitLabel }) => {
+const PriceCurveRangeDisplay: FC<PriceCurveRangeDisplayProps> = ({ voteCurrency }) => {
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const { costToVote, costToVoteEndPrice } = useDeployContestStore(
     useShallow(state => ({
@@ -21,7 +22,7 @@ const PriceCurveRangeDisplay: FC<PriceCurveRangeDisplayProps> = ({ chainUnitLabe
     // pb-6 reserves room for the secondary price line, which PriceDisplay hangs below the flow
     // (absolute top-full) so it can't push the arrow and the primary prices out of alignment
     <div className="flex items-end gap-4 md:gap-6 pb-6">
-      <PriceDisplay price={costToVote.toString()} label="start" chainUnitLabel={chainUnitLabel} />
+      <PriceDisplay price={costToVote.toString()} label="start" voteCurrency={voteCurrency} />
 
       <div className="pb-2">
         <img
@@ -31,7 +32,7 @@ const PriceCurveRangeDisplay: FC<PriceCurveRangeDisplayProps> = ({ chainUnitLabe
         />
       </div>
 
-      <PriceDisplay price={costToVoteEndPrice?.toString() ?? ""} label="finish" chainUnitLabel={chainUnitLabel} />
+      <PriceDisplay price={costToVoteEndPrice?.toString() ?? ""} label="finish" voteCurrency={voteCurrency} />
     </div>
   );
 };

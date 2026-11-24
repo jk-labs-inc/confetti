@@ -21,8 +21,14 @@ export const fetchChargeDetails = async (chainName: string): Promise<ChargeDetai
 
   try {
     const chainParams = await fetchChainParams({ chain: chainName });
+
+    if (!chainParams) {
+      console.error(`no chain_params row for chain ${chainName}`);
+      return { ...defaultChargeDetails, isError: true };
+    }
+
     return {
-      costToVote: chainParams?.defaultCostToVote ?? 0,
+      costToVote: chainParams.defaultCostToVote ?? 0,
       isError: false,
     };
   } catch (error: any) {

@@ -1,4 +1,4 @@
-import useDisplayPrice from "@hooks/useCurrency/useDisplayPrice";
+import useRewardDisplayPrice from "@hooks/useRewards/useRewardDisplayPrice";
 import { FC } from "react";
 import Skeleton from "react-loading-skeleton";
 import { formatUnits } from "viem";
@@ -23,7 +23,7 @@ const RewardsNumberDisplay: FC<RewardsNumberDisplayProps> = ({
   chainName,
 }) => {
   const nativeRaw = formatUnits(value, decimals);
-  const { displayValue, displaySymbol, isLoading } = useDisplayPrice(nativeRaw, symbol, tokenAddress, chainName);
+  const { displayValue, displaySymbol, isLoading } = useRewardDisplayPrice(nativeRaw, symbol, tokenAddress, chainName);
 
   if (isLoading) {
     return <Skeleton width={120} height={40} baseColor="#706f78" highlightColor="#FFE25B" />;
@@ -32,7 +32,9 @@ const RewardsNumberDisplay: FC<RewardsNumberDisplayProps> = ({
   return (
     <p key={index} className={`text-[40px] leading-none text-neutral-11 ${isBold ? "font-bold" : ""}`}>
       {displaySymbol === "$" ? `$${displayValue}` : displayValue}
-      <span className="text-[16px] text-neutral-9 font-bold ml-1 uppercase">{displaySymbol === "$" ? "" : displaySymbol}</span>
+      <span className="text-[16px] text-neutral-9 font-bold ml-1 uppercase">
+        {displaySymbol === "$" ? "" : displaySymbol}
+      </span>
     </p>
   );
 };

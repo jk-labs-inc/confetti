@@ -10,6 +10,7 @@ interface ContestPromptModalV3LayoutProps {
   isPromptOpen: boolean;
   contestEvaluate?: string;
   contestContactDetails?: string;
+  hasDescription: boolean;
   setIsPromptOpen: (value: boolean) => void;
 }
 
@@ -19,6 +20,7 @@ const ContestPromptModalV3Layout: FC<ContestPromptModalV3LayoutProps> = ({
   isPromptOpen,
   contestEvaluate,
   contestContactDetails,
+  hasDescription,
   setIsPromptOpen,
 }) => {
   return (
@@ -27,14 +29,16 @@ const ContestPromptModalV3Layout: FC<ContestPromptModalV3LayoutProps> = ({
         <div className="relative inline-block">
           <span className="text-[24px] text-neutral-11 font-bold inline-block">{contestName}</span>
         </div>
-        <button
-          onClick={() => setIsPromptOpen(!isPromptOpen)}
-          className={`transition-transform duration-500 ease-in-out transform ${isPromptOpen ? "" : "rotate-180"}`}
-        >
-          <ChevronUpIcon height={30} />
-        </button>
+        {hasDescription && (
+          <button
+            onClick={() => setIsPromptOpen(!isPromptOpen)}
+            className={`transition-transform duration-500 ease-in-out transform ${isPromptOpen ? "" : "rotate-180"}`}
+          >
+            <ChevronUpIcon height={30} />
+          </button>
+        )}
       </div>
-      {isPromptOpen && (
+      {hasDescription && isPromptOpen && (
         <div className="pl-5">
           <Collapsible isOpen={isPromptOpen}>
             <div className="border-l border-true-white ">

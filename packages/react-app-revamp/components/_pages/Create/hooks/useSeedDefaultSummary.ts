@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { useShallow } from "zustand/shallow";
 import { generateDynamicSummary } from "../sections/Description/components/PromptEditors/utils";
 
-export const useSeedDefaultSummary = () => {
+export const useSeedDefaultSummary = (isDescriptionOptional: boolean) => {
   const { votingOpen, votingDuration, priceCurveType } = useDeployContestStore(
     useShallow(state => ({
       votingOpen: state.votingOpen,
@@ -19,12 +19,14 @@ export const useSeedDefaultSummary = () => {
     const isUntouched = state.prompt.summarize === state.generatedSummary;
     if (!isVirgin && !isUntouched) return;
 
-    const generated = generateDynamicSummary(priceCurveType, state.getVotingOpenDate(), state.getVotingCloseDate());
+    const generated = isDescriptionOptional
+      ? ""
+      : generateDynamicSummary(priceCurveType, state.getVotingOpenDate(), state.getVotingCloseDate());
     if (state.prompt.summarize !== generated) {
       state.setPrompt({ ...state.prompt, summarize: generated });
     }
     if (state.generatedSummary !== generated) {
       state.setGeneratedSummary(generated);
     }
-  }, [votingOpen, votingDuration, priceCurveType]);
+  }, [votingOpen, votingDuration, priceCurveType, isDescriptionOptional]);
 };

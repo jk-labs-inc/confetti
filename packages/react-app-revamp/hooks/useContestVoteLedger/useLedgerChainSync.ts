@@ -43,13 +43,14 @@ function useSettledLedgerGap(gap: number | null, delayMs: number): number | null
 }
 
 export function useLedgerChainSync(): void {
-  const { address, abi, chainId, chainName, version } = useContestConfigStore(
+  const { address, abi, chainId, chainName, version, voteCurrency } = useContestConfigStore(
     useShallow(state => ({
       address: state.contestConfig.address,
       abi: state.contestConfig.abi,
       chainId: state.contestConfig.chainId,
       chainName: state.contestConfig.chainName,
       version: state.contestConfig.version,
+      voteCurrency: state.contestConfig.voteCurrency,
     })),
   );
   const chainEntries = useProposalStore(state => state.initialMappedProposalIds);
@@ -92,7 +93,7 @@ export function useLedgerChainSync(): void {
         queryFn: () => {
           const latestRecorded = queryClient.getQueryData<ContestVoteLedgerData>(ledgerKey);
           return fetchChainVoteCasts({
-            contest: { address: address as `0x${string}`, abi, chainId },
+            contest: { address: address as `0x${string}`, abi, chainId, voteCurrency },
             scanFromSec: resolveScanFromSec(latestRecorded, voteStartSec),
             voteEndSec,
             recordedCasts: latestRecorded?.casts ?? [],
@@ -114,6 +115,7 @@ export function useLedgerChainSync(): void {
     address,
     abi,
     chainId,
+    voteCurrency,
     voteStartSec,
     voteEndSec,
     queryClient,

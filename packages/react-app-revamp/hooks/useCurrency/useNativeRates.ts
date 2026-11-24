@@ -63,10 +63,11 @@ const fetchNativePrices = async (): Promise<Record<string, number>> => {
 /**
  * Fetches live USD prices for native chain tokens from the Alchemy Prices API.
  */
-const useNativeRates = () => {
+const useNativeRates = ({ enabled = true }: { enabled?: boolean } = {}) => {
   return useQuery({
     queryKey: NATIVE_RATES_KEY,
     queryFn: fetchNativePrices,
+    enabled,
     staleTime: Infinity,
     refetchOnWindowFocus: false,
     retry: 2,

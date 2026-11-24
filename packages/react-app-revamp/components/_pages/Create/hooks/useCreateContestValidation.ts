@@ -9,6 +9,7 @@ import { CreateFormError, CreateFormErrorLocation } from "../types";
 interface CreateContestValidationDeps {
   emailError: string | null;
   phoneNumberError: string | null;
+  isDescriptionOptional: boolean;
 }
 
 export const getCreateContestErrors = (
@@ -31,10 +32,10 @@ export const getCreateContestErrors = (
     errors.push({ location: "duration", message: timing.error });
   }
 
-  if (!state.prompt.summarize) {
+  if (!deps.isDescriptionOptional && !state.prompt.summarize) {
     errors.push({ location: "description", message: "must summarize the contest" });
   }
-  if (!state.prompt.evaluateVoters) {
+  if (!deps.isDescriptionOptional && !state.prompt.evaluateVoters) {
     errors.push({ location: "description", message: "must explain how voters should evaluate entries" });
   }
 
@@ -98,7 +99,7 @@ export const useCreateContestValidation = (deps: CreateContestValidationDeps) =>
   // time-dependent checks like validateTiming even when no subscribed input changed
   const errors = useMemo(
     () => (submitAttempted ? getCreateContestErrors(useDeployContestStore.getState(), deps) : []),
-    [submitCount, validationInputs, fundPoolInputs, deps.emailError, deps.phoneNumberError],
+    [submitCount, validationInputs, fundPoolInputs, deps.emailError, deps.phoneNumberError, deps.isDescriptionOptional],
   );
 
   const errorFor = (location: CreateFormErrorLocation) =>
