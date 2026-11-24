@@ -1,4 +1,5 @@
 "use client";
+import AddFundsGeoblockedModal from "@components/AddFunds/components/GeoblockedModal";
 import TransactionOverlay from "@components/UI/TransactionOverlay";
 import { Slide, ToastContainer } from "react-toastify";
 import { createPortal } from "react-dom";
@@ -30,6 +31,7 @@ const Portal = () => {
         transition={Slide}
       />
       <TransactionOverlay />
+      <AddFundsGeoblockedModal />
     </>,
     document.body,
   );

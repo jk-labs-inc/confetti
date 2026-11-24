@@ -1,7 +1,8 @@
 import { Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
 import { FC } from "react";
 import DialogModalV4Plain from "./components/Plain";
-import { dialogModalV4BackdropClassName, getDialogModalV4PanelClassName, type DialogModalV4Panel } from "./styles";
+import { dialogModalV4BackdropClassName, getDialogModalV4PanelClassName } from "./styles";
+import type { DialogModalV4Layer, DialogModalV4Panel } from "./types";
 
 interface DialogModalV4Props {
   isOpen: boolean;
@@ -10,6 +11,7 @@ interface DialogModalV4Props {
   width?: string;
   lgWidth?: string;
   allowsExternalOverlays?: boolean;
+  layer?: DialogModalV4Layer;
   panel?: DialogModalV4Panel;
 }
 
@@ -20,11 +22,19 @@ const DialogModalV4: FC<DialogModalV4Props> = ({
   width = "w-full",
   lgWidth = "lg:max-w-[1024px]",
   allowsExternalOverlays,
+  layer = "dialog",
   panel = "default",
 }) => {
-  if (allowsExternalOverlays) {
+  if (allowsExternalOverlays || layer === "top") {
     return (
-      <DialogModalV4Plain isOpen={isOpen} onClose={() => onClose(false)} width={width} lgWidth={lgWidth} panel={panel}>
+      <DialogModalV4Plain
+        isOpen={isOpen}
+        onClose={() => onClose(false)}
+        width={width}
+        lgWidth={lgWidth}
+        panel={panel}
+        layer={layer}
+      >
         {children}
       </DialogModalV4Plain>
     );

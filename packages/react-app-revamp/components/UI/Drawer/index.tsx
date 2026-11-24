@@ -5,15 +5,20 @@ import { Drawer as VaulDrawer } from "vaul";
 export const DRAWER_EXIT_ANIMATION_MS = 500;
 const BODY_LOCK_CLEANUP_DELAY_MS = DRAWER_EXIT_ANIMATION_MS + 200;
 const DEFAULT_CONTENT_MAX_HEIGHT = "calc(100dvh - 48px)";
+const OPEN_DRAWER_SELECTOR = '[data-vaul-drawer][data-state="open"]';
+const BASE_LAYER_CLASS_NAME = { overlay: "z-40", content: "z-50" };
+const NESTED_LAYER_CLASS_NAME = { overlay: "z-60", content: "z-70" };
 const HANDLE_CLASS_NAME: Record<DrawerHandleSize, string> = {
   default: "mx-auto! w-12! h-1.5! shrink-0! rounded-full! bg-neutral-9! my-4!",
   compact: "mx-auto! w-9! h-1! shrink-0! rounded-full! bg-primary-3! my-2.5!",
 };
 
+export const isAnyDrawerOpen = () => document.querySelector(OPEN_DRAWER_SELECTOR) !== null;
+
 // vaul/radix own these body locks while a drawer is open, but can leak them on
 // close (mobile-only freeze); once no drawer is open, none of them may remain.
 const clearLeftoverBodyLock = () => {
-  if (document.querySelector('[data-vaul-drawer][data-state="open"]')) return;
+  if (isAnyDrawerOpen()) return;
   if (document.querySelector("body > [data-rk]")) return;
 
   const { style } = document.body;
@@ -41,6 +46,7 @@ interface DrawerProps {
   isOpen: boolean;
   children: React.ReactNode;
   isHandleHidden?: boolean;
+  isNested?: boolean;
   className?: string;
   onClose?: () => void;
   snapPoints?: (number | string)[];
@@ -67,12 +73,15 @@ const Drawer: FC<DrawerProps> = ({
   className,
   onClose,
   isHandleHidden = false,
+  isNested = false,
   snapPoints,
   activeSnapPoint,
   setActiveSnapPoint,
   contentStyle,
   handleSize = "default",
 }) => {
+  const layerClassName = isNested ? NESTED_LAYER_CLASS_NAME : BASE_LAYER_CLASS_NAME;
+
   const handleOpenChange = (open: boolean) => {
     if (!open && onClose) {
       onClose();
@@ -107,14 +116,15 @@ const Drawer: FC<DrawerProps> = ({
       onOpenChange={handleOpenChange}
       repositionInputs={false}
       handleOnly
+      nested={isNested}
       snapPoints={snapPoints}
       activeSnapPoint={activeSnapPoint}
       setActiveSnapPoint={setActiveSnapPoint}
     >
       <VaulDrawer.Portal>
-        <VaulDrawer.Overlay className="fixed inset-0 bg-neutral-8/40 z-40" />
+        <VaulDrawer.Overlay className={`fixed inset-0 bg-neutral-8/40 ${layerClassName.overlay}`} />
         <VaulDrawer.Content
-          className={`z-50 rounded-t-[40px] border-t border-l border-r border-neutral-17 flex flex-col fixed bottom-0 left-0 right-0 outline-none ${className}`}
+          className={`${layerClassName.content} rounded-t-[40px] border-t border-l border-r border-neutral-17 flex flex-col fixed bottom-0 left-0 right-0 outline-none ${className}`}
           onPointerDownOutside={handleInteractOutside}
           onInteractOutside={handleInteractOutside}
           onEscapeKeyDown={handleEscapeKeyDown}
