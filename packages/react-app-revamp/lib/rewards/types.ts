@@ -1,4 +1,4 @@
-import { Abi } from "viem";
+import { Abi, Address } from "viem";
 
 export type ContractQuery = {
   address: `0x${string}`;
@@ -24,6 +24,11 @@ export enum ModuleType {
   AUTHOR_REWARDS = "AUTHOR_REWARDS",
 }
 
+export type RewardsModuleVerification =
+  | { status: "verified"; abi: Abi; moduleType: ModuleType; version: string }
+  | { status: "bytecode-invalid" }
+  | { status: "unreadable" };
+
 export interface TokenData {
   value: bigint;
   formatted: string;
@@ -35,6 +40,22 @@ export interface TotalRewardsData {
   native: TokenData;
   tokens: Record<string, TokenData>;
 }
+
+export interface TotalRewardsQuery {
+  rewardsModuleAddress: Address;
+  rewardsModuleAbi: Abi;
+  chainId: number;
+}
+
+export interface RewardsTotalsRead {
+  totals: TotalRewardsData;
+  isComplete: boolean;
+}
+
+export type ContestPoolRead =
+  { status: "none" } | { status: "unverified" } | { status: "read"; totals: TotalRewardsData; isComplete: boolean };
+
+export type RewardTokensLookup = (rewardsModuleAddress: Address, chainName: string) => Promise<string[]>;
 
 export interface RankShare {
   rank: number;

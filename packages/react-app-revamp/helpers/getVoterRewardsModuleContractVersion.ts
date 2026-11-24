@@ -32,7 +32,8 @@ import UpdateVotingLimitVoterRewards from "@contracts/bytecodeAndAbi/modules/Vot
 import CheckProposalExistsVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.6.22.checkProposalExists.sol/VoterRewardsModule.json";
 import DisallowAllNonWholeVotesVoterRewards from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.6.23.disallowAllNonWholeVotes.sol/VoterRewardsModule.json";
 import DeployedVoterRewardsContract from "@contracts/bytecodeAndAbi/modules/VoterRewardsModule.sol/VoterRewardsModule.json";
-import { createPublicClient, getContract, http } from "viem";
+import { createTransport } from "@config/wagmi/chains";
+import { Chain, createPublicClient, getContract } from "viem";
 import { getChainFromId } from "./getChainFromId";
 import { executeWithTimeout, MAX_TIME_TO_WAIT_FOR_RPC } from "./timeout";
 
@@ -78,19 +79,19 @@ const VERSION_TO_CONTRACT: Record<string, ContractData> = {
 };
 
 export async function getVoterRewardsModuleContractVersion(address: string, chainId: number) {
-  const chain = getChainFromId(chainId);
-  const client = createPublicClient({
-    chain: chain,
-    transport: http(chain?.rpcUrls.default.http[0] ?? ""),
-  });
-
-  const contract = getContract({
-    address: address as `0x${string}`,
-    client,
-    abi: InitialVoterRewards.abi,
-  });
-
   try {
+    const chain = getChainFromId(chainId);
+    const client = createPublicClient({
+      chain: chain,
+      transport: createTransport(chain as Chain),
+    });
+
+    const contract = getContract({
+      address: address as `0x${string}`,
+      client,
+      abi: InitialVoterRewards.abi,
+    });
+
     const version = (await executeWithTimeout(MAX_TIME_TO_WAIT_FOR_RPC, contract.read.version())) as string;
 
     const contractData = VERSION_TO_CONTRACT[version] ?? DeployedVoterRewardsContract;

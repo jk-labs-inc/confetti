@@ -1,4 +1,3 @@
-import { CONTESTS_FEATURE_COUNT } from "lib/contests/constants";
 import { FC } from "react";
 import FeaturedContestCard from "./components/Contest";
 import FeaturedContestsEmptyState from "./components/EmptyState";
@@ -9,26 +8,28 @@ import { FeaturedContestItem } from "./ranking";
 
 interface FeaturedContestsProps {
   status: "error" | "pending" | "success";
-  isContestDataFetching: boolean;
-  isRewardsFetching: boolean;
   contests: FeaturedContestItem[];
+  pendingCount: number;
+  isRewardsFetching: boolean;
+  isRetrying: boolean;
   onRetry: () => void;
 }
 
 const FeaturedContests: FC<FeaturedContestsProps> = ({
   status,
   contests,
+  pendingCount,
   isRewardsFetching,
-  isContestDataFetching,
+  isRetrying,
   onRetry,
 }) => {
-  const isEmpty = status === "success" && !isContestDataFetching && !contests.length;
+  const isEmpty = status === "success" && pendingCount === 0 && !contests.length;
 
   return (
     <div className="flex flex-col gap-4 max-md:px-2">
       <p className="text-neutral-9 font-sabo-filled text-xs block md:hidden">featured contests</p>
       {status === "error" ? (
-        <FeaturedContestsErrorState onRetry={onRetry} isRetrying={isContestDataFetching} />
+        <FeaturedContestsErrorState onRetry={onRetry} isRetrying={isRetrying} />
       ) : isEmpty ? (
         <FeaturedContestsEmptyState />
       ) : (
@@ -39,10 +40,9 @@ const FeaturedContests: FC<FeaturedContestsProps> = ({
             </PeekCard>
           ))}
 
-          {isContestDataFetching &&
-            Array.from({
-              length: Math.max(0, CONTESTS_FEATURE_COUNT - contests.length),
-            }).map((_, index) => <SkeletonCard key={`skeleton-${index}`} />)}
+          {Array.from({ length: pendingCount }).map((_, index) => (
+            <SkeletonCard key={`skeleton-${index}`} />
+          ))}
         </div>
       )}
     </div>

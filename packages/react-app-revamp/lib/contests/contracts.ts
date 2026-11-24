@@ -1,35 +1,12 @@
 import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
-import { chains } from "@config/wagmi";
-import getContestContractVersion from "@helpers/getContestContractVersion";
-import { ContestStateEnum } from "@hooks/useContestState/store";
-import { readContracts } from "@wagmi/core";
-import { fetchVerifiedTotalRewards, getRewardsModuleAddress } from "lib/rewards/contracts";
-import { Address } from "viem";
-import { ContestWithTotalRewards, ProcessedContest } from "./types";
+import { ContestStateEnum } from "@hooks/useContestState/types";
+import { readContestPool } from "lib/rewards/contracts/reads";
+import { fetchTokenAddresses, getTokenAddresses } from "lib/rewards/database";
+import { ContestPoolRead, TotalRewardsData } from "lib/rewards/types";
+import { readContestDetails, readContestFields, resolveContestContract } from "./reads";
+import { ContestDetails, ContestRef, ContestWithTotalRewards } from "./types";
 
 export const EMPTY_ADDRESS = "0x0000000000000000000000000000000000000000";
-
-/**
- * Get contract config for a given address and chainId
- * @param address Contract address
- * @param chainId Chain ID
- * @returns Contract config
- */
-async function getContractConfig(address: string, chainId: number) {
-  const { abi } = await getContestContractVersion(address, chainId);
-
-  if (abi === null) {
-    return;
-  }
-
-  const contractConfig = {
-    address: address as `0x${string}`,
-    abi: abi as any,
-    chainId: chainId,
-  };
-
-  return contractConfig;
-}
 
 /**
  * Get contest title and state in a single batch of contract calls
@@ -41,83 +18,47 @@ export async function getContestContractData(
   contestAddress: string,
   networkName: string,
 ): Promise<{ title: string | null; isCanceled: boolean; prompt: string | null }> {
-  const chainId = chains.find(c => c.name.toLowerCase() === networkName.toLowerCase())?.id;
-  if (!chainId) return { title: null, isCanceled: false, prompt: null };
-
   try {
-    const contractConfig = await getContractConfig(contestAddress, chainId);
-    if (!contractConfig) {
-      return { title: null, isCanceled: false, prompt: null };
-    }
+    const contract = await resolveContestContract({ address: contestAddress, network_name: networkName });
+    const { title, state, prompt } = await readContestFields(getWagmiConfig(), contract);
 
-    const results = await readContracts(getWagmiConfig(), {
-      contracts: [
-        {
-          ...contractConfig,
-          functionName: "name",
-          args: [],
-        },
-        {
-          ...contractConfig,
-          functionName: "state",
-          args: [],
-        },
-        {
-          ...contractConfig,
-          functionName: "prompt",
-          args: [],
-        },
-      ],
-    });
-
-    const title = results[0].result as string;
-    const state = results[1].result;
-    const prompt = results[2].result as string;
-    const isCanceled = state === ContestStateEnum.Canceled;
-
-    return { title, isCanceled, prompt };
+    return { title: title as string, isCanceled: state === ContestStateEnum.Canceled, prompt: prompt as string };
   } catch (error) {
     console.error("Error fetching contest data:", error);
     return { title: null, isCanceled: false, prompt: null };
   }
 }
 
-const withoutRewards = (contest: ProcessedContest): ContestWithTotalRewards => ({
+export async function fetchContestDetails(contest: ContestRef): Promise<ContestDetails> {
+  return readContestDetails(getWagmiConfig(), await resolveContestContract(contest));
+}
+
+export const withoutRewards = (contest: ContestRef): ContestWithTotalRewards => ({
   contestAddress: contest.address || "unknown",
   chain: contest.network_name || "unknown",
   hasRewards: false,
   rewardsData: null,
 });
 
-const normalizeChainName = (chainName: string) => chainName.replace(/\s+/g, "").toLowerCase();
+export const withRewards = (contest: ContestRef, rewardsData: TotalRewardsData): ContestWithTotalRewards => ({
+  contestAddress: contest.address,
+  chain: contest.network_name,
+  hasRewards: true,
+  rewardsData,
+});
 
-export async function fetchTotalRewardsForContest(contest: ProcessedContest): Promise<ContestWithTotalRewards> {
+export async function fetchContestPool(contest: ContestRef): Promise<ContestPoolRead> {
+  return readContestPool(getWagmiConfig(), await resolveContestContract(contest), getTokenAddresses);
+}
+
+export async function fetchTotalRewardsForContest(contest: ContestRef): Promise<ContestWithTotalRewards> {
   try {
     if (!contest.address || !contest.network_name) return withoutRewards(contest);
 
-    const contestChainName = normalizeChainName(contest.network_name);
-    const chain = chains.find(c => normalizeChainName(c.name) === contestChainName);
+    const contract = await resolveContestContract(contest);
+    const pool = await readContestPool(getWagmiConfig(), contract, fetchTokenAddresses);
 
-    if (!chain) {
-      console.warn(`Chain not found for ${contest.network_name}`);
-      return withoutRewards(contest);
-    }
-
-    const contractConfig = await getContractConfig(contest.address, chain.id);
-    if (!contractConfig) return withoutRewards(contest);
-
-    const rewardsModuleAddress = await getRewardsModuleAddress(contractConfig);
-    if (!rewardsModuleAddress) return withoutRewards(contest);
-
-    const rewardsData = await fetchVerifiedTotalRewards(rewardsModuleAddress as Address, chain.id);
-    if (!rewardsData) return withoutRewards(contest);
-
-    return {
-      contestAddress: contest.address,
-      chain: contest.network_name,
-      hasRewards: true,
-      rewardsData,
-    };
+    return pool.status === "read" ? withRewards(contest, pool.totals) : withoutRewards(contest);
   } catch (error) {
     console.error(`Error fetching rewards for contest ${contest.address}:`, error);
     return withoutRewards(contest);
@@ -129,6 +70,6 @@ export async function fetchTotalRewardsForContest(contest: ProcessedContest): Pr
  * @param contests Array of contests with address and network_name
  * @returns Array of contests with their total rewards data
  */
-export function fetchTotalRewardsForContests(contests: ProcessedContest[]): Promise<ContestWithTotalRewards[]> {
+export function fetchTotalRewardsForContests(contests: ContestRef[]): Promise<ContestWithTotalRewards[]> {
   return Promise.all(contests.map(fetchTotalRewardsForContest));
 }

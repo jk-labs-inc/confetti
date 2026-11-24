@@ -1,8 +1,8 @@
 import { ROUTE_VIEW_CONTEST_BASE_PATH } from "@config/routes";
 import { useQueryClient } from "@tanstack/react-query";
+import { featuredContestRewardsQueryKey } from "lib/contests/featured/keys";
 import { ContestWithTotalRewards, ProcessedContest } from "lib/contests/types";
 import { FC, useEffect, useState } from "react";
-import { featuredContestRewardsQueryKey } from "../ranking";
 import CalendarButton from "./Contest/components/CalendarButton";
 import CardFooter from "./Contest/components/CardFooter";
 import CardHeader from "./Contest/components/CardHeader";
