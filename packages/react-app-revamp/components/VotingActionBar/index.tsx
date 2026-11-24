@@ -23,6 +23,7 @@ import { useDefaultVoteAmount } from "@components/Voting/hooks/useDefaultVoteAmo
 import useKeypadInput from "@components/Voting/hooks/useKeypadInput";
 import { useVoteExecution } from "@components/Voting/hooks/useVoteExecution";
 import { useVotingStore } from "@components/Voting/store";
+import { CLAIM_FREE_LABEL } from "@components/XClaim/copy";
 import { useModal } from "@getpara/react-sdk-lite";
 import { formatVoteCount } from "@helpers/formatNumber";
 import { useAddFunds } from "@hooks/useAddFunds";
@@ -315,7 +316,10 @@ const VotingActionBar: FC<VotingActionBarProps> = ({ entryPreview, isVotingClose
             >
               back entry
               {creditOffer && (
-                <ClaimVoteSticker className="absolute -top-2.5 -right-1.5 px-1.5 py-px text-[11px] rotate-8" />
+                <ClaimVoteSticker
+                  label={CLAIM_FREE_LABEL}
+                  className="absolute -top-2.5 -right-1.5 px-1.5 py-px text-[11px] rotate-8"
+                />
               )}
             </button>
           )}
@@ -345,7 +349,10 @@ const VotingActionBar: FC<VotingActionBarProps> = ({ entryPreview, isVotingClose
               >
                 back entry
                 {creditOffer && (
-                  <ClaimVoteSticker className="absolute -top-3 -right-1.5 px-2.5 py-0.5 text-[14px] rotate-8" />
+                  <ClaimVoteSticker
+                    label={CLAIM_FREE_LABEL}
+                    className="absolute -top-3 -right-1.5 px-2.5 py-0.5 text-[14px] rotate-8"
+                  />
                 )}
               </button>
             </div>
