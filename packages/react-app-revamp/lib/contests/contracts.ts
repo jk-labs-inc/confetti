@@ -3,7 +3,7 @@ import { ContestStateEnum } from "@hooks/useContestState/types";
 import { readContestPool } from "lib/rewards/contracts/reads";
 import { fetchTokenAddresses, getTokenAddresses } from "lib/rewards/database";
 import { ContestPoolRead, TotalRewardsData } from "lib/rewards/types";
-import { readContestDetails, readContestFields, resolveContestContract } from "./reads";
+import { findContestChain, readContestDetails, readContestFields, resolveContestContract } from "./reads";
 import { ContestDetails, ContestRef, ContestWithTotalRewards } from "./types";
 
 export const EMPTY_ADDRESS = "0x0000000000000000000000000000000000000000";
@@ -18,6 +18,8 @@ export async function getContestContractData(
   contestAddress: string,
   networkName: string,
 ): Promise<{ title: string | null; isCanceled: boolean; prompt: string | null }> {
+  if (!findContestChain(networkName)) return { title: null, isCanceled: false, prompt: null };
+
   try {
     const contract = await resolveContestContract({ address: contestAddress, network_name: networkName });
     const { title, state, prompt } = await readContestFields(getWagmiConfig(), contract);
@@ -54,6 +56,11 @@ export async function fetchContestPool(contest: ContestRef): Promise<ContestPool
 export async function fetchTotalRewardsForContest(contest: ContestRef): Promise<ContestWithTotalRewards> {
   try {
     if (!contest.address || !contest.network_name) return withoutRewards(contest);
+
+    if (!findContestChain(contest.network_name)) {
+      console.warn(`Chain not found for ${contest.network_name}`);
+      return withoutRewards(contest);
+    }
 
     const contract = await resolveContestContract(contest);
     const pool = await readContestPool(getWagmiConfig(), contract, fetchTokenAddresses);
