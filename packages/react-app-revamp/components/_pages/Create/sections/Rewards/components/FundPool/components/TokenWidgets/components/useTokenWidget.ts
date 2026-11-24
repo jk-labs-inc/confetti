@@ -5,6 +5,7 @@ import useNativeRates from "@hooks/useCurrency/useNativeRates";
 import { FilteredToken } from "@hooks/useTokenList";
 import { useWallet } from "@hooks/useWallet";
 import { ChainWithIcon } from "@config/wagmi";
+import { chainHasNativeCoin } from "lib/voteCurrency";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { FundPoolToken, useFundPoolStore } from "../../../store";
 import { generateNativeToken } from "../../../utils";
@@ -158,7 +159,7 @@ export const useTokenWidget = ({ tokenWidget, chain, preferredInputMode = "crypt
     const tokenToUpdate = {
       ...localSelectedToken,
       amount: cryptoAmt,
-      decimals: balance?.decimals ?? 18,
+      decimals: balance?.decimals ?? (localSelectedToken.decimals || 18),
     };
     const updatedTokens = tokenWidgets.map(w => (w.id === tokenWidget.id ? { ...w, ...tokenToUpdate } : w));
     setTokenWidgets(updatedTokens);
@@ -169,7 +170,7 @@ export const useTokenWidget = ({ tokenWidget, chain, preferredInputMode = "crypt
     setInputValue("");
     setIsMaxPressed(false);
 
-    if (selectedToken.symbol === chainNativeCurrencySymbol) {
+    if (chainHasNativeCoin(chainId) && selectedToken.symbol === chainNativeCurrencySymbol) {
       setLocalSelectedToken(generateNativeToken(nativeCurrency, chainNativeCurrencySymbol));
       const updatedTokens = tokenWidgets.map(w =>
         w.id === tokenWidget.id ? { ...w, ...generateNativeToken(nativeCurrency, chainNativeCurrencySymbol) } : w,

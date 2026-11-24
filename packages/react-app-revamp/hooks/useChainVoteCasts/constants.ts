@@ -17,6 +17,7 @@ export const MAX_BLOCK_TIGHTEN_STEPS = 2;
 export const MIN_BLOCK_TIGHTEN_JUMP = 1_000n;
 export const CAST_DETAILS_CONCURRENCY = 8;
 export const CHAIN_CAST_UUID_PREFIX = "chain";
+export const VOTE_PAYMENT_EVENT_NAMES = ["RewardsPaymentReleased", "JkLabsPaymentReleased", "CreatorPaymentReleased"];
 
 export const chainVoteCastsQueryKey = (contestAddress: string, chainId: number) =>
   ["chainVoteCasts", contestAddress.toLowerCase(), chainId] as const;

@@ -1,6 +1,9 @@
 import { isSupabaseConfigured } from "@helpers/database";
 import { getJson, postJson } from "@helpers/fetchJson";
+import { findChainIdByName } from "@helpers/getChainId";
 import type { OfficialModuleInsert, RewardTokensQuery } from "lib/supabase/types";
+import { chainHasNativeCoin } from "lib/voteCurrency";
+import { potTokenAddresses } from "./pot";
 
 /**
  * Fetches the list of all ERC20 token addresses associated with a specific rewards module address.
@@ -11,11 +14,24 @@ import type { OfficialModuleInsert, RewardTokensQuery } from "lib/supabase/types
  * @param networkName name of the chain
  * @returns a Promise that resolves to an array of unique ERC20 token addresses
  */
-export const getTokenAddresses = async (rewardsModuleAddress: string, networkName: string): Promise<string[]> => {
+export const getListedTokenAddresses = async (rewardsModuleAddress: string, networkName: string): Promise<string[]> => {
   if (!isSupabaseConfigured) return [];
 
   const query: RewardTokensQuery = { rewardsModule: rewardsModuleAddress, chain: networkName };
   return getJson<string[]>("/api/rewards", query);
+};
+
+export const getTokenAddresses = async (rewardsModuleAddress: string, networkName: string): Promise<string[]> => {
+  const chainId = findChainIdByName(networkName);
+
+  const listedTokenAddresses = await getListedTokenAddresses(rewardsModuleAddress, networkName).catch(error => {
+    if (chainHasNativeCoin(chainId)) throw error;
+
+    console.error("Failed to fetch listed reward tokens:", error);
+    return [];
+  });
+
+  return potTokenAddresses(chainId, listedTokenAddresses);
 };
 
 /**

@@ -85,6 +85,7 @@ export function useVerifiedVoterStats({
           abi: contestConfig.abi,
           chainId: contestConfig.chainId,
           version: contestConfig.version,
+          voteCurrency: contestConfig.voteCurrency,
         },
         rewardsModule: {
           address: rewards.contractAddress as `0x${string}`,

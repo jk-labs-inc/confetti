@@ -4,12 +4,13 @@ import { toastError } from "@components/UI/Toast";
 import { buildFunkitCheckoutConfig, getFunkitChain } from "@config/funkit";
 import { useFunkitCheckout, useSoftHiddenCheckout } from "@funkit/connect";
 import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
+import { useVoteCurrencyBalance } from "@hooks/useVoteCurrencyBalance";
 import { useWallet } from "@hooks/useWallet";
 import { useQueryClient } from "@tanstack/react-query";
 import { getAccount, switchChain } from "@wagmi/core";
 import { hideAddFundsMarker, showAddFundsMarker } from "lib/analytics/addFundsMarker";
+import { findChainVoteCurrency } from "lib/voteCurrency";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useBalance } from "wagmi";
 
 export const DEPOSIT_ARRIVAL_POLL_INTERVAL_MS = 5_000;
 const DEPOSIT_ARRIVAL_MAX_WAIT_MS = 30 * 60_000;
@@ -32,18 +33,17 @@ export const useAddFunds = ({ chain }: UseAddFundsParams) => {
   const hasUnclosedCheckoutRef = useRef(false);
   const { softHide, discard } = useSoftHiddenCheckout();
 
-  const { data: balance } = useBalance({
-    address: userAddress as `0x${string}` | undefined,
+  const depositCurrency = findChainVoteCurrency(funkitChain?.id);
+  const { balance } = useVoteCurrencyBalance({
+    voteCurrency: depositCurrency,
     chainId: funkitChain?.id,
-    query: {
-      enabled: !!funkitChain && !!userAddress,
-      refetchInterval: depositWatch ? DEPOSIT_ARRIVAL_POLL_INTERVAL_MS : undefined,
-    },
+    owner: userAddress,
+    refetchIntervalMs: depositWatch ? DEPOSIT_ARRIVAL_POLL_INTERVAL_MS : undefined,
   });
 
   const balanceValueRef = useRef<bigint | undefined>(undefined);
   useEffect(() => {
-    balanceValueRef.current = balance?.value;
+    balanceValueRef.current = balance;
   });
 
   const startDepositWatch = useCallback(() => {
@@ -91,10 +91,10 @@ export const useAddFunds = ({ chain }: UseAddFundsParams) => {
   useEffect(() => {
     if (!depositWatch || balance === undefined) return;
     if (depositWatch.startBalance === null) {
-      setDepositWatch({ ...depositWatch, startBalance: balance.value });
+      setDepositWatch({ ...depositWatch, startBalance: balance });
       return;
     }
-    if (balance.value <= depositWatch.startBalance) return;
+    if (balance <= depositWatch.startBalance) return;
     setDepositWatch(null);
     queryClient.invalidateQueries({ queryKey: ["balance"] });
   }, [depositWatch, balance, queryClient]);

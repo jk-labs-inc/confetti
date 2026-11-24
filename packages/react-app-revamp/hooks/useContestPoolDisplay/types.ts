@@ -1,12 +1,11 @@
-import { TokenItem } from "@hooks/useCurrency/useTotalRewardsUsd";
-import { RewardsAudience, RewardsPhase } from "lib/rewards/types";
+import { RewardsAudience, RewardsPhase, RewardTokenItem } from "lib/rewards/types";
 
 export type ContestPoolDisplay =
   | { status: "loading" }
   | { status: "empty" }
   | {
       status: "ready";
-      tokenItems: TokenItem[];
+      tokenItems: RewardTokenItem[];
       chainName: string;
       phase: RewardsPhase;
       audience: RewardsAudience;

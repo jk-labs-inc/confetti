@@ -1,12 +1,13 @@
 import { VotingWidgetLayout } from "@components/Voting/types";
-import useDisplayPrice from "@hooks/useCurrency/useDisplayPrice";
+import useVoteCurrencyDisplayPrice from "@hooks/useCurrency/useVoteCurrencyDisplayPrice";
+import { VoteCurrency } from "lib/voteCurrency";
 import { FC } from "react";
 import { motion } from "motion/react";
 import Skeleton from "react-loading-skeleton";
 
 interface MyVotesProps {
   balance: string;
-  symbol: string;
+  voteCurrency: VoteCurrency;
   insufficientBalance: boolean;
   isConnected: boolean;
   isBalancePending: boolean;
@@ -35,14 +36,14 @@ const LAYOUT_STYLE: Record<VotingWidgetLayout, MyVotesLayoutStyle> = {
 
 const MyVotes: FC<MyVotesProps> = ({
   balance,
-  symbol,
+  voteCurrency,
   insufficientBalance,
   isConnected,
   isBalancePending,
   onAddFunds,
   layout = VotingWidgetLayout.regular,
 }) => {
-  const { displayValue, displaySymbol, isLoading } = useDisplayPrice(balance, symbol);
+  const { displayValue, displaySymbol, isLoading } = useVoteCurrencyDisplayPrice(balance, voteCurrency);
   const layoutStyle = LAYOUT_STYLE[layout];
 
   return (

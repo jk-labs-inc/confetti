@@ -1,7 +1,10 @@
 import RewardsNumberDisplay from "@components/_pages/Contest/Rewards/components/UI/Display/Number";
 import { Reward } from "@components/_pages/Contest/Rewards/types";
 import RefreshButton from "@components/UI/RefreshButton";
+import useContestConfigStore from "@hooks/useContestConfig/store";
+import { peggedRewardTokenAddress } from "lib/rewards/valuation";
 import { FC } from "react";
+import { useShallow } from "zustand/shallow";
 
 interface RewardsPlayerViewClaimRewardTotalRewardsProps {
   totalRewards: Reward[];
@@ -14,6 +17,8 @@ const RewardsPlayerViewClaimRewardTotalRewards: FC<RewardsPlayerViewClaimRewardT
   isContestInProcess,
   onRefresh,
 }) => {
+  const chainName = useContestConfigStore(useShallow(state => state.contestConfig.chainName));
+
   return (
     <div className={`flex flex-col ${isContestInProcess ? "gap-6" : "gap-8 md:gap-12"}`}>
       <div className="flex flex-col gap-1">
@@ -32,6 +37,8 @@ const RewardsPlayerViewClaimRewardTotalRewards: FC<RewardsPlayerViewClaimRewardT
           decimals={reward.decimals}
           index={index}
           isBold={true}
+          tokenAddress={peggedRewardTokenAddress(chainName, reward.address)}
+          chainName={chainName}
         />
       ))}
     </div>

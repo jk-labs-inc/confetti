@@ -1,11 +1,12 @@
-import useDisplayPrice from "@hooks/useCurrency/useDisplayPrice";
+import useVoteCurrencyDisplayPrice from "@hooks/useCurrency/useVoteCurrencyDisplayPrice";
+import { VoteCurrency } from "lib/voteCurrency";
 import { FC } from "react";
 import Skeleton from "react-loading-skeleton";
 
 interface PriceDisplayProps {
   price: string;
   label: string;
-  chainUnitLabel: string;
+  voteCurrency: VoteCurrency;
 }
 
 const formatPrice = (value: string, symbol: string) => {
@@ -13,8 +14,11 @@ const formatPrice = (value: string, symbol: string) => {
   return `${value} ${symbol.toUpperCase()}`;
 };
 
-const PriceDisplay: FC<PriceDisplayProps> = ({ price, label, chainUnitLabel }) => {
-  const { displayValue, displaySymbol, secondaryValue, secondarySymbol, isLoading } = useDisplayPrice(price, chainUnitLabel);
+const PriceDisplay: FC<PriceDisplayProps> = ({ price, label, voteCurrency }) => {
+  const { displayValue, displaySymbol, secondaryValue, secondarySymbol, isLoading } = useVoteCurrencyDisplayPrice(
+    price,
+    voteCurrency,
+  );
 
   return (
     <div className="flex flex-col gap-4">

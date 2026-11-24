@@ -4,6 +4,8 @@ import { getTokenDecimalsBatch, getTokenSymbolBatch } from "@helpers/getTokenDec
 import { TokenInfo } from "@hooks/useReleasableRewards";
 import { useRewardTokens } from "@hooks/useRewardsTokens";
 import { useQuery } from "@tanstack/react-query";
+import { knownPotTokens } from "lib/rewards/pot";
+import { chainHasNativeCoin } from "lib/voteCurrency";
 import { usePathname } from "next/navigation";
 import { useMemo } from "react";
 import { Abi } from "viem";
@@ -47,6 +49,9 @@ export function useReleasedRewards({
   const { chainName: contestChainName } = extractPathSegments(asPath ?? "");
   const { data: erc20Addresses, isError: isErc20AddressesError } = useRewardTokens(contractAddress, contestChainName);
   const nativeTokenInfo = getNativeTokenInfo(chainId);
+  const hasNativeBalance = chainHasNativeCoin(chainId);
+  const nativeCallsPerRanking = hasNativeBalance ? 1 : 0;
+  const knownTokens = useMemo(() => knownPotTokens(chainId, erc20Addresses ?? []), [chainId, erc20Addresses]);
   const {
     data: tokenInfo,
     isLoading: isTokenInfoLoading,
@@ -75,13 +80,17 @@ export function useReleasedRewards({
   const calls = useMemo(
     () =>
       rankings.flatMap(ranking => [
-        {
-          address: contractAddress as `0x${string}`,
-          chainId,
-          abi,
-          functionName: "released",
-          args: [BigInt(ranking)],
-        },
+        ...(hasNativeBalance
+          ? [
+              {
+                address: contractAddress as `0x${string}`,
+                chainId,
+                abi,
+                functionName: "released",
+                args: [BigInt(ranking)],
+              },
+            ]
+          : []),
         ...(erc20Addresses?.map(tokenAddress => ({
           address: contractAddress as `0x${string}`,
           chainId,
@@ -90,7 +99,7 @@ export function useReleasedRewards({
           args: [tokenAddress, BigInt(ranking)],
         })) ?? []),
       ]),
-    [rankings, contractAddress, chainId, abi, erc20Addresses],
+    [rankings, contractAddress, chainId, abi, erc20Addresses, hasNativeBalance],
   );
 
   const {
@@ -103,8 +112,8 @@ export function useReleasedRewards({
     query: {
       select(data): { processedData: ProcessedReleasedRewards[]; totalRewards: TotalRewardInfo[] } {
         const processedData = rankings.map((ranking, rankIndex) => {
-          const startIndex = rankIndex * (1 + (erc20Addresses?.length ?? 0));
-          const nativeAmount = data[startIndex]?.result as bigint | undefined;
+          const startIndex = rankIndex * (nativeCallsPerRanking + (erc20Addresses?.length ?? 0));
+          const nativeAmount = hasNativeBalance ? (data[startIndex]?.result as bigint | undefined) : undefined;
 
           const result: ProcessedReleasedRewards = {
             ranking,
@@ -121,13 +130,13 @@ export function useReleasedRewards({
           }
 
           erc20Addresses?.forEach((address, index) => {
-            const amount = data[startIndex + index + 1]?.result as bigint | undefined;
+            const amount = data[startIndex + index + nativeCallsPerRanking]?.result as bigint | undefined;
             if (amount && amount > 0n) {
               result.tokens.push({
                 address,
                 amount,
-                symbol: tokenInfo?.symbols[address] || "UNKNOWN",
-                decimals: tokenInfo?.decimals[address] ?? 18,
+                symbol: tokenInfo?.symbols[address] || knownTokens.symbols[address] || "UNKNOWN",
+                decimals: tokenInfo?.decimals[address] ?? knownTokens.decimals[address] ?? 18,
               });
             }
           });

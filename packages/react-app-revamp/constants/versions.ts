@@ -5,3 +5,4 @@ export const SELF_FUND_VERSION = "6.9";
 export const ANALYTICS_VERSION = "6.16";
 export const LOG_CURVE_VERSION = "6.19";
 export const CONTEST_ENTRY_TYPE_VERSION = "6.20";
+export const VOTE_CURRENCY_VERSION = "6.24";

@@ -31,6 +31,7 @@ export const prepareContestDataForIndexing = (params: PrepareContestDataParams) 
     address: params.address,
     chainName: params.chainName,
     charge: params.contestData.charge,
+    voteCurrencyAddress: params.constructorArgs.voteCurrency,
   });
 };
 

@@ -1,30 +1,28 @@
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import { useCurrencyStore } from "@hooks/useCurrency/store";
-import { convertToDisplayPrice, DisplayPriceOptions } from "@hooks/useCurrency/useDisplayPrice";
-import useNativeRates from "@hooks/useCurrency/useNativeRates";
+import { DisplayPriceOptions, formatVoteCurrencyPrice } from "@hooks/useCurrency/useDisplayPrice";
+import useVoteCurrencyUsdRate from "@hooks/useCurrency/useVoteCurrencyUsdRate";
 import { useCallback } from "react";
 
 export type NativePriceFormatter = (nativeAmount: string | number, options?: DisplayPriceOptions) => string;
 
 export const useNativePriceFormatter = (): NativePriceFormatter => {
-  const nativeCurrencySymbol = useContestConfigStore(state => state.contestConfig.chainNativeCurrencySymbol);
+  const voteCurrency = useContestConfigStore(state => state.contestConfig.voteCurrency);
   const displayCurrency = useCurrencyStore(state => state.displayCurrency);
-  const { data: nativeRates } = useNativeRates();
+  const { rate } = useVoteCurrencyUsdRate(voteCurrency);
 
   return useCallback(
     (nativeAmount, options) => {
-      const { displayValue, displaySymbol } = convertToDisplayPrice(
-        String(nativeAmount),
-        nativeCurrencySymbol ?? "",
+      const { displayValue, displaySymbol } = formatVoteCurrencyPrice({
+        value: String(nativeAmount),
+        voteCurrency,
+        rate,
         displayCurrency,
-        nativeRates ?? {},
-        {},
-        undefined,
         options,
-      );
+      });
       return displaySymbol === "$" ? `$${displayValue}` : `${displayValue} ${displaySymbol}`;
     },
-    [nativeCurrencySymbol, displayCurrency, nativeRates],
+    [voteCurrency, displayCurrency, rate],
   );
 };
 

@@ -1,10 +1,13 @@
+import { findChainIdByName } from "@helpers/getChainId";
 import { getChainLogo } from "@helpers/getChainLogo";
+import { chainHasNativeCoin } from "lib/voteCurrency";
 import Image from "next/image";
 import { FC, memo } from "react";
 import { useShallow } from "zustand/shallow";
 import AddFundsToggle from "./components/Toggle";
 import AddFundsProviders from "./providers";
 import { useAddFundsStore } from "./store";
+import { AddFundsProviderType } from "./types";
 
 interface AddFundsProps {
   chain: string;
@@ -32,6 +35,8 @@ const AddFunds: FC<AddFundsProps> = ({
       setProviderType: state.setProviderType,
     })),
   );
+  const offersCashOnramp = chainHasNativeCoin(findChainIdByName(chain));
+  const activeProviderType = offersCashOnramp ? providerType : AddFundsProviderType.BRIDGE;
 
   return (
     <div id="add_funds_modal" className={`@container flex flex-col w-full h-full ${className}`}>
@@ -49,12 +54,12 @@ const AddFunds: FC<AddFundsProps> = ({
         </div>
 
         <div className="flex flex-col gap-4">
-          <AddFundsToggle value={providerType} onChange={setProviderType} />
+          {offersCashOnramp && <AddFundsToggle value={providerType} onChange={setProviderType} />}
 
           <AddFundsProviders
             chain={chain}
             asset={asset}
-            type={providerType}
+            type={activeProviderType}
             onCloseModal={onCloseModal}
             onBridgeSuccess={onBridgeSuccess}
           />

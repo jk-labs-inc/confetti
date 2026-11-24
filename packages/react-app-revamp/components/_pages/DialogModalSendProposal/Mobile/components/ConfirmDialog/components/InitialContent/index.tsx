@@ -1,18 +1,18 @@
 import AddFunds from "@components/AddFunds";
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import UpdatesSignup from "@components/UI/UpdatesSignup";
-import { chains } from "@config/wagmi";
 import { emailRegex } from "@helpers/regex";
+import useContestConfigStore from "@hooks/useContestConfig/store";
 import { Charge } from "@hooks/useDeployContest/types";
 import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
 import { isPhoneNumberEmpty, isValidPhoneNumber } from "lib/phone";
 import { PhoneNumberValue } from "lib/phone/types";
-import { type GetBalanceReturnType } from "@wagmi/core";
 import { FC, useEffect, useState } from "react";
+import { useShallow } from "zustand/shallow";
 
 interface SendProposalMobileLayoutConfirmInitialContentProps {
   charge: Charge;
-  accountData: GetBalanceReturnType | undefined;
+  entryFundsBalance: bigint | undefined;
   chainName: string;
   onConfirm?: () => void;
   onShowAddFunds?: (value: boolean) => void;
@@ -26,7 +26,7 @@ enum ButtonText {
 
 const SendProposalMobileLayoutConfirmInitialContent: FC<SendProposalMobileLayoutConfirmInitialContentProps> = ({
   charge,
-  accountData,
+  entryFundsBalance,
   chainName,
   onConfirm,
   onShowAddFunds,
@@ -44,10 +44,10 @@ const SendProposalMobileLayoutConfirmInitialContent: FC<SendProposalMobileLayout
   } = useSubmitProposalStore(state => state);
   const [emailError, setEmailError] = useState<string | null>(null);
   const [phoneNumberError, setPhoneNumberError] = useState<string | null>(null);
-  const chainCurrencySymbol = chains.find(chain => chain.name.toLowerCase() === chainName)?.nativeCurrency?.symbol;
+  const voteCurrencySymbol = useContestConfigStore(useShallow(state => state.contestConfig.voteCurrency.symbol));
   const [showAddFunds, setShowAddFunds] = useState(false);
   const [buttonText, setButtonText] = useState(ButtonText.SUBMIT);
-  const insufficientBalance = accountData && accountData.value === BigInt(0);
+  const insufficientBalance = entryFundsBalance === 0n;
 
   useEffect(() => {
     setButtonText(insufficientBalance ? ButtonText.ADD_FUNDS : ButtonText.SUBMIT);
@@ -94,7 +94,7 @@ const SendProposalMobileLayoutConfirmInitialContent: FC<SendProposalMobileLayout
   return (
     <>
       {showAddFunds ? (
-        <AddFunds chain={chainName} asset={chainCurrencySymbol || ""} onGoBack={handleAddFundsClose} />
+        <AddFunds chain={chainName} asset={voteCurrencySymbol} onGoBack={handleAddFundsClose} />
       ) : (
         <>
           <UpdatesSignup

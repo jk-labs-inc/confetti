@@ -11,7 +11,7 @@ const VoteInfoBlocks: FC<VoteInfoBlocksProps> = props => {
           isConnected={props.isConnected}
           isBalancePending={props.isBalancePending}
           balance={props.balance}
-          symbol={props.symbol}
+          voteCurrency={props.voteCurrency}
           insufficientBalance={props.insufficientBalance}
           onAddFunds={props.onAddFunds}
           layout={props.layout}

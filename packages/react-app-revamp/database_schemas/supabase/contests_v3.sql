@@ -18,6 +18,7 @@ create table
     percentage_to_rewards numeric null,
     creator_split_enabled smallint null,
     disabled boolean null default false,
+    vote_currency character varying not null default '0x0000000000000000000000000000000000000000',
     constraint contests_v3_pkey primary key (uuid)
   ) tablespace pg_default;
 

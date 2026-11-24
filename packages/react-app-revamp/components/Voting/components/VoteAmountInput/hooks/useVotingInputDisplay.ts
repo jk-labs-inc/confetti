@@ -1,12 +1,13 @@
 import { useVotingStore } from "@components/Voting/store";
 import { toFixedString } from "@helpers/formatBalance";
 import { useCurrencyStore } from "@hooks/useCurrency/store";
-import useNativeRates from "@hooks/useCurrency/useNativeRates";
+import useVoteCurrencyUsdRate from "@hooks/useCurrency/useVoteCurrencyUsdRate";
+import { isUsdPegged, VoteCurrency } from "lib/voteCurrency";
 import { useEffect, useRef, useState } from "react";
 import { useShallow } from "zustand/shallow";
 
 interface UseVotingInputDisplayProps {
-  nativeCurrencySymbol: string;
+  voteCurrency: VoteCurrency;
   maxBalance: string;
   isConnected: boolean;
 }
@@ -45,16 +46,16 @@ const displayFor = (nativeValue: string, rate: number | undefined, isPrefilled: 
 };
 
 const useVotingInputDisplay = ({
-  nativeCurrencySymbol,
+  voteCurrency,
   maxBalance,
   isConnected,
 }: UseVotingInputDisplayProps): UseVotingInputDisplayReturn => {
   const displayCurrency = useCurrencyStore(state => state.displayCurrency);
-  const { data: nativeRates, isLoading: isNativeRatesLoading } = useNativeRates();
-  const rate = nativeRates?.[nativeCurrencySymbol.toLowerCase()];
-  const isUsd = displayCurrency === "usd" && rate !== undefined;
+  const { rate, isLoading: isRateLoading } = useVoteCurrencyUsdRate(voteCurrency);
+  const prefersUsd = displayCurrency === "usd" || isUsdPegged(voteCurrency);
+  const isUsd = prefersUsd && rate !== undefined;
   const usdRate = isUsd ? rate : undefined;
-  const isLoading = displayCurrency === "usd" && isNativeRatesLoading;
+  const isLoading = prefersUsd && isRateLoading;
 
   const { inputValue, isAmountEdited, setInputValue, setIsFocused, isInvalid, handleMaxClick } = useVotingStore(
     useShallow(state => ({
@@ -91,7 +92,7 @@ const useVotingInputDisplay = ({
     handleMaxClick(maxBalance, isConnected);
   };
 
-  const displaySymbol = isUsd ? "$" : nativeCurrencySymbol;
+  const displaySymbol = isUsd ? "$" : voteCurrency.symbol;
 
   return {
     displayValue,

@@ -1,7 +1,10 @@
-import { getNativeTokenSymbol } from "@helpers/nativeToken";
+import { findChainIdByName } from "@helpers/getChainId";
 import { useWallet } from "@hooks/useWallet";
+import { findChainVoteCurrency } from "lib/voteCurrency";
 import { usePathname } from "next/navigation";
 import { useMemo } from "react";
+
+const fundingAssetSymbol = (chainId: number | undefined): string => findChainVoteCurrency(chainId)?.symbol ?? "";
 
 /**
  * returns the chain name and asset symbol to use for the "add funds" modal.
@@ -20,13 +23,13 @@ export function useAddFundsChain() {
       const contestChain = segments[2];
       return {
         chainName: contestChain,
-        asset: getNativeTokenSymbol(contestChain) ?? "",
+        asset: fundingAssetSymbol(findChainIdByName(contestChain)),
       };
     }
 
     return {
       chainName: chain?.name.toLowerCase() ?? "",
-      asset: chain?.nativeCurrency.symbol ?? "",
+      asset: fundingAssetSymbol(chain?.id),
     };
   }, [pathname, chain]);
 }

@@ -2,7 +2,7 @@ import { isSameAddress } from "@helpers/isSameAddress";
 import { calculateProfitPercentage } from "@helpers/percentages";
 import { ContestVoteLedger, VoterEntryTally } from "@hooks/useContestVoteLedger/types";
 import { formatEther } from "viem";
-import { estimateVoterEarning, nativeToWei, pickMainEntryId } from "./earnings";
+import { amountToPriceUnits, estimateVoterEarning, pickMainEntryId } from "./earnings";
 import {
   EarningsContext,
   EntryRanking,
@@ -96,9 +96,9 @@ export function buildLeaderboardRows({
             entryVotesById,
           ),
           earningNative,
-          earningWei: nativeToWei(earningNative),
+          earningWei: amountToPriceUnits(earningNative),
           spentNative: voter.totalSpent,
-          spentWei: nativeToWei(voter.totalSpent),
+          spentWei: amountToPriceUnits(voter.totalSpent),
         },
         earnings,
       ),
@@ -119,7 +119,7 @@ const overlayVerified = (
   const voterEntries = ledger.byVoter.get(row.address)?.entries;
   const mainEntryTally = row.mainEntry ? voterEntries?.get(row.mainEntry.proposalId) : undefined;
   const verifiedVotes = stats.mainEntryId === row.mainEntry?.proposalId ? stats.votesOnMainEntry : null;
-  const spentWei = stats.spentWei ?? nativeToWei(row.spentNative);
+  const spentWei = stats.spentWei ?? amountToPriceUnits(row.spentNative);
 
   return finalizeRow(
     {

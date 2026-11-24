@@ -4,10 +4,10 @@ import { MappedProposalIds } from "@hooks/useProposal/store";
 import { rankProposals } from "@hooks/useProposal/utils";
 import BigNumber from "bignumber.js";
 import { ModuleType, RewardModuleInfo } from "lib/rewards/types";
-import { parseEther } from "viem";
+import { PRICE_UNIT_DECIMALS } from "lib/voteCurrency";
+import { parseUnits } from "viem";
 import { EarningsContext, EntryRank, EntryRanking } from "./types";
 
-const NATIVE_DECIMALS = 18;
 const NO_TIED_RANK = Number.POSITIVE_INFINITY;
 
 export const hasVoterPayouts = (rewards: RewardModuleInfo | null | undefined): rewards is RewardModuleInfo =>
@@ -40,9 +40,9 @@ const isPayableRank = (rank: number, firstTiedRank: number, payees: number[]): b
 export const payableRankSet = (payees: number[], firstTiedRank: number): Set<number> =>
   new Set(payees.filter(rank => isPayableRank(rank, firstTiedRank, payees)));
 
-export const nativeToWei = (value: number): bigint => {
+export const amountToPriceUnits = (value: number): bigint => {
   if (!Number.isFinite(value) || value <= 0) return 0n;
-  return parseEther(new BigNumber(value).toFixed(NATIVE_DECIMALS, BigNumber.ROUND_DOWN));
+  return parseUnits(new BigNumber(value).toFixed(PRICE_UNIT_DECIMALS, BigNumber.ROUND_DOWN), PRICE_UNIT_DECIMALS);
 };
 
 const rankShareFraction = (rank: number, earnings: EarningsContext): number => {
