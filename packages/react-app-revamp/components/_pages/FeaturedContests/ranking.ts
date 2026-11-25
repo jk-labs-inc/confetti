@@ -1,3 +1,4 @@
+import { featuredContestKey } from "lib/contests/featured/keys";
 import { ContestWithTotalRewards, ProcessedContest } from "lib/contests/types";
 import moment from "moment";
 import { getCardState } from "./components/Contest/helpers";
@@ -25,8 +26,6 @@ const COMPARE_TIMING: Record<Phase, (a: ProcessedContest, b: ProcessedContest) =
   upcoming: (a, b) => moment(a.vote_start_at).diff(b.vote_start_at),
   past: (a, b) => moment(b.end_at).diff(a.end_at),
 };
-
-export const featuredContestKey = (contest: ProcessedContest): string => `${contest.network_name}:${contest.address}`;
 
 interface RankFeaturedContestsArgs {
   contests: ProcessedContest[];

@@ -1,12 +1,7 @@
 import { create } from "zustand";
+import { ContestStateEnum } from "./types";
 
-export enum ContestStateEnum {
-  NotStarted,
-  Active,
-  Canceled,
-  Queued,
-  Completed,
-}
+export { ContestStateEnum };
 
 type Store = {
   contestState: ContestStateEnum;

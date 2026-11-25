@@ -3,6 +3,9 @@ import { createClient, SupabaseClient } from "@supabase/supabase-js";
 
 let client: SupabaseClient | null = null;
 
+export const isSupabaseServerConfigured = (): boolean =>
+  Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SECRET_KEY);
+
 export function getSupabaseServer(): SupabaseClient {
   if (client) return client;
 
