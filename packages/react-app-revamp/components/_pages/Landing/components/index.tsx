@@ -1,66 +1,20 @@
 "use client";
 
 import FeaturedContests from "@components/_pages/FeaturedContests";
-import { featuredContestKey, rankFeaturedContests } from "@components/_pages/FeaturedContests/ranking";
 import CustomLink from "@components/UI/Link";
 import { ROUTE_VIEW_LIVE_CONTESTS } from "@config/routes";
 import { isSupabaseConfigured } from "@helpers/database";
-import { useRewardPoolsUsd } from "@hooks/useCurrency/useTotalRewardsUsd";
-import { experimental_streamedQuery as streamedQuery, useQuery } from "@tanstack/react-query";
-import { streamFeaturedContests } from "lib/contests";
-import { CONTESTS_FEATURE_COUNT } from "lib/contests/constants";
-import { fetchTotalRewardsForContests } from "lib/contests/contracts";
-import { useMemo, useState } from "react";
+import { FeaturedSnapshot } from "lib/contests/featured/types";
+import { FC } from "react";
+import { useFeaturedContests } from "../hooks/useFeaturedContests";
 import LandingPageHowItWorks from "./HowItWorks";
 
-function useFeaturedContests() {
-  const [page] = useState(0);
-
-  const {
-    data: contestData = [],
-    status,
-    isFetching: isContestDataFetching,
-    refetch,
-  } = useQuery({
-    queryKey: ["featuredContestsStream", page],
-    //TODO: test this streamedQuery from useQuery, let's see if this feature can replace our manual (still experimental but looks promising)
-    queryFn: streamedQuery({
-      streamFn: () => streamFeaturedContests(page, CONTESTS_FEATURE_COUNT),
-      refetchMode: "reset",
-    }),
-    refetchOnWindowFocus: false,
-  });
-
-  const isStreamingComplete = status === "success" && !isContestDataFetching;
-
-  const { data: rewardsByKey, isFetching: isRewardsFetching } = useQuery({
-    queryKey: ["totalRewards", isStreamingComplete ? contestData.length : "pending"],
-    queryFn: async () => {
-      const rewards = await fetchTotalRewardsForContests(contestData);
-      return Object.fromEntries(contestData.map((contest, index) => [featuredContestKey(contest), rewards[index]]));
-    },
-    enabled: isStreamingComplete && contestData.length > 0,
-    refetchOnWindowFocus: false,
-  });
-
-  const poolUsdByKey = useRewardPoolsUsd(rewardsByKey);
-
-  const contests = useMemo(
-    () => rankFeaturedContests({ contests: contestData, rewardsByKey, poolUsdByKey }),
-    [contestData, rewardsByKey, poolUsdByKey],
-  );
-
-  return {
-    status,
-    contests,
-    isRewardsFetching,
-    isContestDataFetching,
-    refetch,
-  };
+interface LandingPageProps {
+  snapshot: FeaturedSnapshot | null;
 }
 
-const LandingPage = () => {
-  const { status, contests, isRewardsFetching, isContestDataFetching, refetch } = useFeaturedContests();
+const LandingPage: FC<LandingPageProps> = ({ snapshot }) => {
+  const { status, contests, pendingCount, isRewardsFetching, isRetrying, retry } = useFeaturedContests(snapshot);
 
   return (
     <div className="px-4 mt-6 lx:mt-12 pb-12">
@@ -73,9 +27,10 @@ const LandingPage = () => {
             <FeaturedContests
               status={status}
               contests={contests}
+              pendingCount={pendingCount}
               isRewardsFetching={isRewardsFetching}
-              isContestDataFetching={isContestDataFetching}
-              onRetry={() => refetch()}
+              isRetrying={isRetrying}
+              onRetry={retry}
             />
             <CustomLink
               prefetch={true}

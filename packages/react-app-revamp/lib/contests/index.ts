@@ -2,10 +2,9 @@ import { isSupabaseConfigured } from "@helpers/database";
 import { getJson } from "@helpers/fetchJson";
 import type { ContestExistsQuery, ContestListQuery, ContestRowsPage } from "lib/supabase/types";
 import { SearchOptions } from "types/search";
-import { ITEMS_PER_PAGE } from "./constants";
+import { CONTESTS_FEATURE_COUNT, ITEMS_PER_PAGE } from "./constants";
 import { getContestContractData } from "./contracts";
 import { BaseContestData, ContestsResponse, ProcessedContest } from "./types";
-import { streamPromiseResults } from "./utils/streamItems";
 
 const CONTESTS_API = "/api/contests";
 const EMPTY_CONTESTS: ContestsResponse = { data: [], count: 0 };
@@ -15,7 +14,7 @@ const fetchContestRows = (query: ContestListQuery) => getJson<ContestRowsPage>(C
 /**
  * Process contest data by fetching title and cancellation status from contracts
  */
-async function processContestData(contest: BaseContestData): Promise<ProcessedContest> {
+export async function processContestData(contest: BaseContestData): Promise<ProcessedContest> {
   const { title, isCanceled, prompt } = await getContestContractData(contest.address, contest.network_name);
   return {
     ...contest,
@@ -64,30 +63,9 @@ export async function getUserContests(
   return loadContests({ view: "user", author: profileAddress, sortBy, page: currentPage, perPage: itemsPerPage });
 }
 
-export async function* streamFeaturedContests(
-  currentPage: number,
-  itemsPerPage: number,
-): AsyncGenerator<ProcessedContest, void, unknown> {
-  if (!isSupabaseConfigured) return;
-
-  let contests: BaseContestData[];
-  try {
-    ({ data: contests } = await fetchContestRows({ view: "featured", page: currentPage, perPage: itemsPerPage }));
-  } catch (e) {
-    console.error("Error fetching featured contests:", e);
-    return;
-  }
-
-  yield* streamPromiseResults(
-    contests.map(async contest => {
-      try {
-        return await processContestData(contest);
-      } catch (err) {
-        console.error(`Error processing contest ${contest.address}:`, err);
-        return null;
-      }
-    }),
-  );
+export async function fetchFeaturedContestRows(): Promise<BaseContestData[]> {
+  const { data } = await fetchContestRows({ view: "featured", page: 0, perPage: CONTESTS_FEATURE_COUNT });
+  return data;
 }
 
 export async function getLiveContests(

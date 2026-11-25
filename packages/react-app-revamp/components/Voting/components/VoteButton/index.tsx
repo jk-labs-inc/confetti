@@ -4,6 +4,7 @@ import { CLAIM_VOTE_IDS } from "@components/ClaimVote/constants";
 import { withCreditLabel } from "@components/ClaimVote/copy";
 import usePriceCurveChartStore from "@components/PriceCurve/store";
 import ButtonV3, { ButtonSize, ButtonType } from "@components/UI/ButtonV3";
+import { CLAIM_FREE_LABEL } from "@components/XClaim/copy";
 import type { XClaimOpenOffer } from "lib/xClaim/types";
 import { motion } from "motion/react";
 import { FC, useState, useMemo, memo } from "react";
@@ -84,7 +85,10 @@ const VoteButton: FC<VoteButtonProps> = ({ isDisabled, isInvalidBalance, isConne
       </ButtonV3>
       {creditOffer && (
         <>
-          <ClaimVoteSticker className="absolute -top-3 -right-1.5 px-2.5 py-0.5 text-[14px] rotate-8" />
+          <ClaimVoteSticker
+            label={CLAIM_FREE_LABEL}
+            className="absolute -top-3 -right-1.5 px-2.5 py-0.5 text-[14px] rotate-8"
+          />
           <ClaimVoteHoverCard offer={creditOffer} />
         </>
       )}

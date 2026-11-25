@@ -11,6 +11,8 @@ import type {
 
 export const CLAIM_PLUS_LABEL = `+${CLAIM_AMOUNT_LABEL}`;
 
+export const CLAIM_FREE_LABEL = `get ${CLAIM_AMOUNT_LABEL} free!`;
+
 export const CLAIM_TITLE = `claim ${CLAIM_AMOUNT_LABEL}... for free!`;
 
 export const CLAIM_BUTTON_LABEL = `claim ${CLAIM_AMOUNT_LABEL}`;

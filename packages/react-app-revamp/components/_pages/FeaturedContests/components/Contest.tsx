@@ -1,5 +1,6 @@
 import { ROUTE_VIEW_CONTEST_BASE_PATH } from "@config/routes";
 import { useQueryClient } from "@tanstack/react-query";
+import { featuredContestRewardsQueryKey } from "lib/contests/featured/keys";
 import { ContestWithTotalRewards, ProcessedContest } from "lib/contests/types";
 import { FC, useEffect, useState } from "react";
 import CalendarButton from "./Contest/components/CalendarButton";
@@ -51,7 +52,7 @@ const FeaturedContestCard: FC<FeaturedContestCardProps> = ({ contestData, reward
     queryClient.invalidateQueries({
       queryKey: ["contestEntriesVotes", contestData.address.toLowerCase(), config.chainId],
     });
-    queryClient.invalidateQueries({ queryKey: ["totalRewards"] });
+    queryClient.invalidateQueries({ queryKey: featuredContestRewardsQueryKey(contestData) });
   };
 
   const isEnded = cardState === "ended" || cardState === "canceled";

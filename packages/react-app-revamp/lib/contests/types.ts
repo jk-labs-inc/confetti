@@ -1,4 +1,6 @@
+import { ContestStateEnum } from "@hooks/useContestState/types";
 import { TotalRewardsData } from "lib/rewards/types";
+import { Abi, Address } from "viem";
 
 export interface ContestReward {
   contestAddress: string;
@@ -24,11 +26,27 @@ export interface BaseContestData {
   anyone_can_submit: number;
 }
 
-export interface ProcessedContest extends BaseContestData {
+export type ContestRef = Pick<BaseContestData, "address" | "network_name">;
+
+export interface ContestContract {
+  address: Address;
+  abi: Abi;
+  chainId: number;
+}
+
+export interface ContestFieldsRead {
+  title: string | undefined;
+  state: ContestStateEnum | undefined;
+  prompt: string | undefined;
+}
+
+export interface ContestDetails {
   title: string;
   isCanceled: boolean;
   prompt: string | null;
 }
+
+export interface ProcessedContest extends BaseContestData, ContestDetails {}
 
 export interface ContestsResponse {
   data: ProcessedContest[];

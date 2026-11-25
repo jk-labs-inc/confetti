@@ -3,14 +3,15 @@ import { FC } from "react";
 
 interface ClaimVoteStickerProps {
   className: string;
+  label?: string;
 }
 
-const ClaimVoteSticker: FC<ClaimVoteStickerProps> = ({ className }) => (
+const ClaimVoteSticker: FC<ClaimVoteStickerProps> = ({ className, label = CLAIM_PLUS_LABEL }) => (
   <span
     aria-hidden="true"
     className={`pointer-events-none whitespace-nowrap rounded-full bg-primary-10 font-black text-true-black ${className}`}
   >
-    {CLAIM_PLUS_LABEL}
+    {label}
   </span>
 );
 

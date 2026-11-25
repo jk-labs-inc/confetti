@@ -168,10 +168,10 @@ export interface ContestContractVersionResult {
   deployedBytecode?: string;
 }
 
-export async function getContestContractVersion(
-  address: string,
-  chainId: number,
-): Promise<ContestContractVersionResult> {
+const MAX_CACHED_VERSIONS = 2000;
+const versionLookups = new Map<string, Promise<ContestContractVersionResult>>();
+
+async function readContestContractVersion(address: string, chainId: number): Promise<ContestContractVersionResult> {
   try {
     const chain = getChainFromId(chainId);
     const client = createPublicClient({
@@ -200,6 +200,33 @@ export async function getContestContractVersion(
     console.error(`Error while fetching the contract version for address ${address} on chainId ${chainId}:`, error);
     return { abi: null, version: "error", deployedBytecode: undefined };
   }
+}
+
+export function getContestContractVersion(address: string, chainId: number): Promise<ContestContractVersionResult> {
+  const key = `${chainId}:${address?.toLowerCase()}`;
+  const cached = versionLookups.get(key);
+  if (cached) return cached;
+
+  const forget = () => {
+    if (versionLookups.get(key) === lookup) versionLookups.delete(key);
+  };
+  const lookup = readContestContractVersion(address, chainId).then(
+    result => {
+      if (result.abi === null) forget();
+      return result;
+    },
+    (error: unknown) => {
+      forget();
+      throw error;
+    },
+  );
+
+  if (versionLookups.size >= MAX_CACHED_VERSIONS) {
+    const oldestKey = versionLookups.keys().next().value;
+    if (oldestKey !== undefined) versionLookups.delete(oldestKey);
+  }
+  versionLookups.set(key, lookup);
+  return lookup;
 }
 
 export default getContestContractVersion;

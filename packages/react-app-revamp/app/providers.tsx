@@ -6,7 +6,7 @@ import { funkitConfig, funkitTheme, isFunkitConfigured } from "@config/funkit";
 import { FunkitProvider } from "@funkit/connect";
 import ParaWeb, { AuthLayout, Environment, TExternalWallet } from "@getpara/react-sdk-lite";
 import { useParaSignInStore } from "@hooks/useParaSignIn/store";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { environmentManager, QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { FC, ReactNode } from "react";
 import { ParaProvider } from "@getpara/react-sdk-lite";
 
@@ -20,7 +20,13 @@ const PARA_ENVIRONMENT =
 
 const para = new ParaWeb(PARA_ENVIRONMENT, PARA_API_KEY);
 
-const queryClient = new QueryClient();
+let browserQueryClient: QueryClient | undefined;
+
+const getQueryClient = (): QueryClient => {
+  if (environmentManager.isServer()) return new QueryClient();
+  browserQueryClient ??= new QueryClient();
+  return browserQueryClient;
+};
 
 const EXTERNAL_WALLETS: TExternalWallet[] = [
   "METAMASK",
@@ -39,6 +45,7 @@ const EMBEDDED_ONLY_AUTH_LAYOUT = [AuthLayout.AUTH_FULL];
 
 const Providers: FC<ProvidersProps> = ({ children }) => {
   const isEmbeddedOnly = useParaSignInStore(state => state.isEmbeddedOnly);
+  const queryClient = getQueryClient();
 
   return (
     <QueryClientProvider client={queryClient}>
