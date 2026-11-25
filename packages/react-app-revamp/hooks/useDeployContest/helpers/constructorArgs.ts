@@ -1,5 +1,6 @@
 import { toFixedString } from "@helpers/formatBalance";
 import { differenceInSeconds, getUnixTime } from "date-fns";
+import { isWholeChargedAmount, VoteCurrency, voteCurrencyAddress } from "lib/voteCurrency";
 import { parseEther } from "viem";
 import { JK_LABS_SPLIT_DESTINATION_DEFAULT, MAX_SUBMISSIONS_LIMIT } from "../index";
 import { Charge, PriceCurve } from "../types";
@@ -20,6 +21,7 @@ export interface ConstructorArgsParams {
   entryPreviewConfig: EntryPreviewConfig;
   clientAccountAddress?: string;
   jkLabsSplitDestination: string;
+  voteCurrency: VoteCurrency;
 }
 
 export const prepareConstructorArgs = (params: ConstructorArgsParams) => {
@@ -34,7 +36,14 @@ export const prepareConstructorArgs = (params: ConstructorArgsParams) => {
     priceCurve,
     entryPreviewConfig,
     jkLabsSplitDestination,
+    voteCurrency,
   } = params;
+
+  const costToVote = parseEther(toFixedString(charge.costToVote));
+
+  if (!isWholeChargedAmount(voteCurrency, costToVote)) {
+    throw new Error(`a starting price of ${charge.costToVote} ${voteCurrency.symbol} cannot be charged exactly`);
+  }
 
   const intConstructorArgs = {
     anyoneCanSubmit: entryPreviewConfig.isAnyoneCanSubmit ? 1 : 0,
@@ -47,7 +56,7 @@ export const prepareConstructorArgs = (params: ConstructorArgsParams) => {
     percentageToRewards: charge.percentageToRewards,
     creatorSplitEnabled: charge.creatorSplitEnabled,
     priceCurveType: priceCurve.type,
-    costToVote: parseEther(toFixedString(charge.costToVote)),
+    costToVote,
     multiple: parseEther(toFixedString(priceCurve.multiple)),
   };
 
@@ -57,6 +66,7 @@ export const prepareConstructorArgs = (params: ConstructorArgsParams) => {
     intConstructorArgs,
     jkLabsSplitDestination: jkLabsSplitDestination || JK_LABS_SPLIT_DESTINATION_DEFAULT,
     contestEntryType: getContestEntryType(entryPreviewConfig),
+    voteCurrency: voteCurrencyAddress(voteCurrency),
   };
 
   return constructorArgs;

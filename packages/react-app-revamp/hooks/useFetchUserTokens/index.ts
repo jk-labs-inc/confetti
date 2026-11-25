@@ -2,6 +2,7 @@ import { FilteredToken } from "@hooks/useTokenList";
 import { useQuery } from "@tanstack/react-query";
 import { useBalance } from "wagmi";
 import { chains, chainsImages } from "@config/wagmi";
+import { chainHasNativeCoin } from "lib/voteCurrency";
 import React from "react";
 import { formatUnits } from "viem";
 
@@ -33,6 +34,7 @@ export const useFetchUserTokens = (userAddress: string, chainName: string) => {
   const { data: nativeBalance, isLoading: isLoadingNativeBalance } = useBalance({
     address: userAddress as `0x${string}`,
     chainId: chain?.id,
+    query: { enabled: chainHasNativeCoin(chain?.id) },
   });
 
   const {

@@ -16,7 +16,7 @@ interface RewardsPlayerViewClaimRewardsProps {
   claimedDistributions?: Distribution[];
   isClaimLoading: (rank: number, tokenAddress: string) => boolean;
   isClaimSuccess: (rank: number, tokenAddress: string) => boolean;
-  onClaim: (rank: number, value: bigint, tokenAddress: string) => void;
+  onClaim: (rank: number, reward: Reward) => void;
   isAdditionalStatisticsSupported?: boolean;
   userTiedRankings?: number[];
   onRefresh?: () => void;

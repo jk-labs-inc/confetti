@@ -1,6 +1,7 @@
 import { formatBalance } from "@helpers/formatBalance";
-import { useCurrencyStore } from "@hooks/useCurrency/store";
-import useTotalRewardsUsd, { TokenItem } from "@hooks/useCurrency/useTotalRewardsUsd";
+import usePotDisplayCurrency from "@hooks/useCurrency/usePotDisplayCurrency";
+import useTotalRewardsUsd from "@hooks/useCurrency/useTotalRewardsUsd";
+import { RewardTokenItem } from "lib/rewards/types";
 import { ContestWithTotalRewards } from "lib/contests/types";
 import { AnimatePresence, motion } from "motion/react";
 import { FC, useEffect, useMemo, useState } from "react";
@@ -13,12 +14,10 @@ interface ContestRewardsProps {
 }
 
 const ContestRewards: FC<ContestRewardsProps> = ({ rewards, loading, rewardsLoading }) => {
-  const displayCurrency = useCurrencyStore(state => state.displayCurrency);
-
-  const tokenItems: TokenItem[] = useMemo(() => {
+  const tokenItems: RewardTokenItem[] = useMemo(() => {
     if (!rewards?.hasRewards || !rewards.rewardsData) return [];
 
-    const items: TokenItem[] = [];
+    const items: RewardTokenItem[] = [];
     const { native, tokens } = rewards.rewardsData;
 
     if (native && native.value > 0n) {
@@ -36,6 +35,7 @@ const ContestRewards: FC<ContestRewardsProps> = ({ rewards, loading, rewardsLoad
     return items;
   }, [rewards]);
 
+  const displayCurrency = usePotDisplayCurrency(rewards.chain, tokenItems);
   const totalUsd = useTotalRewardsUsd(tokenItems, rewards.chain);
   const hasRewards = tokenItems.length > 0;
 

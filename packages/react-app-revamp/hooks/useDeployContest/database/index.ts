@@ -46,6 +46,7 @@ export async function indexContest(contestData: ContestData) {
     cost_to_vote: contestData.cost_to_vote,
     percentage_to_rewards: contestData.percentage_to_rewards,
     creator_split_enabled: contestData.creator_split_enabled,
+    vote_currency: contestData.vote_currency,
   };
 
   await postJson("/api/contests", contest);

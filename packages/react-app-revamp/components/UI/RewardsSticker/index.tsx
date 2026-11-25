@@ -1,5 +1,5 @@
 import { formatTokenAmountSmart, formatUsd } from "@helpers/formatBalance";
-import { useCurrencyStore } from "@hooks/useCurrency/store";
+import usePotDisplayCurrency from "@hooks/useCurrency/usePotDisplayCurrency";
 import { useRewardsUsd } from "@hooks/useCurrency/useTotalRewardsUsd";
 import { AnimatePresence, motion, useAnimate, useReducedMotion } from "motion/react";
 import { FC, useEffect, useRef, useState } from "react";
@@ -65,7 +65,7 @@ const LONG_LABEL_LINES: Record<RewardsPhase, (audience: RewardsAudience) => [str
 
 const RewardsSticker: FC<RewardsStickerProps> = props => {
   const { items, chainName, phase, size } = props;
-  const displayCurrency = useCurrencyStore(state => state.displayCurrency);
+  const displayCurrency = usePotDisplayCurrency(chainName, items);
   const { totalUsd, increase, isRatesLoading } = useRewardsUsd({ items, chainName });
   const prefersReducedMotion = useReducedMotion();
   const [scope, animate] = useAnimate<HTMLSpanElement>();

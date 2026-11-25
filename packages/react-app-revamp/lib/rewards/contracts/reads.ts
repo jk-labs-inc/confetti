@@ -4,7 +4,9 @@ import { verifyContractBytecode } from "@helpers/verifyContractBytecode";
 import { safeCompareVersions } from "@helpers/versions";
 import { Config, getBalance, readContract, readContracts } from "@wagmi/core";
 import type { ContestContract } from "lib/contests/types";
+import { chainHasNativeCoin, findChainVoteCurrency } from "lib/voteCurrency";
 import { Abi, Address, erc20Abi, formatUnits, zeroAddress } from "viem";
+import { potTokenAddresses } from "../pot";
 import {
   ContestPoolRead,
   ContractQuery,
@@ -101,16 +103,22 @@ async function readReleasedAndTokenTotals(
   tokenAddressesLookup: Promise<Address[]>,
 ): Promise<ReleasedAndTokenTotals> {
   try {
-    const tokenAddresses = await tokenAddressesLookup;
+    const tokenAddresses = potTokenAddresses(chainId, await tokenAddressesLookup) as Address[];
+
+    const nativeCalls: ContractQuery[] = chainHasNativeCoin(chainId)
+      ? [
+          {
+            address: rewardsModuleAddress,
+            abi: rewardsModuleAbi,
+            functionName: "totalReleased",
+            chainId,
+            args: [],
+          },
+        ]
+      : [];
 
     const contractCalls: ContractQuery[] = [
-      {
-        address: rewardsModuleAddress,
-        abi: rewardsModuleAbi,
-        functionName: "totalReleased",
-        chainId,
-        args: [],
-      },
+      ...nativeCalls,
       ...tokenAddresses.flatMap((tokenAddress): ContractQuery[] => [
         {
           address: rewardsModuleAddress,
@@ -145,11 +153,11 @@ async function readReleasedAndTokenTotals(
 
     const contractResults = await readContracts(config, { contracts: contractCalls });
 
-    const nativeTotalReleased = (contractResults[0].result as bigint) || 0n;
+    const nativeTotalReleased = nativeCalls.length > 0 ? (contractResults[0].result as bigint) || 0n : 0n;
     const tokens: Record<string, TokenData> = {};
 
     tokenAddresses.forEach((tokenAddress, index) => {
-      const resultBaseIndex = 1 + index * TOKEN_CALLS_PER_ADDRESS;
+      const resultBaseIndex = nativeCalls.length + index * TOKEN_CALLS_PER_ADDRESS;
       const tokenResults = contractResults.slice(resultBaseIndex, resultBaseIndex + TOKEN_CALLS_PER_ADDRESS);
       const [tokenTotalReleasedResult, symbolResult, decimalsResult, balanceResult] = tokenResults;
 
@@ -182,13 +190,19 @@ async function readReleasedAndTokenTotals(
   }
 }
 
+async function readNativePotBalance(config: Config, { rewardsModuleAddress, chainId }: TotalRewardsQuery) {
+  if (!chainHasNativeCoin(chainId)) return { value: 0n, symbol: findChainVoteCurrency(chainId)?.symbol };
+
+  return getBalance(config, { address: rewardsModuleAddress, chainId });
+}
+
 export async function readRewardsTotals(
   config: Config,
   query: TotalRewardsQuery,
   tokenAddressesLookup: Promise<Address[]>,
 ): Promise<RewardsTotalsRead> {
   const [nativeBalance, { nativeTotalReleased, tokens, isComplete }] = await Promise.all([
-    getBalance(config, { address: query.rewardsModuleAddress, chainId: query.chainId }),
+    readNativePotBalance(config, query),
     readReleasedAndTokenTotals(config, query, tokenAddressesLookup),
   ]);
 

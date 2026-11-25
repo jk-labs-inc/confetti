@@ -3,7 +3,8 @@ import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import { useError } from "@hooks/useError";
 import { FilteredToken } from "@hooks/useTokenList";
 import { sendTransaction, simulateContract, writeContract } from "@wagmi/core";
-import { erc20Abi, parseUnits } from "viem";
+import { chainHasNativeCoin } from "lib/voteCurrency";
+import { erc20Abi, parseUnits, zeroAddress } from "viem";
 
 interface UseSendTokenOptions {
   onSuccess?: () => void;
@@ -58,8 +59,17 @@ export function useSendToken(options?: UseSendTokenOptions) {
       return;
     }
 
+    const isNativeCoin = token.address === zeroAddress;
+
+    if (isNativeCoin && !chainHasNativeCoin(chainId)) {
+      toastError({
+        message: "this chain has no native coin to send, pick a token instead",
+      });
+      return;
+    }
+
     try {
-      if (token.address === "0x0000000000000000000000000000000000000000") {
+      if (isNativeCoin) {
         const parsedAmount = parseUnits(amount, token.decimals);
 
         try {

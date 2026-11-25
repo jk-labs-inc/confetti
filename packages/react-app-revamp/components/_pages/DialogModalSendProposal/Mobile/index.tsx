@@ -7,7 +7,6 @@ import { useMetadataStore } from "@hooks/useMetadataFields/store";
 import useSubmitProposal from "@hooks/useSubmitProposal";
 import { useModal } from "@getpara/react-sdk-lite";
 import { Editor } from "@tiptap/react";
-import { type GetBalanceReturnType } from "@wagmi/core";
 import { FC, useEffect, useState } from "react";
 import { useShallow } from "zustand/shallow";
 import DialogModalSendProposalEditor from "../components/Editor";
@@ -21,7 +20,7 @@ interface DialogModalSendProposalMobileLayoutProps {
   proposal: string;
   editorProposal: Editor | null;
   charge: Charge;
-  accountData: GetBalanceReturnType | undefined;
+  entryFundsBalance: bigint | undefined;
   isOpen: boolean;
   isConnected: boolean;
   isCorrectNetwork: boolean;
@@ -37,7 +36,7 @@ const DialogModalSendProposalMobileLayout: FC<DialogModalSendProposalMobileLayou
   proposal,
   editorProposal,
   charge,
-  accountData,
+  entryFundsBalance,
   isOpen,
   isConnected,
   isCorrectNetwork,
@@ -131,7 +130,7 @@ const DialogModalSendProposalMobileLayout: FC<DialogModalSendProposalMobileLayou
         chainName={chainName}
         isOpen={isConfirmModalOpen}
         charge={charge}
-        accountData={accountData}
+        entryFundsBalance={entryFundsBalance}
         onConfirm={() => onSubmitProposal?.()}
         onClose={() => setIsConfirmModalOpen(false)}
         onAddFunds={onAddFunds}

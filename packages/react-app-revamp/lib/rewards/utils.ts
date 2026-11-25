@@ -1,76 +1,28 @@
 import { Distribution, Reward } from "@components/_pages/Contest/Rewards/types";
 import { Abi } from "viem";
-import { ContractQuery } from "./types";
+import { ContractQuery, ReleasableRewardRead } from "./types";
 
 /*
- * Process native token rewards
- * @param rankings - The rankings to process
- * @param rewardResults - The reward results
+ * Process releasable rewards, native and ERC20
+ * @param reads - The releasable reward reads, each carrying its ranking and token
  * @param nativeTokenInfo - The native token info
+ * @param symbols - The ERC20 symbols
+ * @param decimals - The ERC20 decimals
  * @param distributionsMap - The distributions map
  */
-export function processNativeTokenRewards(
-  rankings: number[],
-  rewardResults: any[],
+export function processReleasableRewards(
+  reads: ReleasableRewardRead[],
   nativeTokenInfo: { symbol: string; decimals: number },
-  distributionsMap: Map<number, Distribution>,
-) {
-  for (let i = 0; i < rankings.length; i++) {
-    const ranking = rankings[i];
-    const nativeAmount = rewardResults?.[i]?.result as bigint | undefined;
-
-    if (nativeAmount && nativeAmount > 0n) {
-      if (!distributionsMap.has(ranking)) {
-        distributionsMap.set(ranking, { rank: ranking, rewards: [] });
-      }
-
-      distributionsMap.get(ranking)!.rewards.push({
-        value: nativeAmount,
-        address: "native",
-        symbol: nativeTokenInfo.symbol,
-        decimals: nativeTokenInfo.decimals,
-      });
-    }
-  }
-}
-
-/*
- * Process ERC20 token rewards
- * @param rankings - The rankings to process
- * @param tokenAddresses - The token addresses
- * @param rewardResults - The reward results
- * @param symbols - The symbols
- * @param distributionsMap - The distributions map
- */
-export function processERC20TokenRewards(
-  rankings: number[],
-  tokenAddresses: `0x${string}`[],
-  rewardResults: any[],
   symbols: Record<string, string>,
   decimals: Record<string, number>,
   distributionsMap: Map<number, Distribution>,
 ) {
-  const nativeCallsCount = rankings.length;
-  let callIndex = nativeCallsCount;
+  for (const { ranking, tokenAddress, amount } of reads) {
+    const token = tokenAddress
+      ? { address: tokenAddress, symbol: symbols[tokenAddress] || "unknown", decimals: decimals[tokenAddress] || 18 }
+      : { address: "native", symbol: nativeTokenInfo.symbol, decimals: nativeTokenInfo.decimals };
 
-  for (const ranking of rankings) {
-    for (const tokenAddress of tokenAddresses) {
-      const amount = rewardResults?.[callIndex]?.result as bigint | undefined;
-      callIndex++;
-
-      if (amount && amount > 0n) {
-        if (!distributionsMap.has(ranking)) {
-          distributionsMap.set(ranking, { rank: ranking, rewards: [] });
-        }
-
-        distributionsMap.get(ranking)!.rewards.push({
-          value: amount,
-          address: tokenAddress,
-          symbol: symbols[tokenAddress] || "unknown",
-          decimals: decimals[tokenAddress] || 18,
-        });
-      }
-    }
+    addRewardToDistribution(distributionsMap, ranking, amount || 0n, token.address, token.symbol, token.decimals);
   }
 }
 

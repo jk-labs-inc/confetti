@@ -2,12 +2,16 @@ import AddFundsModal from "@components/AddFunds/components/Modal";
 import ButtonV3, { ButtonSize, ButtonType } from "@components/UI/ButtonV3";
 import { isWalletForbidden } from "@components/_pages/Create/utils/wallet";
 import { useAddFunds } from "@hooks/useAddFunds";
+import { useVoteCurrencyBalance } from "@hooks/useVoteCurrencyBalance";
 import { useWallet } from "@hooks/useWallet";
+import { findChainVoteCurrency, PRICE_UNIT_DECIMALS } from "lib/voteCurrency";
 import { useRouter } from "next/navigation";
 import { FC, MouseEventHandler, useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
-import { useBalance } from "wagmi";
+import { parseUnits } from "viem";
 import MobileBottomButton from "../Mobile";
+
+const DUST_THRESHOLD_PRICE_UNITS = parseUnits("0.000001", PRICE_UNIT_DECIMALS);
 
 interface CreateContestButtonProps {
   onClick?: MouseEventHandler<HTMLButtonElement>;
@@ -21,14 +25,13 @@ const CreateContestButton: FC<CreateContestButtonProps> = ({ onClick, errorShake
   const isMobileOrTablet = useMediaQuery({ maxWidth: 1024 });
   const [showAddFunds, setShowAddFunds] = useState(false);
   const { openAddFunds } = useAddFunds({ chain: chain?.name ?? "" });
-  const { data: balance } = useBalance({
-    address: userAddress,
+  const voteCurrency = findChainVoteCurrency(chain?.id);
+  const { balance } = useVoteCurrencyBalance({
+    voteCurrency,
     chainId: chain?.id,
+    owner: userAddress as `0x${string}` | undefined,
   });
-  const chainCurrencyDecimals = chain?.nativeCurrency.decimals || 18;
-  const DUST_THRESHOLD = BigInt(10) ** BigInt(chainCurrencyDecimals - 6);
-  const insufficientBalance = balance && (balance.value === BigInt(0) || balance.value < DUST_THRESHOLD);
-  const chainNativeCurrency = chain?.nativeCurrency.symbol;
+  const insufficientBalance = balance !== undefined && balance < DUST_THRESHOLD_PRICE_UNITS;
   const isUnsupportedWallet = connector && isWalletForbidden(connector.id);
   const needsFunds = Boolean(isConnected && insufficientBalance && !isUnsupportedWallet);
 
@@ -79,7 +82,7 @@ const CreateContestButton: FC<CreateContestButtonProps> = ({ onClick, errorShake
         </MobileBottomButton>
         <AddFundsModal
           chain={chain?.name.toLowerCase() ?? ""}
-          asset={chainNativeCurrency ?? ""}
+          asset={voteCurrency?.symbol ?? ""}
           isOpen={showAddFunds}
           onClose={() => setShowAddFunds(false)}
         />
@@ -110,7 +113,7 @@ const CreateContestButton: FC<CreateContestButtonProps> = ({ onClick, errorShake
       </div>
       <AddFundsModal
         chain={chain?.name.toLowerCase() ?? ""}
-        asset={chainNativeCurrency ?? ""}
+        asset={voteCurrency?.symbol ?? ""}
         isOpen={showAddFunds}
         onClose={() => setShowAddFunds(false)}
       />

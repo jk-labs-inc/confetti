@@ -12,7 +12,9 @@ import { isPhoneNumberEmpty, isValidPhoneNumber } from "lib/phone";
 import { useState } from "react";
 import { useShallow } from "zustand/shallow";
 import { useCreateContestValidation } from "../../hooks/useCreateContestValidation";
+import { useIsDescriptionOptional } from "../../hooks/useIsDescriptionOptional";
 import { SIGNUP_BLOCK_ID, useSectionNavigation } from "../../hooks/useSectionNavigation";
+import { useSeedDefaultGuidance } from "../../hooks/useSeedDefaultGuidance";
 import { useSeedDefaultSummary } from "../../hooks/useSeedDefaultSummary";
 import CreateContestDurationSection from "../../sections/Duration";
 import CreateContestDescriptionSection from "../../sections/Description";
@@ -50,7 +52,10 @@ const CreateContestForm = () => {
   const [isTestnetDeploymentModalOpen, setIsTestnetDeploymentModalOpen] = useState(false);
   const [shakeSignal, setShakeSignal] = useState(0);
 
-  useSeedDefaultSummary();
+  const isDescriptionOptional = useIsDescriptionOptional();
+
+  useSeedDefaultSummary(isDescriptionOptional);
+  useSeedDefaultGuidance(isDescriptionOptional);
 
   const emailError =
     !emailSubscriptionAddress || emailRegex.test(emailSubscriptionAddress) ? null : "Invalid email address.";
@@ -59,7 +64,11 @@ const CreateContestForm = () => {
       ? null
       : "Invalid phone number.";
 
-  const { errorFor, validate } = useCreateContestValidation({ emailError, phoneNumberError });
+  const { errorFor, validate } = useCreateContestValidation({
+    emailError,
+    phoneNumberError,
+    isDescriptionOptional,
+  });
 
   const handleChangeChain = async () => {
     const defaultChain = chains[0];

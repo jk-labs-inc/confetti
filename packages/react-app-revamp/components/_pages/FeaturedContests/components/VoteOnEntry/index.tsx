@@ -1,4 +1,3 @@
-import { getNativeTokenSymbol } from "@helpers/nativeToken";
 import { CastVotesWrapper } from "@hooks/useCastVotes/store";
 import { ContestWrapper } from "@hooks/useContest/store";
 import { ContestCardConfig } from "@hooks/useContestCardConfig";
@@ -43,7 +42,7 @@ const FeaturedContestVoteOnEntry: FC<FeaturedContestVoteOnEntryProps> = ({
     address: config.address,
     chainName: config.chainName,
     chainId: config.chainId,
-    chainNativeCurrencySymbol: getNativeTokenSymbol(config.chainName) ?? "",
+    voteCurrency: config.voteCurrency,
     abi: config.abi,
     version: config.version,
   };

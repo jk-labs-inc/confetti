@@ -57,6 +57,25 @@ export type ContestPoolRead =
 
 export type RewardTokensLookup = (rewardsModuleAddress: Address, chainName: string) => Promise<string[]>;
 
+export interface KnownRewardTokens {
+  symbols: Record<string, string>;
+  decimals: Record<string, number>;
+}
+
+export interface ReleasableRewardRead {
+  ranking: number;
+  tokenAddress: `0x${string}` | undefined;
+  amount: bigint | undefined;
+}
+
+export interface RewardTokenItem {
+  value: string;
+  symbol: string;
+  tokenAddress?: string;
+}
+
+export type UsdRates = Record<string, number>;
+
 export interface RankShare {
   rank: number;
   share: bigint;

@@ -1,6 +1,7 @@
 import { chains } from "@config/wagmi";
 import useChargeDetails from "@hooks/useChargeDetails";
 import { useWallet } from "@hooks/useWallet";
+import { chainVoteCurrency } from "lib/voteCurrency";
 import { useMediaQuery } from "react-responsive";
 import CreateTextContainer from "../../components/TextContainer";
 import PriceCurveMultiplerPreview from "./components/PriceCurveMultiplerPreview";
@@ -13,7 +14,7 @@ const CreateContestPriceCurveSection = () => {
   const { isConnected, chain } = useWallet();
   const pricingChain = isConnected && chain ? chain : defaultChain;
   const chainName = pricingChain.name.toLowerCase();
-  const chainUnitLabel = pricingChain.nativeCurrency.symbol;
+  const voteCurrency = chainVoteCurrency(pricingChain.id);
   const { isError, refetch: refetchChargeDetails, isLoading } = useChargeDetails(chainName);
 
   if (isError) {
@@ -45,7 +46,7 @@ const CreateContestPriceCurveSection = () => {
         </p>
       </CreateTextContainer>
       <PriceCurveTypeSelector />
-      <PriceCurveMultiplerPreview chainUnitLabel={chainUnitLabel} />
+      <PriceCurveMultiplerPreview voteCurrency={voteCurrency} />
     </div>
   );
 };

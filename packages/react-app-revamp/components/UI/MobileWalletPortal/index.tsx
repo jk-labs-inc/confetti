@@ -15,10 +15,12 @@ import { useAddFundsChain } from "@hooks/useAddFundsChain";
 import { useHiddenOfferRestore } from "@hooks/useClaimVote/useHiddenOfferRestore";
 import { useWalletCreditHint } from "@hooks/useClaimVote/useWalletCreditHint";
 import { useSwitchAccount } from "@hooks/useSwitchAccount";
+import { useVoteCurrencyBalance } from "@hooks/useVoteCurrencyBalance";
 import { useWallet } from "@hooks/useWallet";
 import { chains } from "@config/wagmi";
+import { findChainVoteCurrency } from "lib/voteCurrency";
 import { mainnet } from "viem/chains";
-import { useEnsAvatar, useEnsName, useBalance } from "wagmi";
+import { useEnsAvatar, useEnsName } from "wagmi";
 
 interface MobileProfileDrawerProps {
   isOpen: boolean;
@@ -50,7 +52,12 @@ export const MobileProfileDrawer: React.FC<MobileProfileDrawerProps> = ({ isOpen
   const { chain: currentChain, changeNetworks } = useWallet();
   const { data: ensName } = useEnsName({ address: address as `0x${string}`, chainId: mainnet.id });
   const { data: ensAvatar } = useEnsAvatar({ name: ensName as string, chainId: mainnet.id });
-  const { data: balance } = useBalance({ address: address as `0x${string}` });
+  const walletCurrency = findChainVoteCurrency(currentChain?.id);
+  const { balance } = useVoteCurrencyBalance({
+    voteCurrency: walletCurrency,
+    chainId: currentChain?.id,
+    owner: address as `0x${string}`,
+  });
   const { openAddFunds } = useAddFunds({ chain: chainName });
   const creditSpots = useWalletCreditHint();
   const restoreOffer = useHiddenOfferRestore();

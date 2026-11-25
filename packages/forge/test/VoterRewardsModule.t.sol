@@ -29,6 +29,7 @@ contract VoterRewardsModuleTest is Test {
     uint256 public constant FLAT_PRICE_CURVE_TYPE = 0;
     uint256 public constant ZERO_EXPONENT_MULTIPLE = 0;
     address public constant JK_LABS_SPLIT_DESTINATION = JK_LABS_ADDRESS;
+    address public constant NATIVE_VOTE_CURRENCY = address(0);
 
     // SORTING INT PARAMS
     uint256 public constant RANK_LIMIT_1 = 1;
@@ -57,7 +58,8 @@ contract VoterRewardsModuleTest is Test {
         CONTEST_PROMPT,
         payPerVoteExpCurveIntConstructorArgs,
         JK_LABS_SPLIT_DESTINATION,
-        CONTEST_ENTRY_TYPE
+        CONTEST_ENTRY_TYPE,
+        NATIVE_VOTE_CURRENCY
     );
 
     Governor.IntConstructorArgs public payPerVoteExpCurveRankLimitOneIntConstructorArgs = Governor.IntConstructorArgs(
@@ -80,7 +82,8 @@ contract VoterRewardsModuleTest is Test {
         CONTEST_PROMPT,
         payPerVoteExpCurveRankLimitOneIntConstructorArgs,
         JK_LABS_SPLIT_DESTINATION,
-        CONTEST_ENTRY_TYPE
+        CONTEST_ENTRY_TYPE,
+        NATIVE_VOTE_CURRENCY
     );
 
     address public constant JK_LABS_ADDRESS = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738;

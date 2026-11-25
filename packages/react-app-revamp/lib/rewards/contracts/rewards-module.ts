@@ -1,7 +1,9 @@
 import { getWagmiConfig } from "@getpara/evm-wallet-connectors";
 import { readContract } from "@wagmi/core";
+import { chainHasNativeCoin } from "lib/voteCurrency";
 import { Abi, Address, formatUnits } from "viem";
 import { fetchTokenAddresses } from "../database";
+import { assertPotIncludesVoteToken } from "../pot";
 import { TokenData, TotalRewardsData, TotalRewardsQuery } from "../types";
 import { findRewardTokensChainName, readRewardsTotals } from "./reads";
 
@@ -17,6 +19,8 @@ function fetchRewardTokenAddresses(rewardsModuleAddress: Address, chainId: numbe
 export async function fetchTotalRewards(query: TotalRewardsQuery): Promise<TotalRewardsData> {
   const tokenAddressesLookup = fetchRewardTokenAddresses(query.rewardsModuleAddress, query.chainId);
   const { totals } = await readRewardsTotals(getWagmiConfig(), query, tokenAddressesLookup);
+  assertPotIncludesVoteToken(query.chainId, totals);
+
   return totals;
 }
 
@@ -103,6 +107,8 @@ export async function fetchTotalRewardsForRank({
     };
   } catch (error) {
     console.error("Error fetching rewards for ranking:", error);
+
+    if (!chainHasNativeCoin(chainId)) throw error;
 
     return {
       native: {

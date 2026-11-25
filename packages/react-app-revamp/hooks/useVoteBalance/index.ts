@@ -1,14 +1,12 @@
-import { getChainFromId } from "@helpers/getChainFromId";
+import { useVoteCurrencyBalance } from "@hooks/useVoteCurrencyBalance";
 import { useWallet } from "@hooks/useWallet";
-import { spendableWei } from "lib/voteBalance/spendable";
+import { spendableWei, voteFeeGasLimit } from "lib/voteBalance/spendable";
+import { findChainVoteCurrency, PRICE_UNIT_DECIMALS } from "lib/voteCurrency";
 import { formatUnits } from "viem";
-import { useBalance, useGasPrice } from "wagmi";
+import { useGasPrice } from "wagmi";
 
 interface Balance {
-  decimals: number;
-  symbol: string;
   formatted: string;
-  value: bigint;
 }
 
 interface UseVoteBalanceReturn {
@@ -34,19 +32,18 @@ export const useVoteBalance = ({
   refetchIntervalMs,
 }: UseVoteBalanceProps): UseVoteBalanceReturn => {
   const { userAddress } = useWallet();
-  const chainCurrencyDecimals = getChainFromId(chainId)?.nativeCurrency?.decimals ?? 18;
+  const voteCurrency = findChainVoteCurrency(chainId);
 
   const {
-    data: balance,
+    balance: heldPriceUnits,
     isLoading: isBalanceLoading,
     isError: isBalanceError,
     refetch: refetchBalance,
-  } = useBalance({
-    address: userAddress as `0x${string}`,
+  } = useVoteCurrencyBalance({
+    voteCurrency,
     chainId,
-    query: {
-      refetchInterval: refetchIntervalMs,
-    },
+    owner: userAddress as `0x${string}`,
+    refetchIntervalMs,
   });
 
   const { data: gasPrice, isLoading: isGasPriceLoading, isError: isGasPriceError } = useGasPrice({ chainId });
@@ -54,8 +51,12 @@ export const useVoteBalance = ({
   const isLoading = isBalanceLoading || isGasPriceLoading;
   const isError = isBalanceError || isGasPriceError;
 
-  const spendableBalanceWei = spendableWei({ balanceWei: balance?.value || 0n, gasPriceWei: gasPrice ?? 0n });
-  const spendableBalance = formatUnits(spendableBalanceWei, chainCurrencyDecimals);
+  const spendableBalanceWei = spendableWei({
+    balanceWei: heldPriceUnits || 0n,
+    gasPriceWei: gasPrice ?? 0n,
+    feeGasLimit: voteFeeGasLimit(voteCurrency),
+  });
+  const spendableBalance = formatUnits(spendableBalanceWei, PRICE_UNIT_DECIMALS);
 
   const spendableBalanceNum = parseFloat(spendableBalance);
 
@@ -65,16 +66,8 @@ export const useVoteBalance = ({
     !isError &&
     (spendableBalanceNum < Number(costToVote) || (!isNaN(inputBalanceNum) && inputBalanceNum > spendableBalanceNum));
 
-  const modifiedBalance = balance
-    ? {
-        ...balance,
-        formatted: spendableBalance,
-        value: spendableBalanceWei,
-      }
-    : balance;
-
   return {
-    balance: modifiedBalance,
+    balance: heldPriceUnits !== undefined ? { formatted: spendableBalance } : undefined,
     spendableBalance,
     refetchBalance,
     insufficientBalance,

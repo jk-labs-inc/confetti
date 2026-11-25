@@ -2,6 +2,7 @@ import RewardsNumberDisplay from "@components/_pages/Contest/Rewards/components/
 import { returnOnlySuffix } from "@helpers/ordinalSuffix";
 import useContestConfigStore from "@hooks/useContestConfig/store";
 import { RankShare, TotalRewardsData } from "lib/rewards/types";
+import { chainHasNativeCoin } from "lib/voteCurrency";
 import { formatUnits } from "viem";
 import { useShallow } from "zustand/shallow";
 import NativeRewardCell from "./components/NativeRewardCell";
@@ -13,7 +14,10 @@ interface TotalRewardsTableProps {
 }
 
 const TotalRewardsTable = ({ totalRewards, shares }: TotalRewardsTableProps) => {
-  const chainName = useContestConfigStore(useShallow(state => state.contestConfig.chainName));
+  const { chainName, chainId } = useContestConfigStore(
+    useShallow(state => ({ chainName: state.contestConfig.chainName, chainId: state.contestConfig.chainId })),
+  );
+  const hasNativeBalance = chainHasNativeCoin(chainId);
   const totalSharesValue = shares.reduce((acc, { share }) => acc + share, 0n);
   const { value: totalValue, symbol, decimals } = totalRewards?.native || { value: 0n, symbol: "ETH", decimals: 18 };
 
@@ -50,7 +54,9 @@ const TotalRewardsTable = ({ totalRewards, shares }: TotalRewardsTableProps) => 
   return (
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-2">
-        <RewardsNumberDisplay value={totalValue} symbol={symbol} decimals={decimals} index={0} isBold={true} />
+        {hasNativeBalance ? (
+          <RewardsNumberDisplay value={totalValue} symbol={symbol} decimals={decimals} index={0} isBold={true} />
+        ) : null}
 
         {tokenEntries.length > 0 && (
           <div className="flex flex-wrap gap-2">
@@ -83,7 +89,7 @@ const TotalRewardsTable = ({ totalRewards, shares }: TotalRewardsTableProps) => 
                 {rank}
                 <sup>{returnOnlySuffix(rank)}</sup> place voters ({percentage}%)
               </p>
-              <NativeRewardCell amount={rewardAmount} symbol={symbol} />
+              {hasNativeBalance ? <NativeRewardCell amount={rewardAmount} symbol={symbol} /> : null}
             </div>
 
             {tokenRewards.length > 0 && (

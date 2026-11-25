@@ -1,7 +1,7 @@
 import RewardsSticker from "@components/UI/RewardsSticker";
 import RewardsStickerSkeleton from "@components/UI/RewardsSticker/components/RewardsStickerSkeleton";
-import { toRewardTokenItems } from "@hooks/useCurrency/useTotalRewardsUsd";
 import { ContestWithTotalRewards } from "lib/contests/types";
+import { toRewardTokenItems } from "lib/rewards/valuation";
 import { FC, useMemo } from "react";
 import { CardState } from "../../types";
 

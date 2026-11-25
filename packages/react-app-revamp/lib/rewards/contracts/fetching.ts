@@ -4,6 +4,8 @@ import { RewardsParams } from "@hooks/useUserRewards";
 import { readContracts } from "@wagmi/core";
 import { Abi } from "viem";
 import { fetchTokenAddresses } from "../database";
+import { knownPotTokens, nativePotRankings } from "../pot";
+import { ReleasableRewardRead } from "../types";
 import { createERC20TokenQuery, createNativeTokenQuery } from "../utils";
 import { validateRankings } from "./validation";
 
@@ -26,31 +28,37 @@ export async function fetchReleasableRewards(
   abi: Abi,
   userAddress?: `0x${string}`,
   isCreator?: boolean,
-): Promise<any[]> {
-  const queries = [];
-
+): Promise<ReleasableRewardRead[]> {
   // build all native token queries
-  const nativeTokenQueries = validRankings.map(ranking =>
-    createNativeTokenQuery(contractAddress, chainId, abi, ranking, userAddress, isCreator),
-  );
-  queries.push(...nativeTokenQueries);
+  const nativeTokenReads = nativePotRankings(chainId, validRankings).map(ranking => ({
+    ranking,
+    tokenAddress: undefined,
+    query: createNativeTokenQuery(contractAddress, chainId, abi, ranking, userAddress, isCreator),
+  }));
 
   // build all ERC20 token queries if we have token addresses
-  if (tokenAddresses.length > 0) {
-    for (const ranking of validRankings) {
-      const erc20Queries = tokenAddresses.map(tokenAddress =>
-        createERC20TokenQuery(contractAddress, chainId, abi, ranking, tokenAddress, userAddress, isCreator),
-      );
-      queries.push(...erc20Queries);
-    }
-  }
+  const erc20Reads = validRankings.flatMap(ranking =>
+    tokenAddresses.map(tokenAddress => ({
+      ranking,
+      tokenAddress,
+      query: createERC20TokenQuery(contractAddress, chainId, abi, ranking, tokenAddress, userAddress, isCreator),
+    })),
+  );
 
-  if (queries.length === 0) return [];
+  const reads = [...nativeTokenReads, ...erc20Reads];
+
+  if (reads.length === 0) return [];
 
   try {
-    return await readContracts(getWagmiConfig(), {
-      contracts: queries,
+    const results = await readContracts(getWagmiConfig(), {
+      contracts: reads.map(read => read.query),
     });
+
+    return reads.map(({ ranking, tokenAddress }, readIndex) => ({
+      ranking,
+      tokenAddress,
+      amount: results[readIndex]?.result as bigint | undefined,
+    }));
   } catch (error) {
     console.error("Error fetching releasable rewards:", error);
     return [];
@@ -94,5 +102,15 @@ export const prepareRewardsFetching = async (
         ])
       : [{}, {}];
 
-  return { validRankings, tiedRankings, tokenAddresses, tokenInfo: { symbols, decimals } };
+  const knownTokens = knownPotTokens(chainId, tokenAddresses);
+
+  return {
+    validRankings,
+    tiedRankings,
+    tokenAddresses,
+    tokenInfo: {
+      symbols: { ...knownTokens.symbols, ...symbols },
+      decimals: { ...knownTokens.decimals, ...decimals },
+    },
+  };
 };

@@ -4,7 +4,7 @@ import BoardHero from "@components/XClaim/parts/BoardHero";
 import BoardLayout from "@components/XClaim/parts/BoardLayout";
 import type { CastVotesResult } from "@hooks/useCastVotes/types";
 import useContestConfigStore from "@hooks/useContestConfig/store";
-import useDisplayPrice from "@hooks/useCurrency/useDisplayPrice";
+import useVoteCurrencyDisplayPrice from "@hooks/useCurrency/useVoteCurrencyDisplayPrice";
 import { FC } from "react";
 
 interface FallbackVotedBoardProps {
@@ -14,8 +14,8 @@ interface FallbackVotedBoardProps {
 }
 
 const FallbackVotedBoard: FC<FallbackVotedBoardProps> = ({ result, spentNative, onAddFunds }) => {
-  const nativeSymbol = useContestConfigStore(state => state.contestConfig.chainNativeCurrencySymbol);
-  const spent = useDisplayPrice(spentNative ?? "0", nativeSymbol);
+  const voteCurrency = useContestConfigStore(state => state.contestConfig.voteCurrency);
+  const spent = useVoteCurrencyDisplayPrice(spentNative ?? "0", voteCurrency);
 
   return (
     <BoardLayout

@@ -1,61 +1,16 @@
 import { formatUsd } from "@helpers/formatBalance";
 import { UseQueryResult, useQueries } from "@tanstack/react-query";
 import { ContestWithTotalRewards } from "lib/contests/types";
-import { TotalRewardsData } from "lib/rewards/types";
+import { RewardTokenItem, UsdRates } from "lib/rewards/types";
+import { sumRewardsUsd, toRewardTokenItems } from "lib/rewards/valuation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import useErc20Rates, { erc20RatesQueryOptions } from "./useErc20Rates";
 import useNativeRates from "./useNativeRates";
 
-export interface TokenItem {
-  value: string;
-  symbol: string;
-  tokenAddress?: string;
-}
-
-type UsdRates = Record<string, number>;
-
-export const toRewardTokenItems = (totalRewards: TotalRewardsData | undefined): TokenItem[] => {
-  const items: TokenItem[] = [];
-  if (totalRewards?.native && totalRewards.native.value > 0n) {
-    items.push({ value: totalRewards.native.formatted, symbol: totalRewards.native.symbol });
-  }
-  Object.entries(totalRewards?.tokens ?? {}).forEach(([address, token]) => {
-    if (token.value > 0n) items.push({ value: token.formatted, symbol: token.symbol, tokenAddress: address });
-  });
-  return items;
-};
-
-interface SumRewardsUsdArgs {
-  items: TokenItem[];
-  nativeRates: UsdRates | undefined;
-  erc20Rates: UsdRates | undefined;
-}
-
-const sumRewardsUsd = ({ items, nativeRates, erc20Rates }: SumRewardsUsdArgs): number | null => {
-  let total = 0;
-  let hasAnyRate = false;
-
-  for (const item of items) {
-    const num = parseFloat(item.value);
-    if (isNaN(num) || num === 0) continue;
-
-    const rate = item.tokenAddress
-      ? erc20Rates?.[item.tokenAddress.toLowerCase()]
-      : nativeRates?.[item.symbol.toLowerCase()];
-
-    if (rate !== undefined) {
-      total += num * rate;
-      hasAnyRate = true;
-    }
-  }
-
-  return hasAnyRate ? total : null;
-};
-
-const toErc20Addresses = (items: TokenItem[]): string[] =>
+const toErc20Addresses = (items: RewardTokenItem[]): string[] =>
   items.flatMap(item => (item.tokenAddress ? [item.tokenAddress] : []));
 
-const useRewardRates = (items: TokenItem[], chainName: string) => {
+const useRewardRates = (items: RewardTokenItem[], chainName: string) => {
   const { data: nativeRates, isLoading: isNativeRatesLoading } = useNativeRates();
   const erc20Addresses = useMemo(() => toErc20Addresses(items), [items]);
   const { data: erc20Rates, isLoading: isErc20RatesLoading } = useErc20Rates(erc20Addresses, chainName);
@@ -66,7 +21,7 @@ const useRewardRates = (items: TokenItem[], chainName: string) => {
 const toFormattedUsd = (total: number | null): string | null =>
   total === null || Number.isNaN(total) ? null : formatUsd(total);
 
-const useTotalRewardsUsd = (items: TokenItem[], chainName: string): string | null => {
+const useTotalRewardsUsd = (items: RewardTokenItem[], chainName: string): string | null => {
   const { nativeRates, erc20Rates } = useRewardRates(items, chainName);
 
   return toFormattedUsd(sumRewardsUsd({ items, nativeRates, erc20Rates }));
@@ -80,7 +35,7 @@ interface RewardsIncrease {
 }
 
 interface UseRewardsUsdArgs {
-  items: TokenItem[];
+  items: RewardTokenItem[];
   chainName: string;
 }
 
@@ -92,7 +47,7 @@ interface RewardsUsd {
 
 export const useRewardsUsd = ({ items, chainName }: UseRewardsUsdArgs): RewardsUsd => {
   const { nativeRates, erc20Rates, isLoading } = useRewardRates(items, chainName);
-  const highestItemsRef = useRef<TokenItem[] | null>(null);
+  const highestItemsRef = useRef<RewardTokenItem[] | null>(null);
   const [increase, setIncrease] = useState<RewardsIncrease | null>(null);
 
   useEffect(() => {

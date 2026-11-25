@@ -49,6 +49,7 @@ export const contestInsertSchema = z.object({
   cost_to_vote: z.number(),
   percentage_to_rewards: z.number(),
   creator_split_enabled: z.number().int().optional(),
+  vote_currency: addressSchema.optional(),
 });
 
 export const officialModuleInsertSchema = z.object({ address: addressSchema, network_name: chainNameSchema });
