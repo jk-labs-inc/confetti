@@ -13,7 +13,7 @@ export const CLAIM_PLUS_LABEL = `+${CLAIM_AMOUNT_LABEL}`;
 
 export const CLAIM_FREE_LABEL = `get ${CLAIM_AMOUNT_LABEL} free!`;
 
-export const CLAIM_TITLE = `claim ${CLAIM_AMOUNT_LABEL}... for free!`;
+export const CLAIM_TITLE = `get ${CLAIM_AMOUNT_LABEL}... for free!`;
 
 export const CLAIM_BUTTON_LABEL = `claim ${CLAIM_AMOUNT_LABEL}`;
 
@@ -25,7 +25,7 @@ export const skipTwitterLabel = (amount: string) => `skip twitter, vote ${amount
 
 export const withVoteTotal = (label: string, total: string) => `${label}, vote ${total}`;
 
-export const CLAIM_PITCH = `create an account with email or social sign-in, verify your twitter, and we'll put ${CLAIM_AMOUNT_LABEL} into your vote.`;
+export const CLAIM_PITCH = `create an account, verify your twitter, and we'll put ${CLAIM_AMOUNT_LABEL} into your vote.`;
 
 export const CLAIM_FINE_PRINT = "one claim per twitter account and wallet. we only read your public profile.";
 

@@ -26,6 +26,9 @@ export const spotsTakenUntil = (spots: XClaimSpots, contestChain: string | null)
   return contestChain === null || paysOnChain(spots, contestChain) ? spots.nextReleaseAt : null;
 };
 
+export const openSpotsOn = (spots: XClaimSpots, contestChain: string | null) =>
+  hasOpenSpots(spots) && (contestChain === null || paysOnChain(spots, contestChain)) ? spots : null;
+
 const spotsOpenNow = (input: XClaimInput) => {
   const spots = latestSpots(input);
   return spots !== null && hasOpenSpots(spots);

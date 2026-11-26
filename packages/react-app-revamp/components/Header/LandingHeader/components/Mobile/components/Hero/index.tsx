@@ -1,7 +1,8 @@
+import { preloadHowItWorks } from "@components/HowItWorksExplainer/Loader";
+import { useHowItWorksStore } from "@components/HowItWorksExplainer/store";
 import CustomLink from "@components/UI/Link";
 import Logo from "@components/UI/Logo";
 import { LINK_TELEGRAM } from "@config/links";
-import { ROUTE_HOW_IT_WORKS } from "@config/routes";
 import { motion, useReducedMotion, Variants } from "motion/react";
 
 const containerVariants: Variants = {
@@ -39,6 +40,7 @@ const logoVariants: Variants = {
 
 const LandingHeaderMobileHero = () => {
   const shouldReduceMotion = useReducedMotion();
+  const openHowItWorks = useHowItWorksStore(state => state.open);
 
   // 264px = ticker (48) + fixed bottom nav (~110) + featured-contests label/margins (~61) + ~45px card
   // sneak-peek; svh keeps the peek visible even with iOS browser chrome expanded
@@ -73,9 +75,15 @@ const LandingHeaderMobileHero = () => {
           </CustomLink>
         </motion.div>
         <motion.div variants={itemVariants}>
-          <CustomLink href={ROUTE_HOW_IT_WORKS} className="block py-1 text-base text-positive-9">
+          <button
+            type="button"
+            onClick={openHowItWorks}
+            onPointerDown={preloadHowItWorks}
+            onFocus={preloadHowItWorks}
+            className="block py-1 text-base text-positive-9"
+          >
             or learn how it works
-          </CustomLink>
+          </button>
         </motion.div>
         <motion.div variants={itemVariants}>
           <CustomLink

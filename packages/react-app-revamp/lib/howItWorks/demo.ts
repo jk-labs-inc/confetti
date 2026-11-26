@@ -6,6 +6,7 @@ import { demoPushFillAmount, projectDemoVote } from "lib/howItWorks/projections"
 import { rankByVotes } from "lib/howItWorks/rank";
 import type { DemoDeposit, DemoDollars, DemoEntry, DemoScript, DemoVoteScenario } from "lib/howItWorks/types";
 import { votesFromSpend } from "lib/voteProjections";
+import { CLAIM_USD_AMOUNT } from "lib/xClaim/constants";
 import { parseEther } from "viem";
 
 const PERCENTAGE_TO_REWARDS = 90;
@@ -164,6 +165,11 @@ const buildDemoScript = (): DemoScript => {
       priceCurveType: PRICE_CURVE_TYPE,
     },
     entries,
+    claim: {
+      entryId: STORY_LEADER_ID,
+      spend: CLAIM_USD_AMOUNT,
+      votes: votesFromSpend(String(CLAIM_USD_AMOUNT), String(CURVE_START_PRICE)),
+    },
     pool: { start: STARTING_POOL, deposits, final: finalPool },
     winner: buildWinner(entries, deposits, finalPool),
     curve: buildCurve(prices),

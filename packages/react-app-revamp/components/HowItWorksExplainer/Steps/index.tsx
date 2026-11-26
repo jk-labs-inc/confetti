@@ -10,9 +10,10 @@ import { swipeToStep, useStepper } from "@components/HowItWorksExplainer/stepper
 import type { StepDirection } from "@components/HowItWorksExplainer/types";
 import { useParentSize } from "@visx/responsive";
 import { DEMO_SCRIPT } from "lib/howItWorks/demo";
-import { HOW_IT_WORKS_STEP_COUNT, HOW_IT_WORKS_STEPS } from "lib/howItWorks/steps";
+import { useSignedOutOpenSpots } from "@hooks/useXClaim/useSignedOutOpenSpots";
+import { howItWorksSteps } from "lib/howItWorks/steps";
 import { AnimatePresence, motion, useReducedMotion, type PanInfo } from "motion/react";
-import { FC } from "react";
+import { FC, useState } from "react";
 
 interface HowItWorksStepsProps {
   isOpen: boolean;
@@ -24,7 +25,9 @@ const SWIPE_ELASTIC = 0.18;
 const SLIDE_TRANSITION = { duration: STEP_SLIDE_DURATION_S, ease: STEP_SLIDE_EASE };
 
 const HowItWorksSteps: FC<HowItWorksStepsProps> = ({ isOpen, onClose }) => {
-  const stepper = useStepper({ isEnabled: isOpen, onFinish: onClose });
+  const { spots: claimSpots } = useSignedOutOpenSpots();
+  const [steps] = useState(() => howItWorksSteps(claimSpots));
+  const stepper = useStepper({ steps, isEnabled: isOpen, onFinish: onClose });
   const reduceMotion = useReducedMotion();
   const { parentRef: sceneRef, width: sceneWidth } = useParentSize({ debounceTime: 0 });
   const slideOffset = reduceMotion ? 0 : SLIDE_OFFSET_PX;
@@ -59,10 +62,10 @@ const HowItWorksSteps: FC<HowItWorksStepsProps> = ({ isOpen, onClose }) => {
           <BackButton isHidden={stepper.isFirst} onBack={stepper.back} />
           <NextButton isLast={stepper.isLast} onNext={stepper.next} />
         </div>
-        <StepSegments count={HOW_IT_WORKS_STEP_COUNT} index={stepper.index} onSelect={stepper.goTo} />
+        <StepSegments count={steps.length} index={stepper.index} onSelect={stepper.goTo} />
       </div>
       <div className="relative grid overflow-hidden" aria-live="polite">
-        {HOW_IT_WORKS_STEPS.map(step => (
+        {steps.map(step => (
           <div
             key={step.id}
             aria-hidden

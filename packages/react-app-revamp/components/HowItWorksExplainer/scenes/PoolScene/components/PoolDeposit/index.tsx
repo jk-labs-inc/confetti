@@ -2,7 +2,7 @@ import FlyingBill from "@components/HowItWorksExplainer/actors/FlyingBill";
 import { BILL_TILT_DEG, useBillFlight } from "@components/HowItWorksExplainer/actors/FlyingBill/useBillFlight";
 import { bump, isWithin } from "@components/HowItWorksExplainer/clock";
 import { BILL_FLIGHT_S, BILL_SPLIT_PROGRESS, billPoint } from "@components/HowItWorksExplainer/scenes/PoolScene/beats";
-import VotesGainedTag from "@components/HowItWorksExplainer/scenes/PoolScene/components/VotesGainedTag";
+import VotesGainedTag from "@components/HowItWorksExplainer/actors/VotesGainedTag";
 import { CARD_SIZE_PX, CARD_TOP_PX } from "@components/HowItWorksExplainer/scenes/potStage";
 import { ENTRY_CARD_CENTER_X } from "@components/HowItWorksExplainer/realProps";
 import type { DepositBeats } from "@components/HowItWorksExplainer/scenes/PoolScene/types";
