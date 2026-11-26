@@ -4,7 +4,7 @@ import { IconMagnifyingGlassSolid } from "@components/UI/Icons";
 import CustomLink from "@components/UI/Link";
 import { MobileProfileDrawer } from "@components/UI/MobileWalletPortal";
 import { useVotingFocusModeStore } from "@components/VotingActionBar/store";
-import { FOOTER_LINKS } from "@config/links";
+import { FOOTER_LINKS, LINK_TELEGRAM } from "@config/links";
 import {
   ROUTE_CREATE_CONTEST,
   ROUTE_LANDING,
@@ -81,6 +81,15 @@ const LandingHeaderMobileFooter = () => {
         >
           <div className="flex items-center w-full overflow-x-auto no-scrollbar px-4 pb-1">
             <div className="flex gap-4 items-center min-w-max">
+              <a
+                className="font-bold whitespace-nowrap py-1 text-secondary-11"
+                href={LINK_TELEGRAM}
+                rel="nofollow noreferrer"
+                target="_blank"
+                aria-label="Join Telegram"
+              >
+                join telegram
+              </a>
               {filteredLinks.map((link, key) => (
                 <a
                   className="font-bold whitespace-nowrap py-1"

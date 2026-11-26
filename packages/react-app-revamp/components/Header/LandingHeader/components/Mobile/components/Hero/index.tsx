@@ -2,7 +2,6 @@ import { preloadHowItWorks } from "@components/HowItWorksExplainer/Loader";
 import { useHowItWorksStore } from "@components/HowItWorksExplainer/store";
 import CustomLink from "@components/UI/Link";
 import Logo from "@components/UI/Logo";
-import { LINK_TELEGRAM } from "@config/links";
 import { motion, useReducedMotion, Variants } from "motion/react";
 
 const containerVariants: Variants = {
@@ -84,16 +83,6 @@ const LandingHeaderMobileHero = () => {
           >
             or learn how it works
           </button>
-        </motion.div>
-        <motion.div variants={itemVariants}>
-          <CustomLink
-            prefetch={false}
-            href={LINK_TELEGRAM}
-            target="_blank"
-            className="block py-1 text-base font-bold text-secondary-11"
-          >
-            join telegram
-          </CustomLink>
         </motion.div>
       </div>
     </motion.section>
