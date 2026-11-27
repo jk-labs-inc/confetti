@@ -1,8 +1,9 @@
+import SpotsLine from "@components/XClaim/parts/SpotsLine";
 import { FC } from "react";
 import type { HowItWorksStep } from "lib/howItWorks/types";
 
 interface StepCopyProps {
-  step: Pick<HowItWorksStep, "headline" | "body">;
+  step: Pick<HowItWorksStep, "headline" | "body" | "spots">;
 }
 
 const StepCopy: FC<StepCopyProps> = ({ step }) => (
@@ -13,6 +14,7 @@ const StepCopy: FC<StepCopyProps> = ({ step }) => (
         {step.body.map((part, i) => (typeof part === "string" ? part : <em key={i}>{part.emphasis}</em>))}
       </p>
     )}
+    {step.spots && <SpotsLine spots={step.spots} placement="card" />}
   </div>
 );
 

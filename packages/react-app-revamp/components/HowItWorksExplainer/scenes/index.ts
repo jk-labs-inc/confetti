@@ -1,3 +1,4 @@
+import ClaimScene from "@components/HowItWorksExplainer/scenes/ClaimScene";
 import CurveScene from "@components/HowItWorksExplainer/scenes/CurveScene";
 import LateScene from "@components/HowItWorksExplainer/scenes/LateScene";
 import PayoutScene from "@components/HowItWorksExplainer/scenes/PayoutScene";
@@ -9,6 +10,7 @@ import type { FC } from "react";
 import type { HowItWorksStepId } from "lib/howItWorks/types";
 
 export const SCENES: Record<HowItWorksStepId, FC<SceneProps>> = {
+  claim: ClaimScene,
   pool: PoolScene,
   winner: WinnerScene,
   curve: CurveScene,

@@ -1,3 +1,4 @@
+import HowItWorksTrigger from "@components/HowItWorksExplainer/Trigger";
 import LandingPageTicker from "@components/_pages/Landing/components/Ticker";
 import CustomLink from "@components/UI/Link";
 import Logo from "@components/UI/Logo";
@@ -15,6 +16,7 @@ const LandingHeaderDesktop = () => {
           </CustomLink>
 
           <div className="flex items-center gap-4 mt-4 ml-auto">
+            <HowItWorksTrigger size="lg" />
             <CustomLink
               prefetch={false}
               href={LINK_TELEGRAM}

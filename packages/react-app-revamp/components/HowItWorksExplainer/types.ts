@@ -19,6 +19,7 @@ export type StepDirection = 1 | -1;
 export interface StepperState {
   index: number;
   direction: StepDirection;
+  lastIndex: number;
 }
 
 export type StepperAction = { kind: "next" } | { kind: "back" } | { kind: "goTo"; index: number };

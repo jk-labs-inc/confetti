@@ -1,6 +1,7 @@
 import type { ChartDataPoint } from "@components/PriceCurve/types";
 import type { PriceCurveType } from "@hooks/useDeployContest/types";
 import type { HOW_IT_WORKS_STEP_IDS } from "lib/howItWorks/steps";
+import type { XClaimSpots } from "lib/xClaim/types";
 
 export type HowItWorksStepId = (typeof HOW_IT_WORKS_STEP_IDS)[number];
 
@@ -13,6 +14,7 @@ export interface HowItWorksStep {
   headline: string;
   body?: StepCopyText;
   pose: BubblesPose;
+  spots?: XClaimSpots;
 }
 
 export type DemoDollars = number;
@@ -51,6 +53,12 @@ export interface DemoCurveBuy {
 
 export type DemoScenarioId = Extract<HowItWorksStepId, "payout" | "push" | "late">;
 
+export interface DemoClaim {
+  entryId: string;
+  spend: DemoDollars;
+  votes: number;
+}
+
 export interface DemoVoteScenario {
   entryId: string;
   spend: string;
@@ -68,6 +76,7 @@ export interface DemoScript {
     priceCurveType: PriceCurveType;
   };
   entries: readonly DemoEntry[];
+  claim: DemoClaim;
   pool: { start: DemoDollars; deposits: readonly DemoDeposit[]; final: DemoDollars };
   winner: { entryId: string; voters: readonly DemoWinnerVoter[] };
   curve: {

@@ -1,8 +1,18 @@
+import { CLAIM_PITCH, CLAIM_TITLE } from "@components/XClaim/copy";
 import type { HowItWorksStep, HowItWorksStepId } from "lib/howItWorks/types";
+import type { XClaimSpots } from "lib/xClaim/types";
 
-export const HOW_IT_WORKS_STEP_IDS = ["pool", "winner", "payout", "curve", "late", "push"] as const;
+const CLAIM_STEP_ID = "claim";
+const GAME_STEP_IDS = ["pool", "winner", "payout", "curve", "late", "push"] as const;
+
+export const HOW_IT_WORKS_STEP_IDS = [CLAIM_STEP_ID, ...GAME_STEP_IDS] as const;
 
 const COPY: Record<HowItWorksStepId, Omit<HowItWorksStep, "id">> = {
+  claim: {
+    headline: CLAIM_TITLE,
+    body: [CLAIM_PITCH],
+    pose: "money",
+  },
   pool: {
     headline: "buy votes on your favorite entries.",
     body: ["90% of funds go into a rewards pool."],
@@ -42,6 +52,7 @@ const COPY: Record<HowItWorksStepId, Omit<HowItWorksStep, "id">> = {
   },
 };
 
-export const HOW_IT_WORKS_STEPS: readonly HowItWorksStep[] = HOW_IT_WORKS_STEP_IDS.map(id => ({ id, ...COPY[id] }));
+const GAME_STEPS: readonly HowItWorksStep[] = GAME_STEP_IDS.map(id => ({ id, ...COPY[id] }));
 
-export const HOW_IT_WORKS_STEP_COUNT = HOW_IT_WORKS_STEPS.length;
+export const howItWorksSteps = (claimSpots: XClaimSpots | null): readonly HowItWorksStep[] =>
+  claimSpots ? [{ id: CLAIM_STEP_ID, ...COPY.claim, spots: claimSpots }, ...GAME_STEPS] : GAME_STEPS;

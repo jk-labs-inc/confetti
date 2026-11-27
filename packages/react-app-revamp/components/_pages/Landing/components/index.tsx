@@ -55,7 +55,6 @@ const LandingPage: FC<LandingPageProps> = ({ snapshot }) => {
             for contest chain and address information!
           </div>
         )}
-        {/* mobile gets the dedicated /how-it-works page instead (linked from the hero) */}
         <div className="hidden md:block">
           <LandingPageHowItWorks />
         </div>

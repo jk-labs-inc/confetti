@@ -1,3 +1,4 @@
+import HowItWorksLoader from "@components/HowItWorksExplainer/Loader";
 import LandingHeaderDesktop from "./components/Desktop";
 import LandingHeaderMobile from "./components/Mobile";
 
@@ -10,6 +11,7 @@ const LandingHeader = () => {
       <div className="hidden md:block">
         <LandingHeaderDesktop />
       </div>
+      <HowItWorksLoader />
     </>
   );
 };

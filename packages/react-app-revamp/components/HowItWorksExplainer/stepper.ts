@@ -1,24 +1,22 @@
 import type { StepDirection, Stepper, StepperAction, StepperState } from "@components/HowItWorksExplainer/types";
-import { HOW_IT_WORKS_STEPS, HOW_IT_WORKS_STEP_COUNT } from "lib/howItWorks/steps";
+import type { HowItWorksStep } from "lib/howItWorks/types";
 import { useCallback, useEffect, useReducer } from "react";
-
-const LAST_INDEX = HOW_IT_WORKS_STEP_COUNT - 1;
 
 export const SWIPE_DISTANCE_PX = 56;
 export const SWIPE_VELOCITY = 400;
 
-const INITIAL_STEPPER_STATE: StepperState = { index: 0, direction: 1 };
+const initialStepperState = (stepCount: number): StepperState => ({ index: 0, direction: 1, lastIndex: stepCount - 1 });
 
 export const stepperReducer = (state: StepperState, action: StepperAction): StepperState => {
   switch (action.kind) {
     case "next":
-      return state.index >= LAST_INDEX ? state : { index: state.index + 1, direction: 1 };
+      return state.index >= state.lastIndex ? state : { ...state, index: state.index + 1, direction: 1 };
     case "back":
-      return state.index <= 0 ? state : { index: state.index - 1, direction: -1 };
+      return state.index <= 0 ? state : { ...state, index: state.index - 1, direction: -1 };
     case "goTo": {
-      const index = Math.min(LAST_INDEX, Math.max(0, action.index));
+      const index = Math.min(state.lastIndex, Math.max(0, action.index));
       if (index === state.index) return state;
-      return { index, direction: index > state.index ? 1 : -1 };
+      return { ...state, index, direction: index > state.index ? 1 : -1 };
     }
     default: {
       const _exhaustive: never = action;
@@ -33,9 +31,17 @@ export const swipeToStep = (offsetX: number, velocityX: number): StepDirection |
   return null;
 };
 
-export const useStepper = ({ isEnabled, onFinish }: { isEnabled: boolean; onFinish: () => void }): Stepper => {
-  const [state, dispatch] = useReducer(stepperReducer, INITIAL_STEPPER_STATE);
-  const isLast = state.index === LAST_INDEX;
+export const useStepper = ({
+  steps,
+  isEnabled,
+  onFinish,
+}: {
+  steps: readonly HowItWorksStep[];
+  isEnabled: boolean;
+  onFinish: () => void;
+}): Stepper => {
+  const [state, dispatch] = useReducer(stepperReducer, steps.length, initialStepperState);
+  const isLast = state.index === state.lastIndex;
 
   const next = useCallback(() => {
     if (isLast) onFinish();
@@ -56,7 +62,7 @@ export const useStepper = ({ isEnabled, onFinish }: { isEnabled: boolean; onFini
 
   return {
     index: state.index,
-    step: HOW_IT_WORKS_STEPS[state.index],
+    step: steps[state.index],
     direction: state.direction,
     isFirst: state.index === 0,
     isLast,

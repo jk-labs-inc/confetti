@@ -4,7 +4,7 @@ import { STAGE_HEIGHT_PX, STAGE_WIDTH_PX, useClockState, useSceneClock } from "@
 import { ENTRY_CARD_SIZE_PX } from "@components/HowItWorksExplainer/realProps";
 import { pushBeats, standingsAt } from "@components/HowItWorksExplainer/scenes/PushScene/beats";
 import RankedCard from "@components/HowItWorksExplainer/scenes/PushScene/components/RankedCard";
-import TapRing from "@components/HowItWorksExplainer/scenes/PushScene/components/TapRing";
+import TapRing from "@components/HowItWorksExplainer/actors/TapRing";
 import type { SceneProps } from "@components/HowItWorksExplainer/types";
 import { typedPrefix } from "@components/HowItWorksExplainer/typing";
 import { motion, useTransform } from "motion/react";
