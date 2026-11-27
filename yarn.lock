@@ -14736,10 +14736,10 @@ victory-vendor@^36.6.8:
     d3-time "^3.0.0"
     d3-timer "^3.0.1"
 
-viem@2.58.4:
-  version "2.58.4"
-  resolved "https://registry.yarnpkg.com/viem/-/viem-2.58.4.tgz#7194d68d1bb67c11998998aabd6b03aabce93524"
-  integrity sha512-zeYi2PliKbmJVbIvudHZrYJLh1XMXci6GBJznQLjhhGPGl9L7Hp/LmelpXhOM9VvlXwnvfW7/2PCgpjnc2j8MQ==
+viem@2.58.8:
+  version "2.58.8"
+  resolved "https://registry.yarnpkg.com/viem/-/viem-2.58.8.tgz#3dd0833c4a51084347b097e60d83ad44dceac629"
+  integrity sha512-kQBP9j2gkL1j+eCIV3qs+cfS2NvltlNX2BcJ2C1qKlCIjP6ibqvIlZSJN8OJ+CR8j/pJpUUoG97179upObcw3g==
   dependencies:
     "@noble/curves" "1.9.1"
     "@noble/hashes" "1.8.0"
